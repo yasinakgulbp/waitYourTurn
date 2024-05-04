@@ -2,23 +2,36 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f; // Oyuncu hareket hýzý
-    private Vector3 velocity = Vector3.zero;
+    public float moveSpeed = 5f;
+    public float gravity = -9.81f;
+    private CharacterController controller;
+    private Vector3 moveDirection = Vector3.zero;
+    public Animator animator;
+
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+    }
 
     void Update()
     {
-        // Kameranýn yönüne göre hareket etme
-        Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
-        Vector3 moveDirection = cameraForward * Input.GetAxis("Vertical") + Camera.main.transform.right * Input.GetAxis("Horizontal");
+        // Check if grounded
+        if (controller.isGrounded)
+        {
+            // Camera-based movement
+            Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+            moveDirection = cameraForward * Input.GetAxis("Vertical") + Camera.main.transform.right * Input.GetAxis("Horizontal");
+            moveDirection *= moveSpeed;
+        }
 
-        // Hareket vektörünü normalize et ve oyuncu hýzý ile çarp
-        moveDirection.Normalize();
-        velocity = moveDirection * moveSpeed;
+        // Apply gravity
+        moveDirection.y += gravity * Time.deltaTime;
 
-        // Hareketi uygula
-        transform.position += velocity * Time.deltaTime;
+        // Move the character
+        controller.Move(moveDirection * Time.deltaTime);
 
-        // Fare imlecinin olduðu yöne bakma
+        // Mouse look direction (same as before)
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
         float rayDistance;
@@ -27,14 +40,23 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 point = ray.GetPoint(rayDistance);
             Vector3 lookDirection = point - transform.position;
-            lookDirection.y = 0; // Y ekseninde dönüþ yapma
+            lookDirection.y = 0;
             transform.rotation = Quaternion.LookRotation(lookDirection);
         }
 
-        // Tuþ býrakýldýðýnda hýzý sýfýrla
-        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
+        // Update animator
+        UpdateAnimator();
+    }
+
+    void UpdateAnimator()
+    {
+        if (moveDirection.magnitude > 0.3 && controller.isGrounded)
         {
-            velocity = Vector3.zero;
+            animator.SetBool("isWalking", true);
+        }
+        else
+        {
+            animator.SetBool("isWalking", false);
         }
     }
 }
