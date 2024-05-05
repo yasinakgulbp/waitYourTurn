@@ -77,16 +77,17 @@ public class Enemy : MonoBehaviour
 
     void Chase()
     {
-        // Calculate direction towards the player on the horizontal plane
-        Vector3 horizontalDirection = new Vector3(player.position.x, transform.position.y, player.position.z);
-        horizontalDirection -= transform.position;
-        horizontalDirection.Normalize();
+        // Calculate direction towards the player only along the x and z axes
+        Vector3 direction = (new Vector3(player.position.x, transform.position.y, player.position.z) - transform.position).normalized;
 
-        // Move towards the player along the horizontal plane
-        transform.Translate(horizontalDirection * moveSpeed * Time.deltaTime);
+        // Move towards the player along the x and z axes
+        transform.Translate(direction * moveSpeed * Time.deltaTime, Space.World);
 
-        // Look at the player
-        transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
+        // Calculate the rotation needed to face the player only in the horizontal plane
+        Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+
+        // Apply the rotation only in the horizontal plane
+        transform.rotation = Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f);
 
         // Check if within attack range
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
