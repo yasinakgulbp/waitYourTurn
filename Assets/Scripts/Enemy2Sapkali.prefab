@@ -764,8 +764,8 @@ GameObject:
   - component: {fileID: 8109124906267891162}
   - component: {fileID: 2038801412573189834}
   - component: {fileID: 1188552177537081912}
-  - component: {fileID: 4983495363020372936}
   - component: {fileID: 3480839324844322974}
+  - component: {fileID: 6641448406720411175}
   m_Layer: 0
   m_Name: Enemy2Sapkali
   m_TagString: Enemy
@@ -875,6 +875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  goInsideTarget: {fileID: 0}
   moveSpeed: 1.5
   playerDetectionRadius: 10
   doorDetectionRadius: 10
@@ -910,7 +911,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &4983495363020372936
+--- !u!114 &3480839324844322974
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -919,11 +920,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7586966624921621420}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa999b5adadcb11448aa7c49116e3b58, type: 3}
+  m_Script: {fileID: 11500000, guid: a8f7ed902d57004469c6cc8afe2e793f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 4
---- !u!114 &3480839324844322974
+  bullet: {fileID: 5298495511775070020, guid: 9448a68f8659f5744b5ae9713e9ce77c, type: 3}
+  firePosition: {fileID: 0}
+--- !u!114 &6641448406720411175
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -932,11 +934,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7586966624921621420}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8f7ed902d57004469c6cc8afe2e793f, type: 3}
+  m_Script: {fileID: 11500000, guid: fa999b5adadcb11448aa7c49116e3b58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 5298495511775070020, guid: 9448a68f8659f5744b5ae9713e9ce77c, type: 3}
-  firePosition: {fileID: 0}
+  health: 10
 --- !u!1001 &4901703428480576833
 PrefabInstance:
   m_ObjectHideFlags: 0
