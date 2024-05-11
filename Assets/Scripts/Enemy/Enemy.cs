@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     public float playerStopDistance = 1f;
     public float doorStopDistance = 1f;
     public LayerMask doorLayer;
+    public string Hedefismi = "Target2";
 
     private bool doorExists = true;
     private enum EnemyState { Patrol, Chase, Attack, GoInside };
@@ -21,7 +22,22 @@ public class Enemy : MonoBehaviour
     private void Start()
     {
         Application.targetFrameRate = 200;
+
+        // Player ve goInsideTarget objelerini bul ve referanslarýný al
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        goInsideTarget = GameObject.FindGameObjectWithTag(Hedefismi).transform;
+
+        if (player == null)
+        {
+            Debug.LogError("Player object not found!");
+        }
+
+        if (goInsideTarget == null)
+        {
+            Debug.LogError("GoInsideTarget object not found!");
+        }
     }
+
 
     void Update()
     {
@@ -46,7 +62,8 @@ public class Enemy : MonoBehaviour
     {
         if (doorExists)
         {
-            MoveTowardsDoor();
+            //MoveTowardsDoor();
+            GoInside();
         }
         else
         {

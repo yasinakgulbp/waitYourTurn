@@ -8,6 +8,12 @@ TagManager:
   - Door
   - Bullet
   - Hand
+  - Target2
+  - Target3
+  - Target4
+  - Target5
+  - Target6
+  - Target1
   layers:
   - Default
   - TransparentFX
