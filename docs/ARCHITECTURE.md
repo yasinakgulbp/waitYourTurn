@@ -1,6 +1,6 @@
 # Mimari ve sistem sözleşmeleri
 
-Bu belge hedef yapıyı tarif eder; adı geçen sistemlerin çoğu henüz uygulanmadı. İlk navigation bileşenleri ve gerçek doğrulama sınırları `NAVIGATION_LAB.md` içinde listelenir. Kesin tasarım kararları `DECISIONS.md` içinde, doğrulama işleri `ROADMAP.md` içindedir.
+Bu belge hedef yapıyı tarif eder; adı geçen sistemlerin bir kısmı henüz uygulanmadı. Uygulanan navigation, ortak can/hasar ve ilk tek-vagon bileşenlerinin gerçek doğrulama sınırları `NAVIGATION_LAB.md`, `COMBAT_LAB.md` ve `GAMEPLAY_LAB.md` içinde listelenir. Kesin tasarım kararları `DECISIONS.md` içinde, doğrulama işleri `ROADMAP.md` içindedir.
 
 ## Temel yaklaşım
 

@@ -18,6 +18,8 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | D10 | Turret ve dron sınırlı mermi kullanır; dron oyuncuyu izler ve mermi bitince kamikaze yapar | Kullanıcının ana mekaniği. Satın alma sınırları ve hedef kaybı yönetilir. |
 | D11 | İngilizce, aşamalara ait küçük commitler; repo içi ilerleme kaydı | Kullanıcının çalışma tercihi. Kaynak koddaki mevcut değişiklikler plan commitine alınmaz. |
 | D12 | Dış incelemeler öneridir; değişiklikler oyun hedefi ve somut gerekçeyle seçilir | Kullanıcının tercihi. Model uzlaşması veya nezaket tasarım kararının kanıtı değildir. |
+| D13 | Sol joystick ile hareket, en yakın görüşü açık zombiye otomatik nişan ve ateş | Kullanıcı M3 için seçti; masaüstünde WASD/ok tuşları aynı hareket girdisine bağlanır. Sağ joystick gerekmez. |
+| D14 | İlk tabanca sınırlı şarjör, sınırsız yedek mermi ve otomatik doldurma kullanır | Kullanıcı M3 için seçti. İlk lab değerleri deneme ayarıdır: 8 mermi, 1.2 s doldurma, 0.35 s atış aralığı. |
 
 ## Teknik öneriler
 
@@ -49,8 +51,8 @@ Bu liste ilk navigasyon/hasar denemesini engellemez. İlgili özellik başlamada
 | Düşman hedef önceliği | Atanmış vagonda oyuncu, turret veya başka hedeflerin önceliği; boş vagondaki zombi davranışı. | M3/M7 |
 | Savunmaların canı ve patlaması | Zombiler turret/drona zarar verebilir mi? Turretin mermi bitiş patlaması sadece efekt mi? Dron patlaması duvar/kapıya nasıl etki eder? | M7 |
 | Turret sınırının kapsamı | Her türden 2 adet örneği: oyuncu başına mı vagon başına mı? Öneri vagon/slot başına, koşu toplamı ayrıca sınırlı. | M7 |
-| Mobil kontrol şeması | Hareket/nişan/ateş dokunmatik düzeni kullanıcıyla seçilir; bu planda belirli joystick/otomatik ateş kararı verilmedi. | M0/M1'de seçim, M3'te minimum uygulama |
-| Silah mermisi ve reload | Tabancanın şarjör/yedek mermi/reload kuralı erken seçilir; türlere genişletme ve satın alma ayrıntıları sonra gelir. | M0/M1'de tabanca tasarımı, M3/M5 uygulama |
+| Mobil kontrol hissi | Şema D13 ile seçildi; sol joystick ve otomatik ateşin ergonomisi kullanıcı/cihaz denemesinde değerlendirilir. | M3 değerlendirmesi |
+| Silah çeşitlerinin mermisi | İlk tabanca D14 ile seçildi; diğer türlerin mermi/doldurma ve satın alma ayrıntıları sonra gelir. | M5/M7 |
 | Mağaza erişimi | Savaşta açık mı, yalnızca yolculukta mı? Öneri gerçek zamanı durdurmayan kolay mobil UI. | M7 |
 | Para toplama | Kullanıcı para toplama istedi; ilk öneri ödülü otomatik cüzdana yazmak. Görsel pickup/yerden toplama tercihi açık. | M7 |
 | Koşu devamı / metagelişim | Hangi kazanımların kaldığı ve devam beklentisi erken kâğıt üzerinde seçilir; disk kaydı ihtiyaç kadar uygulanır. | M4a öncesi tasarım, M8 uygulama |

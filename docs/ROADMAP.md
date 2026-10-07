@@ -1,6 +1,6 @@
 # Sıralı geliştirme planı
 
-Durum: 2026-10-07 — M0 ve M2 tamamlandı; M1'in temel kapı/rota kontrolü tamamlandı, kalabalığın vagon içi hedef yerleşimi açık. Sıradaki aşama M3 tek vagon oynanışı. Kullanıcı gözlemiyle uzak köprü/ikili link yerine vagon kenarında kapı, yakın zeminler ve ortak NavMesh + carving kuruldu; yeni geometri PC'de 10/10 kontrolü geçti. 30 agentta bir zombi vagon içinde duran kalabalıkta hedefe ulaşamadı; hedef yönetimi M3/M6'da ele alınacak. Önceki A54 performans/100-agent kanıtı eski link geometrisine aittir. Rutin testler PC'de; önemli birleşik oynanış değişiminde Android'e dönülecek. Ayrıntılar NAVIGATION_LAB.md ve COMBAT_LAB.md içinde. Her aşama küçük alt commitlere ayrılabilir.
+Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruldu; son kod PC'de 10/10 birleşik kontrolü geçti, kullanıcı/cihaz oynanış değerlendirmesi açık. M1'in temel kapı/rota kontrolü tamamlandı; eski 30-agent gridinde gözlenen hedef yerleşimi sorunu büyük kalabalık için açık kalır. M3 gerçek brain sabit grid yerine oyuncu menzilini hedefler; bu büyük kalabalığın kanıtı değildir. Vagon kenarındaki yakın zeminler ortak NavMesh + carving kullanır. Önceki A54 performans/100-agent kanıtı eski link geometrisine aittir. Rutin testler PC'de; uygun zamanda önemli birleşik oynanış değişimi Android'de değerlendirilecek. Ayrıntılar NAVIGATION_LAB.md, COMBAT_LAB.md ve GAMEPLAY_LAB.md içinde.
 
 ## Öncelik mantığı
 
@@ -15,7 +15,7 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı; M1'in temel kapı/rota kontrolü tam
 | M0 | Korunan prototip ve geliştirme/test düzeni | Plan | Tamamlandı; referans/test sahnesi, AudioListener düzeltmesi ve Android lab buildi doğrulandı; hedef A54 |
 | M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | Temel rota/kapı 10/10; A54 ilk ölçümü kayıtlı. Yeni sürekli yüzeyde vagon içi kalabalık hedef yerleşimi M3/M6 için açık |
 | M2 | Ortak can, hasar, ölüm | M1 deneme sonucu; kodu M1'e bağımlı değil | Tamamlandı; 14 test geçti, izole hitscan/can/ölüm Play kontrolü yapıldı |
-| M3 | Mobil kontrollü tek vagon döngüsü ve oynanış değerlendirmesi | M1, M2 | Bekliyor |
+| M3 | Mobil kontrollü tek vagon döngüsü ve oynanış değerlendirmesi | M1, M2 | GameplaySandbox'ta birleşik mekanikler ve son doğuş/görüş kontrolü 10/10 PC PASS. Dokunmatik cihaz hissi ve kullanıcı oynanış değerlendirmesi açık |
 | M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | Bekliyor |
 | M4b | Kanıtlanan döngüyü beş vagona genişletme | M4a değerlendirmesi | Bekliyor |
 | M5 | Mobil kontrolü iyileştirme ve silah çeşitliliği | M2, M4b | Bekliyor |
@@ -28,7 +28,7 @@ Performans ölçümü M1'den itibaren başlar; M9'a ertelenmez. Pooling M3'te te
 
 ## Erken tasarım kararları ve çalışma sınırı
 
-- M0/M1 sırasında minimum mobil kontrol şeması ve ilk tabancanın şarjör/yedek mermi/reload kuralı kullanıcıyla seçilir; M3 bunları kullanır. Tam silah çeşitliliği M5'te uygulanır.
+- Minimum mobil kontrol ve ilk tabanca kuralı M3 için seçildi: sol joystick + otomatik nişan/ateş; sınırlı şarjör + sınırsız yedek + otomatik doldurma (D13/D14). Tam silah çeşitliliği M5'te uygulanır.
 - M4a öncesinde koşudan koşuya korunacak kazanımlar ve uygulama kapanınca devam beklentisi kâğıt üzerinde netleştirilir. Kayıt sistemi M8'de uygulanır.
 - M7 öncesinde ödüllü reklam/IAP ürünleri, tekrar sınırları ve ekonomi etkisi kullanıcıyla tasarlanır. Entegrasyon M9'da kalır; kesinleşmemiş ödül/fiyat uydurulmaz.
 - Her oturum tek, küçük bir kabul hedefiyle başlar. Teknik deneme sonuç vermiyorsa kapsam genişletilmez; bulgu ve sonraki deneme kaydedilir.
@@ -174,4 +174,4 @@ Kabul: seçilen cihaz/kalite profili/FPS ve canlı sınırı raporlanır; ölç�
 
 ## Bir sonraki somut iş
 
-**M3 ilk küçük parça:** ortak canı `DoorController` üzerinden portala bağlamak; zombi kapıya vurur, can bitince geçit açılır, oyuncunun 3 saniyelik yakınlık onarımı iptal edilebilir ve eşik güvenle kapanır. Ardından hareket/ateş, oyuncuya saldırı ve temel pool aynı tek vagon sahnesinde birleştirilir. Minimum mobil kontrol ve tabanca mermi/reload kararı uygulamadan önce kullanıcıyla seçilir.
+**M3 değerlendirmesi:** GameplaySandbox'ta hareket–otomatik ateş–onarım akışını kullanıcıyla denemek; gerekli geri bildirimi uygulamak ve uygun zamanda kısa Android kontrolü yapmak. Teknik kanıt/kapsam GAMEPLAY_LAB.md içinde. M4a iki vagon/istasyon akışı bu değerlendirme sonrası başlar.

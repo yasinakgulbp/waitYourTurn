@@ -12,15 +12,17 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 4. [Yol haritası](ROADMAP.md): sıralı geliştirme işleri ve kabul koşulları.
 5. [Prototip başlangıç kaydı](BASELINE.md): mevcut yerel prototipin kaynak kontrolüne alınan durumu ve doğrulama sınırları.
 6. [Navigasyon laboratuvarı](NAVIGATION_LAB.md): ilk uygulama, kontroller, doğrulama ve açık işler.
+7. [Can/hasar laboratuvarı](COMBAT_LAB.md): ortak kurallar ve M2 kanıtı.
+8. [Tek vagon oynanışı](GAMEPLAY_LAB.md): M3 entegrasyonu, kontroller ve açık cihaz değerlendirmesi.
 
 ## Mevcut durum
 
 - Uygulama başladı: ayrı NavigationSandbox sahnesinde kontrollü NavMesh geçişi kuruldu. Açık tasarım kararları `DECISIONS.md` içinde.
 - 2026-10-07 revizyonu: M1 erken cihaz ölçümü, M3 minimum mobil kontrol/tabanca ve oynanış değerlendirmesi, M4a iki vagon → M4b beş vagon. Yeniden kullanım/kapsam sınırları ve erken tasarım kararları `ROADMAP.md` içinde.
 - İncelenen Unity: 6000.6.4f1; kurulu AI Navigation: 2.0.14. Paket güncellemesi bu planın parçası değil.
-- Referans/build sahnesi: `Assets/Scenes/SampleScene 2.unity`; yeni test sahnesi: `Assets/Game/Scenes/NavigationSandbox.unity`.
+- Referans/build sahnesi: `Assets/Scenes/SampleScene 2.unity`; ayrı test sahneleri: NavigationSandbox, CombatSandbox ve GameplaySandbox (`Assets/Game/Scenes`).
 - Prototip: 5 rastgele oyuncu doğuş noktası, 6 düşman doğuş noktası, 7 saniyede bir üretim, 40 saniyede sahne yenileme.
-- Vagon zorluğu kapı zamanlamasıyla oluşturuluyor. Gerçek kapı dayanıklılığı, oyuncu ölümü ve etap ilerlemesi henüz bağlı değil.
+- Eski prototip vagon zorluğunu kapı zamanlamasıyla oluşturur. Yeni GameplaySandbox'ta hasarlı kapı, onarım, oyuncuya saldırı/ölüm ve otomatik tabanca bağlıdır; istasyon/etap ilerlemesi henüz yoktur.
 - İlk incelemede sahne yenileme/vagon değişimi görüldü. Altı zombi prefabındaki fazladan AudioListener bileşenleri M0 düzeltmesinde kaldırıldı; AudioSource ve eski oynanış scriptleri korundu.
 - Plan öncesindeki yerel prototip değişiklikleri ayrı başlangıç commitine alındı. Eski Windows buildleri/arşivi yerelde korundu ve Git dışında tutuldu; plan commitine dahil edilmedi.
 
@@ -49,5 +51,6 @@ Yeni bir oturumda bu dizin, güncel kod, Git durumu ve Unity sahnesi birlikte ok
 | 2026-10-07 | M0 geliştirme düzeni ve Android lab buildi | M0 tamamlandı | Referans sahne/zombi üretimi görüldü; AudioListener düzeltmesi ayrı commit. Android Development APK ve kimlik geri yüklemesi başarılı. A54'e kurulum/çalıştırma doğrulandı. |
 | 2026-10-07 | Vagon kenarında kapı ve kesintisiz kalabalık geçişi | Tek-agent kontrolü 10/10; kalabalık hedef yerleşimi açık | Köprü/ikili link kaldırıldı; ortak NavMesh + carving. 30 agentta 29 hedefe varış, bir agent vagon içinde avoidance nedeniyle takıldı. M3/M6 hedef yönetimi işi; ayrıntı NAVIGATION_LAB.md. Rutin testler kullanıcı talebiyle PC'de. |
 | 2026-10-07 | M2 ortak can, hasar ve ölüm | Tamamlandı | 14 EditMode testi geçti; hitscan, kapı 8+2, oyuncu iyileşmesi ve ölüm sinyali Play'de doğrulandı. COMBAT_LAB.md. Sıradaki M3: kapı kırılma/onarımı, enemy brain, minimum girdi/tabanca ve pool. |
+| 2026-10-07 | M3 tek vagon mekaniği entegrasyonu | PC teknik kontrolü geçti; kullanıcı/cihaz değerlendirmesi açık | Son kod 10/10 PASS: kapı hasarı/giriş, oyuncuya saldırı, iptal edilen/tam onarım, eşik güvenliği, pool yaşamı ve kapının tabanca görüş engeli. Sol joystick/otomatik ateş ve otomatik reload kullanıcı tercihiyle kuruldu; GAMEPLAY_LAB.md. Android bu turda denenmedi. |
 
 Reklam/IAP'nin ekonomi rolü M7 öncesinde tasarlanır; servis entegrasyonu ve yayınlama çekirdek oynanış/cihaz performansı doğrulandıktan sonraki aşamalardır.
