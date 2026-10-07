@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 8668573981362194106}
   - component: {fileID: 3094425405158007395}
   - component: {fileID: -2884032267363102707}
-  - component: {fileID: -6412471358056421659}
   m_Layer: 0
   m_Name: Canavar3
   m_TagString: Untagged
@@ -282,14 +281,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!81 &-6412471358056421659
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4392484520978270611}
-  m_Enabled: 1
 --- !u!1001 &7166851383741896914
 PrefabInstance:
   m_ObjectHideFlags: 0
