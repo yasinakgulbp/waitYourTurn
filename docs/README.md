@@ -15,6 +15,7 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 ## Mevcut durum
 
 - Planlama tamamlandı; uygulama başlamadı. Açık tasarım kararları `DECISIONS.md` içinde.
+- 2026-10-07 revizyonu: M1 erken cihaz ölçümü, M3 minimum mobil kontrol/tabanca ve oynanış değerlendirmesi, M4a iki vagon → M4b beş vagon. Yeniden kullanım/kapsam sınırları ve erken tasarım kararları `ROADMAP.md` içinde.
 - İncelenen Unity: 6000.6.4f1; kurulu AI Navigation: 2.0.14. Paket güncellemesi bu planın parçası değil.
 - Aktif sahne: `Assets/Scenes/SampleScene 2.unity`.
 - Prototip: 5 rastgele oyuncu doğuş noktası, 6 düşman doğuş noktası, 7 saniyede bir üretim, 40 saniyede sahne yenileme.
@@ -42,5 +43,6 @@ Yeni bir oturumda bu dizin, güncel kod, Git durumu ve Unity sahnesi birlikte ok
 | 2026-10-07 | Prototip incelemesi | Tamamlandı | Kod/prefab incelemesi ve bir Play döngüsü; kaynak kod değiştirilmedi. |
 | 2026-10-07 | Oyun tasarımı, mimari ve aşamalı plan | Hazır; açık kararlar var | İlk iş M0: prototip kaydı ve küçük navigasyon test sahnesi hazırlığı. |
 | 2026-10-07 | Mevcut yerel prototipi kaynak kontrolüne alma | Tamamlandı | Kaynak/asset/ayarlar ayrı commit; eski dağıtım çıktıları Git dışında. M0/M1 test sahnesi henüz kurulmadı. |
+| 2026-10-07 | Yararlı dış inceleme önerilerini plana işleme | Tamamlandı | Belgeler güncellendi; oynanış kodu ve Unity sahneleri değişmedi. Yeni aşama kabul koşulları henüz doğrulanmadı. |
 
-Reklam, gerçek para satın alımları ve yayınlama; çekirdek oynanış ve cihaz performansı doğrulandıktan sonra ayrı aşamalardır.
+Reklam/IAP'nin ekonomi rolü M7 öncesinde tasarlanır; servis entegrasyonu ve yayınlama çekirdek oynanış/cihaz performansı doğrulandıktan sonraki aşamalardır.

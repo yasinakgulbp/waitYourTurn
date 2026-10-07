@@ -58,6 +58,8 @@ Oyuncu, kapı, zombi ve gerektiğinde turret aynı hasar sözleşmesini kullanı
 
 Başlangıç silahı tabanca; satın alınabilecekler hafif makineli, tüfek ve pompalı. Silah türü, ateş aralığı, menzil, hasar, saçılma/pellet sayısı, mermi ve efekt ayarları veridir. Oyuncu/turret/dron aynı silah çekirdeğini farklı hedefleme ve hareketle kullanır.
 
+Kontrol şeması ve ilk tabancanın mermi/reload kuralı M0/M1'de kullanıcıyla seçilecek. M3'te minimum mobil kontrol ve tabancayla hareket–ateş–onarım deneyimi telefonda değerlendirilecek; tam silah çeşitliliği daha sonra eklenecek.
+
 Satın alınmış Hovl projectile assetleri görsel sunumda korunur. Gerçek vuruş tespiti efektlerden bağımsızdır. İlk öneri tabanca/tüfek/turret için raycast tabanlı anlık isabet + görsel mermi; yavaş roket vb. için ileride kontrollü fiziksel projectile. Pompalıda saçmalar kasıtlı ayrı isabetlerdir.
 
 ## Turret ve dron
@@ -83,6 +85,8 @@ Satın alma yalnızca uygulanabilir ürün için para düşer. Yetersiz para, do
 
 Mağazanın savaşta da açık olup olmayacağı kesinleşmedi. İlk öneri mobil erişimi kolay, gerçek zamanı durdurmayan mağaza; arayüz/denge aşamasında değerlendirilir.
 
+Ödüllü reklam/IAP'nin vereceği ürünler ve ekonomi etkisi mağaza kurulmadan önce kâğıt üzerinde netleştirilecek; servis entegrasyonu sonraki yayın aşamasında yapılacak. Bu belgede belirli reklam ödülü veya ücretli avantaj seçilmiş değildir.
+
 ## Etap verisi ve kalıcılık
 
 Bir istasyon verisi: süre, yerleşim, vagon başına spawn grupları, türler, başlangıç gecikmeleri, üretim aralıkları, toplam bütçe, canlı düşman sınırı ve ödül ayarları.
@@ -90,5 +94,7 @@ Bir istasyon verisi: süre, yerleşim, vagon başına spawn grupları, türler, 
 Zorluk yalnızca her istasyonda daha çok düşman üretmek değildir: aynı canlı düşman sınırı içinde tür dağılımı, tempo ve kapı baskısı ayarlanabilir. Güvenli ilk istasyon, giderek artan baskı ve periyodik nefes alma istasyonları önerilir.
 
 Kararlaştırıldı: oyuncunun canı, parası, silahı ve dronu onunla gider. Kapı hasarı ve turretler kurulu oldukları vagonda kalır. İçeri girmiş zombiler de vagon durumuna dahildir. Mimari oyuncu ve vagon durumlarını ayrı saklar; istasyon değişimi koşuyu sıfırlamaz. Koşu içindeki kalıcılık ile uygulama kapanıp açılınca devam etme farklı özelliklerdir; disk kayıt M8 kapsamıdır.
+
+Koşular arasında korunacak kazanımlar ve uygulama kapanınca devam beklentisi M4a öncesinde tasarlanacak. İlk istasyon döngüsü iki vagonla kanıtlanıp sonra beş vagona genişletilecek; bu geliştirme sırası hedef tren kapsamını küçültmez.
 
 Atama önerisi: tüm vagonlar eşit olasılıklı, aynı vagon tekrar çıkabilir. Doğuş noktası duvar içinde veya karakterle çakışacak şekilde seçilmez. İçeride zombiler taşınacaksa güvenli doğuş/çok kısa koruma ayrıca tasarlanmalıdır.
