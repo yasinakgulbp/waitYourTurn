@@ -2,6 +2,20 @@
 
 Sahne: `Assets/Game/Scenes/NavigationSandbox.unity`. Unity 6000.6.4f1, AI Navigation 2.0.14. Bu sahne kapı geçişini kanıtlar; hasar, onarım, saldırı ve istasyon akışı sonraki aşamalardır.
 
+## Güncel düzen — kullanıcının geometri/giriş gözlemi sonrası
+
+Kapı artık vagon ön duvarında **z=1** düzleminde ve vagonun alt nesnesidir. İstasyonun kenarı z=0.95, vagon zemini z=1; aralık **0.05 m**. Yalnızca 0.1 m uzunluğunda kapı eşiği vardır; uzak kapı ve geniş boarding bridge kaldırıldı. İki sabit geçiş linki yerine ortak bake edilmiş `ConnectedNavMesh.asset` ve kapı açıklığında `NavMeshObstacle.carving` kullanılır. Kapı açılınca normal yürüyüş alanı oluşur; sabit birer/ikişer geçiş kilidi yoktur. Bake yalnızca Editor'da, carving ise kapı değiştiğinde uygulanır.
+
+`EntryPortal` eşikteki gövdeler çıkmadan collider/nav kesitini kapatmaz. Eşik içindeki agent kapanış isteğinde mevcut yönünde yürür; diğerleri dış hedefe döner. Carving etkisi aynı çağrıda oluşmaz; kabul kontrolü navigation güncellemesini bekler. Referans: [Unity NavMeshObstacle](https://docs.unity3d.com/cn/2018.3/Manual/class-NavMeshObstacle.html). Kapanış beklerken fizik sorgusu öncesinde transformlar eşitlenir; sürekli açık/kapalı durumda bu sorgu çalışmaz.
+
+Kullanıcı talebiyle rutin kontrol **30 agent / bilgisayar** oldu. Yeni mobil build hazırlanmadı; aşağıdaki A54 kanıtları önceki link geometrisine aittir. Önemli mekanik/geometri veya birleşik oynanış değişiminde cihaz kontrolü yeniden yapılacak. Test agentlarında küçük hız/avoidance priority farkları vardır; yürüyüş animasyonu ve gerçek saldırı hedefleri M3'tedir.
+
+İlk kesintisiz yol denemesi: **29/30**, 120 saniyede zaman aşımı (`2026-10-07T16:58:27.9279938Z`), tepe eşik bölgesi sayıları 5/4. Bu başarılı sonuç diye yazılmaz. Duran test hedeflerinin geçişi tıkamaması için 30 agent yerleşimi daha seyrek 5×6 düzene geçirildi (x aralığı 1.3 m, z aralığı 1.1 m). Test gridinin doluluğu gerçek saldırı-slotu davranışı değildir.
+
+Seyrek düzen de **29/30 hedef varışı**, 120 saniye (`2026-10-07T17:10:11.5213932Z`) verdi; eşik bölgesi tepe sayıları 6/5. `Lab Zombie 22` vagon içinde (-2.828, 0.050, 4.150) konumunda, (-1.300, 0, 3.600) hedefine 1.625 m kala diğer duran agentların avoidance etkisinde bekledi; rota `PathComplete`. Kapıdan giriş ile vagon içinde hedefe yerleşme ayrı sonuçlardır. Kalabalık hedef seçimi/yer açma M3/M6'da ele alınacak; bu başarısız hedef yerleşimi kaydı korunur. Eşik sayaçları bölgedeki gövdeleri sayar; 5 zombinin yan yana geçtiği anlamına gelmez.
+
+Yeni ortak yüzey/carving geometrisinde **10/10 PASS**, WindowsEditor (`2026-10-07T17:15:41.8290546Z`): kapalı/açık rotalar, fiziksel eşikten geçiş, dolu eşikte güvenli kapanış, geri dönüş ve geçersiz doğuş reddi. Bu tek-agent kanıtı, yukarıdaki kalabalık hedef yerleşimi eksikliğini kapatmaz.
+
 ## Çalıştırma
 
 Unity menüsünde **Wait Your Turn → Navigation → Open Sandbox**, ardından Play. Sahne ilk açılışta yoksa editor kurulum aracı oluşturur; var olan sahne yeniden üretilmez. Ana prototip `Assets/Scenes/SampleScene 2.unity` korunur ve build sahnesi olarak kalır.
@@ -9,17 +23,17 @@ Unity menüsünde **Wait Your Turn → Navigation → Open Sandbox**, ardından 
 - **Space / Open–Close:** giriş bağlantısını aç/kapat.
 - **R / Reset:** zombileri dış zemine yerleştir ve kapıyı kapat.
 - **T / Check 10 cycles:** tek agent ile tekrarlı kabul kontrolü.
-- **C / Check 100 agents:** 100 agentta kapalı rota, geçiş sırasında güvenli kapanış, yeniden açılma ve her ayrı hedefe varış kontrolü. Varış sınırı 120 saniye, hedef mesafesi ≤0.4 m; başarısız agentların konum/rota bilgisi loglanır.
+- **C / Check 30 agents:** 30 agentta kapalı rota, geçiş sırasında güvenli kapanış, yeniden açılma ve her ayrı hedefe varış kontrolü. Varış sınırı 120 saniye, hedef mesafesi ≤0.4 m; başarısız agentların konum/rota bilgisi loglanır.
 - **1 / 10 / 30 / 60 / 100 düğmeleri:** geçici kalabalık yükleri. Son oyunun canlı sınırı değildir.
 
 Klavye için Game görünümü odakta olmalı. Kontroller ekran düğmeleriyle de kullanılabilir. Editor sonuçları `Logs/NavigationSandboxReport.json` ve `Logs/NavigationCrowdReport.json` dosyalarına, cihaz sonucu ADB uygulama loguna yazılır; Logs Git dışında tutulur. Kod değiştirirken Play durdurulur; derleme/domain reload sonrası kalabalık testi temiz Play oturumundan başlatılır. Ekrandaki ortalama kare süresi kaba bir gözlemdir; CPU/GPU ayrımı, profiler verisi veya Android performans raporu değildir.
 
 ## Sorumluluklar
 
-- `EntryPortal`: geçiş linkleri ve fiziksel engelin sahibi. Paralel linkleri tek kapı olarak açar/kapatır; herhangi bir hat veya fiziksel eşik doluyken kapanışı bekletir. Can, saldırı, UI veya ses bilmez. Hareket adaptörü hat sayısını bilmez.
+- `EntryPortal`: kapının nav kesiti ve fiziksel engelin sahibi. Eşik doluyken kapanışı bekletir. Can, saldırı, UI veya ses bilmez.
 - `PortalNavigator`: NavMeshAgent hareket adaptörü. Kapalı geçitte dış yaklaşma noktasına, açık geçitte iç hedefe gider. Rota hedef/durum değişiminde yenilenir; agent geçişteyken ResetPath uygulanmaz. Yeni enemy brain bu adaptöre ayrı bağlanacak.
 - `NavigationSandboxController`: geçici düğmeler, test yükleri ve kabul kontrolü. Son oyun akışı değildir. Laboratuvarda oluşturma/silme kullanır; üretim havuzu değildir.
-- `NavigationSandboxBuilder`: yalnızca Editor'da sahne kurar ve iki yüzeyi bake eder. Runtime'da kapı değişince tekrar bake yapılmaz.
+- `NavigationSandboxBuilder`: yalnızca Editor'da sahne kurar ve ortak yüzeyi bake eder. Runtime'da kapı değişince tekrar bake yapılmaz. `Upgrade Lab Platform Edge` labı güncel geometriyle yeniden kurar; yalnızca Edit modunda kullanılır.
 
 İstasyon/vagon collision ve NavMesh kökleri sabittir. Hareket eden görsel çevre kökünde collider veya nav yüzeyi yoktur. Zombi kökünü yalnızca NavMeshAgent sürer; Rigidbody yoktur, görsel root motion kapalıdır. Eski zombi modeli kullanılır; eski hareket/hasar scriptleri laboratuvara alınmaz.
 
@@ -62,7 +76,7 @@ Yerel kanıtlar: `Logs/A54-{10,30,60,100}-{closed,open}.png`. Yük üretme anlar
 
 30–100 yükünde 8 saniyelik açık örnekte dışarıda hâlâ kuyruk vardı. Daha sonraki `Logs/A54-100-later.png` görüntüsünde kalabalık vagon içine taşınmıştı; kalıcı deadlock kanıtı yok. Tüm agentların ayrı hedefe erişme süresi/sayısı programatik ölçülmedi. Üretimde geçiş sırası ve saldırı slotu rezervasyonu M3/M6'da ele alınır; NavMesh avoidance bunu tek başına çözmez. 100 agent sonraki tek bellek örneği: PSS 317,405 KiB (~310 MiB), RSS 416,782 KiB (~407 MiB). Bu tek snapshot bellek sızıntısı testi değildir.
 
-## Programatik kalabalık kontrolü ve paralel geçit
+## Önceki link geometrisinin kontrol kaydı
 
 1.2 m bağlantı / z=1.8 çıkışla temiz Editor Play testleri: ilk deneme **99/100**, 120 saniyede zaman aşımı (`2026-10-07T16:01:55.3568506Z`); sonraki deneme **100/100 PASS**, 64.78 saniye (`2026-10-07T16:08:29.7679784Z`). İki sonuç da korunur; tek başarılı koşu kararlılık garantisi değildir. Her agentın ayrı hedefine ≤0.4 m yaklaşması istenir; yalnızca vagon tarafına geçmiş olması yeterli sayılmaz.
 

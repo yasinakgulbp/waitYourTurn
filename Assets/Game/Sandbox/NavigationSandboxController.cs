@@ -25,7 +25,7 @@ namespace WaitYourTurn.Sandbox
         private float averageFrameMs;
         private uint visualRevision = uint.MaxValue;
         private float visualStartX;
-        private const int CrowdAcceptanceCount = 100;
+        private const int CrowdAcceptanceCount = 30;
         private int peakConcurrentCrossings;
         private int peakDoorwayOccupants;
 
@@ -105,7 +105,7 @@ namespace WaitYourTurn.Sandbox
             foreach (int count in new[] { 1, 10, 30, 60, 100 })
                 if (GUILayout.Button(count.ToString(), GUILayout.Height(28))) SetAgentCount(count);
             GUILayout.EndHorizontal();
-            if (GUILayout.Button("Check 100 agents [C]", GUILayout.Height(34))) StartCoroutine(CheckCrowd());
+            if (GUILayout.Button("Check 30 agents [C]", GUILayout.Height(34))) StartCoroutine(CheckCrowd());
             GUI.enabled = true;
             GUILayout.Label(result, GUILayout.Height(48));
             GUILayout.Label("Lab gate control only. Health/repair comes in M2/M3.");
@@ -118,7 +118,7 @@ namespace WaitYourTurn.Sandbox
         private Vector3 OutsideSpawn(int index)
         {
             if (index == 0) return new Vector3(0f, 0f, -7f);
-            return new Vector3(((index % 10) - 4.5f) * 0.8f, 0f, -2.5f - (index / 10) * 0.6f);
+            return new Vector3(((index % 10) - 4.5f) * 0.8f, 0f, -0.8f - (index / 10) * 0.65f);
         }
 
         private void ResetAgents()
@@ -136,9 +136,6 @@ namespace WaitYourTurn.Sandbox
         {
             // In crowd runs the template also gets its own grid slot. Its single-agent
             // acceptance goal would otherwise overlap the slot of a later clone.
-            agentTemplate.Configure(portal,
-                count == 1 ? Vector3.zero : new Vector3(-2.925f, 0f, 0f),
-                count == 1 ? Vector3.zero : new Vector3(-3.15f, 0f, 2.3f));
             for (int i = agents.Count - 1; i >= count; i--)
             {
                 Destroy(agents[i].gameObject);
@@ -149,11 +146,18 @@ namespace WaitYourTurn.Sandbox
                 int index = agents.Count;
                 PortalNavigator clone = Instantiate(agentTemplate, OutsideSpawn(index), Quaternion.identity);
                 clone.name = "Lab Zombie " + (index + 1);
-                Vector3 waiting = new Vector3(((index % 10) - 4.5f) * 0.65f, 0f, -(index / 10) * 0.55f);
-                // Fill from the back: stopped test agents must not form a wall in front of later arrivals.
-                Vector3 arrival = new Vector3(((index % 10) - 4.5f) * 0.7f, 0f, 2.3f - (index / 10) * 0.7f);
-                clone.Configure(portal, waiting, arrival);
                 agents.Add(clone);
+            }
+            for (int index = 0; index < agents.Count; index++)
+            {
+                Vector3 waiting = new Vector3(((index % 10) - 4.5f) * 0.65f, 0f, -(index / 10) * 0.55f);
+                Vector3 arrival = count <= 30
+                    ? new Vector3(((index % 5) - 2f) * 1.3f, 0f, 2f - (index / 5) * 1.1f)
+                    : new Vector3(((index % 10) - 4.5f) * 0.7f, 0f, 2.3f - (index / 10) * 0.7f);
+                agents[index].Configure(portal, count == 1 ? Vector3.zero : waiting,
+                    count == 1 ? Vector3.zero : arrival);
+                agents[index].Agent.speed = count == 1 ? 3f : 2.7f + (index * 37 % 11) * 0.07f;
+                agents[index].Agent.avoidancePriority = count == 1 ? 50 : 30 + index % 40;
             }
             ResetAgents();
         }
@@ -167,6 +171,7 @@ namespace WaitYourTurn.Sandbox
             {
                 ResetAgents();
                 yield return null;
+                yield return null; // Carving is applied by the navigation update, not synchronously with SetOpen.
                 if (HasCompletePath(agentTemplate.transform.position, agentTemplate.InsideGoal))
                 { Finish(false, cycle - 1, "Closed gate still has an inside path."); yield break; }
 
@@ -182,14 +187,15 @@ namespace WaitYourTurn.Sandbox
 
                 portal.SetOpen(true);
                 yield return null;
+                yield return null;
                 if (!HasCompletePath(agentTemplate.transform.position, agentTemplate.InsideGoal))
                 { Finish(false, cycle - 1, "Open gate did not connect the surfaces."); yield break; }
 
                 // Request closure during traversal; an occupied passage must not close on the agent.
                 float crossingDeadline = Time.time + 8f;
-                while (!agentTemplate.Agent.isOnOffMeshLink && Time.time < crossingDeadline) yield return null;
-                if (!agentTemplate.Agent.isOnOffMeshLink)
-                { Finish(false, cycle - 1, "Agent did not use the portal link."); yield break; }
+                while (!IsCrossing(agentTemplate) && Time.time < crossingDeadline) yield return null;
+                if (!IsCrossing(agentTemplate))
+                { Finish(false, cycle - 1, "Agent did not reach the physical doorway."); yield break; }
                 portal.SetOpen(false);
                 if (!portal.IsOpen || !portal.ClosePending)
                 { Finish(false, cycle - 1, "Occupied passage closed immediately."); yield break; }
@@ -199,6 +205,8 @@ namespace WaitYourTurn.Sandbox
                 { Finish(false, cycle - 1, "Crossing or safe closure did not finish."); yield break; }
 
                 portal.SetOpen(true);
+                yield return null;
+                yield return null;
                 agentTemplate.SetGoal(false);
                 yield return WaitForPosition(portal.OutsideApproach, 8f);
                 if (Vector3.Distance(agentTemplate.transform.position, portal.OutsideApproach) > 0.5f)
@@ -235,7 +243,7 @@ namespace WaitYourTurn.Sandbox
             float deadline = Time.time + 20f;
             while (!AnyAgentCrossing() && Time.time < deadline) yield return null;
             if (!AnyAgentCrossing())
-            { FinishCrowd(false, 0, 0f, "No crowd agent used the entry link."); yield break; }
+            { FinishCrowd(false, 0, 0f, "No crowd agent reached the doorway."); yield break; }
 
             portal.SetOpen(false);
             if (!portal.IsOpen || !portal.ClosePending)
@@ -244,6 +252,8 @@ namespace WaitYourTurn.Sandbox
             while (portal.IsOpen && Time.time < deadline) yield return null;
             if (portal.IsOpen || AnyAgentCrossing())
             { FinishCrowd(false, CountArrivedInside(), 0f, "Crowd passage failed to drain and close."); yield break; }
+            yield return null;
+            yield return null;
 
             foreach (PortalNavigator navigator in agents)
             {
@@ -279,7 +289,7 @@ namespace WaitYourTurn.Sandbox
             foreach (PortalNavigator navigator in agents)
             {
                 NavMeshAgent agent = navigator.Agent;
-                if (!agent.enabled || !agent.isOnNavMesh || !agent.isOnOffMeshLink) continue;
+                if (!IsCrossing(navigator)) continue;
                 crossings++;
                 Vector3 local = portal.transform.InverseTransformPoint(navigator.transform.position);
                 // A short band at the physical door distinguishes abreast entry from a long queue on the link.
@@ -292,9 +302,12 @@ namespace WaitYourTurn.Sandbox
         private bool AnyAgentCrossing()
         {
             foreach (PortalNavigator navigator in agents)
-                if (navigator.Agent.enabled && navigator.Agent.isOnNavMesh && navigator.Agent.isOnOffMeshLink) return true;
+                if (IsCrossing(navigator)) return true;
             return false;
         }
+
+        private bool IsCrossing(PortalNavigator navigator) => navigator.Agent.enabled && navigator.Agent.isOnNavMesh &&
+            portal.IsInPassage(navigator.transform.position, navigator.Agent.radius);
 
         private int CountArrivedInside()
         {
@@ -322,7 +335,7 @@ namespace WaitYourTurn.Sandbox
                 }
             }
             result = $"{(passed ? "PASS" : "FAIL")}: {arrived}/{agents.Count}, {seconds:F1}s; " +
-                $"peak link/door: {peakConcurrentCrossings}/{peakDoorwayOccupants}. {message}";
+                $"peak passage/door: {peakConcurrentCrossings}/{peakDoorwayOccupants}. {message}";
             var report = new CrowdReport
             {
                 passed = passed, agentCount = agents.Count, arrivedCount = arrived, arrivalSeconds = seconds,

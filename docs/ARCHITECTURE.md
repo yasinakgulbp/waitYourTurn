@@ -69,9 +69,9 @@ NavMesh'in yüzey konumunu güncellemesi ile üzerindeki karakterleri güvenle t
 
 ## Kapı bir geçiş noktasıdır
 
-Her `EntryPortal`: `WagonId`, `DoorId`, dış yaklaşma/saldırı noktaları, iç varış noktası, giriş bölgesi ve kontrollü `NavMeshLink` bağlantıları içerir. Tek kapı gerektiğinde paralel geçiş hatlarını birlikte yönetir; enemy brain hat sayısını bilmez. Kapı sağlık/durumunun sahibi `DoorController`; yürünebilir geçişin sahibi navigation adaptörüdür. Lab uygulamasında iki hat vardır; kapanış herhangi biri doluyken bekler. Ayrıntı ve cihaz kanıtı `NAVIGATION_LAB.md` içindedir.
+Her `EntryPortal`: `WagonId`, `DoorId`, dış yaklaşma/saldırı noktaları, iç varış noktası ve fiziksel giriş bölgesi içerir. Kapı sağlık/durumunun sahibi `DoorController`; yürünebilir geçişin sahibi navigation adaptörüdür. Bitişiğe yakın istasyon/vagon zeminlerinde tercih, kesintisiz bake edilmiş NavMesh ve yalnızca kapı açıklığını kesen carving obstacle'dır. Enemy brain bunun uygulamasını bilmez. İlk link deneyi ve sonraki düzenleme `NAVIGATION_LAB.md` içinde kayıtlıdır.
 
-İç ve dış NavMesh arasında bake edilmiş otomatik bir alternatif bağlantı bırakılmaz. Aradaki boşluk kontrollü link ile bağlanır. Link kapandığında başka bir polygon yolu açık kalırsa kapı kuralı bozulur; test sahnesi bunu özellikle kontrol eder.
+Kapalı kapıda içeriye alternatif bir polygon yolu kalmaz; obstacle bütün kapı açıklığını keser. Açık kapıda agent normal zeminde yürür, off-mesh linkin tek-agent geçiş kilidini kullanmaz. Yüzeylerin gerçekten ayrık olduğu farklı geometride kontrollü link hâlâ ayrı bir seçenek olabilir; mevcut yakın zeminli vagon kapısında sabit ikili hat tercih edilmez. Kapı değişiminde bütün yüzey yeniden bake edilmez. Carving sorgu sonucu bir navigation güncellemesi sonra değişir; rota kontrolü bunu dikkate alır.
 
 | Koşul | Yeni geçiş kabulü | Fiziksel kapı | Zombi kararı |
 | --- | --- | --- | --- |
@@ -81,7 +81,7 @@ Her `EntryPortal`: `WagonId`, `DoorId`, dış yaklaşma/saldırı noktaları, i�
 | Kalkış | Yeni dış giriş kapalı | Kapı canına göre | Tamamlanmış içeri girişler trende kalır. |
 | Yolculuk | İstasyona bağlantı kapalı | Kapı canına göre | İç zombiler vagon içinde davranışını sürdürür. |
 
-Kapı onarımında yalnızca linki kapatmak ve colliderı anında açmak yeterli kabul edilmez. Geçit bölgesi işgali, geçmekte olan agent ve oyuncu fiziksel çakışması kontrol edilir. Geçiş adaptörü yeni girişleri engeller; başlamış geçişi tamamlar. Alan sürekli doluysa kapanış bekler; timeout karakteri duvara ışınlamaz. Bekleme UI'da gösterilebilir.
+Kapı onarımında yalnızca nav yolunu kesmek ve colliderı anında açmak yeterli kabul edilmez. Geçit bölgesi işgali, geçmekte olan agent ve oyuncu fiziksel çakışması kontrol edilir. Geçiş adaptörü yeni giriş hedeflerini engeller; eşikteki agent mevcut geçiş yönünde ilerler. Alan sürekli doluysa kapanış bekler; timeout karakteri duvara ışınlamaz. Bekleme UI'da gösterilebilir. Labdaki SetOpen düğmesi nihai kapı controller'ı değildir; M3/M4'te kapı sağlamlığı ile istasyondan giriş izni ayrı girdiler olarak bağlanır.
 
 Kalkış için sonlu bir kural gerekir: yeni girişler kapatılır; geçitteki agentın içeride/dışarıda olma kararı tanımlı eşik ile sabitlenir. İç tarafta kabul edilmiş agent güvenli iç varışa yerleştirilir ve `OnBoard` olur; dış tarafta kalan agent istasyon grubunda kalır. Bu normal girişte teleport yöntemi değildir; yalnızca istasyon ayrılma sınırındaki temizliktir. M4'te gerçek geometrilerle doğrulanır.
 

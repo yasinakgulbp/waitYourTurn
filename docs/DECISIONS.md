@@ -23,7 +23,7 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 
 | Kimlik | Öneri | Doğrulama aşaması |
 | --- | --- | --- |
-| T01 | İç/dış NavMesh + kapı başına kontrollü NavMeshLink hatları | M1: kapalıyken alternatif geçiş yok, açıkken gerçek geçiş var. Eşzamanlı giriş için bir kapıda birden fazla hat kullanılabilir; hepsi tek portalın durumunu izler. Labda iki hat A54 üzerinde doğrulandı. |
+| T01 | Yakın istasyon/vagon zeminlerinde kesintisiz NavMesh + kapıda carving | İlk link deneyi A54'te doğrulandı; kullanıcı düzenli ikili giriş ve uzak köprü geometrisini uygun bulmadı. 2026-10-07 revizyonu: kapı vagon kenarında, zeminler 0.05 m aralıklı ve kısa eşikle bağlı; sabit geçiş hatları kaldırılır. Gerçek ayrık geometride link seçeneği ayrıca değerlendirilebilir. |
 | T02 | Kapı/zombi/oyuncu için ortak hasar ve sağlık sözleşmesi | M2: sağlık sınırları, tek ölüm/ödül, farklı kaynaklar. |
 | T03 | İlk silahlar hitscan/pellet; satın alınmış projectile assetleri VFX | M2/M3: tabanca temeli; M5: çeşitlilik. Yavaş projectile gelecekte ayrı resolver kullanır. |
 | T04 | Küçük enemy durum makinesi, veri tabanlı tür farklılıkları | M3/M6: türler aynı döngüyü kullanır; gereksiz framework eklenmez. |

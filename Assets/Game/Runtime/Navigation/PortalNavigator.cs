@@ -82,12 +82,13 @@ namespace WaitYourTurn.Navigation
             {
                 dirty = false;
                 bool isInside = portal.IsInside(transform.position);
+                bool finishingCrossing = portal.ClosePending && portal.IsInPassage(transform.position, agent.radius);
                 Vector3 destination;
                 if (wantsInside)
-                    destination = isInside || portal.AcceptsEntry
+                    destination = isInside || portal.AcceptsEntry || finishingCrossing
                         ? InsideGoal : portal.OutsideApproach + waitingOffset;
                 else
-                    destination = !isInside || portal.AcceptsEntry
+                    destination = !isInside || portal.AcceptsEntry || finishingCrossing
                         ? portal.OutsideApproach + waitingOffset : InsideGoal;
 
                 agent.ResetPath();

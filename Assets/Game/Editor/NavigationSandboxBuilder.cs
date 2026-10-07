@@ -13,23 +13,13 @@ namespace WaitYourTurn.Editor
     {
         private const string Root = "Assets/Game";
         private const string ScenePath = Root + "/Scenes/NavigationSandbox.unity";
-        private const float PassageWidth = 0.2f;
 
-        [MenuItem("Wait Your Turn/Navigation/Apply Lab Parallel Passages")]
-        public static void ApplyLabParallelPassages()
+        [MenuItem("Wait Your Turn/Navigation/Upgrade Lab Platform Edge")]
+        public static void UpgradeLabPlatformEdge()
         {
-            if (EditorApplication.isPlayingOrWillChangePlaymode ||
-                EditorSceneManager.GetActiveScene().path != ScenePath) return;
-            EntryPortal portal = Object.FindFirstObjectByType<EntryPortal>();
-            if (portal == null) return;
-            NavMeshLink link = portal.GetComponent<NavMeshLink>();
-            if (link == null) return;
-            NavMeshLink second = CreateParallelPassages(portal.gameObject, link);
-            portal.Configure(link, portal.GetComponentInChildren<BoxCollider>(),
-                portal.transform.Find("Outside approach"), portal.transform.Find("Inside destination"),
-                new[] { second });
-            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            BuildSandbox();
         }
 
         [MenuItem("Wait Your Turn/Navigation/Inspect Crowd Targets")]
@@ -105,32 +95,47 @@ namespace WaitYourTurn.Editor
             Material lineMat = MaterialAsset("Marker", new Color(0.9f, 0.7f, 0.25f));
 
             GameObject station = new GameObject("Station Gameplay Surface");
-            Cube("Station floor", station.transform, new Vector3(0, -0.1f, -5), new Vector3(10, 0.2f, 8), stationMat);
-            NavMeshSurface outside = Surface(station);
+            GameObject geometry = new GameObject("Connected Gameplay Geometry");
+            station.transform.SetParent(geometry.transform, false);
+            Cube("Station floor", station.transform, new Vector3(0, -0.1f, -4.05f), new Vector3(10, 0.2f, 10), stationMat);
             GameObject wagon = new GameObject("Wagon Gameplay Surface");
+            wagon.transform.SetParent(geometry.transform, false);
             Cube("Wagon floor", wagon.transform, new Vector3(0, -0.1f, 5), new Vector3(8, 0.2f, 8), wagonMat);
             Cube("Back wall", wagon.transform, new Vector3(0, 0.8f, 9), new Vector3(8, 1.6f, 0.2f), wallMat);
             Cube("Left wall", wagon.transform, new Vector3(-4, 0.8f, 5), new Vector3(0.2f, 1.6f, 8), wallMat);
             Cube("Right wall", wagon.transform, new Vector3(4, 0.8f, 5), new Vector3(0.2f, 1.6f, 8), wallMat);
             Cube("Front left", wagon.transform, new Vector3(-2.6f, 0.8f, 1), new Vector3(2.8f, 1.6f, 0.2f), wallMat);
             Cube("Front right", wagon.transform, new Vector3(2.6f, 0.8f, 1), new Vector3(2.8f, 1.6f, 0.2f), wallMat);
-            NavMeshSurface inside = Surface(wagon);
-            outside.BuildNavMesh();
-            inside.BuildNavMesh();
-            AssetDatabase.CreateAsset(outside.navMeshData, Root + "/Content/NavigationLab/StationNavMesh.asset");
-            AssetDatabase.CreateAsset(inside.navMeshData, Root + "/Content/NavigationLab/WagonNavMesh.asset");
+            Cube("Door sill", wagon.transform, new Vector3(0, -0.1f, 0.975f), new Vector3(2.2f, 0.2f, 0.1f), wallMat);
+            NavMeshSurface connected = Surface(geometry);
+            connected.overrideVoxelSize = true;
+            connected.voxelSize = 0.1f;
+            connected.BuildNavMesh();
+            string navPath = Root + "/Content/NavigationLab/ConnectedNavMesh.asset";
+            NavMeshData existingData = AssetDatabase.LoadAssetAtPath<NavMeshData>(navPath);
+            if (existingData == null) AssetDatabase.CreateAsset(connected.navMeshData, navPath);
+            else
+            {
+                EditorUtility.CopySerialized(connected.navMeshData, existingData);
+                connected.navMeshData = existingData;
+                EditorUtility.SetDirty(existingData);
+            }
 
             GameObject entry = new GameObject("Entry Portal");
-            NavMeshLink link = entry.AddComponent<NavMeshLink>();
-            link.agentTypeID = outside.agentTypeID;
-            NavMeshLink secondLink = CreateParallelPassages(entry, link);
-            GameObject door = Cube("Test gate", entry.transform, new Vector3(0, 1, 0), new Vector3(2.2f, 2, 0.22f), doorMat);
-            GameObject bridge = Cube("Visual boarding bridge", entry.transform, new Vector3(0, -0.05f, 0), new Vector3(2.2f, 0.1f, 2), wallMat);
-            Object.DestroyImmediate(bridge.GetComponent<Collider>()); // Navigation connection is exclusively the link.
-            Transform approach = Anchor("Outside approach", entry.transform, new Vector3(0, 0, -2.2f));
+            entry.transform.SetParent(wagon.transform, false);
+            entry.transform.position = new Vector3(0, 0, 1);
+            GameObject door = Cube("Wagon door", entry.transform, new Vector3(0, 1, 1), new Vector3(2.2f, 2, 0.22f), doorMat);
+            door.AddComponent<NavMeshModifier>().ignoreFromBuild = true;
+            NavMeshObstacle cut = door.AddComponent<NavMeshObstacle>();
+            cut.shape = NavMeshObstacleShape.Box;
+            cut.center = Vector3.zero;
+            cut.size = Vector3.one;
+            cut.carving = true;
+            cut.carveOnlyStationary = false;
+            Transform approach = Anchor("Outside approach", entry.transform, new Vector3(0, 0, -0.2f));
             Transform goal = Anchor("Inside destination", entry.transform, new Vector3(0, 0, 6));
             EntryPortal portal = entry.AddComponent<EntryPortal>();
-            portal.Configure(link, door.GetComponent<BoxCollider>(), approach, goal, new[] { secondLink });
+            portal.Configure(cut, door.GetComponent<BoxCollider>(), approach, goal);
             GameObject marker = Cube("Destination marker", null, goal.position + Vector3.up * 0.015f, new Vector3(0.6f, 0.03f, 0.6f), lineMat);
             Object.DestroyImmediate(marker.GetComponent<Collider>());
 
@@ -138,7 +143,7 @@ namespace WaitYourTurn.Editor
             zombie.transform.position = new Vector3(0, 0, -7);
             NavMeshAgent agent = zombie.AddComponent<NavMeshAgent>();
             agent.enabled = false; // Activate only after baked surfaces are registered and spawn is validated.
-            agent.agentTypeID = outside.agentTypeID;
+            agent.agentTypeID = connected.agentTypeID;
             agent.radius = 0.3f;
             agent.height = 1.7f;
             agent.speed = 3f;
@@ -193,33 +198,7 @@ namespace WaitYourTurn.Editor
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
             Selection.activeGameObject = zombie;
-            Debug.Log("[NavigationSandbox] Created two baked surfaces and one portal with two parallel passages.");
-        }
-
-        private static NavMeshLink CreateParallelPassages(GameObject entry, NavMeshLink first)
-        {
-            Transform secondTransform = entry.transform.Find("Right passage");
-            if (secondTransform == null)
-            {
-                secondTransform = new GameObject("Right passage").transform;
-                secondTransform.SetParent(entry.transform, false);
-            }
-            NavMeshLink second = secondTransform.GetComponent<NavMeshLink>();
-            if (second == null) second = secondTransform.gameObject.AddComponent<NavMeshLink>();
-            ConfigurePassage(first, -0.45f, first.agentTypeID);
-            ConfigurePassage(second, 0.45f, first.agentTypeID);
-            return second;
-        }
-
-        private static void ConfigurePassage(NavMeshLink passage, float lateral, int agentType)
-        {
-            passage.agentTypeID = agentType;
-            passage.startPoint = new Vector3(lateral, 0, -1.7f);
-            passage.endPoint = new Vector3(lateral, 0, 2.2f);
-            passage.width = PassageWidth;
-            passage.bidirectional = true;
-            passage.autoUpdate = false;
-            passage.activated = false;
+            Debug.Log("[NavigationSandbox] Created a platform-edge wagon door on a continuous carved NavMesh.");
         }
 
         private static NavMeshSurface Surface(GameObject root)
