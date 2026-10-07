@@ -1,0 +1,94 @@
+# Oyun tasarımı
+
+Durum: kullanıcının 2026-10-07 tarihinde anlattığı hedefler ve açıkça işaretlenen öneriler. Sayısal değerler ilk denge denemeleri içindir.
+
+## Oyun kimliği
+
+Otomasyonla istasyonlar arasında hareket eden bir trende zombi salgını sırasında hayatta kalma. Savunma, rastgele vagon ataması ve koşu içindeki ekipman gelişimi birleşir. İlk hedef mümkün olduğunca çok istasyondan sağ çıkmaktır. Geniş roguelike yetenek/ödül sistemi sonraki kapsamdır.
+
+Her vagon ayrı bir kimliğe, kapılara ve savunma kurulum noktalarına sahiptir. Kapıların maksimum canı vagonun güvenliğini belirler. Şans, her yolculukta oyuncunun hangi vagona atanacağını belirler.
+
+Kararlaştırıldı: oynanış zemini sabit kalır, çevre/istasyonun görsel hareketi tren yolculuğunu oluşturur. İçeri girmiş zombiler yolculukta trende kalır; dışarıdakiler istasyonda bırakılır.
+
+## İstasyon ve yolculuk döngüsü
+
+Kararlaştırıldı: tren istasyonda süreye bağlı bekler; ilk savunma 60 saniyedir, tüm zombilerin ölmesi kalkış için zorunlu değildir. Süreler veriden ayarlanır. Bu, otomasyon hikayesiyle uyumludur ve kalan tek bir düşmanın döngüyü kilitlemesini önler. İleride farklı istasyonlar için ayrı bitiş kuralları eklenebilir.
+
+| Evre | İlk değer / davranış | Sorumluluk |
+| --- | --- | --- |
+| İlk yaklaşma | Yaklaşık 10 saniye; yumuşak yavaşlama | Oyuncu hazırlık yapabilir; ilk istasyon kurulur. |
+| Savunma | Kararlaştırıldı: ilk istasyonda 60 saniye | Spawn programı işler; kapılara ve içeri giren zombilere karşı savaşılır. |
+| Kalkış uyarısı | Yaklaşık 3 saniye | Yeni üretim durur; oyuncuya kalkış bildirilir. |
+| Kalkış | Yaklaşık 3 saniyelik görünür hızlanma | İstasyon bağlantıları güvenle kesilir. |
+| Geçiş | Kararma; karanlıkta 10 saniyelik sayaç | Trenin sesi sürer; bir kez rastgele vagon ataması yapılır. |
+| Yeni yaklaşma | Görüntü açılır; yaklaşık 3 saniye sonra yavaşlama başlar | Sonraki istasyon hazır edilir; oyuncu hazırlık yapabilir. |
+| Yeni savunma | Tren tamamen durunca | Kurulum hazırsa yeni spawn programı başlar. |
+
+Fade süresi ve yavaşlama süresi ayrı ayarlardır; 10 saniyelik karanlık sayaca kendiliğinden eklenmiş kabul edilmez. Kalkış uyarısının 60 saniyeye dahil olup olmayacağı ilk denge denemesinde netleştirilecek. İlk öneri: 60 saniye savunma + 3 saniye uyarı.
+
+Oyuncu ölümü her evreden `GameOver` durumuna geçebilir. Gerçek pause; hareketi, AI'ı, spawnı, hasarı ve onarım zamanını birlikte durdurur. Geçiş görüntüsü/sesi gerekiyorsa ayrı zaman kaynağı kullanır.
+
+Kararlaştırıldı: karanlık geçişte oynanış durur; görünür yolculukta savaş devam eder. Fade başından görüntü/kontrol geri gelene kadar AI, atış, hasar, spawn ve onarım askıdadır; trenin geçiş sunumu/sesi sürer. Bu süre için saldırı/spawn birikimi oluşmaz.
+
+## Kapılar ve onarım
+
+- Sağlam kapı yürüyüşü ve normal mermileri fiziksel olarak engeller. Zombi kapının dışındaki saldırı konumuna gelir, kendi hasarı ve saldırı aralığıyla vurur.
+- Örnek: 10 canlık kapıyı 8 hasarlık güçlü zombi iki vuruşta, 2 hasarlık zayıf zombi beş vuruşta kırar.
+- Can sıfıra düşünce kapı `Broken` olur, geçiş açılır. Kapı nesnesi yok edilmez; aynı kimlikle onarılabilir.
+- Oyuncu kırık kapının yakınına gelip yaklaşık 3 saniye alanda kalırsa onarım tamamlanır; slider ilerlemeyi gösterir.
+- Uzaklaşma, ölüm veya vagon değişimi onarımı iptal eder. Yarım onarım kapıya can vermez; yeniden denemede sayaç sıfırdan başlar.
+- Öneri: tamir sırasında ateş edilebilir; tetik alanında olmak gerekir, ayrıca tuşa basmak gerekmez.
+- Geçitte bir karakter varken kapı onun içine kapatılmaz. Onarım hazır olduğunda yeni girişler durdurulur, geçitte olanlar güvenle tamamlar; fiziksel kapanış alan boşaldığında uygulanır. Sıkışma politikası ilk testte doğrulanır.
+- Öneri: başarılı onarım maksimum canı doldurur. Hasar almış ama kırılmamış kapıya yakınlıkla onarım ilk kapsamda yoktur; mağaza ürünü onu da doldurur.
+- Ücretsiz yakınlık onarımının bedeli oyuncunun zamanı ve konumudur. Anlık ücretli tamir aynı yerel onarım kurallarını kullanır; tıkanmış geçitte collider zorla kapatılmaz.
+
+## Zombiler
+
+Ortak döngü: doğuş → atanmış vagona yaklaşma → kapı seçimi → kapıya saldırma / açık geçitten girme → erişilebilir oyuncu veya savunmaya saldırma → ölüm → havuza dönüş.
+
+NavMesh yol bulur; kapıya saldırma veya oyuncuyu hedefleme kararı zombi davranışına aittir. Türler hız, can, saldırı hasarı, saldırı aralığı, ödül ve hedefleme profiliyle ayrılır. İlk tür normal yürüyen zombidir; hızlı ve dayanıklı türler ortak davranış doğrulandıktan sonra eklenir.
+
+Her zombi doğarken bir `WagonId` alır. Sırf oyuncu yer değiştirdi diye tüm zombiler onun vagonuna akmaz. Atanmış vagona alternatif kapıdan ulaşma mümkündür; vagonlar arası dolaşma ayrı tasarım kararıdır. Ulaşılamayan hedef öldürülmüş sayılmaz; yeniden değerlendirilir veya istasyon sonu kurallarıyla temizlenir.
+
+Kararlaştırıldı: kalkış sınırında içerideki zombiler trende kalır. Dışarıdakiler istasyonda bırakılır ve görünmez olduklarında ödülsüz havuza döner. Geçitteki zombi için içeride/dışarıda olma durumu geçiş tamamlanmasıyla kesinleştirilir; ayrıntılı teknik kural `ARCHITECTURE.md` içindedir.
+
+## Can, silah ve hasar
+
+Oyuncu, kapı, zombi ve gerektiğinde turret aynı hasar sözleşmesini kullanır. Maksimum can ile mevcut can ayrıdır. Yelek gibi zırh, bağışıklık veya maksimum can artışı sonradan aynı sözleşmeye eklenen etkilerdir; ilk aşamada hepsi uygulanmaz.
+
+Başlangıç silahı tabanca; satın alınabilecekler hafif makineli, tüfek ve pompalı. Silah türü, ateş aralığı, menzil, hasar, saçılma/pellet sayısı, mermi ve efekt ayarları veridir. Oyuncu/turret/dron aynı silah çekirdeğini farklı hedefleme ve hareketle kullanır.
+
+Satın alınmış Hovl projectile assetleri görsel sunumda korunur. Gerçek vuruş tespiti efektlerden bağımsızdır. İlk öneri tabanca/tüfek/turret için raycast tabanlı anlık isabet + görsel mermi; yavaş roket vb. için ileride kontrollü fiziksel projectile. Pompalıda saçmalar kasıtlı ayrı isabetlerdir.
+
+## Turret ve dron
+
+- Vagonların önceden tanımlı boş kurulum noktaları vardır; serbest yerleştirme ilk kapsamda yoktur.
+- Normal ve gelişmiş turret: 360 derece dönebilir; menzilinde, görüşü açık en yakın düşmanı hedefler. Duvar/sağlam kapı arkasına ateş etmez.
+- Her ürünün ateş aralığı, hasarı ve mermi kapasitesi ayrı veridir. Örnek kapasite 50, örnek aralık 1 saniye; kesin denge değeri değildir.
+- Örnek sınır her turret türünden 2 adet; kapsamın oyuncu başına mı vagon başına mı olduğu ayrıca kararlaştırılacak.
+- Mermisi biten turret bir kez kapanır, patlama efekti oynatır ve slotu boşaltır. Efektin alan hasarı vermesi ayrıca tasarlanır.
+- Oyuncuda en fazla 1 dron; oyuncuyu yumuşak takip ve küçük uçuş salınımlarıyla izler. Yakındaki erişilebilir/görüşü açık düşmana ateş eder.
+- Dronun mermisi bitince kamikaze durumu başlar. Hedef varsa ona giderek bir kez alan hasarı verir; hedef yoksa sınırlı süre bekler ve güvenle kapanır. Hedefin arada ölmesi, oyuncunun ölmesi ve vagon değişimi tanımlı durumlar olmalıdır.
+- Dron uçuş görseliyle hasarın duvarlardan geçmesi birbirinden ayrı konudur; kamikazenin kapı/duvar ilişkisi uygulamadan önce belirlenir.
+
+## Para ve mağaza
+
+Zombi ölümü bir kez ödül verir; havuza geri verme veya istasyon temizliği ödül değildir. İlk öneri: ödül öldüren oyuncuya ya da ona ait turret/drona aittir; otomatik cüzdana eklenir. Fiziksel para toplama daha sonra aynı ödül kaynağına bağlanabilir.
+
+Ürünler: iyileştirme, mevcut vagondaki kapıları anlık onarma, silahlar, turretler, dron; sonradan maksimum can/zırh geliştirmeleri.
+
+Kararlaştırılan iyileştirme: `min(eksikCan, max(30, mevcutCan * 0.5))`. Örnekler: 10/100 → 40/100, 50/100 → 80/100, 80/100 → 100/100. Bu kural mevcut can arttıkça daha fazla iyileştirir; kullanıcı bu davranışı seçti. İyileştirme maksimumu aşmaz, tam canda işlem para harcamaz. Kesirli değerlerin UI'da yuvarlanması uygulamada açıkça belirlenir; hesaplanan can kaybolmaz.
+
+Satın alma yalnızca uygulanabilir ürün için para düşer. Yetersiz para, dolu slot, dron sınırı, tam can veya kurulum hatasında ücret/ürün kaybı olmaz. Oyuncu vagon değiştirirken açık mağazanın işlemleri yeni bağlamı kontrol eder.
+
+Mağazanın savaşta da açık olup olmayacağı kesinleşmedi. İlk öneri mobil erişimi kolay, gerçek zamanı durdurmayan mağaza; arayüz/denge aşamasında değerlendirilir.
+
+## Etap verisi ve kalıcılık
+
+Bir istasyon verisi: süre, yerleşim, vagon başına spawn grupları, türler, başlangıç gecikmeleri, üretim aralıkları, toplam bütçe, canlı düşman sınırı ve ödül ayarları.
+
+Zorluk yalnızca her istasyonda daha çok düşman üretmek değildir: aynı canlı düşman sınırı içinde tür dağılımı, tempo ve kapı baskısı ayarlanabilir. Güvenli ilk istasyon, giderek artan baskı ve periyodik nefes alma istasyonları önerilir.
+
+Kararlaştırıldı: oyuncunun canı, parası, silahı ve dronu onunla gider. Kapı hasarı ve turretler kurulu oldukları vagonda kalır. İçeri girmiş zombiler de vagon durumuna dahildir. Mimari oyuncu ve vagon durumlarını ayrı saklar; istasyon değişimi koşuyu sıfırlamaz. Koşu içindeki kalıcılık ile uygulama kapanıp açılınca devam etme farklı özelliklerdir; disk kayıt M8 kapsamıdır.
+
+Atama önerisi: tüm vagonlar eşit olasılıklı, aynı vagon tekrar çıkabilir. Doğuş noktası duvar içinde veya karakterle çakışacak şekilde seçilmez. İçeride zombiler taşınacaksa güvenli doğuş/çok kısa koruma ayrıca tasarlanmalıdır.

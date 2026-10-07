@@ -1,0 +1,44 @@
+# Wait Your Turn — geliştirme kaydı
+
+Güncelleme: 2026-10-07. Doküman dili Türkçe; kod, tip adları ve commit mesajları İngilizce.
+
+Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştirmek; yeni mekanikler eklenirken önceki mekaniklerin korunmasını sağlamak.
+
+## Okuma sırası
+
+1. [Oyun tasarımı](GAME_DESIGN.md): oyuncunun deneyimi, kurallar, henüz kesinleşmemiş detaylar.
+2. [Mimari](ARCHITECTURE.md): sorumluluklar, bağımlılıklar ve kritik teknik kurallar.
+3. [Kararlar](DECISIONS.md): kararlaştırılanlar, öneriler ve açık sorular.
+4. [Yol haritası](ROADMAP.md): sıralı geliştirme işleri ve kabul koşulları.
+
+## Mevcut durum
+
+- Planlama tamamlandı; uygulama başlamadı. Açık tasarım kararları `DECISIONS.md` içinde.
+- İncelenen Unity: 6000.6.4f1; kurulu AI Navigation: 2.0.14. Paket güncellemesi bu planın parçası değil.
+- Aktif sahne: `Assets/Scenes/SampleScene 2.unity`.
+- Prototip: 5 rastgele oyuncu doğuş noktası, 6 düşman doğuş noktası, 7 saniyede bir üretim, 40 saniyede sahne yenileme.
+- Vagon zorluğu kapı zamanlamasıyla oluşturuluyor. Gerçek kapı dayanıklılığı, oyuncu ölümü ve etap ilerlemesi henüz bağlı değil.
+- Play kontrolünde sahne yenileme/vagon değişimi görüldü. Düşman prefablarındaki AudioListener bileşenleri çoğalan uyarılar üretiyor.
+- Çalışma ağacında bu plan öncesinden çok sayıda değişiklik ve takip edilmeyen asset var. Bunlar otomatik temizlenmeyecek veya plan commitine eklenmeyecek.
+
+## Her geliştirme adımının çalışma biçimi
+
+1. Yol haritasından tek bir aşama/iş seç; bağımlılıkları ve açık kararları oku.
+2. Hangi davranışın değişeceğini ve aşamanın kabul koşullarını belirle.
+3. Önce küçük test sahnesinde kur, ardından hedef oyun sahnesine entegre et.
+4. İlgili mantık testlerini ve Play kontrollerini yap; performansı gereken aşamada cihazda ölç.
+5. `ROADMAP.md` durumunu ve aşağıdaki kaydı güncelle. Kanıt olmadan işi tamamlandı işaretleme.
+6. Yalnızca bu işe ait dosyaları commit et. Kullanıcının mevcut çalışmalarını izinsiz dahil etme. Commitler küçük ve İngilizce olsun.
+
+Örnek commit: `feat: add damageable doors and repair interaction`.
+
+Yeni bir oturumda bu dizin, güncel kod, Git durumu ve Unity sahnesi birlikte okunur. Plan belgesi tek başına uygulamanın kanıtı değildir. Değişen tasarım kararının gerekçesi `DECISIONS.md` içine eklenir; eski karar sessizce değiştirilmez.
+
+## İlerleme kaydı
+
+| Tarih | İş | Durum | Doğrulama / sonraki adım |
+| --- | --- | --- | --- |
+| 2026-10-07 | Prototip incelemesi | Tamamlandı | Kod/prefab incelemesi ve bir Play döngüsü; kaynak kod değiştirilmedi. |
+| 2026-10-07 | Oyun tasarımı, mimari ve aşamalı plan | Hazır; açık kararlar var | İlk iş M0: prototip kaydı ve küçük navigasyon test sahnesi hazırlığı. |
+
+Reklam, gerçek para satın alımları ve yayınlama; çekirdek oynanış ve cihaz performansı doğrulandıktan sonra ayrı aşamalardır.
