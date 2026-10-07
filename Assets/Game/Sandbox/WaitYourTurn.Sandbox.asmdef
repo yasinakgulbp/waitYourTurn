@@ -1,0 +1,6 @@
+{
+    "name": "WaitYourTurn.Sandbox",
+    "rootNamespace": "WaitYourTurn.Sandbox",
+    "references": ["WaitYourTurn.Navigation"],
+    "autoReferenced": false
+}

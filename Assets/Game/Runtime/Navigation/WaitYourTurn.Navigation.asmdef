@@ -1,0 +1,6 @@
+{
+    "name": "WaitYourTurn.Navigation",
+    "rootNamespace": "WaitYourTurn.Navigation",
+    "references": ["Unity.AI.Navigation"],
+    "autoReferenced": false
+}

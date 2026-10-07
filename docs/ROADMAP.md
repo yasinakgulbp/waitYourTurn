@@ -1,6 +1,6 @@
 # Sıralı geliştirme planı
 
-Durum: 2026-10-07 — başlangıç prototipi kaydedildi; yeni oynanış kodu henüz yazılmadı. Dış incelemedeki öneriler proje hedefleriyle değerlendirilerek plan güncellendi. Bir aşama, kabul koşulları karşılanmadan tamamlandı sayılmaz. Her aşama küçük alt commitlere ayrılabilir.
+Durum: 2026-10-07 — M0 tamamlandı; M1 uygulaması başladı. NavigationSandbox'ta tek agent ile WindowsEditor ve A54 üzerinde 10/10 geçiş kontrolü geçti; son APK kontrolü ve Android kalabalık/CPU ölçümü açık. Kanıt ve kullanım NAVIGATION_LAB.md içinde. Bir aşama, kabul koşulları karşılanmadan tamamlandı sayılmaz. Her aşama küçük alt commitlere ayrılabilir.
 
 ## Öncelik mantığı
 
@@ -12,8 +12,8 @@ Durum: 2026-10-07 — başlangıç prototipi kaydedildi; yeni oynanış kodu hen
 
 | Aşama | Çıktı | Bağımlılık | Durum |
 | --- | --- | --- | --- |
-| M0 | Korunan prototip ve geliştirme/test düzeni | Plan | Bekliyor |
-| M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | Bekliyor |
+| M0 | Korunan prototip ve geliştirme/test düzeni | Plan | Tamamlandı; referans/test sahnesi, AudioListener düzeltmesi ve Android lab buildi doğrulandı; hedef A54 |
+| M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | WindowsEditor/A54 10/10 geçti; son APK ve kalabalık/CPU ölçümü açık |
 | M2 | Ortak can, hasar, ölüm | M1 deneme sonucu; kodu M1'e bağımlı değil | Bekliyor |
 | M3 | Mobil kontrollü tek vagon döngüsü ve oynanış değerlendirmesi | M1, M2 | Bekliyor |
 | M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | Bekliyor |

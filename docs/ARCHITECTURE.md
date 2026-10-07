@@ -1,6 +1,6 @@
 # Mimari ve sistem sözleşmeleri
 
-Bu belge uygulanacak yapıyı tarif eder; sınıf adları henüz mevcut kod değildir. Kesin tasarım kararları `DECISIONS.md` içinde, doğrulama işleri `ROADMAP.md` içindedir.
+Bu belge hedef yapıyı tarif eder; adı geçen sistemlerin çoğu henüz uygulanmadı. İlk navigation bileşenleri ve gerçek doğrulama sınırları `NAVIGATION_LAB.md` içinde listelenir. Kesin tasarım kararları `DECISIONS.md` içinde, doğrulama işleri `ROADMAP.md` içindedir.
 
 ## Temel yaklaşım
 
