@@ -1,6 +1,6 @@
 # Sıralı geliştirme planı
 
-Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruldu; son kod PC'de 10/10 birleşik kontrolü geçti, kullanıcı/cihaz oynanış değerlendirmesi açık. M1'in temel kapı/rota kontrolü tamamlandı; eski 30-agent gridinde gözlenen hedef yerleşimi sorunu büyük kalabalık için açık kalır. M3 gerçek brain sabit grid yerine oyuncu menzilini hedefler; bu büyük kalabalığın kanıtı değildir. Vagon kenarındaki yakın zeminler ortak NavMesh + carving kullanır. Önceki A54 performans/100-agent kanıtı eski link geometrisine aittir. Rutin testler PC'de; uygun zamanda önemli birleşik oynanış değişimi Android'de değerlendirilecek. Ayrıntılar NAVIGATION_LAB.md, COMBAT_LAB.md ve GAMEPLAY_LAB.md içinde.
+Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruldu; ilk sürüm PC'de 10/10 birleşik kontrolü geçti. D15/D16 cam kapı ve vagon sınırı revizyonu odaklı PC kontrolünü geçti (UTC 18:53:55); kullanıcı PC değerlendirmesini kabul etti; cihaz hissi ileride uygun zamanda kontrol edilecek. M1'in temel kapı/rota kontrolü tamamlandı; eski 30-agent gridinde gözlenen hedef yerleşimi sorunu büyük kalabalık için açık kalır. M3 gerçek brain sabit grid yerine oyuncu menzilini hedefler; bu büyük kalabalığın kanıtı değildir. Vagon kenarındaki yakın zeminler ortak NavMesh + carving kullanır. Önceki A54 performans/100-agent kanıtı eski link geometrisine aittir. Rutin testler PC'de; uygun zamanda önemli birleşik oynanış değişimi Android'de değerlendirilecek. Ayrıntılar NAVIGATION_LAB.md, COMBAT_LAB.md ve GAMEPLAY_LAB.md içinde.
 
 ## Öncelik mantığı
 
@@ -15,7 +15,7 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 | M0 | Korunan prototip ve geliştirme/test düzeni | Plan | Tamamlandı; referans/test sahnesi, AudioListener düzeltmesi ve Android lab buildi doğrulandı; hedef A54 |
 | M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | Temel rota/kapı 10/10; A54 ilk ölçümü kayıtlı. Yeni sürekli yüzeyde vagon içi kalabalık hedef yerleşimi M3/M6 için açık |
 | M2 | Ortak can, hasar, ölüm | M1 deneme sonucu; kodu M1'e bağımlı değil | Tamamlandı; 14 test geçti, izole hitscan/can/ölüm Play kontrolü yapıldı |
-| M3 | Mobil kontrollü tek vagon döngüsü ve oynanış değerlendirmesi | M1, M2 | GameplaySandbox'ta birleşik mekanikler ve son doğuş/görüş kontrolü 10/10 PC PASS. Dokunmatik cihaz hissi ve kullanıcı oynanış değerlendirmesi açık |
+| M3 | Mobil kontrollü tek vagon döngüsü ve oynanış değerlendirmesi | M1, M2 | GameplaySandbox ilk sürümünde birleşik mekanikler 10/10 PC PASS; D15/D16 revizyonunda cam/duvar/oyuncu sınırı ve gerçek hasar-giriş-onarım odaklı PC PASS. Kullanıcı PC oynanış değerlendirmesini kabul etti; cihaz hissi sonraki uygun kontrolde |
 | M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | Bekliyor |
 | M4b | Kanıtlanan döngüyü beş vagona genişletme | M4a değerlendirmesi | Bekliyor |
 | M5 | Mobil kontrolü iyileştirme ve silah çeşitliliği | M2, M4b | Bekliyor |
@@ -91,6 +91,7 @@ Kabul: 10 canlık kapıda 8+2 hasar tam olarak kırar; negatif değerler sınır
 - Geçitte zombi/oyuncu varken kapanış, birden fazla onarım hedefi ve aynı anda gelen hasar ele alınır.
 - En küçük enemy pool/factory ve kayıt yaşam döngüsü; ölüm/havuza dönüş rezervasyonları temizler.
 - Önceden seçilmiş minimum dokunmatik hareket/nişan/ateş adaptörü ve tek tabancayı bağla. Tam silah çeşitliliği M5 kapsamıdır.
+- D15/D16: sağlam kapının üst camından dış zombiye atış; alt panel/duvar atışı keser. Oyuncu kapı durumundan bağımsız vagon içinde kalır; hareket alanı daha sonra görev izniyle değişebilir. Zombi girişi bu sınırdan etkilenmez.
 
 Kabul: en az 10 kırılma→giriş→onarım döngüsü; kapı içinde spawn/kapanma yok; onarım iptali can doldurmaz; kırılmış kapıya zombi gereksiz saldırmaz. UI devre dışıyken mekanik çalışır. Oyuncu ölebilir; eski callback yeniden doğurmaz. Pool nesnesi tekrar doğunca eski hedef/hasar/slot taşımaz.
 
@@ -123,7 +124,7 @@ Kabul: beş vagonun durumları birbirine karışmaz; atama geçerli konum seçer
 - Satın alınmış efektleri gerçek hit logicten ayır; raycast/pellet, menzil, görüş engeli ve uygun hasar hedefleri.
 - Erken seçilen tabanca mermi/reload kuralı diğer silahlara genişletilir; yeni türün farklı kuralı kullanıcıyla netleştirilir.
 
-Kabul: silah verisiyle hasar/aralık değişir; sağlam kapı/duvar arkasına isabet olmaz. Efektin colliderı ikinci hasar oluşturmaz. Pompalı saçması kasıtlı biçimde çoklu isabet edebilir; collider tekrarları sonucu büyütmez. Düşük FPS'de ateş temposu kontrolden çıkmaz. Mobilde hareket+ateş+onarım birlikte oynanabilir.
+Kabul: silah verisiyle hasar/aralık değişir; sağlam kapının camından atış geçer, dolu alt panel/duvar arkasına isabet olmaz. Aynı atış engeli kuralı oyuncu/turret/dron için kullanılır. Efektin colliderı ikinci hasar oluşturmaz. Pompalı saçması kasıtlı biçimde çoklu isabet edebilir; collider tekrarları sonucu büyütmez. Düşük FPS'de ateş temposu kontrolden çıkmaz. Mobilde hareket+ateş+onarım birlikte oynanabilir.
 
 ## M6 — Spawn ve enemy ölçeği
 
@@ -174,4 +175,4 @@ Kabul: seçilen cihaz/kalite profili/FPS ve canlı sınırı raporlanır; ölç�
 
 ## Bir sonraki somut iş
 
-**M3 değerlendirmesi:** GameplaySandbox'ta hareket–otomatik ateş–onarım akışını kullanıcıyla denemek; gerekli geri bildirimi uygulamak ve uygun zamanda kısa Android kontrolü yapmak. Teknik kanıt/kapsam GAMEPLAY_LAB.md içinde. M4a iki vagon/istasyon akışı bu değerlendirme sonrası başlar.
+**M4a:** kullanıcı M3 PC oynanış değerlendirmesini kabul etti ve sonraki aşamayı istedi. İki vagonla süreli istasyon, görünür yolculuk, karanlık pause, güvenli rastgele atama ve kalıcı vagon durumlarını birleştir. Android hissi uygun zamanda ayrıca kontrol edilecek.

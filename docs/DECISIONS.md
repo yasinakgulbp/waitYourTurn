@@ -20,6 +20,8 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | D12 | Dış incelemeler öneridir; değişiklikler oyun hedefi ve somut gerekçeyle seçilir | Kullanıcının tercihi. Model uzlaşması veya nezaket tasarım kararının kanıtı değildir. |
 | D13 | Sol joystick ile hareket, en yakın görüşü açık zombiye otomatik nişan ve ateş | Kullanıcı M3 için seçti; masaüstünde WASD/ok tuşları aynı hareket girdisine bağlanır. Sağ joystick gerekmez. |
 | D14 | İlk tabanca sınırlı şarjör, sınırsız yedek mermi ve otomatik doldurma kullanır | Kullanıcı M3 için seçti. İlk lab değerleri deneme ayarıdır: 8 mermi, 1.2 s doldurma, 0.35 s atış aralığı. |
+| D15 | Sağlam kapının üst camından dışarıdaki zombilere ateş edilir; alt dolu panel ve vagon duvarları atışı keser | Kullanıcı M3 değerlendirmesinde netleştirdi. Oyuncu ve ileride kapı önündeki turretler zombileri kapı kırılmadan vurabilir. Kapının yürüyüş engeli ile atış engeli ayrıdır. |
+| D16 | Oyuncu ilk kapsamda atandığı vagondan dışarı yürüyemez; kapı kırılması bu izni değiştirmez | Kullanıcı M3 değerlendirmesinde seçti. Hareket alanı ayrı ve isteğe bağlıdır; ileride istasyona inme görevi bu sınırı kaldırabilir/değiştirebilir. Zombi girişini veya atışı engelleyen ek fizik duvarı kurulmaz. |
 
 ## Teknik öneriler
 
@@ -44,7 +46,7 @@ Bu liste ilk navigasyon/hasar denemesini engellemez. İlgili özellik başlamada
 | Konu | İlk öneri / açık detay | Gerektiği aşama |
 | --- | --- | --- |
 | Hedef Android cihazları | En az bir düşük ve bir orta sınıf gerçek cihaz seçmek; ölçüm olmadan sabit FPS garantisi yok. | M1 ölçüm düzeni, M6 ilk kalabalık bütçesi |
-| Vagonlar arası geçiş | İlk kapsamda oyuncu atandığı vagonda; bağlantılar varsa açıkça tanımlanır. Zombilerin başka vagona gidip gitmeyeceği ayrı. | M3/M4 |
+| Vagonlar arası geçiş | D16: oyuncu atandığı vagonda kalır, kırık kapıdan istasyona çıkamaz. Gelecekte görev bazlı inme izni açıkça verilir. Zombilerin başka vagona gidip gitmeyeceği ayrı. | M3/M4 |
 | Onarımda kapanış ve saldırı | Geçitte karakter varsa kapanış beklesin; ateş edilebilir. Hasar alınca onarımın iptali henüz seçilmedi. | M3 |
 | Doğuş güvenliği | Duvar/karakter içine doğmama + kısa doğuş koruması önerisi; içerideki zombilerin konumu korunur. | M4 |
 | Kalkış uyarısı | İlk öneri 60 saniye savunma sonrasında 3 saniye uyarı; fade/yavaşlama süreleri ayrı ayarlar. | M4 |

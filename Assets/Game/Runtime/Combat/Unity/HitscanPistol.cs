@@ -16,6 +16,7 @@ namespace WaitYourTurn.Combat
         [SerializeField, Min(0.1f)] private float range = 10f;
         [SerializeField, Min(1)] private int magazineSize = 8;
         [SerializeField, Min(0.1f)] private float reloadSeconds = 1.2f;
+        [SerializeField] private LayerMask hitMask = Physics.AllLayers;
         private float nextShot;
         private float reloadUntil;
         private ulong shotId;
@@ -26,6 +27,7 @@ namespace WaitYourTurn.Combat
         public Vector3 Muzzle => transform.position + Vector3.up * 0.9f;
         public event Action<ShotNotice> Fired;
         public void Configure(HealthComponent hero) => owner = hero;
+        public void SetHitMask(LayerMask mask) => hitMask = mask;
         private void Start() => ResetWeapon();
         public void ResetWeapon() { rounds = magazineSize; nextShot = reloadUntil = 0f; shotId = 0; }
         private void Update()
@@ -38,7 +40,7 @@ namespace WaitYourTurn.Combat
             if (target == null || !target.IsAlive || target.Team != Team.Enemy) return false;
             Vector3 delta = target.transform.position + Vector3.up * 0.85f - Muzzle;
             return delta.sqrMagnitude <= range * range && Physics.Raycast(Muzzle, delta.normalized,
-                out RaycastHit hit, delta.magnitude + 0.2f, Physics.AllLayers, QueryTriggerInteraction.Ignore) &&
+                out RaycastHit hit, delta.magnitude + 0.2f, hitMask, QueryTriggerInteraction.Ignore) &&
                 hit.collider.GetComponentInParent<HealthComponent>() == target;
         }
         public bool TryFire(Vector3 direction)
@@ -48,7 +50,7 @@ namespace WaitYourTurn.Combat
             nextShot = Time.time + fireInterval; // No burst catch-up after a slow frame.
             rounds--;
             Vector3 end = Muzzle + direction * range;
-            if (Physics.Raycast(Muzzle, direction, out RaycastHit hit, range, Physics.AllLayers, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(Muzzle, direction, out RaycastHit hit, range, hitMask, QueryTriggerInteraction.Ignore))
             {
                 end = hit.point;
                 HealthComponent target = hit.collider.GetComponentInParent<HealthComponent>();

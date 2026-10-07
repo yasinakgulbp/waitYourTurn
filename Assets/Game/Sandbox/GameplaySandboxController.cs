@@ -79,6 +79,7 @@ namespace WaitYourTurn.Sandbox
             if (GUILayout.Button("+6 zombies")) Spawn(6);
             GUILayout.EndHorizontal();
             if (GUILayout.Button("Check 10 door / repair / pool cycles")) StartCoroutine(CheckCycles());
+            if (GUILayout.Button("Check window shots / walls / player boundary")) StartCoroutine(CheckDefenseRules());
             GUI.enabled = true;
             GUILayout.Label(player.IsAlive ? result : "PLAYER DIED — Restart starts a new test run.");
             GUILayout.EndArea();
@@ -95,8 +96,9 @@ namespace WaitYourTurn.Sandbox
                 Spawn(1);
                 if (enemies.Active.Count != 1) { Finish(false, cycle - 1, "Validated spawn failed."); yield break; }
                 EnemyBrain enemy = enemies.Active[0];
-                if (pistol.HasSight(enemy.Health))
-                { Finish(false, cycle - 1, "A closed door exposed a newly spawned target to the pistol."); yield break; }
+                Physics.SyncTransforms();
+                if (!pistol.HasSight(enemy.Health))
+                { Finish(false, cycle - 1, "A closed door window blocked a newly spawned target from the pistol."); yield break; }
                 if (previous == enemy.Health && enemy.Health.TryApplyDamage(staleHit).Rejection != DamageRejection.StaleLife)
                 { Finish(false, cycle - 1, "Old hit damaged a reused enemy life."); yield break; }
                 float deadline = Time.time + 15f;
@@ -145,6 +147,94 @@ namespace WaitYourTurn.Sandbox
                 result = $"Checks: {cycle}/10 passed.";
             }
             Finish(true, 10, "Enemy damage/entry, cancelled repair, safe closure, player damage and pool reuse passed.");
+        }
+        private IEnumerator CheckDefenseRules()
+        {
+            checking = true;
+            aim.enabled = false;
+            ResetRound(); Spawn(1);
+            if (enemies.Active.Count != 1) { FinishDefense(false, "Spawn failed."); yield break; }
+            EnemyBrain enemy = enemies.Active[0];
+            Physics.SyncTransforms();
+            float enemyBefore = enemy.Health.Current;
+            float doorBefore = door.Durability.Current;
+            if (!pistol.HasSight(enemy.Health) || !pistol.TryFire(enemy.transform.position + Vector3.up * 0.85f - pistol.Muzzle) ||
+                enemy.Health.Current >= enemyBefore || door.Durability.Current != doorBefore || door.Portal.IsOpen)
+            { FinishDefense(false, "Window shot failed or damaged/opened the intact door."); yield break; }
+
+            motor.Place(new Vector3(3, 0.05f, 5.5f));
+            if (!enemy.GetComponent<WaitYourTurn.Navigation.AgentMotor>().TryPlace(new Vector3(3, 0, -4)))
+            { FinishDefense(false, "Wall test placement failed."); yield break; }
+            Physics.SyncTransforms(); pistol.ResetWeapon(); enemyBefore = enemy.Health.Current;
+            if (pistol.HasSight(enemy.Health) || !pistol.TryFire(enemy.transform.position + Vector3.up * 0.85f - pistol.Muzzle) ||
+                enemy.Health.Current != enemyBefore)
+            { FinishDefense(false, "A wall exposed/damaged the outside target."); yield break; }
+
+            motor.Place(new Vector3(0, 0.05f, 5.5f)); Physics.SyncTransforms(); pistol.ResetWeapon();
+            pistol.TryFire(door.Portal.transform.position + Vector3.up * 0.35f - pistol.Muzzle);
+            Vector3 impact = trace.GetPosition(1);
+            if (Mathf.Abs(impact.z - door.Portal.transform.position.z) > 0.2f || impact.y > 0.7f ||
+                door.Durability.Current != doorBefore)
+            { FinishDefense(false, "Solid lower panel did not block the shot."); yield break; }
+
+            motor.MoveDisplacement(Vector3.back * 20);
+            if (player.transform.position.z < 1.42f)
+            { FinishDefense(false, "Player crossed an intact door boundary."); yield break; }
+            if (!enemy.GetComponent<WaitYourTurn.Navigation.AgentMotor>().TryPlace(new Vector3(0, 0, -4)))
+            { FinishDefense(false, "Entry test placement failed."); yield break; }
+            motor.Place(new Vector3(0, 0.05f, 5.5f));
+            float deadline = Time.time + 15;
+            while (door.Durability.IsAlive && Time.time < deadline) yield return null;
+            if (door.Durability.IsAlive)
+            { FinishDefense(false, "Enemy did not damage/break the intact window door."); yield break; }
+            motor.Place(new Vector3(0, 0.05f, 2.2f));
+            motor.MoveDisplacement(Vector3.back * 20);
+            if (!door.Portal.AcceptsEntry || player.transform.position.z < 1.42f)
+            { FinishDefense(false, "Broken door let the player leave or stayed closed to enemies."); yield break; }
+
+            // Exercise actual enemy navigation through the same broken doorway.
+            motor.Place(new Vector3(0, 0.05f, 5.5f));
+            deadline = Time.time + 12;
+            while (!enemy.IsInside && Time.time < deadline) yield return null;
+            if (!enemy.IsInside) { FinishDefense(false, "Player boundary also blocked zombie entry."); yield break; }
+            motor.Place(door.RepairPosition + Vector3.up * 0.05f);
+            deadline = Time.time + 6;
+            while (door.Portal.IsOpen && Time.time < deadline) yield return null;
+            if (!door.Durability.IsAlive || door.Portal.IsOpen)
+            { FinishDefense(false, "Door did not repair/close after entry."); yield break; }
+            motor.MoveDisplacement(Vector3.back * 20);
+            if (player.transform.position.z < 1.42f)
+            { FinishDefense(false, "Repaired door let the player leave."); yield break; }
+            // Mission code can explicitly remove confinement without changing door or weapon code.
+            MovementArea area = FindFirstObjectByType<MovementArea>();
+            enemies.ClearAlive();
+            motor.Place(new Vector3(0, 0.05f, 5.5f));
+            Spawn(1); Physics.SyncTransforms(); pistol.ResetWeapon();
+            enemy = enemies.Active[0]; enemyBefore = enemy.Health.Current; doorBefore = door.Durability.Current;
+            if (!pistol.HasSight(enemy.Health) || !pistol.TryFire(enemy.transform.position + Vector3.up * 0.85f - pistol.Muzzle) ||
+                enemy.Health.Current >= enemyBefore || door.Durability.Current != doorBefore)
+            { FinishDefense(false, "Repaired window no longer allowed shots."); yield break; }
+            enemies.ClearAlive();
+            door.Durability.TryApplyDamage(new DamageContext(1000, player.Identity, Team.Player, 2, door.Durability.LifeVersion));
+            Physics.SyncTransforms();
+            motor.SetMovementArea(null);
+            motor.MoveDisplacement(Vector3.back * 5);
+            bool released = player.transform.position.z < 1;
+            motor.SetMovementArea(area);
+            if (!released) { FinishDefense(false, "Explicit movement-area release did not allow station access."); yield break; }
+            FinishDefense(true, "Intact/repaired window shots, solid panel/wall blocking, intact/broken/repaired player confinement, real enemy door damage/entry/repair and explicit release passed.");
+        }
+        private void FinishDefense(bool passed, string message)
+        {
+            checking = false; aim.enabled = true;
+            ResetRound(); Spawn(3);
+            result = $"{(passed ? "PASS" : "FAIL")}: {message}";
+#if UNITY_EDITOR
+            Directory.CreateDirectory("Logs");
+            File.WriteAllText("Logs/GameplayDefenseReport.json", JsonUtility.ToJson(new GameplayReport
+            { passed = passed, cycles = 1, message = message, platform = Application.platform.ToString(), utc = DateTime.UtcNow.ToString("O") }, true));
+#endif
+            if (passed) Debug.Log("[GameplayDefense] " + result); else Debug.LogError("[GameplayDefense] " + result);
         }
         private void Finish(bool passed, int cycles, string message)
         {

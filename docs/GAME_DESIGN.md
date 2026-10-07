@@ -32,7 +32,8 @@ Kararlaştırıldı: karanlık geçişte oynanış durur; görünür yolculukta 
 
 ## Kapılar ve onarım
 
-- Sağlam kapı yürüyüşü ve normal mermileri fiziksel olarak engeller. Zombi kapının dışındaki saldırı konumuna gelir, kendi hasarı ve saldırı aralığıyla vurur.
+- Sağlam kapı zombi yürüyüşünü engeller, **üst camından dışarıya ateş edilebilir**. Kapının alt dolu paneli ve vagon duvarları mermiyi engeller. Oyuncu ve kapı önüne kurulan turretler zombileri kapıyı kırmadan vurabilir; kapı dayanıklılığı bu savunma için zaman kazandırır (D15).
+- Oyuncu ilk kapsamda kapı sağlam/kırık/onarılmış olsa da atandığı vagondan dışarı yürüyemez. Bu, düşman geçişi ve atıştan ayrı bir hareket iznidir. İleride istasyona inilen görevlerde izin açıkça değiştirilebilir (D16).
 - Örnek: 10 canlık kapıyı 8 hasarlık güçlü zombi iki vuruşta, 2 hasarlık zayıf zombi beş vuruşta kırar.
 - Can sıfıra düşünce kapı `Broken` olur, geçiş açılır. Kapı nesnesi yok edilmez; aynı kimlikle onarılabilir.
 - Oyuncu kırık kapının yakınına gelip yaklaşık 3 saniye alanda kalırsa onarım tamamlanır; slider ilerlemeyi gösterir.
@@ -58,14 +59,14 @@ Oyuncu, kapı, zombi ve gerektiğinde turret aynı hasar sözleşmesini kullanı
 
 Başlangıç silahı tabanca; satın alınabilecekler hafif makineli, tüfek ve pompalı. Silah türü, ateş aralığı, menzil, hasar, saçılma/pellet sayısı, mermi ve efekt ayarları veridir. Oyuncu/turret/dron aynı silah çekirdeğini farklı hedefleme ve hareketle kullanır.
 
-Kontrol şeması ve ilk tabancanın mermi/reload kuralı M0/M1'de kullanıcıyla seçilecek. M3'te minimum mobil kontrol ve tabancayla hareket–ateş–onarım deneyimi telefonda değerlendirilecek; tam silah çeşitliliği daha sonra eklenecek.
+Kararlaştırıldı (D13/D14): sol hareket joystick'i, otomatik nişan/ateş; ilk tabancada sınırlı şarjör, sınırsız yedek mermi, otomatik doldurma. M3'te hareket–ateş–onarım deneyimi değerlendirilir; kullanıcı tercihiyle rutin kontroller PC'de, uygun zamanda cihazda yapılır. Tam silah çeşitliliği daha sonra eklenecek.
 
 Satın alınmış Hovl projectile assetleri görsel sunumda korunur. Gerçek vuruş tespiti efektlerden bağımsızdır. İlk öneri tabanca/tüfek/turret için raycast tabanlı anlık isabet + görsel mermi; yavaş roket vb. için ileride kontrollü fiziksel projectile. Pompalıda saçmalar kasıtlı ayrı isabetlerdir.
 
 ## Turret ve dron
 
 - Vagonların önceden tanımlı boş kurulum noktaları vardır; serbest yerleştirme ilk kapsamda yoktur.
-- Normal ve gelişmiş turret: 360 derece dönebilir; menzilinde, görüşü açık en yakın düşmanı hedefler. Duvar/sağlam kapı arkasına ateş etmez.
+- Normal ve gelişmiş turret: 360 derece dönebilir; menzilinde, görüşü açık en yakın düşmanı hedefler. Sağlam kapının üst camından dışarıya ateş edebilir; dolu alt panel ve duvar arkasındaki hedefi vuramaz. Kapı önüne kurulum temel savunma taktiğidir; aynı atış geometrisi oyuncu silahlarıyla paylaşılır.
 - Her ürünün ateş aralığı, hasarı ve mermi kapasitesi ayrı veridir. Örnek kapasite 50, örnek aralık 1 saniye; kesin denge değeri değildir.
 - Örnek sınır her turret türünden 2 adet; kapsamın oyuncu başına mı vagon başına mı olduğu ayrıca kararlaştırılacak.
 - Mermisi biten turret bir kez kapanır, patlama efekti oynatır ve slotu boşaltır. Efektin alan hasarı vermesi ayrıca tasarlanır.

@@ -10,6 +10,8 @@ Başlangıçta klasik GameObject/MonoBehaviour + Unity AI Navigation yeterlidir.
 
 Minimum mobil girdi adaptörü ve tabanca M3'ün ilk oynanabilir parçasında bulunur; M5 bu çekirdeği genişletir. M1'de kaba Android kalabalık ölçümü yapılır. FPS düşüklüğünün kaynağı ayrılmadan navigation motoru değiştirilmez; kapı çevresi sıra/saldırı slotları NavMesh'in yanında kullanılabilir. M4 önce iki vagonda doğrulanır, sonra veri/prefab bağlantılarıyla beş vagona çıkar.
 
+D15/D16: kapının geçiş engeli ile atış engeli ayrıdır. Sağlam cam oyuncu ve ileride turret atışını geçirir; dolu panel/duvar isabeti keser. Silah hedefleme görüşü ve gerçek isabet aynı `hitMask` kullanır. `ShotTransparent` sadece uygun geçiş colliderlarında kullanılır; melee/nav/karakter çarpışması bu katmanı görmeye devam eder. Oyuncunun dışarı çıkma izni Player modülündeki isteğe bağlı `MovementArea` ile uygulanır; ek duvar colliderı veya zombi yolunu kesen NavMesh engeli değildir. Görev/vagon bağlamı alanı açıkça atar veya kaldırır.
+
 Doğrulama riske göre ölçeklenir: saf hasar/can kuralları otomatik test, ilk mekânsal davranışlar küçük sahnede elle kontrol edilir. Havuz/abonelik/eski callback kuralları ilgili özellik eklendiğinde doğrulanır. Her sınıfa test veya henüz kullanılmayan kayıt altyapısı kurmak hedef değildir.
 
 ```mermaid
