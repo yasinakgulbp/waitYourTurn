@@ -45,7 +45,7 @@ Yeni bir oturumda bu dizin, güncel kod, Git durumu ve Unity sahnesi birlikte ok
 | 2026-10-07 | Oyun tasarımı, mimari ve aşamalı plan | Hazır; açık kararlar var | İlk iş M0: prototip kaydı ve küçük navigasyon test sahnesi hazırlığı. |
 | 2026-10-07 | Mevcut yerel prototipi kaynak kontrolüne alma | Tamamlandı | Kaynak/asset/ayarlar ayrı commit; eski dağıtım çıktıları Git dışında. M0/M1 test sahnesi henüz kurulmadı. |
 | 2026-10-07 | Yararlı dış inceleme önerilerini plana işleme | Tamamlandı | Belgeler güncellendi; oynanış kodu ve Unity sahneleri değişmedi. Yeni aşama kabul koşulları henüz doğrulanmadı. |
-| 2026-10-07 | NavMesh geçişinin ilk uygulaması | İşlevsel kontrol geçti; M1 açık | WindowsEditor ve A54'te 10/10 geçiş kontrolü PASS. Son APK kontrolü ve Android kalabalık/CPU ölçümü açık; gerçek hasar/onarım sonraki aşamada. Ayrıntılar NAVIGATION_LAB.md içinde. |
+| 2026-10-07 | NavMesh geçişi ve paralel kapı hatları | M1 lab kabulü tamamlandı | Son A54 APK'sı 10/10 PASS; 100/100 varış 36.25 saniye, eşzamanlı giriş 2. Kaba yük örnekleri yaklaşık 60 FPS; CPU örneği kaydedildi. Üretim entegrasyonu M3'te. Ayrıntılar NAVIGATION_LAB.md içinde. |
 | 2026-10-07 | M0 geliştirme düzeni ve Android lab buildi | M0 tamamlandı | Referans sahne/zombi üretimi görüldü; AudioListener düzeltmesi ayrı commit. Android Development APK ve kimlik geri yüklemesi başarılı. A54'e kurulum/çalıştırma doğrulandı. |
 
 Reklam/IAP'nin ekonomi rolü M7 öncesinde tasarlanır; servis entegrasyonu ve yayınlama çekirdek oynanış/cihaz performansı doğrulandıktan sonraki aşamalardır.

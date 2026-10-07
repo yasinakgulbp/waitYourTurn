@@ -23,7 +23,7 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 
 | Kimlik | Öneri | Doğrulama aşaması |
 | --- | --- | --- |
-| T01 | İç/dış NavMesh + kapı başına kontrollü NavMeshLink | M1: kapalıyken alternatif geçiş yok, açıkken gerçek geçiş var. |
+| T01 | İç/dış NavMesh + kapı başına kontrollü NavMeshLink hatları | M1: kapalıyken alternatif geçiş yok, açıkken gerçek geçiş var. Eşzamanlı giriş için bir kapıda birden fazla hat kullanılabilir; hepsi tek portalın durumunu izler. Labda iki hat A54 üzerinde doğrulandı. |
 | T02 | Kapı/zombi/oyuncu için ortak hasar ve sağlık sözleşmesi | M2: sağlık sınırları, tek ölüm/ödül, farklı kaynaklar. |
 | T03 | İlk silahlar hitscan/pellet; satın alınmış projectile assetleri VFX | M2/M3: tabanca temeli; M5: çeşitlilik. Yavaş projectile gelecekte ayrı resolver kullanır. |
 | T04 | Küçük enemy durum makinesi, veri tabanlı tür farklılıkları | M3/M6: türler aynı döngüyü kullanır; gereksiz framework eklenmez. |

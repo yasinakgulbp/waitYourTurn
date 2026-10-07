@@ -13,6 +13,39 @@ namespace WaitYourTurn.Editor
     {
         private const string Root = "Assets/Game";
         private const string ScenePath = Root + "/Scenes/NavigationSandbox.unity";
+        private const float PassageWidth = 0.2f;
+
+        [MenuItem("Wait Your Turn/Navigation/Apply Lab Parallel Passages")]
+        public static void ApplyLabParallelPassages()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode ||
+                EditorSceneManager.GetActiveScene().path != ScenePath) return;
+            EntryPortal portal = Object.FindFirstObjectByType<EntryPortal>();
+            if (portal == null) return;
+            NavMeshLink link = portal.GetComponent<NavMeshLink>();
+            if (link == null) return;
+            NavMeshLink second = CreateParallelPassages(portal.gameObject, link);
+            portal.Configure(link, portal.GetComponentInChildren<BoxCollider>(),
+                portal.transform.Find("Outside approach"), portal.transform.Find("Inside destination"),
+                new[] { second });
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+        }
+
+        [MenuItem("Wait Your Turn/Navigation/Inspect Crowd Targets")]
+        public static void InspectCrowdTargets()
+        {
+            if (!EditorApplication.isPlaying || EditorSceneManager.GetActiveScene().path != ScenePath) return;
+            foreach (PortalNavigator navigator in Object.FindObjectsByType<PortalNavigator>(FindObjectsSortMode.None))
+            {
+                float distance = Vector3.Distance(navigator.transform.position, navigator.InsideGoal);
+                if (distance <= 0.4f) continue;
+                NavMeshAgent agent = navigator.Agent;
+                Debug.Log($"[NavigationCrowdTarget] {navigator.name}: position={navigator.transform.position:F3}, " +
+                    $"goal={navigator.InsideGoal:F3}, distance={distance:F3}, state={navigator.State}, " +
+                    $"path={agent.pathStatus}, remaining={agent.remainingDistance:F3}, velocity={agent.velocity:F3}", navigator);
+            }
+        }
 
         [MenuItem("Wait Your Turn/Navigation/Open Sandbox")]
         public static void OpenSandbox()
@@ -90,19 +123,14 @@ namespace WaitYourTurn.Editor
             GameObject entry = new GameObject("Entry Portal");
             NavMeshLink link = entry.AddComponent<NavMeshLink>();
             link.agentTypeID = outside.agentTypeID;
-            link.startPoint = new Vector3(0, 0, -1.7f);
-            link.endPoint = new Vector3(0, 0, 1.8f);
-            link.width = 1.2f;
-            link.bidirectional = true;
-            link.autoUpdate = false;
-            link.activated = false;
+            NavMeshLink secondLink = CreateParallelPassages(entry, link);
             GameObject door = Cube("Test gate", entry.transform, new Vector3(0, 1, 0), new Vector3(2.2f, 2, 0.22f), doorMat);
             GameObject bridge = Cube("Visual boarding bridge", entry.transform, new Vector3(0, -0.05f, 0), new Vector3(2.2f, 0.1f, 2), wallMat);
             Object.DestroyImmediate(bridge.GetComponent<Collider>()); // Navigation connection is exclusively the link.
             Transform approach = Anchor("Outside approach", entry.transform, new Vector3(0, 0, -2.2f));
             Transform goal = Anchor("Inside destination", entry.transform, new Vector3(0, 0, 6));
             EntryPortal portal = entry.AddComponent<EntryPortal>();
-            portal.Configure(link, door.GetComponent<BoxCollider>(), approach, goal);
+            portal.Configure(link, door.GetComponent<BoxCollider>(), approach, goal, new[] { secondLink });
             GameObject marker = Cube("Destination marker", null, goal.position + Vector3.up * 0.015f, new Vector3(0.6f, 0.03f, 0.6f), lineMat);
             Object.DestroyImmediate(marker.GetComponent<Collider>());
 
@@ -165,7 +193,33 @@ namespace WaitYourTurn.Editor
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
             Selection.activeGameObject = zombie;
-            Debug.Log("[NavigationSandbox] Created isolated scene with two baked surfaces and one controlled link.");
+            Debug.Log("[NavigationSandbox] Created two baked surfaces and one portal with two parallel passages.");
+        }
+
+        private static NavMeshLink CreateParallelPassages(GameObject entry, NavMeshLink first)
+        {
+            Transform secondTransform = entry.transform.Find("Right passage");
+            if (secondTransform == null)
+            {
+                secondTransform = new GameObject("Right passage").transform;
+                secondTransform.SetParent(entry.transform, false);
+            }
+            NavMeshLink second = secondTransform.GetComponent<NavMeshLink>();
+            if (second == null) second = secondTransform.gameObject.AddComponent<NavMeshLink>();
+            ConfigurePassage(first, -0.45f, first.agentTypeID);
+            ConfigurePassage(second, 0.45f, first.agentTypeID);
+            return second;
+        }
+
+        private static void ConfigurePassage(NavMeshLink passage, float lateral, int agentType)
+        {
+            passage.agentTypeID = agentType;
+            passage.startPoint = new Vector3(lateral, 0, -1.7f);
+            passage.endPoint = new Vector3(lateral, 0, 2.2f);
+            passage.width = PassageWidth;
+            passage.bidirectional = true;
+            passage.autoUpdate = false;
+            passage.activated = false;
         }
 
         private static NavMeshSurface Surface(GameObject root)

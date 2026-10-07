@@ -69,7 +69,7 @@ NavMesh'in yüzey konumunu güncellemesi ile üzerindeki karakterleri güvenle t
 
 ## Kapı bir geçiş noktasıdır
 
-Her `EntryPortal`: `WagonId`, `DoorId`, dış yaklaşma/saldırı noktaları, iç varış noktası, giriş bölgesi ve `NavMeshLink` içerir. Kapı sağlık/durumunun sahibi `DoorController`; yürünebilir geçişin sahibi navigation adaptörüdür.
+Her `EntryPortal`: `WagonId`, `DoorId`, dış yaklaşma/saldırı noktaları, iç varış noktası, giriş bölgesi ve kontrollü `NavMeshLink` bağlantıları içerir. Tek kapı gerektiğinde paralel geçiş hatlarını birlikte yönetir; enemy brain hat sayısını bilmez. Kapı sağlık/durumunun sahibi `DoorController`; yürünebilir geçişin sahibi navigation adaptörüdür. Lab uygulamasında iki hat vardır; kapanış herhangi biri doluyken bekler. Ayrıntı ve cihaz kanıtı `NAVIGATION_LAB.md` içindedir.
 
 İç ve dış NavMesh arasında bake edilmiş otomatik bir alternatif bağlantı bırakılmaz. Aradaki boşluk kontrollü link ile bağlanır. Link kapandığında başka bir polygon yolu açık kalırsa kapı kuralı bozulur; test sahnesi bunu özellikle kontrol eder.
 

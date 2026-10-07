@@ -1,6 +1,6 @@
 # Sıralı geliştirme planı
 
-Durum: 2026-10-07 — M0 tamamlandı; M1 uygulaması başladı. NavigationSandbox'ta tek agent ile WindowsEditor ve A54 üzerinde 10/10 geçiş kontrolü geçti; son APK kontrolü ve Android kalabalık/CPU ölçümü açık. Kanıt ve kullanım NAVIGATION_LAB.md içinde. Bir aşama, kabul koşulları karşılanmadan tamamlandı sayılmaz. Her aşama küçük alt commitlere ayrılabilir.
+Durum: 2026-10-07 — M0 ve M1 laboratuvar kabulü tamamlandı; sıradaki aşama M2 ortak can/hasar temeli. A54'te son iki hatlı portal 10/10 tekrarlı kontrolü geçti; 100/100 agent 36.25 saniyede hedefe vardı, eşzamanlı giriş tepe sayısı 2. Kaba 10/30/60/100 yükleri ve ilk CPU örneği kaydedildi. Bu sonuçlar izole laboratuvara aittir; üretim entegrasyonu ve doğal enemy davranışı M3/M6'da doğrulanır. Kanıt ve kullanım NAVIGATION_LAB.md içinde. Bir aşama, kabul koşulları karşılanmadan tamamlandı sayılmaz. Her aşama küçük alt commitlere ayrılabilir.
 
 ## Öncelik mantığı
 
@@ -13,7 +13,7 @@ Durum: 2026-10-07 — M0 tamamlandı; M1 uygulaması başladı. NavigationSandbo
 | Aşama | Çıktı | Bağımlılık | Durum |
 | --- | --- | --- | --- |
 | M0 | Korunan prototip ve geliştirme/test düzeni | Plan | Tamamlandı; referans/test sahnesi, AudioListener düzeltmesi ve Android lab buildi doğrulandı; hedef A54 |
-| M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | WindowsEditor/A54 10/10 geçti; son APK ve kalabalık/CPU ölçümü açık |
+| M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | Lab kabulü tamamlandı; son A54 iki hatlı geçit 10/10, kalabalık 100/100 ve eşzamanlı giriş 2; ilk cihaz/CPU ölçümü kaydedildi |
 | M2 | Ortak can, hasar, ölüm | M1 deneme sonucu; kodu M1'e bağımlı değil | Bekliyor |
 | M3 | Mobil kontrollü tek vagon döngüsü ve oynanış değerlendirmesi | M1, M2 | Bekliyor |
 | M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | Bekliyor |

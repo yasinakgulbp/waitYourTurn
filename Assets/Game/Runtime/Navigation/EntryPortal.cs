@@ -10,6 +10,7 @@ namespace WaitYourTurn.Navigation
     public sealed class EntryPortal : MonoBehaviour
     {
         [SerializeField] private NavMeshLink link;
+        [SerializeField] private NavMeshLink[] additionalLinks = Array.Empty<NavMeshLink>();
         [SerializeField] private BoxCollider blocker;
         [SerializeField] private Transform outsideApproach;
         [SerializeField] private Transform insideDestination;
@@ -24,9 +25,10 @@ namespace WaitYourTurn.Navigation
         public uint Revision { get; private set; }
 
         public void Configure(NavMeshLink traversal, BoxCollider obstruction,
-            Transform approach, Transform destination)
+            Transform approach, Transform destination, NavMeshLink[] parallelLinks = null)
         {
             link = traversal;
+            additionalLinks = parallelLinks ?? Array.Empty<NavMeshLink>();
             blocker = obstruction;
             outsideApproach = approach;
             insideDestination = destination;
@@ -41,6 +43,7 @@ namespace WaitYourTurn.Navigation
                 return;
             }
             blocker.enabled = !IsOpen;
+            SetLinksActive(IsOpen);
         }
 
         public bool IsInside(Vector3 position)
@@ -56,7 +59,7 @@ namespace WaitYourTurn.Navigation
                 if (IsOpen && !ClosePending) return;
                 ClosePending = false;
                 blocker.enabled = false;
-                link.activated = true;
+                SetLinksActive(true);
                 NotifyChanged();
                 return;
             }
@@ -75,11 +78,26 @@ namespace WaitYourTurn.Navigation
 
         private void TryFinishClosing()
         {
-            if (link.occupied || HasCharacterInDoorway()) return;
-            link.activated = false;
+            if (AnyLinkOccupied() || HasCharacterInDoorway()) return;
+            SetLinksActive(false);
             blocker.enabled = true;
             ClosePending = false;
             NotifyChanged();
+        }
+
+        private void SetLinksActive(bool active)
+        {
+            link.activated = active;
+            foreach (NavMeshLink passage in additionalLinks)
+                if (passage != null) passage.activated = active;
+        }
+
+        private bool AnyLinkOccupied()
+        {
+            if (link.occupied) return true;
+            foreach (NavMeshLink passage in additionalLinks)
+                if (passage != null && passage.occupied) return true;
+            return false;
         }
 
         private bool HasCharacterInDoorway()

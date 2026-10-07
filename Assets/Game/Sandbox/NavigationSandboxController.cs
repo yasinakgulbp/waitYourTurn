@@ -25,6 +25,9 @@ namespace WaitYourTurn.Sandbox
         private float averageFrameMs;
         private uint visualRevision = uint.MaxValue;
         private float visualStartX;
+        private const int CrowdAcceptanceCount = 100;
+        private int peakConcurrentCrossings;
+        private int peakDoorwayOccupants;
 
         public void Configure(EntryPortal entry, PortalNavigator template, Renderer visual, Transform environment)
         {
@@ -52,11 +55,13 @@ namespace WaitYourTurn.Sandbox
 
         private void Update()
         {
+            if (checking) SamplePassageOccupancy();
             if (!checking)
             {
                 if (Input.GetKeyDown(KeyCode.Space)) ToggleGate();
                 if (Input.GetKeyDown(KeyCode.R)) ResetAgents();
                 if (Input.GetKeyDown(KeyCode.T)) StartCoroutine(CheckTenCycles());
+                if (Input.GetKeyDown(KeyCode.C)) StartCoroutine(CheckCrowd());
             }
             // Presentation-only movement: no colliders or nav sources in this hierarchy.
             Vector3 visualPosition = visualEnvironment.position;
@@ -84,7 +89,7 @@ namespace WaitYourTurn.Sandbox
             float scale = Mathf.Clamp(Screen.width / 1100f, 0.8f, 1.6f);
             Matrix4x4 previous = GUI.matrix;
             GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
-            GUILayout.BeginArea(new Rect(16, 16, 450, 290), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16, 16, 450, 330), GUI.skin.box);
             GUILayout.Label("NAVIGATION LAB  |  M1");
             GUILayout.Label("Station (blue) -> gate -> wagon (green)");
             GUILayout.Label("Gate: " + (portal.ClosePending ? "CLOSING: waiting for passage" : portal.IsOpen ? "OPEN" : "CLOSED"));
@@ -100,6 +105,7 @@ namespace WaitYourTurn.Sandbox
             foreach (int count in new[] { 1, 10, 30, 60, 100 })
                 if (GUILayout.Button(count.ToString(), GUILayout.Height(28))) SetAgentCount(count);
             GUILayout.EndHorizontal();
+            if (GUILayout.Button("Check 100 agents [C]", GUILayout.Height(34))) StartCoroutine(CheckCrowd());
             GUI.enabled = true;
             GUILayout.Label(result, GUILayout.Height(48));
             GUILayout.Label("Lab gate control only. Health/repair comes in M2/M3.");
@@ -132,7 +138,7 @@ namespace WaitYourTurn.Sandbox
             // acceptance goal would otherwise overlap the slot of a later clone.
             agentTemplate.Configure(portal,
                 count == 1 ? Vector3.zero : new Vector3(-2.925f, 0f, 0f),
-                count == 1 ? Vector3.zero : new Vector3(-2.925f, 0f, -4f));
+                count == 1 ? Vector3.zero : new Vector3(-3.15f, 0f, 2.3f));
             for (int i = agents.Count - 1; i >= count; i--)
             {
                 Destroy(agents[i].gameObject);
@@ -144,7 +150,8 @@ namespace WaitYourTurn.Sandbox
                 PortalNavigator clone = Instantiate(agentTemplate, OutsideSpawn(index), Quaternion.identity);
                 clone.name = "Lab Zombie " + (index + 1);
                 Vector3 waiting = new Vector3(((index % 10) - 4.5f) * 0.65f, 0f, -(index / 10) * 0.55f);
-                Vector3 arrival = new Vector3(((index % 10) - 4.5f) * 0.65f, 0f, (index / 10) * 0.65f - 4f);
+                // Fill from the back: stopped test agents must not form a wall in front of later arrivals.
+                Vector3 arrival = new Vector3(((index % 10) - 4.5f) * 0.7f, 0f, 2.3f - (index / 10) * 0.7f);
                 clone.Configure(portal, waiting, arrival);
                 agents.Add(clone);
             }
@@ -210,6 +217,129 @@ namespace WaitYourTurn.Sandbox
                 yield return null;
         }
 
+        private IEnumerator CheckCrowd()
+        {
+            checking = true;
+            peakConcurrentCrossings = 0;
+            peakDoorwayOccupants = 0;
+            SetAgentCount(CrowdAcceptanceCount);
+            yield return new WaitForSeconds(5f);
+            foreach (PortalNavigator navigator in agents)
+            {
+                if (!navigator.Agent.isOnNavMesh || portal.IsInside(navigator.transform.position) ||
+                    HasCompletePath(navigator.transform.position, navigator.InsideGoal))
+                { FinishCrowd(false, 0, 0f, "Closed gate or validated crowd spawn failed."); yield break; }
+            }
+
+            portal.SetOpen(true);
+            float deadline = Time.time + 20f;
+            while (!AnyAgentCrossing() && Time.time < deadline) yield return null;
+            if (!AnyAgentCrossing())
+            { FinishCrowd(false, 0, 0f, "No crowd agent used the entry link."); yield break; }
+
+            portal.SetOpen(false);
+            if (!portal.IsOpen || !portal.ClosePending)
+            { FinishCrowd(false, CountArrivedInside(), 0f, "Occupied crowd passage closed immediately."); yield break; }
+            deadline = Time.time + 20f;
+            while (portal.IsOpen && Time.time < deadline) yield return null;
+            if (portal.IsOpen || AnyAgentCrossing())
+            { FinishCrowd(false, CountArrivedInside(), 0f, "Crowd passage failed to drain and close."); yield break; }
+
+            foreach (PortalNavigator navigator in agents)
+            {
+                if (!portal.IsInside(navigator.transform.position) &&
+                    HasCompletePath(navigator.transform.position, navigator.InsideGoal))
+                { FinishCrowd(false, CountArrivedInside(), 0f, "Closed crowd passage still connects outside to inside."); yield break; }
+            }
+
+            portal.SetOpen(true);
+            float started = Time.realtimeSinceStartup;
+            float nextProgress = started;
+            int arrived = CountArrivedInside();
+            while (arrived < agents.Count && Time.realtimeSinceStartup - started < 120f)
+            {
+                if (Time.realtimeSinceStartup >= nextProgress)
+                {
+                    arrived = CountArrivedInside();
+                    result = $"Crowd: {arrived}/{agents.Count} arrived; {Time.realtimeSinceStartup - started:F1}s.";
+                    nextProgress = Time.realtimeSinceStartup + 0.5f;
+                }
+                yield return null;
+            }
+            arrived = CountArrivedInside();
+            FinishCrowd(arrived == agents.Count, arrived, Time.realtimeSinceStartup - started,
+                arrived == agents.Count ? "Safe crowd closure, reopening and all assigned arrivals passed."
+                    : "Crowd arrival timed out. Inspect waiting agents before accepting this geometry.");
+        }
+
+        private void SamplePassageOccupancy()
+        {
+            int crossings = 0;
+            int doorway = 0;
+            foreach (PortalNavigator navigator in agents)
+            {
+                NavMeshAgent agent = navigator.Agent;
+                if (!agent.enabled || !agent.isOnNavMesh || !agent.isOnOffMeshLink) continue;
+                crossings++;
+                Vector3 local = portal.transform.InverseTransformPoint(navigator.transform.position);
+                // A short band at the physical door distinguishes abreast entry from a long queue on the link.
+                if (Mathf.Abs(local.z) <= 0.3f) doorway++;
+            }
+            peakConcurrentCrossings = Mathf.Max(peakConcurrentCrossings, crossings);
+            peakDoorwayOccupants = Mathf.Max(peakDoorwayOccupants, doorway);
+        }
+
+        private bool AnyAgentCrossing()
+        {
+            foreach (PortalNavigator navigator in agents)
+                if (navigator.Agent.enabled && navigator.Agent.isOnNavMesh && navigator.Agent.isOnOffMeshLink) return true;
+            return false;
+        }
+
+        private int CountArrivedInside()
+        {
+            int count = 0;
+            foreach (PortalNavigator navigator in agents)
+                if (navigator.Agent.enabled && navigator.Agent.isOnNavMesh && !navigator.Agent.isOnOffMeshLink &&
+                    portal.IsInside(navigator.transform.position) &&
+                    Vector3.Distance(navigator.transform.position, navigator.InsideGoal) <= 0.4f) count++;
+            return count;
+        }
+
+        private void FinishCrowd(bool passed, int arrived, float seconds, string message)
+        {
+            checking = false;
+            if (!passed)
+            {
+                foreach (PortalNavigator navigator in agents)
+                {
+                    float distance = Vector3.Distance(navigator.transform.position, navigator.InsideGoal);
+                    if (distance <= 0.4f) continue;
+                    NavMeshAgent agent = navigator.Agent;
+                    Debug.Log($"[NavigationCrowdTarget] {navigator.name}: position={navigator.transform.position:F3}, " +
+                        $"goal={navigator.InsideGoal:F3}, distance={distance:F3}, state={navigator.State}, " +
+                        $"path={agent.pathStatus}, remaining={agent.remainingDistance:F3}, velocity={agent.velocity:F3}", navigator);
+                }
+            }
+            result = $"{(passed ? "PASS" : "FAIL")}: {arrived}/{agents.Count}, {seconds:F1}s; " +
+                $"peak link/door: {peakConcurrentCrossings}/{peakDoorwayOccupants}. {message}";
+            var report = new CrowdReport
+            {
+                passed = passed, agentCount = agents.Count, arrivedCount = arrived, arrivalSeconds = seconds,
+                peakConcurrentCrossings = peakConcurrentCrossings, peakDoorwayOccupants = peakDoorwayOccupants,
+                message = message, platform = Application.platform.ToString(),
+                unityVersion = Application.unityVersion, utc = DateTime.UtcNow.ToString("O")
+            };
+#if UNITY_EDITOR
+            string reportPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../Logs/NavigationCrowdReport.json"));
+            Directory.CreateDirectory(Path.GetDirectoryName(reportPath));
+            File.WriteAllText(reportPath, JsonUtility.ToJson(report, true));
+#endif
+            string log = "[NavigationCrowd] " + JsonUtility.ToJson(report);
+            if (passed) Debug.Log(log);
+            else Debug.LogError(log);
+        }
+
         private bool HasCompletePath(Vector3 from, Vector3 to)
         {
             return NavMesh.CalculatePath(from, to, NavMesh.AllAreas, queryPath) &&
@@ -240,6 +370,21 @@ namespace WaitYourTurn.Sandbox
         {
             public bool passed;
             public int completedCycles;
+            public string message;
+            public string platform;
+            public string unityVersion;
+            public string utc;
+        }
+
+        [Serializable]
+        private sealed class CrowdReport
+        {
+            public bool passed;
+            public int agentCount;
+            public int arrivedCount;
+            public float arrivalSeconds;
+            public int peakConcurrentCrossings;
+            public int peakDoorwayOccupants;
             public string message;
             public string platform;
             public string unityVersion;

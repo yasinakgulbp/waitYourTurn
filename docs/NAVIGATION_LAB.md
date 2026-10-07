@@ -9,13 +9,14 @@ Unity menüsünde **Wait Your Turn → Navigation → Open Sandbox**, ardından 
 - **Space / Open–Close:** giriş bağlantısını aç/kapat.
 - **R / Reset:** zombileri dış zemine yerleştir ve kapıyı kapat.
 - **T / Check 10 cycles:** tek agent ile tekrarlı kabul kontrolü.
+- **C / Check 100 agents:** 100 agentta kapalı rota, geçiş sırasında güvenli kapanış, yeniden açılma ve her ayrı hedefe varış kontrolü. Varış sınırı 120 saniye, hedef mesafesi ≤0.4 m; başarısız agentların konum/rota bilgisi loglanır.
 - **1 / 10 / 30 / 60 / 100 düğmeleri:** geçici kalabalık yükleri. Son oyunun canlı sınırı değildir.
 
-Klavye için Game görünümü odakta olmalı. Kontroller ekran düğmeleriyle de kullanılabilir. Sonuç `Logs/NavigationSandboxReport.json` dosyasına yazılır; Logs Git dışında tutulur. Ekrandaki ortalama kare süresi kaba bir gözlemdir; CPU/GPU ayrımı, profiler verisi veya Android performans raporu değildir.
+Klavye için Game görünümü odakta olmalı. Kontroller ekran düğmeleriyle de kullanılabilir. Editor sonuçları `Logs/NavigationSandboxReport.json` ve `Logs/NavigationCrowdReport.json` dosyalarına, cihaz sonucu ADB uygulama loguna yazılır; Logs Git dışında tutulur. Kod değiştirirken Play durdurulur; derleme/domain reload sonrası kalabalık testi temiz Play oturumundan başlatılır. Ekrandaki ortalama kare süresi kaba bir gözlemdir; CPU/GPU ayrımı, profiler verisi veya Android performans raporu değildir.
 
 ## Sorumluluklar
 
-- `EntryPortal`: link ve fiziksel engelin sahibi. Durum değişimini bildirir; geçit doluyken kapanışı bekletir. Can, saldırı, UI veya ses bilmez.
+- `EntryPortal`: geçiş linkleri ve fiziksel engelin sahibi. Paralel linkleri tek kapı olarak açar/kapatır; herhangi bir hat veya fiziksel eşik doluyken kapanışı bekletir. Can, saldırı, UI veya ses bilmez. Hareket adaptörü hat sayısını bilmez.
 - `PortalNavigator`: NavMeshAgent hareket adaptörü. Kapalı geçitte dış yaklaşma noktasına, açık geçitte iç hedefe gider. Rota hedef/durum değişiminde yenilenir; agent geçişteyken ResetPath uygulanmaz. Yeni enemy brain bu adaptöre ayrı bağlanacak.
 - `NavigationSandboxController`: geçici düğmeler, test yükleri ve kabul kontrolü. Son oyun akışı değildir. Laboratuvarda oluşturma/silme kullanır; üretim havuzu değildir.
 - `NavigationSandboxBuilder`: yalnızca Editor'da sahne kurar ve iki yüzeyi bake eder. Runtime'da kapı değişince tekrar bake yapılmaz.
@@ -40,21 +41,56 @@ Her döngü şu davranışları denetler:
 
 10/30/60/100 agent ile elle kapalı kuyruk ve açık giriş gözlendi. Ekrandaki kısa ortalama örnekleri editörde yaklaşık 3–5.2 ms aralığındaydı; düzenli süreyle alınmış benchmark veya mobil hedef kabulü değildir. 60/100 yükünde dar kapıda kuyruk/sıkışıklık görüldü; bütün agentların hedefe erişme süresi bu denemede ölçülmedi. İç hedeflerin laboratuvar dağılımı daha geniş aralığa taşındı; üretim saldırı slotu sistemi henüz yok.
 
-Son kod kontrolünde kalabalık testindeki ilk agentın hedefi diğerlerinin grid slotlarından biriyle çakışıyordu; kalabalık yükünde ilk agent da ayrı grid slotuna alındı. Tek agent kabul hedefi korunur. Bu son dağılımın bütün agentları hedefe ulaştırdığı henüz ölçülmedi.
+Son kod kontrolünde kalabalık testindeki ilk agentın hedefi diğerlerinin grid slotlarından biriyle çakışıyordu; kalabalık yükünde ilk agent da ayrı grid slotuna alındı. Tek agent kabul hedefi korunur. Sonraki programatik varış kontrolleri aşağıda kayıtlıdır.
 
-İlk A54 çalıştırmasında başlangıç agentı yüzeyler yüklenmeden etkinleştiği için tek `no valid NavMesh` uyarısı verdi. Sahne/template agentı başlangıçta devre dışı tutulup `TryPlace` başarılı örnekleme sonrası etkinleştirecek şekilde düzeltildi. Laboratuvarın Android kare hedefi açıkça 60'a alındı; ilk sürümdeki 33.3 ms gözlemi varsayılan 30 FPS sınırını yansıtıyordu. Son oyunun kalite profili henüz değildir. Bu düzeltmeleri içeren dördüncü APK buildi başarılı (39.1 saniye); cihazda yeniden kabul kontrolü gerekli.
+İlk A54 çalıştırmasında başlangıç agentı yüzeyler yüklenmeden etkinleştiği için tek `no valid NavMesh` uyarısı verdi. Sahne/template agentı başlangıçta devre dışı tutulup `TryPlace` başarılı örnekleme sonrası etkinleştirecek şekilde düzeltildi. Laboratuvarın Android kare hedefi açıkça 60'a alındı; ilk sürümdeki 33.3 ms gözlemi varsayılan 30 FPS sınırını yansıtıyordu. Son oyunun kalite profili henüz değildir. Bu düzeltmeleri içeren dördüncü APK buildi başarılı (39.1 saniye); cihazda **10/10 PASS** tekrarlandı (`2026-10-07T15:39:39.095Z`). Yeni process başlangıç logunda `no valid NavMesh` görülmedi.
+
+## A54 kaba kalabalık ölçümü — 2026-10-07
+
+Ölçüm APK (dördüncü build): 27,124,190 bayt; Development / IL2CPP / ARM64; kalite indeksi 2 (Medium), 1080×2340 portre, hedef 60 FPS. Profiler bağlı, Deep Profile kapalı. Her yük düğmesinden 8 saniye sonra kapalı kuyruk, ardından kapı açılışından 8 saniye sonra açık geçiş görüntüsü alındı. Aşağıdaki değerler bu görüntülerdeki son bir saniyelik ortalamalardır; sekiz saniyenin ortalaması veya p95 değildir.
+
+| Agent | Kapalı kuyruk | Açık geçiş |
+| --- | --- | --- |
+| 10 | 16.7 ms (~60 FPS) | 16.7 ms (~60 FPS) |
+| 30 | 16.7 ms (~60 FPS) | 16.7 ms (~60 FPS) |
+| 60 | 16.7 ms (~60 FPS) | 16.7 ms (~60 FPS) |
+| 100 | 16.7 ms (~60 FPS) | 16.7 ms (~60 FPS) |
+
+Yerel kanıtlar: `Logs/A54-{10,30,60,100}-{closed,open}.png`. Yük üretme anlarının sıçramaları bu tabloya dahil değildir. Test prefabının animasyonu/saldırısı/VFX'i yoktur; sonuç tam oyunda 100 zombinin 60 FPS çalışacağı garantisi değildir.
+
+100 agent açık geçit sonrasındaki Profiler örneği, frame **16932**: Main Thread 7.56 ms; `PreUpdate.AIUpdate` 1.11 ms (`NavMeshManager` 1.08 ms), `FixedUpdate.PhysicsFixedUpdate` 0.88 ms, `Update.ScriptRunBehaviourUpdate` 0.23 ms, renderer güncelleme 0.10 ms. `FinishFrameRendering` 4.44 ms; bu marker bekleme/sunum da içerebildiğinden saf GPU maliyeti diye yorumlanmaz. GPU zamanı bu capture'da yok. Bunlar tek kare değerleridir, istatistiksel bütçe değildir. Laboratuvar sunumunda yaklaşık 10.8 KB/kare GC allocation görülür; üretim UI'ı bu IMGUI kontrolünden alınmayacak. Ham capture yerelde `ProfilerCaptures/The Gates Are Opening - Harmony_2026-10-07_18-43-03.data` olarak doğrulandı (189,031,968 bayt); üretilen capture klasörü Git dışında tutulur.
+
+30–100 yükünde 8 saniyelik açık örnekte dışarıda hâlâ kuyruk vardı. Daha sonraki `Logs/A54-100-later.png` görüntüsünde kalabalık vagon içine taşınmıştı; kalıcı deadlock kanıtı yok. Tüm agentların ayrı hedefe erişme süresi/sayısı programatik ölçülmedi. Üretimde geçiş sırası ve saldırı slotu rezervasyonu M3/M6'da ele alınır; NavMesh avoidance bunu tek başına çözmez. 100 agent sonraki tek bellek örneği: PSS 317,405 KiB (~310 MiB), RSS 416,782 KiB (~407 MiB). Bu tek snapshot bellek sızıntısı testi değildir.
+
+## Programatik kalabalık kontrolü ve paralel geçit
+
+1.2 m bağlantı / z=1.8 çıkışla temiz Editor Play testleri: ilk deneme **99/100**, 120 saniyede zaman aşımı (`2026-10-07T16:01:55.3568506Z`); sonraki deneme **100/100 PASS**, 64.78 saniye (`2026-10-07T16:08:29.7679784Z`). İki sonuç da korunur; tek başarılı koşu kararlılık garantisi değildir. Her agentın ayrı hedefine ≤0.4 m yaklaşması istenir; yalnızca vagon tarafına geçmiş olması yeterli sayılmaz.
+
+Kullanıcının eşzamanlı giriş isteği üzerine ilk denemede tek link **1.6 m** genişliğe ve **z=2.2** çıkışa alındı. Beşinci APK A54 sonucu: **99/100**, 120 saniye; tepe link/kapı doluluğu **1/1** (`2026-10-07T16:23:22.5176770Z`). Son agent kapıyı geçmişti: konum (3.333, 0.05, 6.852), hedef (2.925, 0, 7.85), tam rota, yaklaşık sıfır hız. Bu, kapı kilitlenmesi ile iç hedefte avoidance sıkışmasını ayırır. Tek linki genişletmek eşzamanlı geçiş sağlamadı.
+
+Unity [IsLinkOccupied API](https://docs.unity3d.com/kr/current/ScriptReference/AI.NavMesh.IsLinkOccupied.html) her link instance'ının aynı anda tek agent tarafından geçildiğini belirtir. Son düzenlemede aynı kapının içinde **iki paralel link** kullanılır: x=−0.45/+0.45 m, her birinin genişliği 0.2 m; başlangıç z=−1.7, çıkış z=2.2. Fiziksel açıklık 2.4 m, köprü 2.2 m, agent yarıçapı 0.3 m; colliderlar ve bake edilmiş yüzeyler değiştirilmedi. Hatların uçları kapı açıklığı içinde kalır. Editor menüsündeki `Apply Lab Parallel Passages` mevcut lab sahnesini bu değerlere getirir; yeni sahne kurucusu aynı değerleri kullanır.
+
+Lab varış gridinin aralığı 0.65 → 0.7 m oldu ve hedefler arkadan öne sıralandı (z=8.3 → 2.0). Önce gelen test agentlarının kapı önünde durup sonrakilerin hedef yolunu kapatması azaltılır. Bu yalnızca test yerleşimidir; gerçek oyunun düşman hedef seçimi veya saldırı slotu uygulaması değildir.
+
+Altıncı APK A54 sonucu: **100/100 PASS**, 36.25 saniye; tepe link/kapı doluluğu **2/2** (`2026-10-07T16:30:41.9610570Z`). Kapalı rota, dolu geçidin güvenli kapanışı, yeniden açılma ve tüm ayrı hedeflere erişim kontrol edildi. Bağlantılar iki agentın aynı anda geçmesine izin verdi; ekrandaki sonuç örneği 16.7 ms (~60 FPS). Kanıt: `Logs/A54-parallel-crowd-pass.png` ve uygulama logu. Süre, güvenli kapanıştan sonra tekrar açılan kapıdan tüm agentların hedeflerine varışına kadardır; önceki farklı grid/geometri koşusuyla saf hız karşılaştırması yapılmaz.
+
+Son iki hatlı APK üzerinde tek agent kontrolü de **10/10 PASS** olarak tekrarlandı (ADB uygulama logu, 2026-10-07 yerel saat 19:33:13). Kapalı/açık yollar, gerçek geçiş, doluyken güvenli kapanma, ters yönde dönüş ve geçersiz spawn kontrol edildi. Bu sonuçlarla M1 laboratuvar kabulü tamamlandı; üretim oyununa entegrasyon M3'te yapılacak.
+
+Kalabalık raporuna linkteki tepe agent sayısı ve kapı düzlemindeki ±0.3 m bandın tepe doluluğu eklendi. İkincisi yalnızca uzun bağlantıda peş peşe yürüyenleri eşzamanlı kapı girişinden ayırmaya yardımcı olur; fiziksel çarpışma veya animasyon gerçekçiliği garantisi değildir. Üretim saldırı slotları, değişken hız/animasyon ve doğal kalabalık davranışı bu küçük geometri düzeltmesinin kapsamı değildir.
 
 ## Android hazırlığı
 
 Hedef cihaz kullanıcı tarafından **Samsung Galaxy A54** olarak seçildi: SM-A546E, Android 16 / API 36. USB hata ayıklama izni sonrası ADB bağlantısı kuruldu; üçüncü APK kuruldu ve uygulama açıldı. İlk boş ADB listeleri bağlantı hazırlığına aitti.
 
-Telefondaki işlevsel test geçti; kaba kalabalık ölçümü ve CPU maliyeti henüz kabul edilmedi. Dördüncü APK kurulum denemesinde cihaz ADB listesinden çıktı; bağlantı yeniden kurulması istendi. USB bağlantısı sorunu oyun hatası olarak değerlendirilmez.
+Telefondaki işlevsel test geçti. Dördüncü APK kurulum denemesinde cihaz ADB listesinden çıktı; USB hata ayıklama yeniden açılınca bağlantı geri geldi ve son APK kuruldu. USB bağlantısı sorunu oyun hatası olarak değerlendirilmez. Profiler otomatik bağlantısı dördüncü APK'da doğrulandı.
 
 İlk Android Development APK buildi **Succeeded**, 382.7 saniye; APK dosyası 27,120,228 bayt. IL2CPP/ARM64, minimum API 26; yalnızca laboratuvar sahnesi. BuildReport toplam boyutu debug çıktıları da içerdiğinden APK dosya boyutuyla aynı değildir.
 
 Geri yükleme düzeltmesi sonrası ikinci build **Succeeded**, 18.2 saniye. Üçüncü build 39.8 saniyede, dördüncü build 39.1 saniyede başarılı. Build sonrası ürün adı, applicationIdentifier ve override bayrağı başlangıç değerleriyle aynı; build sahnesi listesi değişmedi.
 
-Üçüncü APK uygulama başlangıcında `AndroidJavaException: ClassNotFoundException: com.google.android.play.core.assetpacks.AssetPackManager` kaydı verdi; uygulama devam etti ve geçiş testi geçti. Bu platform başlangıç hatası henüz teşhis edilmedi ve çözülmüş sayılmaz. İkinci APK'nın ayrı eski process logundaki texture hataları üçüncü APK'nın sonuçlarına karıştırılmadı.
+Kalabalık sayaçlarıyla beşinci build 53.9 saniyede; iki paralel hatla altıncı build 36.4 saniyede başarılı. Son APK 41,739,426 bayt ve A54 üzerinde kurulum/çalıştırma doğrulandı. Unity, SceneTemplateSettings içine güncel `UnityEngine.PhysicsMaterial` tip kaydını otomatik ekledi; gameplay ayarı değildir.
+
+Üçüncü/dördüncü APK uygulama başlangıcında `java.lang.ClassNotFoundException: com.google.android.play.core.assetpacks.AssetPackManager` kaydı verdi; uygulama devam etti ve geçiş testi geçti. Yerel Unity 6000.6.4f1 Android Player `Variations/il2cpp/Development/Classes/classes.jar` içindeki `PlayAssetDeliveryUnityWrapper` bytecode'u `javap -c -p` ile incelendi: constructor isteğe bağlı PAD sınıfını arıyor, ClassNotFoundException'ı yakalayıp logError ile yazıyor ve geri dönüyor. Bu kayıt yeni C# navigasyon scriptlerinin exception'ı veya mevcut labın çökmesi değildir. PAD kullanılacak yayın buildinde ilgili teslimat bağımlılıkları ayrıca doğrulanmalı; yalnızca logu susturmak için lab APK'sına paket eklenmedi. İkinci APK'nın ayrı eski process logundaki texture hataları üçüncü APK'nın sonuçlarına karıştırılmadı.
 
 Editor menüsü: **Wait Your Turn → Navigation → Android → Prepare Platform**; platform geçişi ve script reload bittikten sonra **Build Lab APK**. Build yalnızca laboratuvar sahnesini içerir; çıktı `Builds/NavigationLab.apk` (Git dışında). Geçici paket kimliği `com.yasinakgulbp.waityourturn.navigationlab`, Development build. Build aracı proje ürün/paket ve export ayarlarını sonunda geri yükler; prototipin build sahnesi listesine dokunmaz.
 
@@ -64,8 +100,8 @@ Build aracının kimlik geri yüklemesi serialize edilmiş PlayerSettings anlık
 
 ## Açık işler
 
-- A54 üzerinde son APK ile başlangıç NavMesh düzeltmesini ve 10/10 kontrolünü tekrarlamak; 60 FPS hedefinde kapalı kuyruk/açık geçiş yüklerini ölçmek. Navigation, physics ve sunum maliyetini Profiler ile ayırmak. Bu yapılmadan M1 bütünü tamamlanmış sayılmaz.
-- Android AssetPackManager başlangıç hatasını teşhis etmek; başarılı geçiş kontrolü bunu gidermez.
+- M1 lab kabulü tamamlandı: kaba A54 ölçümü, iki eşzamanlı giriş, kalabalık varış ve güvenli kapanma/yeniden açılma kanıtlandı. Farklı agent boyları, oyuncunun eşikte durması ve daha doğal animasyon/hız davranışı M3/M6 entegrasyonunda ayrıca doğrulanacak. Uzun süreli ısı/bellek ve tam oyun maliyeti sonraki performans kontrolleridir.
+- Yayın buildinde PAD kullanılacaksa Unity/Google Play teslimat bağımlılıklarını doğrulamak; mevcut lab yalnızca yerel APK'dır.
 - Gerçek kapı canı M2'de, kırılma/onarım ve saldırı kararları M3'te bağlanır. Laboratuvar düğmesi kapının son oyundaki davranışı değildir.
 - Kuyruk offsetleri test içindir; saldırı slotu rezervasyonu ve rota hesaplama bütçesi kalabalık enemy sistemiyle geliştirilir. NavMesh avoidance tek başına saldırı slotu yönetmez.
 - Minimum mobil kontrol/tabanca mermi kuralı kullanıcıyla netleştirilecek; bu sahne bunları varsaymaz.
