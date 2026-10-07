@@ -1,0 +1,6 @@
+{
+    "name": "WaitYourTurn.Enemies",
+    "rootNamespace": "WaitYourTurn.Enemies",
+    "references": ["WaitYourTurn.Navigation", "WaitYourTurn.Train", "WaitYourTurn.Combat", "WaitYourTurn.Combat.Unity"],
+    "autoReferenced": false
+}
