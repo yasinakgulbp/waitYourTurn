@@ -10,6 +10,7 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 2. [Mimari](ARCHITECTURE.md): sorumluluklar, bağımlılıklar ve kritik teknik kurallar.
 3. [Kararlar](DECISIONS.md): kararlaştırılanlar, öneriler ve açık sorular.
 4. [Yol haritası](ROADMAP.md): sıralı geliştirme işleri ve kabul koşulları.
+5. [Prototip başlangıç kaydı](BASELINE.md): mevcut yerel prototipin kaynak kontrolüne alınan durumu ve doğrulama sınırları.
 
 ## Mevcut durum
 
@@ -19,7 +20,7 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 - Prototip: 5 rastgele oyuncu doğuş noktası, 6 düşman doğuş noktası, 7 saniyede bir üretim, 40 saniyede sahne yenileme.
 - Vagon zorluğu kapı zamanlamasıyla oluşturuluyor. Gerçek kapı dayanıklılığı, oyuncu ölümü ve etap ilerlemesi henüz bağlı değil.
 - Play kontrolünde sahne yenileme/vagon değişimi görüldü. Düşman prefablarındaki AudioListener bileşenleri çoğalan uyarılar üretiyor.
-- Çalışma ağacında bu plan öncesinden çok sayıda değişiklik ve takip edilmeyen asset var. Bunlar otomatik temizlenmeyecek veya plan commitine eklenmeyecek.
+- Plan öncesindeki yerel prototip değişiklikleri ayrı başlangıç commitine alındı. Eski Windows buildleri/arşivi yerelde korundu ve Git dışında tutuldu; plan commitine dahil edilmedi.
 
 ## Her geliştirme adımının çalışma biçimi
 
@@ -40,5 +41,6 @@ Yeni bir oturumda bu dizin, güncel kod, Git durumu ve Unity sahnesi birlikte ok
 | --- | --- | --- | --- |
 | 2026-10-07 | Prototip incelemesi | Tamamlandı | Kod/prefab incelemesi ve bir Play döngüsü; kaynak kod değiştirilmedi. |
 | 2026-10-07 | Oyun tasarımı, mimari ve aşamalı plan | Hazır; açık kararlar var | İlk iş M0: prototip kaydı ve küçük navigasyon test sahnesi hazırlığı. |
+| 2026-10-07 | Mevcut yerel prototipi kaynak kontrolüne alma | Tamamlandı | Kaynak/asset/ayarlar ayrı commit; eski dağıtım çıktıları Git dışında. M0/M1 test sahnesi henüz kurulmadı. |
 
 Reklam, gerçek para satın alımları ve yayınlama; çekirdek oynanış ve cihaz performansı doğrulandıktan sonra ayrı aşamalardır.

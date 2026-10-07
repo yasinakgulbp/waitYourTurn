@@ -7,6 +7,10 @@
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
+# Existing local Windows prototype exports (keep source Assets in Git)
+/BuildGate/
+/BuildGates2/
+/The Gates Are Opening Harmony.rar
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
