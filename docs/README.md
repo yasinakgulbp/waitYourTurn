@@ -47,5 +47,7 @@ Yeni bir oturumda bu dizin, güncel kod, Git durumu ve Unity sahnesi birlikte ok
 | 2026-10-07 | Yararlı dış inceleme önerilerini plana işleme | Tamamlandı | Belgeler güncellendi; oynanış kodu ve Unity sahneleri değişmedi. Yeni aşama kabul koşulları henüz doğrulanmadı. |
 | 2026-10-07 | NavMesh geçişi ve paralel kapı hatları | M1 lab kabulü tamamlandı | Son A54 APK'sı 10/10 PASS; 100/100 varış 36.25 saniye, eşzamanlı giriş 2. Kaba yük örnekleri yaklaşık 60 FPS; CPU örneği kaydedildi. Üretim entegrasyonu M3'te. Ayrıntılar NAVIGATION_LAB.md içinde. |
 | 2026-10-07 | M0 geliştirme düzeni ve Android lab buildi | M0 tamamlandı | Referans sahne/zombi üretimi görüldü; AudioListener düzeltmesi ayrı commit. Android Development APK ve kimlik geri yüklemesi başarılı. A54'e kurulum/çalıştırma doğrulandı. |
+| 2026-10-07 | Vagon kenarında kapı ve kesintisiz kalabalık geçişi | Tek-agent kontrolü 10/10; kalabalık hedef yerleşimi açık | Köprü/ikili link kaldırıldı; ortak NavMesh + carving. 30 agentta 29 hedefe varış, bir agent vagon içinde avoidance nedeniyle takıldı. M3/M6 hedef yönetimi işi; ayrıntı NAVIGATION_LAB.md. Rutin testler kullanıcı talebiyle PC'de. |
+| 2026-10-07 | M2 ortak can, hasar ve ölüm | Tamamlandı | 14 EditMode testi geçti; hitscan, kapı 8+2, oyuncu iyileşmesi ve ölüm sinyali Play'de doğrulandı. COMBAT_LAB.md. Sıradaki M3: kapı kırılma/onarımı, enemy brain, minimum girdi/tabanca ve pool. |
 
 Reklam/IAP'nin ekonomi rolü M7 öncesinde tasarlanır; servis entegrasyonu ve yayınlama çekirdek oynanış/cihaz performansı doğrulandıktan sonraki aşamalardır.

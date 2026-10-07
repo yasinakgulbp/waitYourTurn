@@ -1,6 +1,6 @@
 # Sıralı geliştirme planı
 
-Durum: 2026-10-07 — M0 ve M1 laboratuvar kabulü tamamlandı; sıradaki aşama M2 ortak can/hasar temeli. A54'te son iki hatlı portal 10/10 tekrarlı kontrolü geçti; 100/100 agent 36.25 saniyede hedefe vardı, eşzamanlı giriş tepe sayısı 2. Kaba 10/30/60/100 yükleri ve ilk CPU örneği kaydedildi. Bu sonuçlar izole laboratuvara aittir; üretim entegrasyonu ve doğal enemy davranışı M3/M6'da doğrulanır. Kanıt ve kullanım NAVIGATION_LAB.md içinde. Bir aşama, kabul koşulları karşılanmadan tamamlandı sayılmaz. Her aşama küçük alt commitlere ayrılabilir.
+Durum: 2026-10-07 — M0 ve M2 tamamlandı; M1'in temel kapı/rota kontrolü tamamlandı, kalabalığın vagon içi hedef yerleşimi açık. Sıradaki aşama M3 tek vagon oynanışı. Kullanıcı gözlemiyle uzak köprü/ikili link yerine vagon kenarında kapı, yakın zeminler ve ortak NavMesh + carving kuruldu; yeni geometri PC'de 10/10 kontrolü geçti. 30 agentta bir zombi vagon içinde duran kalabalıkta hedefe ulaşamadı; hedef yönetimi M3/M6'da ele alınacak. Önceki A54 performans/100-agent kanıtı eski link geometrisine aittir. Rutin testler PC'de; önemli birleşik oynanış değişiminde Android'e dönülecek. Ayrıntılar NAVIGATION_LAB.md ve COMBAT_LAB.md içinde. Her aşama küçük alt commitlere ayrılabilir.
 
 ## Öncelik mantığı
 
@@ -13,8 +13,8 @@ Durum: 2026-10-07 — M0 ve M1 laboratuvar kabulü tamamlandı; sıradaki aşama
 | Aşama | Çıktı | Bağımlılık | Durum |
 | --- | --- | --- | --- |
 | M0 | Korunan prototip ve geliştirme/test düzeni | Plan | Tamamlandı; referans/test sahnesi, AudioListener düzeltmesi ve Android lab buildi doğrulandı; hedef A54 |
-| M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | Lab kabulü tamamlandı; son A54 iki hatlı geçit 10/10, kalabalık 100/100 ve eşzamanlı giriş 2; ilk cihaz/CPU ölçümü kaydedildi |
-| M2 | Ortak can, hasar, ölüm | M1 deneme sonucu; kodu M1'e bağımlı değil | Bekliyor |
+| M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | Temel rota/kapı 10/10; A54 ilk ölçümü kayıtlı. Yeni sürekli yüzeyde vagon içi kalabalık hedef yerleşimi M3/M6 için açık |
+| M2 | Ortak can, hasar, ölüm | M1 deneme sonucu; kodu M1'e bağımlı değil | Tamamlandı; 14 test geçti, izole hitscan/can/ölüm Play kontrolü yapıldı |
 | M3 | Mobil kontrollü tek vagon döngüsü ve oynanış değerlendirmesi | M1, M2 | Bekliyor |
 | M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | Bekliyor |
 | M4b | Kanıtlanan döngüyü beş vagona genişletme | M4a değerlendirmesi | Bekliyor |
@@ -64,8 +64,8 @@ Kabul: eski sahne açılır; test sahnesi açılır; audio listener uyarısı ü
 
 - Sabit tren zemini, istasyon zemini ve tek kontrollü giriş portalı kur.
 - Kapı açık/kapalı durumu bu aşamada test kontrolünden verilebilir; bu geçici kontrol son oyun mantığı değildir.
-- Zombi `NavMeshAgent` ile dış yaklaşma noktasına ve link açıkken iç noktaya yürüsün.
-- Link devre dışıyken iç/dış alan arasında başka nav yolu olmadığını doğrula.
+- Zombi `NavMeshAgent` ile dış yaklaşma noktasına ve geçit açıkken iç noktaya yürüsün.
+- Kapı kapalıyken iç/dış alan arasında başka nav yolu olmadığını doğrula.
 - Kapı çevresinde sınırlı saldırı/kuşatma noktaları, yol bulunamama ve nav dışında doğuş durumunu incele.
 - Çevrenin görsel hareketinin gameplay collision/nav alanını taşımadığını doğrula.
 - Örneğin 10/30/60/100 agent ile kaba ölçek denemesi yap; dar kapı kuyruğu ve açık geçitten geçiş ayrı ölçülsün. Bunlar test yükleridir, hedef canlı sınırı değildir.
@@ -86,6 +86,7 @@ Kabul: 10 canlık kapıda 8+2 hasar tam olarak kırar; negatif değerler sınır
 
 - `DoorController` sağlık/kırılma/onarım durumunu portal adaptörüne bağlar.
 - Normal zombi yaklaşır, kapıya menzilde ve aralıkla vurur, kapı kırılınca girer, oyuncuya saldırır.
+- Labda gözlenen vagon içi avoidance tıkanmasını hedef/menzil yerleşimiyle ele al; zombilerin sabit grid hedeflerine dizilmesini gerçek brain davranışı sanma.
 - Oyuncu kırık kapı yanında 3 saniye kalınca onarır; uzaklaşınca ilerleme sıfırlanır. Slider gözlemcidir.
 - Geçitte zombi/oyuncu varken kapanış, birden fazla onarım hedefi ve aynı anda gelen hasar ele alınır.
 - En küçük enemy pool/factory ve kayıt yaşam döngüsü; ölüm/havuza dönüş rezervasyonları temizler.
@@ -173,4 +174,4 @@ Kabul: seçilen cihaz/kalite profili/FPS ve canlı sınırı raporlanır; ölç�
 
 ## Bir sonraki somut iş
 
-**M0 ve M1 hazırlığı:** prototipi koruyarak ayrı bir test sahnesi açmak; tek vagon–tek kapı–tek zombi ile kapalı/açık portalın NavMesh davranışını kanıtlamak. Bu iş başladığında kapı health/onarımını geçici test kontrolüyle karıştırmadan M2/M3 için açık bağlantı bırakılacak.
+**M3 ilk küçük parça:** ortak canı `DoorController` üzerinden portala bağlamak; zombi kapıya vurur, can bitince geçit açılır, oyuncunun 3 saniyelik yakınlık onarımı iptal edilebilir ve eşik güvenle kapanır. Ardından hareket/ateş, oyuncuya saldırı ve temel pool aynı tek vagon sahnesinde birleştirilir. Minimum mobil kontrol ve tabanca mermi/reload kararı uygulamadan önce kullanıcıyla seçilir.

@@ -1,7 +1,7 @@
 {
     "name": "WaitYourTurn.Navigation.Editor",
     "rootNamespace": "WaitYourTurn.Editor",
-    "references": ["WaitYourTurn.Navigation", "WaitYourTurn.Sandbox", "Unity.AI.Navigation"],
+    "references": ["WaitYourTurn.Navigation", "WaitYourTurn.Sandbox", "Unity.AI.Navigation", "WaitYourTurn.Combat", "WaitYourTurn.Combat.Unity", "UnityEditor.TestRunner"],
     "includePlatforms": ["Editor"],
     "autoReferenced": false
 }
