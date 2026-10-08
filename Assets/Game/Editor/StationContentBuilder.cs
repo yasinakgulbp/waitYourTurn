@@ -14,9 +14,18 @@ namespace WaitYourTurn.Editor
             var normal = Profile("Normal", "normal", 24, 2.1f, 2, 1, 8, new Color(.68f, .39f, .27f));
             var fast = Profile("Fast", "fast", 16, 3f, 1, .75f, 10, new Color(.55f, .75f, .35f));
             var tough = Profile("Tough", "tough", 70, 1.45f, 5, 1.4f, 20, new Color(.55f, .35f, .65f));
-            return new[] { Program("Station01", 1, normal, fast, tough, 8, 2, 1),
+            var intro = Profile("Intro", "intro", 12, 1.65f, 1, 1.2f, 12, new Color(.68f, .39f, .27f));
+            return new[] { IntroProgram(intro),
                 Program("Station03", 3, normal, fast, tough, 10, 4, 2),
                 Program("Station06", 6, normal, fast, tough, 12, 6, 4) };
+        }
+        private static StationDefinition IntroProgram(EnemyProfile profile)
+        {
+            string path = Folder + "/Station01.asset";
+            var value = AssetDatabase.LoadAssetAtPath<StationDefinition>(path); if (value != null) return value;
+            value = ScriptableObject.CreateInstance<StationDefinition>(); value.firstStation = 1; value.wagonLiveLimit = 4;
+            value.bands = new[] { new SpawnBand { profile = profile, count = 10, firstAt = 4, interval = 4.5f } };
+            AssetDatabase.CreateAsset(value, path); return value;
         }
         private static EnemyProfile Profile(string name, string id, float health, float speed, float damage, float interval, int reward, Color tint)
         {

@@ -14,25 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaitYourTurn.Run::WaitYourTurn.Run.StationDefinition
   firstStation: 1
   globalLiveLimit: 40
-  wagonLiveLimit: 12
+  wagonLiveLimit: 4
   queueCapacity: 32
   requestsPerFrame: 2
   warmupPerFrame: 4
   positionAttempts: 3
   retryDelay: 0.25
   bands:
-  - profile: {fileID: 11400000, guid: 01c291fc06362b24f945d47742c3abf8, type: 2}
+  - profile: {fileID: 11400000, guid: ba99581a49354bd9831cc34aa233e0bb, type: 2}
     wagon: -1
-    count: 8
-    firstAt: 2
-    interval: 3
-  - profile: {fileID: 11400000, guid: 265f625ff3451884c8caad3631b9c6bf, type: 2}
-    wagon: -1
-    count: 2
-    firstAt: 10
-    interval: 7
-  - profile: {fileID: 11400000, guid: 95a1b1b329c9c164cb899de558ddc9bc, type: 2}
-    wagon: -1
-    count: 1
-    firstAt: 20
-    interval: 10
+    count: 10
+    firstAt: 4
+    interval: 4.5
