@@ -4,7 +4,7 @@
 
 ## Açma ve oynama
 
-Unity: `Wait Your Turn → Run → Open Two Wagons`, ardından Play. Sahne: `Assets/Game/Scenes/RunSandbox.unity`. WASD/sol joystick; otomatik nişan, ateş ve reload. Sarı onarım noktasında yaklaşık 3 saniye kalınca kırık kapı onarılır. Camdan dışarı ateş ve oyuncunun vagon sınırı M3 bileşenleriyle sürer.
+Unity: `Wait Your Turn → Run → Open Two Wagons`, ardından Play. Sahne: `Assets/Game/Scenes/RunSandbox.unity`. WASD/sol joystick; otomatik nişan, ateş ve reload. Sarı onarım noktasında yaklaşık 3 saniye kalınca hasarlı/kırık kapı onarılır. D20: oyuncu hasarı onarımı kesmez, kapı hasarı ilerlemeyi sıfırlar; ikisi ayrı ayarlanabilir (GAMEPLAY_LAB.md). Camdan dışarı ateş ve oyuncunun vagon sınırı M3 bileşenleriyle sürer.
 
 Başlangıç ayarları: ilk yaklaşma 10 s, savunma 60 s, kalkış uyarısı 3 s, hızlanma 3 s, kararma 1.5 s, karanlık sayaç 10 s, açılma 1.5 s; sonraki yaklaşma 6 s. `RunDriver` Inspector'ındaki süreler koşu ayarıdır. `Restart run` yeni koşu başlatır; sıradan istasyon geçişi hiçbir canı doldurmaz.
 
@@ -62,3 +62,19 @@ Kullanıcının görsel geri bildirimiyle iki/beş vagonlu sahnelerin eski yan �
 Builder mevcut iki/beş vagon sahnelerini `Wait Your Turn → Run → Align Lab Track Visuals` ile günceller; yeniden oluşturma ve yerleşim uygulama da aynı görsel kurulumunu kullanır. Ray/travers kökünde yalnızca Transform, MeshFilter ve MeshRenderer vardır; collider veya NavMesh kaynağı eklenmedi. Kayıtlı sahne blokları karşılaştırıldığında görsel kök dışındaki bütün bileşenler aynı kaldı. Silah değerleri değiştirilmedi.
 
 Beş vagonlu mevcut geçiş kontrolü **10/10 PASS**, UTC `2026-10-08T04:29:49.7764496Z`; tüm vagonlar ziyaret edildi ve önceki oynanış koruma kontrolleri geçti. Son Play çıkışında Console **0 hata / 0 uyarı**. Bu küçük görsel düzeltme için Android yük testi tekrarlanmadı.
+
+## Hareketli istasyon ve yol çevresi — 2026-10-08
+
+Kullanıcı yalnız traverslerin hareket etmesinin yolculuk hissini tamamlamadığını belirtti. Önceki sürümde mavi platform, sabit istasyon colliderının Renderer'ıyla çiziliyordu; çevre ayrımı bu kısmı kapsamıyordu. Artık iki/beş vagon sahnelerinde bu Renderer kapalıdır. Aynı ölçü/konumdaki ayrı platform görselleri, sarı platform kenarları ve dekoratif istasyon sütunları `Station Visuals (no physics)` kökündedir. Yol zemini ve referans işaretleri ayrı `Journey Scenery (no physics)` kökündedir. Vagon zemini, kapılar, colliderlar, baked navigation ve spawn/onarım çapaları hareket etmez.
+
+`RunPresentation` aynı evreden üç hareket üretir: ray/travers 2 birim, yol çevresi 20 birim tekrar eder; istasyon **tekrar etmez**. `JourneyMotion` yumuşak hız eğrisinin integralinden istasyon ofsetini hesaplar. İlk yaklaşmanın başında +25 birim (5 hız × 10 saniye / 2), duruşta tam 0; kalkışta geriye doğru uzaklaşma vardır. FadeOut eski istasyondan ayrılmayı sürdürür; tam karanlıkta eski görünüm kapanır. FadeIn yeni istasyonu sonraki yaklaşma süresine uygun mesafeye koyar; açılma → yaklaşma sınırında konum/hız süreklidir. Terminal evre görsel hareketi durdurur; Restart yeni yolculuğu başlatır. Kamera vagon takibini korur. Dekoratif sütunlar fiziksel engel değildir.
+
+Kurulum: Play kapalıyken **Wait Your Turn → Run → Upgrade Journey Visuals** (`Ctrl+Shift+F7`), iki labı günceller; normal açma/yerleşim uygulama da aynı kurulumdan geçer. Görsel kök referansları ve hız `RunPresentation` Inspector'ındadır; runtime kodu sahnedeki nesneleri isimle aramaz. 20 birimlik dekor tekrarına uygun model/doku kullanılmalı; ayarı rastgele değiştirip desen aralığı aynı bırakılmamalı. Gerçek tren modelleri geldiğinde sunum kökleri giydirilir; oynanış geometri verileri ayrıca hazırlanır.
+
+**11/11 EditMode PASS**, UTC `2026-10-08 05:13:24Z`: mevcut 6 evre vakası ve 5 hareket vakası; duruş hizası, hızlanma/kararma sınırı, iki farklı sonraki yaklaşma süresi, kare örneklemesinden bağımsız ofset ve terminal hız. Menü **Run Journey Tests** (`Ctrl+Shift+F8`), rapor `Logs/JourneyTests.xml`.
+
+**10/10 TrainSandbox geçiş PASS**, UTC `2026-10-08T05:14:46.1341671Z`: önceki can/silah/kapı/karanlık/üyelik/havuz kontrollerine ek olarak her duruşta gerçek görsel platform hizası, yaklaşma/kalkışta ofset, sabit gameplay zeminleri ve üç hareketli kökte sıfır collider doğrulandı. Beş vagonun tümü ziyaret edildi, 60 gövde sınırı korundu. Normal 10 saniyelik yaklaşma ve savunmada spawn/kapı saldırısı da gözlendi; Console Play giriş/test/çıkışında **0 runtime hata/uyarı**. İki vagon sahnesi de güncellendi ve dosya yapısı denetlendi; bu revizyonda iki-vagon Play testi ayrıca tekrarlanmadı.
+
+Kaydedilen scene bloklarının karşılaştırmasında mevcut collider, NavMesh, agent, spawn, kapı, silah ve vagon transformları korunur. Beklenen mevcut değişiklikler: platform Renderer'ının kapanması, sunum referansları, önceki D20 varsayılanlarının serileştirilmesi ve yeni görsel kök kayıtları. Yeni bileşen tipleri yalnız GameObject/Transform/MeshFilter/MeshRenderer; runtime instantiate/destroy, yeni fizik sorgusu veya runtime bake eklenmez. Yolculuk her kare sabit sayıda kök taşır; **render maliyeti sıfır sayılmaz**. Bu basit modellerin Android render maliyeti nihai içerik/kalabalık kontrolünde ölçülecek; bu turda cihaz FPS iddiası yoktur.
+
+D21: üretim oyununda zombiler trenin iki tarafından gelebilir. Mevcut tek taraflı/tek kapılı lab bu hedefi tamamlamaz. M6'nın ilk gerçek geometri işi her iki tarafın kapı/yürünebilir alan/spawn verilerini doğrular. Dış zombi üretimi yalnız durmuş istasyonda yapılır; kalkışta dış üyeler havuza döner, içeridekiler korunur. Sunum, spawn/hasar kararının sahibi değildir. Battle ve botsuz mod aynı evre/sunum sözleşmesini kullanabilir; modların kendileri henüz uygulanmadı.

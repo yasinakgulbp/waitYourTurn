@@ -36,6 +36,8 @@ namespace WaitYourTurn.Run
             _ => 0
         };
         public float Remaining => Math.Max(0, Duration - Elapsed);
+        public float NextApproachDuration => timings.nextApproach;
+        public float DepartureDuration => timings.departure;
         public float Progress => Duration > 0 ? Math.Min(1, Elapsed / Duration) : 0;
         public event Action<RunPhase> Changed;
         public RunFlow(RunTimings configuration)

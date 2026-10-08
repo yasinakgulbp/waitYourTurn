@@ -19,6 +19,22 @@ namespace WaitYourTurn.Editor
         private const string TrainScenePath = "Assets/Game/Scenes/TrainSandbox.unity";
         private const string LayoutPath = "Assets/Game/Content/FiveWagonLayout.asset";
 
+        [MenuItem("Wait Your Turn/Run/Upgrade Journey Visuals %#F7")]
+        public static void UpgradeJourneyVisuals()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            string path = EditorSceneManager.GetActiveScene().path;
+            if (path != ScenePath && path != TrainScenePath) return;
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            foreach (string labPath in new[] { ScenePath, TrainScenePath })
+            {
+                if (!File.Exists(labPath)) continue;
+                EditorSceneManager.OpenScene(labPath); EnsureWagonNavigation();
+            }
+            EditorSceneManager.OpenScene(path);
+            Debug.Log("[RunJourney] Moving station/scenery visuals installed in both labs; colliders, baked navigation and spawn anchors remain fixed.");
+        }
+
         [MenuItem("Wait Your Turn/Run/Align Lab Track Visuals")]
         public static void AlignTrackVisuals()
         {
@@ -180,6 +196,7 @@ namespace WaitYourTurn.Editor
             RunDriver run = Object.FindAnyObjectByType<RunDriver>();
             var scene = EditorSceneManager.GetActiveScene();
             bool changed = EnsureTrackVisuals(run);
+            changed |= EnsureJourneyVisuals(run);
             for (int i = 0; i < run.Wagons.Length; i++)
             {
                 NavMeshSurface surface = run.Wagons[i].GetComponentInChildren<NavMeshSurface>();
@@ -197,6 +214,67 @@ namespace WaitYourTurn.Editor
             }
             if (changed) { EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); }
             AssetDatabase.SaveAssets();
+        }
+
+        private static bool EnsureJourneyVisuals(RunDriver run)
+        {
+            bool changed = false;
+            Transform station = Root("Station Visuals (no physics)");
+            Transform scenery = Root("Journey Scenery (no physics)");
+            Material wall = AssetDatabase.LoadAssetAtPath<Material>("Assets/Game/Content/NavigationLab/Wall.mat");
+            Material marker = AssetDatabase.LoadAssetAtPath<Material>("Assets/Game/Content/NavigationLab/Marker.mat");
+            float first = float.PositiveInfinity, last = float.NegativeInfinity;
+            foreach (WagonRuntime wagon in run.Wagons)
+            {
+                first = Mathf.Min(first, wagon.transform.position.x); last = Mathf.Max(last, wagon.transform.position.x);
+                Transform floor = wagon.transform.Find("Connected Gameplay Geometry/Station Gameplay Surface/Station floor");
+                Renderer source = floor.GetComponent<Renderer>();
+                if (source.enabled) { source.enabled = false; EditorUtility.SetDirty(source); changed = true; }
+                // Copy only the mesh presentation. Never clone the source collider or surface.
+                Part(station, wagon.Id + " platform", floor.position, floor.lossyScale, source.sharedMaterial);
+                Part(station, wagon.Id + " platform edge", wagon.transform.TransformPoint(new Vector3(0, .012f, .7f)),
+                    new Vector3(9.8f, .025f, .15f), marker);
+                for (int i = 0; i < 2; i++)
+                    Part(station, wagon.Id + " station column " + i,
+                        wagon.transform.TransformPoint(new Vector3(i == 0 ? -3 : 3, 1.2f, -7.8f)),
+                        new Vector3(.3f, 2.4f, .3f), wall);
+            }
+            // Uniform base and a 20-unit repeating pattern: the wrapped edges stay off camera.
+            float min = Mathf.Floor((first - 80) / 20) * 20, max = Mathf.Ceil((last + 80) / 20) * 20;
+            Part(scenery, "Journey ground", new Vector3((min + max) * .5f, -.65f, 0),
+                new Vector3(max - min + 40, .2f, 60), wall);
+            for (float x = min; x <= max; x += 20)
+            {
+                Part(scenery, "Wayside marker " + x, new Vector3(x, .35f, -12), new Vector3(1, 1, 1), marker);
+                Part(scenery, "Wayside strip " + x, new Vector3(x + 5, -.48f, -15), new Vector3(8, .08f, .2f), marker);
+            }
+            RunPresentation presentation = Object.FindAnyObjectByType<RunPresentation>();
+            if (presentation.StationVisuals != station || presentation.Scenery != scenery)
+            { presentation.ConfigureJourney(station, scenery); EditorUtility.SetDirty(presentation); changed = true; }
+            return changed;
+
+            Transform Root(string name)
+            {
+                GameObject existing = GameObject.Find(name);
+                if (existing != null) return existing.transform;
+                changed = true; return new GameObject(name).transform;
+            }
+            void Part(Transform parent, string name, Vector3 position, Vector3 scale, Material material)
+            {
+                Transform child = parent.Find(name);
+                if (child == null)
+                {
+                    GameObject part = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    part.name = name; part.transform.SetParent(parent, false); child = part.transform;
+                    Object.DestroyImmediate(part.GetComponent<Collider>()); changed = true;
+                }
+                Renderer renderer = child.GetComponent<Renderer>();
+                if (child.position == position && child.localScale == scale && renderer.sharedMaterial == material &&
+                    renderer.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.Off && !renderer.receiveShadows) return;
+                child.SetPositionAndRotation(position, Quaternion.identity); child.localScale = scale;
+                renderer.sharedMaterial = material; renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                renderer.receiveShadows = false; EditorUtility.SetDirty(child); EditorUtility.SetDirty(renderer); changed = true;
+            }
         }
 
         private static bool EnsureTrackVisuals(RunDriver run)

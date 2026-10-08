@@ -165,9 +165,17 @@ namespace WaitYourTurn.Sandbox
             int count = run.Wagons.Length;
             var survivors = new EnemyBrain[count]; var health = new float[count]; var lives = new uint[count];
             var frozenEnemies = new Vector3[count]; var visited = new HashSet<string>();
+            var floors = new Transform[count]; var floorPositions = new Vector3[count];
+            if (presentation.StationVisuals == null || presentation.Scenery == null ||
+                presentation.StationVisuals.GetComponentsInChildren<Collider>(true).Length != 0 ||
+                presentation.Scenery.GetComponentsInChildren<Collider>(true).Length != 0 ||
+                presentation.TrackVisuals.GetComponentsInChildren<Collider>(true).Length != 0)
+            { Finish(false, "Journey visuals missing or contain gameplay colliders."); yield break; }
             for (int i = 0; i < count; i++)
             {
                 WagonRuntime wagon = run.Wagons[i]; var door = wagon.Doors[0];
+                floors[i] = wagon.transform.Find("Connected Gameplay Geometry/Station Gameplay Surface/Station floor");
+                floorPositions[i] = floors[i].position;
                 door.Durability.TryApplyDamage(new DamageContext(i == 0 ? 1000 : 3 + i,
                     default, Team.Enemy, (ulong)(3 + i), door.Durability.LifeVersion));
                 health[i] = door.Durability.Current; lives[i] = door.Durability.LifeVersion;
@@ -194,7 +202,9 @@ namespace WaitYourTurn.Sandbox
             uint playerLife = run.Player.LifeVersion;
             int ammo = run.Weapon.Rounds; ulong hitId = 10;
             bool wasPaused = false; float frozenTime = 0, repairProgress = 0;
+            bool sawApproach = false, sawDeparture = false;
             float deadline = Time.realtimeSinceStartup + 35;
+            yield return new WaitForEndOfFrame(); // Inspect presentation after LateUpdate as well as gameplay.
             while (run.Flow.Station < 11 && Time.realtimeSinceStartup < deadline)
             {
                 if (run.Flow.Phase == RunPhase.Faulted) { Finish(false, run.Failure); yield break; }
@@ -221,6 +231,10 @@ namespace WaitYourTurn.Sandbox
                 for (int i = 0; i < count; i++)
                 {
                     WagonRuntime wagon = run.Wagons[i]; var door = wagon.Doors[0].Durability; EnemyBrain enemy = survivors[i];
+                    if (floors[i].position != floorPositions[i] || floors[i].GetComponent<Renderer>().enabled ||
+                        (run.Flow.Phase is RunPhase.Defense or RunPhase.DepartureWarning &&
+                        (presentation.StationVisuals.Find(wagon.Id + " platform").position - floorPositions[i]).sqrMagnitude > .0001f))
+                    { Finish(false, "Gameplay floor moved or stopped platform is misaligned: " + wagon.Id); yield break; }
                     if (door.Current != health[i] || door.LifeVersion != lives[i] || enemy == null ||
                         !wagon.Enemies.Active.ContainsReference(enemy) || enemy.WagonId != wagon.Id)
                     { Finish(false, "Door state/enemy ownership changed: " + wagon.Id); yield break; }
@@ -231,18 +245,20 @@ namespace WaitYourTurn.Sandbox
                         !enemy.OnBoard || enemy.NeedsSafeDeparture))
                     { Finish(false, "Outside cleanup/inside retention failed: " + wagon.Id); yield break; }
                 }
+                sawApproach |= run.Flow.Phase == RunPhase.Approach && presentation.StationOffset > .001f;
+                sawDeparture |= run.Flow.Phase == RunPhase.Departing && presentation.StationOffset < -.001f;
                 wasPaused = run.Flow.Paused;
-                yield return null;
+                yield return new WaitForEndOfFrame();
             }
             int created = 0; foreach (WagonRuntime wagon in run.Wagons) created += wagon.Enemies.CreatedCount;
-            if (run.Flow.Station != 11 || run.Assignments != 10 || created != count * 12 || visited.Count != count)
+            if (run.Flow.Station != 11 || run.Assignments != 10 || created != count * 12 || visited.Count != count || !sawApproach || !sawDeparture)
             { Finish(false, "Ten transitions, one assignment each or bounded pools failed."); yield break; }
             run.Player.Invulnerable = false;
             run.Player.TryApplyDamage(new DamageContext(1000, default, Team.Enemy, 99, run.Player.LifeVersion));
             yield return new WaitForSecondsRealtime(.2f);
             if (run.Flow.Phase != RunPhase.GameOver || run.Player.IsAlive || run.Assignments != 10 || run.Flow.Station != 11)
             { Finish(false, "Death resumed the run or reset a life."); yield break; }
-            Finish(true, $"10 transitions, all {count} wagons visited: HP/equipped weapon/magazine/reserve/independent doors persist; camera/player binding correct; dark clock/motion/repair/damage pause; inside/threshold survivors retained, outside cleanup has no kill; {created} pooled bodies; terminal death.");
+            Finish(true, $"10 transitions, all {count} wagons visited: HP/equipped weapon/magazine/reserve/independent doors persist; camera/player binding correct; dark clock/motion/repair/damage pause; inside/threshold survivors retained, outside cleanup has no kill; {created} pooled bodies; terminal death. Journey roots have no colliders; gameplay floors stay fixed, visual platforms align at every stop and move during approach/departure.");
         }
 
         private IEnumerator CheckCrowd()

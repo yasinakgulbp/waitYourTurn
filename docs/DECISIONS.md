@@ -26,6 +26,7 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | D18 | Ortak temel üzerinde botlu hayatta kalma yarışı (Battle) ve botsuz tek oyunculu ilerleme/hikâye modu hedeflenir | Kullanıcının yeni vizyonu: tren giriş sunumu, nickli komşu vagon rakipleri, son hayatta kalan/sıralama; en az 3 bot beceri profili. Gerçek ağ oyuncuları bu talepten çıkarılmaz. M4a önce ortak döngüyü kanıtlar; mod/bot aşaması ayrı kurulur. |
 | D19 | Tabanca sınırsız yedek; hafif makineli, tüfek ve pompalı toplam sınırlı mermi kullanır | Kullanıcı M5'te seçti (2026-10-08). Şarjör bitince yedek varsa otomatik doldurma; son dolum kısmi olabilir. Yeni silah alma/mermi ürünü M7'de tasarlanır; silah veya vagon değiştirmek mermi vermez. |
 | D20 | Varsayılan: oyuncu hasarı onarımı kesmez, kapı hasarı ilerlemeyi sıfırlar; iki kural ayrı ayarlanabilir | Kullanıcı 2026-10-08'de bu ayrımı netleştirdi. Hasar engellenmez; kapı kırılabilir ve oyuncu ölebilir. Onarım süresi/menzili ve iki kesilme anahtarı denge araçlarıdır. Dalga bitişi koşulu yoktur. |
+| D21 | Zombiler trenin iki tarafından da gelebilir | Kullanıcı 2026-10-08'de hatırlattı. Tek taraflı/tek kapılı lab üretim hedefi değildir. Gerçek vagon entegrasyonunda her iki tarafın yürünebilir alanı, kapıları ve spawn verileri doğrulanır; sunum hareketi saldırı tarafına bağlı olmaz. |
 
 ## Teknik öneriler
 
@@ -44,6 +45,7 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | T11 | M4a iki vagonla döngü; M4b beş vagona genişletme | Önce atama/kalıcılık/yolculuk kanıtlanır, sonra geometri ve yük genişler. |
 | T12 | Botlu yarış nick/karar/hareketle canlı hissi verir; bilgisayar rakipleri olduğu anlaşılır | Gerçek çevrimiçi insan eşleşmesi diye sunmak güven beklentisini bozabilir. Bu açıklık teknik öneridir; kullanıcı tarafından ayrıca seçilmiş sayılmaz. |
 | T13 | Hasarlı sağlam kapı da 3 saniyelik yakınlık onarımıyla tam cana döner | 2026-10-08: kullanıcı bu eksik durumların ele alınmasını istedi. Hasar kaynaklarının kesilme kuralları D20 ile ayrı netleştirildi. Yarım süre can vermez; sağlam kapıda yaşam kimliği korunur, kırık kapı açıkça yeniden kurulur. |
+| T14 | D02 görsel hareketi istasyon zemini/çevresini de kapsar; istasyon traverslerle döngülenmez | 2026-10-08 kullanıcı geri bildirimi: yalnız ray hareketi yetersizdi. Sabit istasyon colliderının görünümü ayrı köke taşınır; duruşta tam hizalanır. Yol çevresi sınırlı döngü, istasyon tek yaklaşma/kalkış hareketi kullanır; yeni istasyon tam karanlıkta yerleştirilir. Spawn/nav bu görsellere bağlı değildir. |
 
 ## Uygulama öncesi veya ilgili aşamada netleştirilecekler
 

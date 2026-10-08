@@ -133,7 +133,7 @@ Kabul: silah verisiyle hasar/aralık değişir; sağlam kapının camından atı
 
 ## M6 — Spawn ve enemy ölçeği
 
-- Gerçek tren/altı kapılı vagon entegrasyonunu ayrı küçük işle doğrula: kapı seçimi, kapı/istasyon spawn noktaları ve güvenli iç noktalar geometri verisinden gelsin. M4b'nin tek-kapılı lab varsayımlarını üretim geometrisine taşımadan kaldır.
+- Gerçek tren/altı kapılı vagon entegrasyonunu ayrı küçük işle doğrula: D21 uyarınca trenin iki tarafından da saldırı mümkün olmalı. Her iki tarafın yürünebilir istasyon alanları, kapı seçimi, kapı/istasyon spawn noktaları ve güvenli iç noktalar geometri verisinden gelsin. M4b'nin tek taraflı/tek-kapılı lab varsayımlarını üretim geometrisine taşımadan kaldır.
 - `StationDefinition` ile vagon/tür/zaman/bütçe dağılımı; Inspector'dan ayarlanır.
 - Normalden türeyen hızlı/dayanıklı enemy profilleri; ortak brain/motor/hasar.
 - Global/vagon canlı sınırları, spawn istek kuyruğu sınırı, kare başına üretim bütçesi.
