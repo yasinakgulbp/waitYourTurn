@@ -6,7 +6,7 @@ Durum: kullanıcının 2026-10-07 tarihinde anlattığı hedefler ve açıkça i
 
 Otomasyonla istasyonlar arasında hareket eden bir trende zombi salgını sırasında hayatta kalma. Savunma, rastgele vagon ataması ve koşu içindeki ekipman gelişimi birleşir. İlk hedef mümkün olduğunca çok istasyondan sağ çıkmaktır. Geniş roguelike yetenek/ödül sistemi sonraki kapsamdır.
 
-Her vagon ayrı bir kimliğe, kapılara ve savunma kurulum noktalarına sahiptir. Kapıların maksimum canı vagonun güvenliğini belirler. Şans, her yolculukta oyuncunun hangi vagona atanacağını belirler.
+Her vagon ayrı bir kimliğe, kapılara ve savunma kapasitesine sahiptir. Kapıların maksimum canı vagonun güvenliğini belirler. Şans, her yolculukta oyuncunun hangi vagona atanacağını belirler.
 
 İlk prototip `Assets/Scenes/SampleScene 2.unity` yerleşim referansıdır: uzun dikdörtgen vagonlar, oyuncuyu izleyen kamera ve trenin iki yanından saldırılar. Güncel D23 görselleri fiziksel oranları ve 4–6 kapılı vagon hedefini belirler; ölçüler VISUAL_SCALE.md ve MODEL_CONTRACT.md içindedir. Kare/tek kapılı/tek taraflı test sahneleri bu hedefin yerine geçmez. 2026-10-08 karşılaştırması ve gerçek geometriye geçiş kabulü `VISION_AND_INTEGRATION.md` içinde kayıtlıdır.
 
@@ -87,11 +87,11 @@ Satın alınmış Hovl projectile assetleri görsel sunumda korunur. Gerçek vur
 
 ## Turret ve dron
 
-- Vagonların önceden tanımlı boş kurulum noktaları vardır; serbest yerleştirme ilk kapsamda yoktur.
+- D31: turret satın alma anındaki oyuncu konumuna kurulur; uygun zemin/engel ve vagon kotası kontrol edilir. Sabit kurulum noktası aranmaz.
 - Normal ve gelişmiş turret: 360 derece dönebilir; menzilinde, görüşü açık en yakın düşmanı hedefler. Sağlam kapı camından ve yan pencere açıklığından ateş edebilir; metal dikme/çerçeve veya dolu panel arkasındaki hedefi vuramaz. Kapı önüne kurulum temel savunma taktiğidir; aynı atış geometrisi oyuncu silahlarıyla paylaşılır. Turretin gerçek namlu yüksekliği kendi aşamasında açıklıklarla sınanır.
 - Her ürünün ateş aralığı, hasarı ve mermi kapasitesi ayrı veridir. Örnek kapasite 50, örnek aralık 1 saniye; kesin denge değeri değildir.
-- Örnek sınır her turret türünden 2 adet; kapsamın oyuncu başına mı vagon başına mı olduğu ayrıca kararlaştırılacak.
-- Mermisi biten turret bir kez kapanır, patlama efekti oynatır ve slotu boşaltır. Efektin alan hasarı vermesi ayrıca tasarlanır.
+- D29: her turret türünden vagon başına en fazla 2 adet; oyuncuyla taşınmaz, kurulduğu vagonda kalır.
+- Mermisi biten turret bir kez kapanır, patlama efekti oynatır ve slotu boşaltır. D29: bitiş patlaması yakındaki zombilere bir kez alan hasarı verir.
 - Oyuncuda en fazla 1 dron; oyuncuyu yumuşak takip ve küçük uçuş salınımlarıyla izler. Yakındaki erişilebilir/görüşü açık düşmana ateş eder.
 - Dronun mermisi bitince kamikaze durumu başlar. Hedef varsa ona giderek bir kez alan hasarı verir; hedef yoksa sınırlı süre bekler ve güvenle kapanır. Hedefin arada ölmesi, oyuncunun ölmesi ve vagon değişimi tanımlı durumlar olmalıdır.
 - Dron uçuş görseliyle hasarın duvarlardan geçmesi birbirinden ayrı konudur; kamikazenin kapı/duvar ilişkisi uygulamadan önce belirlenir.

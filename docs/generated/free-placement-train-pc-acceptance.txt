@@ -1,0 +1,19 @@
+2026-10-08 — PC revision: free turret placement and consistent train geometry
+Unity 6000.6.4f1 / TrainIntegration / five playable wagons.
+
+User changes: buy at current player XZ; four reused actors per wagon; 0.22m body / 0.24m nav footprint; owner pass-through, restored after wagon teleport. Windows: top 1.9, outer post 0.42, middle post 0.32. All visual wall tops 2.1m, static door headers. Tail-to-head doors/HP: 6/10, 5/20, 5/26, 4/32, 4/40. Decorative roofed locomotive at head (+X), absent from gameplay/spawn/nav lists. New production seed + random initial wagon; deterministic fixture settings are restored. Temporary starting coins 1000.
+
+Scene rebuilt with fresh bilateral NavMesh. Visual inspection: consistent wall tops, static door headers, no turret pad markers; strongest wagon has locomotive on right, another wagon on left. Natural Play showed different starting wagons (e, a); production restart reset money to 1000.
+
+F12 (includes owner collision pair checks after each assignment):
+2026-10-08T19:34:17.9860063Z
+PASS: Normal/advanced purchases at exact buyer XZ use 50/80 finite rounds; owner walks through small collider; occupied/outside/per-type caps reject without charge; actual glass shot credits owner; 3 zombies enter around installed geometry; dark gate and 10 assignments preserve positions/ammo; old wagon owner reward; 3-shot fixture exhausts once, blasts two enemies once and credits kill; same actor redeploy resets life/ammo; death closes; Restart clears all 20 pooled actors. PC only; final balance and Android pending.
+F10:
+2026-10-08T19:35:08.5328474Z
+PASS: Door variants 6,5,5,4,4: repair/glass; every bilateral window passes all four guns, metal edges/panels block straight/oblique rays, movement/nav remain closed; bilateral door entry/thresholds and player boundary; responsive camera; 10 cycles visiting 5 wagons; HP/SMG/ammo/survivors/door damage preserved; full 60-enemy pool bound.
+F9:
+2026-10-08T19:35:41.2145329Z
+PASS: Actual pistol kill + owned-defense credit; pooled life/replay/foreign-owner/cleanup; heal 10->40,50->80,80->100; full/unfunded/duplicate reject; current-wagon repair; weapon unlock/refill/cooldown; 10 assignments preserve currency/inventory/ammo; dark/death/old context reject; new run resets. PC only.
+Final Play Console: 0 errors / 0 warnings; stopped Play after successful checks.
+PC only. Android, touch ergonomics, long-session performance, final balance and bot behavior not re-tested in this revision.
+

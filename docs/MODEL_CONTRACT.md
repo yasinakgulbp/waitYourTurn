@@ -22,31 +22,31 @@
 | Kapı üst camı | Y=0,6…2,0; mermi geçer, sağlam kapıdan beden geçmez |
 | Kapı dış yan dikmeleri | Açıklığın dış kenarına bitişik, genişlik 0,07; tam duvar yüksekliğinde |
 | Kapı üst metal çerçevesi | Y=2,0…2,1; mermiyi engeller |
-| Yan pencere net camı | Y=0,7…1,6; net yükseklik 0,9; aşağıdaki X aralıkları |
-| Pencere alt/üst metali | Y=0…0,7 / 1,6…2,1; mermiyi engeller |
-| Duvar segmenti dış pencere çerçevesi | X'te 0,32 genişlik; tam duvar yüksekliğinde; uç duvarla örtüşmeyi önler |
-| Aynı segmentte iki camı ayıran dikme | X'te 0,18 genişlik; tam duvar yüksekliğinde |
+| Yan pencere net camı | Y=0,7…1,9; net yükseklik 1,2; aşağıdaki X aralıkları |
+| Pencere alt/üst metali | Y=0…0,7 / 1,9…2,1; mermiyi engeller |
+| Duvar segmenti dış pencere çerçevesi | X'te 0,42 genişlik; tam duvar yüksekliğinde |
+| Aynı segmentte iki camı ayıran dikme | X'te 0,32 genişlik; tam duvar yüksekliğinde |
 | Vagonlar arası mesafe | Gövde uçları arasında 1,0 |
 
 Atış çekirdeğinin namlusu aktör kökünden Y=0,9, hedef merkezi Y=0,85'tir. Modeldeki namlu/efekt bağlantısı bu atış çizgisine uymalıdır; modelin silahını başka yüksekliğe koymak mekanik namluyu kendiliğinden değiştirmez. Büyük düşmanlar veya yüksek turret namluları için aynı tablo ve kabul kontrolleri ayrıca değerlendirilir.
 
 ## Pencerelerin X aralıkları
 
-Her iki tarafta yalnız dış kapılar **arasında** kalan duvar segmentlerine pencere açılır. Vagon uçları ile dış kapılar arasındaki dört köşe tamamen metaldir; hiç bir yerleşimde burada cam veya atış açıklığı bulunmaz. Segmentin iki ucundan 0,32 metal ayrılır. Kalan alan, net genişliği en fazla 2,2 olan eşit camlara ve aralarında 0,18 metal dikmeye bölünür.
+Her iki tarafta yalnız dış kapılar **arasında** kalan duvar segmentlerine pencere açılır. Vagon uçları ile dış kapılar arasındaki dört köşe tamamen metaldir; hiç bir yerleşimde burada cam veya atış açıklığı bulunmaz. Segmentin iki ucundan 0,42 metal ayrılır. Kalan alan, net genişliği en fazla 2,2 olan eşit camlara ve aralarında 0,32 metal dikmeye bölünür.
 
 | Segment | Net cam merkez X / genişlik |
 | --- | --- |
 | Sol uç (−6…−4,525) | Tamamen metal, pencere yok |
 | Sağ uç (+4,525…+6) | Tamamen metal, pencere yok |
-| Orta kapı mevcutken sol ara duvar (−3,075…−0,725) | −1,9 / 1,71 |
-| Orta kapı mevcutken sağ ara duvar (+0,725…+3,075) | +1,9 / 1,71 |
-| Orta kapı yokken büyük ara duvar (−3,075…+3,075) | −1,896667 / 1,716667; 0 / 1,716667; +1,896667 / 1,716667 |
+| Orta kapı mevcutken sol ara duvar (−3,075…−0,725) | −1,9 / 1,51 |
+| Orta kapı mevcutken sağ ara duvar (+0,725…+3,075) | +1,9 / 1,51 |
+| Orta kapı yokken büyük ara duvar (−3,075…+3,075) | −1,876667 / 1,556667; 0 / 1,556667; +1,876667 / 1,556667 |
 
 SixDoor iki tarafta orta kapı taşır (4 yan pencere). FiveDoor kuzey orta kapıyı kaldırır (5 pencere). FourDoor iki orta kapıyı kaldırır (6 pencere). Beşli sahnede toplam 26 yan pencere vardır. Kapı sayısı zombi giriş sayısıdır; pencere ayrı bir zombi girişi değildir. Pencere kırılması, canı veya onarımı bu kararda yoktur.
 
 ## Kesit görünümü ve bağlama
 
-Ön/güney duvarı kameranın iç mekânı göstermesi için **görsel olarak Y=1,15'te kesilir**. Arka/kuzey duvar tamdır. Bu nedenle güney camı önizlemede yalnız Y=0,7…1,15 görünür; fiziksel açıklık iki tarafta da aynı Y=0,7…1,6'dır. Kesit, mermi veya beden kurallarını değiştirmez. Modelci güney duvar üst bölümünü ayrı, gizlenebilir parça yapmalıdır; ileride kamera kesiti uygulanınca tam model kullanılabilir. Bugün kesilmiş camın üstüne görünür metal kapak eklenmez: orada fiziksel bir metal yoktur.
+2026-10-08 kullanıcı düzeltmesi: **bütün yan/uç duvarların görünür üst kotu Y=2,1**. Ön duvarı 1,15'te, uçları 1,6'da kesen eski görünüm kaldırıldı. Cam iki yanda aynı açıklıktadır; üst metal ince (0,2), dikey metal daha geniştir. Kapı üst çerçevesi Y=2,0…2,1 sabit gövde parçasıdır; kapı kırıldığında yalnız alt panel ve kapı camı gizlenir, üst çerçeve/dikmeler kalır. Modelci bu sabit parçaları hareketli kapı meshine birleştirmez. Tavan oynanabilir vagonlarda açık kesit, lokomotifte kapalıdır.
 
 `Replaceable visuals - no gameplay ownership` ve `Replaceable actor visuals - no colliders` değiştirilebilir sanat kökleridir. Camın net sınırı ile fizik açıklığı aynı olmalıdır; metal çerçeve/dikme görünümü karşılık gelen kutuyla örtüşür. Render modelinde collider, NavMeshAgent, ayrı hareket/hasar scripti veya root motion etkinleştirilmez. Kapı açılma görünümü mevcut `DoorPanels`/portal durumuna bağlanır; hasar ve yol açma işi model animasyonuna verilmez.
 
@@ -62,6 +62,12 @@ Model tesliminde scene gizmo/collider görünümüyle pivot, scale ve açıklık
 
 ## M7b turret model bağlantısı
 
-Kurulum pivotu vagon yerel koordinatındadır; `generated/turret-mount-dimensions.csv` bütün pad kimlik/konumlarını verir. Aktör kökü padin Y=0,05 üzerindedir, scale=(1,1,1). Gövde colliderı köke göre merkez Y=0,3, tam boyut 0,56 × 0,6 × 0,56 m; carving kutusu 0,6 × 0,7 × 0,6 m. Mekanik namlu aktör kökü +Y=0,9, dolayısıyla pad/vagon zemini +Y=0,95'tir. Pad çapı 0,65 m görsel işarettir, collider değildir.
+Kurulum artık sabit pad kullanmaz: satın alma anındaki oyuncu X/Z konumu, vagon zemini Y=0 esas alınır. Her vagonda dört yeniden kullanılabilir havuz slotu vardır; CSV slot kapasitesi/fizik ölçülerini verir, sabit kurulum koordinatı vermez. Aktör kökü zemin +Y=0,05, scale=(1,1,1). Gövde colliderı köke göre merkez Y=0,3, tam boyut **0,22 × 0,6 × 0,22 m**; carving kutusu **0,24 × 0,7 × 0,24 m**. Model tabanı hâlâ 0,5 m çapındadır; görünüm çarpışmayı büyütmez. Sahibi turret gövdesinden yürüyebilir; zombi fiziği/nav küçük engeli kullanır. Mekanik namlu aktör kökü +Y=0,9, zemin +Y=0,95'tir.
+
+## Tren dizilimi ve lokomotif
+
+İlerleme yönü +X (ekranda sağ), görsel çevre −X akar. Kuyruk→baş dizilimi: wagon-a 6 kapı/10 can, b 5/20, c 5/26, d 4/32, e 4/40. Merkezler X=0/13/26/39/52. Dayanıklılık her layout assetinde ayarlanır; turretteki sayılar kapı sayısından türetilmez. En iyi wagon-e'nin sağında lokomotif, solunda wagon-d görünür; henüz bot eklenmediği için komşu vagon boş olabilir.
+
+Lokomotif pivotu X=63, Y=0, Z=0 (son vagon ucundan 1 m boşlukla); gövde **8 × 2 × 4,2 m**, kapalı tavan üst kotu 2,3 m, havalandırma üstü 2,34 m. Burun +X. Bu aşamada yalnız görsel bilgisayar kontrol odasıdır: collider, Health, WagonRuntime, zombi spawnı veya NavMesh kaynağı taşımaz. Model kendi görsel köküne giydirilir; oynanabilir vagonlar listesine eklenmez.
 
 `Replaceable turret visual` yalnız sanat çocukları taşır. `Aiming head` 360 derece Y ekseninde döner, ileri yön +Z; fizik kökü döndürülmez. Model collider/NavMeshAgent/hasar scripti eklemez. Namlu pivotu bugünkü mekanik ışının kökteki X/Z ve Y=0,9 konumuna uymalı; görünen namlu ucunu değiştirmek mekanik başlangıcı değiştirmez. Muzzle socket gelecekte değişirse ortak silah ve metal/cam kabulü birlikte güncellenir. Patlama kozmetiktir; gerçek yarıçap TurretDefinition verisidir. Kurulum/atış kapı onarımını veya geçidi kapatmamalı; model tesliminde F12 ve F10 tekrar çalıştırılır. Dron ölçüleri M7c'de eklenir.

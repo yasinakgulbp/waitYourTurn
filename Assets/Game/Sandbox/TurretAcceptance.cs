@@ -25,6 +25,7 @@ namespace WaitYourTurn.Sandbox
         private TurretDefinition original, fast;
         private WeaponDefinition fastWeapon;
         private string status;
+        private bool restoreFixedSeed, restoreRandomInitial;
         public void Configure(RunDriver owner, RunEconomy shop, StationSpawner spawn, RunDefenses turrets, TargetRegistry targets)
         { run = owner; economy = shop; spawner = spawn; defenses = turrets; registry = targets; }
         private void Update() { if (!checking && Input.GetKeyDown(KeyCode.F12)) StartCoroutine(Check()); }
@@ -32,6 +33,11 @@ namespace WaitYourTurn.Sandbox
         private IEnumerator Check()
         {
             checking = true; status = "shop / live shot / capacity";
+            restoreFixedSeed = run.UseFixedSeed; restoreRandomInitial = run.RandomInitialWagon;
+            int previousSeed = run.ActualRunSeed;
+            run.Restart();
+            if (!CheckThat(run.UseFixedSeed || run.ActualRunSeed != previousSeed, "Normal Restart reused its random seed")) yield break;
+            run.ConfigureRandomAssignments(true, false);
             hud = FindAnyObjectByType<TrainIntegrationController>(); shopHud = FindAnyObjectByType<ShopHud>();
             if (hud != null) hud.enabled = false; if (shopHud != null) shopHud.enabled = false;
             run.ControlsAllowed = run.AimAllowed = false; run.Repair.enabled = false;
@@ -46,13 +52,20 @@ namespace WaitYourTurn.Sandbox
             int advanced = System.Array.FindIndex(economy.Catalog.items, i => i.effect == ShopEffect.Turret && i.turretIndex == 1);
             if (!CheckThat(normal >= 0 && advanced >= 0 && defenses.Definitions.All(d => d.Valid), "Missing valid turret products/types")) yield break;
             int balance = economy.Wallet.Balance;
-            run.Player.GetComponent<PlayerMotor>().Place(wagon.Geometry.SafePosition(0));
-            if (!CheckThat(Buy(normal) == PurchaseResult.Unavailable && economy.Wallet.Balance == balance, "Remote pad purchase charged money")) yield break;
-            StandBeside(mount); balance = economy.Wallet.Balance;
+            // No authored pad is required; reject an actual out-of-wagon location instead.
+            run.Player.GetComponent<PlayerMotor>().Place(wagon.transform.position + Vector3.forward * 4);
+            if (!CheckThat(Buy(normal) == PurchaseResult.Unavailable && economy.Wallet.Balance == balance, "Outside-wagon purchase charged money")) yield break;
+            StandBeside(mount); Vector3 boughtAt = run.Player.transform.position; balance = economy.Wallet.Balance;
             if (!CheckThat(Buy(normal) == PurchaseResult.Success && mount.Occupied && mount.Actor.Weapon.Rounds == 50 &&
-                economy.Wallet.Balance == balance - economy.Catalog.items[normal].price, "Normal turret purchase/ammo/price failed")) yield break;
+                Vector2.Distance(new Vector2(mount.transform.position.x, mount.transform.position.z), new Vector2(boughtAt.x, boughtAt.z)) < .001f &&
+                economy.Wallet.Balance == balance - economy.Catalog.items[normal].price, "Free-position purchase/ammo/price failed")) yield break;
             yield return Cooldown(); balance = economy.Wallet.Balance;
             if (!CheckThat(Buy(normal) == PurchaseResult.Unavailable && economy.Wallet.Balance == balance, "Occupied mount charged money")) yield break;
+            var playerMotor = run.Player.GetComponent<PlayerMotor>();
+            playerMotor.MoveDisplacement(Vector3.right * .8f);
+            playerMotor.MoveDisplacement(Vector3.left * 1.6f);
+            if (!CheckThat(run.Player.transform.position.x < boughtAt.x - .6f, "Turret collision trapped its owner")) yield break;
+            playerMotor.Place(wagon.Geometry.SafePosition(0));
             if (!CheckThat(wagon.SpawnOutside(0, profile), "Actual-shot target spawn failed")) yield break;
             var enemy = wagon.Enemies.Active[0]; enemy.SetPaused(true); enemy.Health.ResetForSpawn(1, Team.Enemy);
             float deadline = Time.realtimeSinceStartup + 2;
@@ -94,6 +107,8 @@ namespace WaitYourTurn.Sandbox
             while ((run.Assignments < 10 || (run.Wagons.Length > 1 && run.CurrentWagon == wagon)) && !run.Flow.Terminal && Time.realtimeSinceStartup < deadline)
             {
                 run.Flow.Tick(1000); yield return null;
+                if (actors.Any(a => a.Deployed && !Physics.GetIgnoreCollision(a.GetComponent<Collider>(), run.Player.GetComponent<Collider>())))
+                { Finish(false, "Wagon teleport lost owner/turret pass-through"); yield break; }
                 if (run.Flow.Paused && actors.Any(a => !a.Weapon.Paused))
                 { Finish(false, "Turret not paused in dark/gameplay gate"); yield break; }
             }
@@ -109,7 +124,7 @@ namespace WaitYourTurn.Sandbox
             }
             if (!CheckThat(wagon.SpawnOutside(0, profile), "Retained target spawn failed")) yield break;
             enemy = wagon.Enemies.Active[0]; enemy.SetPaused(true);
-            if (!CheckThat(enemy.GetComponent<AgentMotor>().TryPlace(mount.transform.position + Vector3.right * 1.2f + Vector3.up * .05f) &&
+            if (!CheckThat(enemy.GetComponent<AgentMotor>().TryPlace(mount.transform.position + Vector3.forward * .9f + Vector3.up * .05f) &&
                 enemy.RetainForTravel(enemy.transform.position), "Retained target placement failed")) yield break;
             enemy.Health.ResetForSpawn(1, Team.Enemy); balance = economy.Wallet.Balance;
             deadline = Time.realtimeSinceStartup + 2;
@@ -152,9 +167,15 @@ namespace WaitYourTurn.Sandbox
             run.Restart();
             if (!CheckThat(defenses.Racks.All(r => r.Mounts.All(m => !m.Occupied)) && actorIds.SequenceEqual(
                 defenses.Racks.SelectMany(r => r.Mounts).Select(m => m.Actor.GetEntityId())), "New run leaked deployments or grew actors")) yield break;
-            Finish(true, $"Normal/advanced purchases use 50/80 finite rounds; occupied/remote/per-type caps reject without charge; actual glass shot credits owner; 3 zombies enter around installed geometry; dark gate and 10 assignments preserve mounts/ammo; old wagon owner reward; 3-shot fixture exhausts once, blasts two enemies once and credits kill; same actor redeploy resets life/ammo; death closes; Restart clears all {actorIds.Length} fixed mount actors. PC only; final balance and Android pending.");
+            Finish(true, $"Normal/advanced purchases at exact buyer XZ use 50/80 finite rounds; owner walks through small collider; occupied/outside/per-type caps reject without charge; actual glass shot credits owner; 3 zombies enter around installed geometry; dark gate and 10 assignments preserve positions/ammo; old wagon owner reward; 3-shot fixture exhausts once, blasts two enemies once and credits kill; same actor redeploy resets life/ammo; death closes; Restart clears all {actorIds.Length} pooled actors. PC only; final balance and Android pending.");
         }
-        private void StandBeside(TurretMount mount) => run.Player.GetComponent<PlayerMotor>().Place(mount.transform.position + Vector3.right * .85f + Vector3.up * .05f);
+        private void StandBeside(TurretMount mount)
+        {
+            var rack = defenses.CurrentRack;
+            int index = System.Array.IndexOf(rack.Mounts, mount);
+            Vector3 door = rack.transform.InverseTransformPoint(run.CurrentWagon.Doors[0].transform.position);
+            run.Player.GetComponent<PlayerMotor>().Place(rack.transform.TransformPoint(new Vector3(door.x + .65f + index * 1.2f, .05f, -1.25f)));
+        }
         private PurchaseResult Buy(int index) => economy.Buy(index, economy.Context, economy.NextRequest());
         private WaitForSecondsRealtime Cooldown() => new WaitForSecondsRealtime(economy.Catalog.purchaseCooldown + .03f);
         private bool CheckThat(bool pass, string detail) { if (!pass) Finish(false, detail); return pass; }
@@ -167,7 +188,7 @@ namespace WaitYourTurn.Sandbox
             if (fast != null) Destroy(fast); if (fastWeapon != null) Destroy(fastWeapon);
             original = fast = null; fastWeapon = null;
             defenses.enabled = true; spawner.enabled = true; run.ControlsAllowed = run.AimAllowed = true;
-            run.Repair.enabled = true; run.Restart();
+            run.Repair.enabled = true; run.ConfigureRandomAssignments(restoreFixedSeed, restoreRandomInitial); run.Restart();
             if (hud != null) hud.enabled = true; if (shopHud != null) shopHud.enabled = true; checking = false;
         }
     }

@@ -17,6 +17,7 @@ namespace WaitYourTurn.Sandbox
         [SerializeField] private RunPresentation presentation;
         private bool checking;
         private bool restoreStartingWeaponOnly;
+        private bool restoreFixedSeed, restoreRandomInitial;
         private string result="WASD / left joystick; automatic fire. F10: integration checks.";
         public void Configure(RunDriver owner,StationSpawner spawn,RunPresentation visual)
         { run=owner;spawner=spawn;presentation=visual; }
@@ -61,6 +62,8 @@ namespace WaitYourTurn.Sandbox
         }
         private IEnumerator Check()
         {
+            restoreFixedSeed=run.UseFixedSeed;restoreRandomInitial=run.RandomInitialWagon;
+            run.ConfigureRandomAssignments(true, false);
             restoreStartingWeaponOnly=run.Weapon.StartingWeaponOnly;run.Weapon.ConfigureInventory(false);
             checking=true;spawner.enabled=false;run.ControlsAllowed=run.AimAllowed=false;run.Repair.enabled=false;
             run.Restart(new RunTimings{initialApproach=.2f,defense=300});run.Player.Invulnerable=true;
@@ -272,7 +275,7 @@ namespace WaitYourTurn.Sandbox
             result=(pass?"PASS: ":"FAIL: ")+detail;Directory.CreateDirectory("Logs");
             File.WriteAllText($"Logs/TrainIntegration-{run.Wagons.Length}.txt",System.DateTime.UtcNow.ToString("O")+"\n"+result);
             if(pass)Debug.Log("[TrainIntegration] "+result);else Debug.LogError("[TrainIntegration] "+result);
-            checking=false;run.Weapon.ConfigureInventory(restoreStartingWeaponOnly);run.Repair.enabled=true;spawner.enabled=true;run.ControlsAllowed=run.AimAllowed=true;run.Restart();
+            checking=false;run.ConfigureRandomAssignments(restoreFixedSeed,restoreRandomInitial);run.Weapon.ConfigureInventory(restoreStartingWeaponOnly);run.Repair.enabled=true;spawner.enabled=true;run.ControlsAllowed=run.AimAllowed=true;run.Restart();
         }
     }
 }

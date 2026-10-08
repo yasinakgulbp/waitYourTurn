@@ -43,7 +43,7 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | T03 | İlk silahlar hitscan/pellet; satın alınmış projectile assetleri VFX | M2/M3: tabanca temeli; M5: çeşitlilik. Yavaş projectile gelecekte ayrı resolver kullanır. |
 | T04 | Küçük enemy durum makinesi, veri tabanlı tür farklılıkları | M3/M6: türler aynı döngüyü kullanır; gereksiz framework eklenmez. |
 | T05 | Spawn canlı sınırları, havuzlar ve dağıtılmış AI/path güncellemeleri | M6/M9: cihazda ölçüm; sayısal bütçeler profil sonucuyla belirlenir. |
-| T06 | Sabit savunma slotları; ilk mağazada otomatik para ödülü | M7: daha sade mobil etkileşim. Fiziksel para toplama ileride eklenebilir. |
+| T06 | D31 ile oyuncunun konumuna turret kurulumu; vagon başına havuz/kota, otomatik para ödülü | Sabit pad önerisi kullanıcı geri bildirimiyle kaldırıldı. Fiziksel para toplama ileride eklenebilir. |
 | T07 | Rastgele atamada eşit vagon olasılığı; aynı vagon tekrar çıkabilir | M4: tasarım denemesi. Kullanıcı henüz bu dağılımı seçmedi. |
 | T08 | Ölümde oyun biter; kararma/onarım/satın alma eski koşuyu yeniden başlatamaz | M2/M4: ölüm her evrede geçerli. |
 | T09 | M1'de kaba Android kalabalık ölçümü, maliyetlerin ayrılması | Ölçüm olmadan NavMesh değiştirilmez veya mobil performans kanıtlandı denmez. |
@@ -115,3 +115,15 @@ Kullanıcı seçimi: normal ve gelişmiş turret için **vagon başına her tür
 ## 2026-10-08 — D30: gelir planının ertelenmesi ve sağlayıcı tercihi
 
 Kullanıcı odağı önce oyun olarak seçti; IAP ekonomisi/ürün/fiyat henüz kararlaştırılmadı. İlk yayın Google Play, IAP teslimi onun faturalandırmasıyla hedeflenir. Reklam için Unity Ads tercih edilir; bu sağlayıcının gelir üstünlüğü doğrulanmış sayılmaz. Kullanıcı Battle 3×, hikâye devam/3× tekliflerini ve teklif reddinden sonra kısa sonuç geçiş reklamı fikrini yeniden belirtti. Önceki bağımsız reklam yerleşimi önerisi kullanıcı tarafından seçilmiş karar değildir; yeni tercih esas alınır. Gösterim sıklığı, reklam kaldırma hakkı, reklam yok/hata akışı ve güncel platform kuralları M9 somut servis tasarımında doğrulanır. Bu aşamada SDK eklenmedi.
+
+## 2026-10-08 — D31: serbest turret kurulumu ve tren dizilimi
+
+Kullanıcı sabit pad yaklaşımını kaldırdı: kendi vagonunda uygun zeminde satın alınan turret oyuncunun o andaki X/Z konumuna kurulur. Her türden 2/vagon kotası kalır. Dört yeniden kullanılabilir aktör/vagon; zombi/metal/başka turret üstüne kurulum ücret almadan reddedilir. Görünüm değişmeden gövde 0,22 × 0,6 × 0,22 m, carving 0,24 × 0,7 × 0,24 m; sahibi içinden yürür. Atama sonrası CharacterController yeniden etkinleştirildiğinde bu çarpışma hariç tutması yenilenir. Turret kurulmuş konum/mermiyle vagonda kalır.
+
+D24 görünüm düzeltmesi: pencere üst kotu 1,9, üst metal 0,2 m; dikey dış çerçeve 0,42 ve ara dikme 0,32 m. Bütün görünür duvarlar 2,1 m üst kotta birleşir. Kapı üst çerçevesi gövdede sabittir, kapıyla gizlenmez. Cam/metal fiziği bu gerçek hacimlerle uyumludur; köşeler penceresiz kalır.
+
+Tren +X yönüne gider; kuyruktan başa kapı/can dizilimi 6/10 → 5/20 → 5/26 → 4/32 → 4/40. En sağdaki güçlü vagonun sağında kapalı lokomotif/kontrol odası vardır; orası hedef, spawn alanı veya oynanabilir vagon değildir. Botlar henüz eklenmedi; M7c sonrası Mod/Bot sırası korunur.
+
+Normal koşu her Restart'ta yeni rastgele tohum ve rastgele ilk vagon kullanır. Önceki 12345 sabit tohumu her oyunda aynı diziyi üretiyordu. Sabit tohum testlerde açık seçenek olarak korunur; fixture sonunda normal ayar geri yüklenir. Aynı vagonun tesadüfen tekrar seçilmesi mümkündür; sıra garantisi yoktur. ActualRunSeed ileride kayıtla RNG devamını çözmek için tek başına yeterli değildir; M8 mevcut RNG konumunu da korumalıdır.
+
+Deneme kolaylığı için başlangıç parası RunShop.asset üzerinden geçici 1000 yapıldı; yayın dengesi kabulü değildir. Güncel model ölçüleri MODEL_CONTRACT ve üretilen CSV'lerdedir. Bu düzeltmelerden sonra sonraki mekanik M7c drondur.

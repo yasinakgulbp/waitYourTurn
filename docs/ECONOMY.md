@@ -4,7 +4,7 @@
 
 ## Oyuncu kuralları
 
-- Koşu tabanca ve 0 para ile başlar. Oyuncuya ait öldürmeler parayı otomatik cüzdana ekler. Başka sahibin öldürmesi veya istasyon/havuz temizliği ödül değildir.
+- Koşu tabanca ile başlar. Kullanıcının denemesi için başlangıç parası geçici **1000**; yayın dengesi değildir. Oyuncuya ait öldürmeler parayı otomatik cüzdana ekler. Başka sahibin öldürmesi veya istasyon/havuz temizliği ödül değildir.
 - Mağaza savaşta ve görünür yolculukta açıktır; oyun, ateş ve yakınlık onarımı devam eder. Karanlık geçişte/ölümde alışveriş kapanır; vagon ataması açık paneli kapatır.
 - İyileştirme `max(mevcut can × %50, 30)`, maksimum canla sınırlı: 10→40, 50→80, 80→100. Tam canda para harcanmaz.
 - Toplu onarım yalnız işlem anındaki vagonun hasarlı/kırık kapılarını tam cana getirir. Aynı kapı API'si kullanılır; eşikte beden varsa fiziksel kapanışın güvenlik kuralı sürer. Ücretsiz yakınlık onarımı değişmez.
@@ -23,7 +23,7 @@
 | Rifle / mermi tamamlama | 100 |
 | Shotgun / mermi tamamlama | 90 |
 
-Başlangıç parası 0, başarılı alımlar arasında 0,35 sn bekleme vardır. Normal/hızlı/dayanıklı zombi ödülü 8/10/20; `Content/StationPrograms` altındaki ilgili `EnemyProfile.reward` alanıdır. Bunlar nihai ekonomi dengesi değildir. Fiyat/ödül/silah değerleri birbirinden ayrı veridir.
+Başlangıç parası geçici 1000, başarılı alımlar arasında 0,35 sn bekleme vardır. Normal/hızlı/dayanıklı zombi ödülü 8/10/20; `Content/StationPrograms` altındaki ilgili `EnemyProfile.reward` alanıdır. Bunlar nihai ekonomi dengesi değildir. Fiyat/ödül/silah değerleri birbirinden ayrı veridir.
 
 ## Sorumluluklar ve genişletme
 

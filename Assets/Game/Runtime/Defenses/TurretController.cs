@@ -4,7 +4,7 @@ using WaitYourTurn.Combat;
 
 namespace WaitYourTurn.Defenses
 {
-    /// <summary>One reusable actor per authored mount. No shop, player, wagon or run dependency.</summary>
+    /// <summary>Reusable actor at a purchased position. No shop, player, wagon or run dependency.</summary>
     public sealed class TurretController : MonoBehaviour
     {
         [SerializeField] private HealthComponent source;
@@ -18,6 +18,7 @@ namespace WaitYourTurn.Defenses
         private uint ownerLife, targetLife;
         private float nextSelection;
         private bool paused;
+        private Collider[] ownerColliders;
         public bool Deployed { get; private set; }
         public bool Retiring { get; private set; }
         private readonly RadialDamage blast = new RadialDamage();
@@ -39,6 +40,8 @@ namespace WaitYourTurn.Defenses
             weapon.Configure(source, credit); weapon.ConfigureDefinitions(new[] { definition.weapon }); weapon.ResetWeapon();
             Deployed = true; weapon.Paused = paused;
             gameObject.SetActive(true); body.enabled = obstacle.enabled = true;
+            ownerColliders = credit.GetComponentsInChildren<Collider>();
+            RefreshOwnerCollisions();
             presentation.Show(definition.color);
             return true;
         }
@@ -51,6 +54,7 @@ namespace WaitYourTurn.Defenses
         {
             Deployed = false; target = null; creditedOwner = null; Definition = null;
             weapon.Paused = true; body.enabled = obstacle.enabled = false;
+            RestoreOwnerCollisions();
             presentation.Clear(); gameObject.SetActive(false);
         }
         private void Update()
@@ -75,8 +79,20 @@ namespace WaitYourTurn.Defenses
             Retiring = true; Deployed = false; target = null; weapon.Paused = true;
             try { BlastHits = blast.Apply(registry, source, creditedOwner.Identity, weapon.Muzzle,
                 Definition.blastRadius, Definition.blastDamage, weapon.HitMask); }
-            finally { Retiring = false; body.enabled = obstacle.enabled = false; }
+            finally { Retiring = false; body.enabled = obstacle.enabled = false; RestoreOwnerCollisions(); }
             Exhaustions++; presentation.Exhaust();
+        }
+        private void RestoreOwnerCollisions()
+        {
+            if (ownerColliders != null) foreach (var collider in ownerColliders)
+                if (collider != null) Physics.IgnoreCollision(body, collider, false);
+            ownerColliders = null;
+        }
+        public void RefreshOwnerCollisions()
+        {
+            // CharacterController is toggled during wagon placement; restore the pair after teleport.
+            if (Deployed && ownerColliders != null) foreach (var collider in ownerColliders)
+                if (collider != null) Physics.IgnoreCollision(body, collider, true);
         }
     }
 }

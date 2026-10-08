@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58f554feda633f0439651908a4be72fd, type: 3}
   m_Name: RunShop
   m_EditorClassIdentifier: WaitYourTurn.Run::WaitYourTurn.Run.ShopCatalog
-  startingCoins: 0
+  startingCoins: 1000
   purchaseCooldown: 0.35
   items:
   - id: heal

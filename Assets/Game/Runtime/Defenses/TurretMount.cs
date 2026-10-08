@@ -12,15 +12,22 @@ namespace WaitYourTurn.Defenses
         public TurretController Actor => actor;
         public bool Occupied => actor.Deployed || actor.Retiring;
         public void Configure(string id, TurretController turret) { slotId = id; actor = turret; }
-        public bool CanPlace()
+        public bool CanPlace(Vector3 position, HealthComponent buyer)
         {
             if (Occupied) return false;
             Physics.SyncTransforms();
-            int count = Physics.OverlapBoxNonAlloc(transform.position + Vector3.up * .35f, new Vector3(.31f, .3f, .31f),
+            int count = Physics.OverlapBoxNonAlloc(position + Vector3.up * .35f, new Vector3(.13f, .3f, .13f),
                 overlaps, transform.rotation, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-            return count == 0; // Fail closed on any occupant, including a full query buffer.
+            if (count == overlaps.Length) return false;
+            for (int i = 0; i < count; i++)
+                if (overlaps[i].GetComponentInParent<HealthComponent>() != buyer) return false;
+            return true;
         }
-        public bool TryDeploy(TurretDefinition definition, HealthComponent owner, TargetRegistry registry) =>
-            CanPlace() && actor.TryDeploy(definition, owner, registry);
+        public bool TryDeploy(TurretDefinition definition, HealthComponent owner, TargetRegistry registry, Vector3 position)
+        {
+            if (!CanPlace(position, owner)) return false;
+            transform.position = position;
+            return actor.TryDeploy(definition, owner, registry);
+        }
     }
 }

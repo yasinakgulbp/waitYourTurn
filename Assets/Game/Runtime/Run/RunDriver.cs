@@ -20,6 +20,13 @@ namespace WaitYourTurn.Run
         [SerializeField] private ProximityRepair repair;
         [SerializeField] private RunTimings timings = new RunTimings();
         [SerializeField] private int seed = 12345;
+        [SerializeField] private bool useFixedSeed = true;
+        [SerializeField] private bool randomInitialWagon;
+        public bool UseFixedSeed => useFixedSeed;
+        public bool RandomInitialWagon => randomInitialWagon;
+        public int ActualRunSeed { get; private set; }
+        public void ConfigureRandomAssignments(bool fixedSeed = false, bool randomInitial = true)
+        { useFixedSeed = fixedSeed; randomInitialWagon = randomInitial; }
         [SerializeField] private int initialWagonIndex;
         [SerializeField, Min(0)] private float arrivalProtectionSeconds = 2;
         public float ArrivalProtectionSeconds => arrivalProtectionSeconds;
@@ -50,7 +57,8 @@ namespace WaitYourTurn.Run
         {
             SetGate(false);
             if (Flow != null) Flow.Changed -= OnPhase;
-            random = new System.Random(seed); Assignments = 0; Failure = null;
+            ActualRunSeed = useFixedSeed ? seed : Guid.NewGuid().GetHashCode();
+            random = new System.Random(ActualRunSeed); Assignments = 0; Failure = null;
             foreach (WagonRuntime wagon in wagons)
             {
                 wagon.SetDefender(null);
@@ -59,7 +67,8 @@ namespace WaitYourTurn.Run
             }
             player.ResetForSpawn(player.Maximum, Team.Player); pistol.ResetWeapon(); repair.Cancel(); aim.ClearTarget();
             Flow = new RunFlow(overrideTimings ?? timings); Flow.Changed += OnPhase;
-            if (!Assign(wagons[Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1)], false)) { Flow.Fail(); return; }
+            int first = randomInitialWagon ? random.Next(wagons.Length) : Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1);
+            if (!Assign(wagons[first], false)) { Flow.Fail(); return; }
             OnPhase(RunPhase.Approach);
         }
         private void Update()

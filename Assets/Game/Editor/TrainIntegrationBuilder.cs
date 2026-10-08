@@ -39,6 +39,8 @@ namespace WaitYourTurn.Editor
             var layouts = new[] {
                 Layout("SixDoor", DoorSlots.All, 10),
                 Layout("FiveDoor", DoorSlots.All & ~DoorSlots.NorthCenter, 20),
+                Layout("FiveDoorReinforced", DoorSlots.All & ~DoorSlots.NorthCenter, 26),
+                Layout("FourDoorStandard", DoorSlots.All & ~(DoorSlots.NorthCenter | DoorSlots.SouthCenter), 32),
                 Layout("FourDoor", DoorSlots.All & ~(DoorSlots.NorthCenter | DoorSlots.SouthCenter), 40)
             };
             if (layouts.Any(x => !x.Valid)) throw new System.InvalidOperationException("Invalid wagon layout; check dimensions and 4–6 door slots.");
@@ -91,8 +93,8 @@ namespace WaitYourTurn.Editor
                 for (int sign = -1; sign <= 1; sign += 2)
                 {
                     Cube("End wall collider", physics, new Vector3(sign * (half - .1f), 1.05f, 0), new Vector3(.2f, 2.1f, layout.width), null, true);
-                    Cube("End wall visual", visual, new Vector3(sign * half, .8f, 0), new Vector3(.2f, 1.6f, layout.width), wall, false);
-                    Cube("End rim", visual, new Vector3(sign * half, 1.65f, 0), new Vector3(.25f, .12f, layout.width), trim, false);
+                    Cube("End wall visual", visual, new Vector3(sign * half, layout.wallHeight * .5f, 0), new Vector3(.2f, layout.wallHeight, layout.width), wall, false);
+                    Cube("End rim", visual, new Vector3(sign * half, layout.wallHeight - .05f, 0), new Vector3(.25f, .1f, layout.width), trim, false);
                     Cube("Coupling", visual, new Vector3(sign * (half + .4f), .15f, 0), new Vector3(.8f, .25f, .55f), trim, false);
                     Cube("Warm end lamp", visual, new Vector3(sign * (half + .12f), .9f, 0), new Vector3(.05f, .3f, .18f), yellow, false);
                 }
@@ -114,8 +116,8 @@ namespace WaitYourTurn.Editor
                     var health = entry.AddComponent<HealthComponent>(); SetHealth(health, layout.doorHealth, Team.Neutral);
                     var repair = Anchor("Repair anchor", entry.transform, new Vector3(0, 0, .72f));
                     var door = entry.AddComponent<DoorController>(); door.Configure(health, portal, repair); doors.Add(door);
-                    // Front wall/door visuals are cut away; full-height blockers retain the same rules on both sides.
-                    float visualHeight = side == 0 ? 1.15f : layout.wallHeight;
+                    // Door leaves disappear on opening; static jambs/header stay on the wagon.
+                    float visualHeight = layout.wallHeight - .1f;
                     var solid = Cube("Lower panel", entry.transform, new Vector3(0, .3f, 0), new Vector3(width, .6f, .16f), red, true);
                     solid.AddComponent<NavMeshModifier>().ignoreFromBuild = true;
                     var window = Cube("Shoot-through glass", entry.transform, new Vector3(0, .6f + (visualHeight - .6f) * .5f, 0), new Vector3(width, visualHeight - .6f, .08f), glass, false);
@@ -163,7 +165,7 @@ namespace WaitYourTurn.Editor
                                 new Vector3(left + paneWidth * .5f, (layout.windowBottom + layout.windowTop) * .5f, sign * sideZ));
                             aperture.gameObject.AddComponent<WagonWindow>().Configure(new Vector3(paneWidth, layout.windowTop - layout.windowBottom, .18f),
                                 Mathf.Min(layout.windowPost, layout.windowBorder));
-                            float top = Mathf.Min(layout.windowTop, side == 0 ? 1.15f : layout.wallHeight);
+                            float top = layout.windowTop;
                             Cube("Shoot-through window glass", visual, new Vector3(left + paneWidth * .5f, (layout.windowBottom + top) * .5f, sign * sideZ),
                                 new Vector3(paneWidth, top - layout.windowBottom, .06f), glass, false);
                             if (p + 1 < panes) Metal("Window middle post", left + paneWidth + layout.windowPost * .5f, 0, layout.windowPost, layout.wallHeight, sign, trim);
@@ -182,13 +184,15 @@ namespace WaitYourTurn.Editor
                     var collider = Cube(name + " collider", physics, new Vector3(x, bottom + height * .5f, sign * sideZ), new Vector3(width, height, .18f), null, true);
                     // The continuous boundary above is the nav source; shot metal never opens navigation.
                     collider.AddComponent<NavMeshModifier>().ignoreFromBuild = true;
-                    float top = Mathf.Min(bottom + height, sign < 0 ? 1.15f : layout.wallHeight);
+                    float top = bottom + height;
                     if (top > bottom) Cube(name + " visual", visual, new Vector3(x, (bottom + top) * .5f, sign * sideZ), new Vector3(width, top - bottom, .18f), material, false);
                 }
             }
-            int LayoutIndex(int i) => count == 5 ? new[] { 2, 1, 0, 1, 2 }[i] : i % layouts.Length;
+            // Increasing X is travel/head direction: tail 6/10, 5/20, 5/26, 4/32, head 4/40.
+            int LayoutIndex(int i) => count == 5 ? i : i % layouts.Length;
             float start = -layouts[LayoutIndex(0)].length * .5f, end = cursor + layouts[LayoutIndex(count - 1)].length * .5f;
             float maxWidth = layouts.Max(x => x.width);
+            BuildLocomotive(fixedTrain.transform, end + 5, maxWidth);
             for (int sign = -1; sign <= 1; sign += 2)
             {
                 Vector3 pos = new Vector3((start + end) * .5f, -.12f, sign * (maxWidth * .5f + 3.08f));
@@ -212,6 +216,7 @@ namespace WaitYourTurn.Editor
             hero.GetComponent<ProximityRepair>().Configure(wagons[0].Doors[0], player); hero.GetComponent<PlayerMotor>().SetMovementArea(wagons[0].Area); hero.transform.position = new Vector3(0, .05f, 0);
             run.Configure(wagons, player, hero.GetComponent<PlayerMotor>(), hero.GetComponent<MoveInput>(), hero.GetComponent<AutoAim>(), hero.GetComponent<HitscanWeapon>(), hero.GetComponent<ProximityRepair>());
             int initial = count / 2; run.ConfigureInitialWagon(initial);
+            run.ConfigureRandomAssignments();
             hero.transform.position = wagons[initial].transform.position + Vector3.up * .05f;
             hero.GetComponent<PlayerMotor>().SetMovementArea(wagons[initial].Area);
             var spawner = new GameObject("Bounded station spawner").AddComponent<StationSpawner>(); spawner.Configure(run);
@@ -264,6 +269,25 @@ namespace WaitYourTurn.Editor
             }
             System.IO.Directory.CreateDirectory("docs/generated");
             System.IO.File.WriteAllText("docs/generated/train-model-dimensions.csv", csv.ToString());
+        }
+
+        private static void BuildLocomotive(Transform parent, float centerX, float width)
+        {
+            // Presentation only: not a WagonRuntime, no target, physics, spawn or nav source.
+            var cab = new GameObject("Locomotive - closed automated control room - visual only").transform;
+            cab.SetParent(parent, false); cab.localPosition = Vector3.right * centerX;
+            Cube("Closed body", cab, new Vector3(0, 1, 0), new Vector3(8, 2, width), wall, false);
+            Cube("Closed roof", cab, new Vector3(0, 2.15f, 0), new Vector3(8.1f, .3f, width + .1f), trim, false);
+            Cube("Rear coupling", cab, new Vector3(-4.5f, .15f, 0), new Vector3(1, .25f, .55f), trim, false);
+            for (int s = -1; s <= 1; s += 2)
+            {
+                Cube("Control room window", cab, new Vector3(2.6f, 1.45f, s * (width * .5f + .01f)), new Vector3(1.5f, .7f, .04f), glass, false);
+                Cube("Head lamp", cab, new Vector3(4.03f, .7f, s * 1.4f), new Vector3(.08f, .24f, .3f), yellow, false);
+                Cube("Control room stripe", cab, new Vector3(0, .6f, s * (width * .5f + .01f)), new Vector3(7.8f, .12f, .04f), yellow, false);
+            }
+            for (int i = 0; i < 5; i++)
+                Cube("Roof ventilation", cab, new Vector3(-2.5f + i * .65f, 2.32f, 0), new Vector3(.35f, .04f, 2), rail, false);
+            Cube("Front windscreen", cab, new Vector3(4.01f, 1.5f, 0), new Vector3(.04f, .7f, width - .6f), glass, false);
         }
 
         private static void ReplaceActorVisual(GameObject actor, Material material, bool player)

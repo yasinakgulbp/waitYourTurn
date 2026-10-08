@@ -21,7 +21,11 @@ namespace WaitYourTurn.Run
         private void OnDisable() { if (run != null) run.Assigned -= OnAssigned; SetPaused(true); }
         private void OnAssigned(WagonRuntime wagon)
         {
-            if (observedFlow == run.Flow) return;
+            if (observedFlow == run.Flow)
+            {
+                foreach (var rack in racks) foreach (var mount in rack.Mounts) mount.Actor.RefreshOwnerCollisions();
+                return;
+            }
             observedFlow = run.Flow; foreach (var rack in racks) rack.Clear();
         }
         private void Update() => SetPaused(run.Flow == null || run.Flow.Paused || !run.Player.IsAlive);
@@ -32,16 +36,16 @@ namespace WaitYourTurn.Run
             { for (int i = 0; i < run.Wagons.Length; i++) if (run.Wagons[i] == run.CurrentWagon) return racks[i]; return null; }
         }
         public bool CanBuy(int index) => isActiveAndEnabled && run.Flow != null && !run.Flow.Paused && run.Player.IsAlive &&
-            index >= 0 && index < definitions.Length && CurrentRack != null && CurrentRack.CanDeploy(definitions[index], run.Player.transform.position);
+            index >= 0 && index < definitions.Length && CurrentRack != null && CurrentRack.CanDeploy(definitions[index], run.Player);
         public bool TryBuy(int index) => CanBuy(index) && CurrentRack.TryDeploy(definitions[index], run.Player, registry);
         public string PurchaseHint
         {
             get
             {
-                var rack = CurrentRack; var mount = rack != null ? rack.Nearest(run.Player.transform.position) : null;
-                if (mount == null) return "Move beside a turret pad";
-                if (mount.Occupied) return mount.Id + " occupied (" + mount.Actor.Weapon.Rounds + " rounds)";
-                return mount.Id + (mount.CanPlace() ? " available; max " + rack.PerTypeLimit + " per type/wagon" : " blocked; step beside pad");
+                var rack = CurrentRack;
+                if (rack == null) return "No assigned wagon";
+                return "Deploy at your feet on clear floor; normal " + rack.Count(definitions[0]) + "/" + rack.PerTypeLimit +
+                    ", advanced " + rack.Count(definitions[1]) + "/" + rack.PerTypeLimit;
             }
         }
     }

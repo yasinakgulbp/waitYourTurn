@@ -2,7 +2,7 @@
 
 Sahne: `Assets/Game/Scenes/TrainIntegration.unity`. Orijinal `SampleScene 2` ve önceki küçük laboratuvarlar korunur. Bu sahne mevcut savaş/onarım/koşu çekirdeğini hedef geometriyle birleştirir; nihai sanat, UI, denge veya bot uygulaması değildir.
 
-**Güncel D23 revizyonu:** kullanıcı yeni görsellerle eski prefab ölçülerinin düzeltilmesini istedi. Sahne artık veriyle kurulan 12 × 4,2 blok vagon, 1,7 boyunda kapsüller, 4/5/6/5/4 kapı dizilimi ve responsive perspektif kullanır. Güncel kurulum/ölçü/model bağlama [VISUAL_SCALE.md](VISUAL_SCALE.md) içindedir. Aşağıdaki ilk referans ölçüleri ve test zamanları M6a'nın önceki sürümünün tarihsel kaydıdır.
+**Güncel D23 revizyonu:** kullanıcı yeni görsellerle eski prefab ölçülerinin düzeltilmesini istedi. Sahne artık veriyle kurulan 12 × 4,2 blok vagon, 1,7 boyunda kapsüller, kuyruktan başa 6/5/5/4/4 kapı dizilimi ve sağda kapalı lokomotif ve responsive perspektif kullanır. Güncel kurulum/ölçü/model bağlama [VISUAL_SCALE.md](VISUAL_SCALE.md) içindedir. Aşağıdaki ilk referans ölçüleri ve test zamanları M6a'nın önceki sürümünün tarihsel kaydıdır.
 
 ## İlk M6a referansı ve kurulum geçmişi
 

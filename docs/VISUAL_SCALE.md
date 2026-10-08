@@ -14,7 +14,7 @@
 | Vagon arası boşluk | 1 birim |
 | Oyuncu ve normal zombi | Boy 1,7; çap 0,6; fizik/nav kökü scale=1 |
 | Atış yüksekliği | Mevcut çekirdek: namlu 0,9, hedef 0,85; alt panel 0–0,6 |
-| Görsel ön duvar | 1,15 yüksekliğinde kesit; fizik duvarı tam yükseklikte |
+| Görsel duvarlar | İki yan ve uçlar aynı 2,1 m üst kotta; oynanabilir vagon tavanı açık |
 | Kamera | Perspektif FOV 35, X eğimi 55°; X takibi vagon merkezine göre en fazla ±0,65 |
 
 Bu değerler tasarım denemesidir, değişmez gerçek dünya zorunluluğu veya son denge değildir. Kökü scale ederek oynanış küçültülmez. Model/animasyon sonradan `Replaceable ... visuals` çocuklarına bağlanır; hasar colliderı, CharacterController, NavMeshAgent, Health ve silah kökte kalır. Görsel çocuklar collider/AI/root motion sahibi değildir. Kapsüllerin burun/üst çizgisi ön yönü gösterir. Yeni normal model bu hacme oturur; büyük zombi türü ayrı nav/collision/kapı uyumu gerektirir.
@@ -64,3 +64,9 @@ Android build, gerçek çentik/dokunmatik ergonomi, uzun oturum ve nihai sanat b
 Kullanıcının işaretlediği dört uç köşedeki camlar bütün vagonlardan kaldırıldı; bu bölümler tamamen metal ve atışa kapalıdır. Ara pencerelerin dış metal payı 0,24 → 0,32 m, orta dikmesi 0,12 → 0,18 m oldu; net cam genişliği yaklaşık %5–9 küçüldü. Yükseklik ve kapı açıklıkları korunur. Güncel yan pencere sayıları SixDoor/FiveDoor/FourDoor için 4/5/6; beşli sahnede 26. MODEL_CONTRACT.md ve üretilen CSV bu revizyonu esas alır; yukarıdaki 46 pencere eski kabulün tarihsel kaydıdır. F10 kontrolüne her vagonun dört köşesinde düz/eğik rayların metalde durması eklendi.
 
 Güncel kabul: 16:00:18 UTC F10 PASS; 26 cam ve dört köşe/vagon, dört silah ve düz/eğik metal rayları, beden/nav sınırı ve 10 geçiş. Kanıt: generated/window-refinement-pc-acceptance.txt. Android tekrar ölçülmedi.
+
+## 2026-10-08 — D31: eşit duvarlar ve baş/kuyruk
+
+Kullanıcı pencereyi yatay daraltmayı kastettiğini netleştirdi: üst kot 1,6 → 1,9 (üst metal 0,2 m); dış dikey metal 0,32 → 0,42, orta dikme 0,18 → 0,32. Küçük segmentte net cam 1,51 m, büyük segmentte 1,556667 m. Ön duvarın eski kesiti kaldırıldı; bütün yan/uç üst kotları 2,1 m. Kapı üst çerçevesi sabit gövdede görünür kalır. Önceki tarihli kesit ölçüleri tarihsel kayıttır, güncel model talimatı değildir.
+
+Kuyruk→baş (soldan sağa) kapı/can: 6/10, 5/20, 5/26, 4/32, 4/40. Sağda 8 m uzunluğunda kapalı lokomotif kontrol odası görseli; gameplay/spawn/nav sahibi değil. Mekanik zemin hâlâ sabit, çevre −X akar. Turret pad işaretleri kaldırıldı, satın alma oyuncunun bulunduğu konuma yapılır. Güncel kesin ölçüler MODEL_CONTRACT.md içindedir.

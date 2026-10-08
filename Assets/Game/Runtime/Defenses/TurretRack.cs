@@ -3,43 +3,43 @@ using WaitYourTurn.Combat;
 
 namespace WaitYourTurn.Defenses
 {
-    /// <summary>Wagon-local capacity and authored mounts. Unaware of prices or run phases.</summary>
+    /// <summary>Wagon-local capacity and reusable actors; placement follows the buyer.</summary>
     public sealed class TurretRack : MonoBehaviour
     {
         [SerializeField] private TurretMount[] mounts;
         [SerializeField, Min(1)] private int perTypeLimit = 2;
-        [SerializeField, Min(.1f)] private float purchaseRange = 1.35f;
+        [SerializeField] private Bounds placementBounds;
         public TurretMount[] Mounts => mounts;
         public int PerTypeLimit => perTypeLimit;
-        public float PurchaseRange => purchaseRange;
-        public void Configure(TurretMount[] slots) => mounts = slots;
+        public void Configure(TurretMount[] slots, Bounds bounds) { mounts = slots; placementBounds = bounds; }
         public int Count(TurretDefinition definition)
         {
             int count = 0;
             foreach (var mount in mounts) if (mount.Occupied && mount.Actor.Definition == definition) count++;
             return count;
         }
-        public TurretMount Nearest(Vector3 position)
+        private TurretMount Available()
         {
-            TurretMount nearest = null; float best = purchaseRange * purchaseRange;
-            foreach (var mount in mounts)
-            {
-                Vector3 delta = mount.transform.position - position; delta.y = 0;
-                if (delta.sqrMagnitude > best) continue;
-                nearest = mount; best = delta.sqrMagnitude;
-            }
-            return nearest;
+            foreach (var mount in mounts) if (!mount.Occupied) return mount;
+            return null;
         }
-        public bool CanDeploy(TurretDefinition definition, Vector3 buyerPosition)
+        private Vector3 Placement(HealthComponent buyer) => new Vector3(buyer.transform.position.x, transform.position.y, buyer.transform.position.z);
+        public bool CanPlace(HealthComponent buyer)
         {
-            if (definition == null || !definition.Valid || Count(definition) >= perTypeLimit) return false;
-            var mount = Nearest(buyerPosition);
-            return mount != null && mount.CanPlace();
+            if (buyer == null || !buyer.IsAlive) return false;
+            Vector3 position = Placement(buyer), local = transform.InverseTransformPoint(position);
+            if (float.IsNaN(local.x) || float.IsNaN(local.z) || float.IsInfinity(local.x) || float.IsInfinity(local.z) ||
+                local.x < placementBounds.min.x + .13f || local.x > placementBounds.max.x - .13f ||
+                local.z < placementBounds.min.z + .13f || local.z > placementBounds.max.z - .13f) return false;
+            var mount = Available();
+            return mount != null && mount.CanPlace(position, buyer);
         }
+        public bool CanDeploy(TurretDefinition definition, HealthComponent buyer) =>
+            definition != null && definition.Valid && Count(definition) < perTypeLimit && CanPlace(buyer);
         public bool TryDeploy(TurretDefinition definition, HealthComponent owner, TargetRegistry registry)
         {
-            if (owner == null || !owner.IsAlive || !CanDeploy(definition, owner.transform.position)) return false;
-            return Nearest(owner.transform.position).TryDeploy(definition, owner, registry);
+            if (!CanDeploy(definition, owner)) return false;
+            return Available().TryDeploy(definition, owner, registry, Placement(owner));
         }
         public void SetPaused(bool paused) { foreach (var mount in mounts) mount.Actor.SetPaused(paused); }
         public void Clear() { foreach (var mount in mounts) mount.Actor.Clear(); }

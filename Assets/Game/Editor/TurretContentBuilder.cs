@@ -39,22 +39,17 @@ namespace WaitYourTurn.Editor
             for (int w = 0; w < racks.Length; w++)
             {
                 var wagon = run.Wagons[w];
-                var slots = new TurretMount[wagon.Doors.Length];
+                var slots = new TurretMount[4]; // Two of each type, independent of door count.
                 for (int d = 0; d < slots.Length; d++)
                 {
-                    var door = wagon.Doors[d];
-                    Vector3 local = wagon.transform.InverseTransformPoint(door.transform.position);
-                    float offset = local.x > 0 ? -.65f : .65f;
-                    var pad = new GameObject("Turret pad " + (d + 1)); pad.transform.SetParent(wagon.transform, false);
-                    pad.transform.localPosition = new Vector3(local.x + offset, 0, local.z - Mathf.Sign(local.z) * .85f);
-                    Shape("Pad marker - no physics", PrimitiveType.Cylinder, pad.transform, new Vector3(0, .015f, 0), new Vector3(.65f, .012f, .65f), tracerMat);
+                    var pad = new GameObject("Turret pool slot " + (d + 1)); pad.transform.SetParent(wagon.transform, false);
                     var actor = new GameObject("Reusable turret actor"); actor.transform.SetParent(pad.transform, false);
                     actor.transform.localPosition = Vector3.up * .05f; actor.SetActive(false);
                     var health = actor.AddComponent<HealthComponent>();
-                    var body = actor.AddComponent<BoxCollider>(); body.center = Vector3.up * .3f; body.size = new Vector3(.56f, .6f, .56f); body.enabled = false;
+                    var body = actor.AddComponent<BoxCollider>(); body.center = Vector3.up * .3f; body.size = new Vector3(.22f, .6f, .22f); body.enabled = false;
                     actor.AddComponent<NavMeshModifier>().ignoreFromBuild = true;
                     var obstacle = actor.AddComponent<NavMeshObstacle>(); obstacle.shape = NavMeshObstacleShape.Box;
-                    obstacle.center = Vector3.up * .3f; obstacle.size = new Vector3(.6f, .7f, .6f);
+                    obstacle.center = Vector3.up * .3f; obstacle.size = new Vector3(.24f, .7f, .24f);
                     obstacle.carving = true; obstacle.carveOnlyStationary = false; obstacle.enabled = false;
                     var weapon = actor.AddComponent<HitscanWeapon>(); weapon.SetHitMask(run.Weapon.HitMask);
                     var visual = new GameObject("Replaceable turret visual"); visual.transform.SetParent(actor.transform, false);
@@ -69,9 +64,9 @@ namespace WaitYourTurn.Editor
                         new Vector3(0, .5f, 0), Vector3.one * .2f, tracerMat).transform; burst.gameObject.SetActive(false);
                     var view = actor.AddComponent<TurretPresentation>(); view.Configure(weapon, visual, accent, line, burst);
                     var controller = actor.AddComponent<TurretController>(); controller.Configure(health, weapon, body, obstacle, head, view);
-                    slots[d] = pad.AddComponent<TurretMount>(); slots[d].Configure(wagon.Id + "-pad-" + (d + 1), controller);
+                    slots[d] = pad.AddComponent<TurretMount>(); slots[d].Configure(wagon.Id + "-pool-" + (d + 1), controller);
                 }
-                racks[w] = wagon.gameObject.AddComponent<TurretRack>(); racks[w].Configure(slots);
+                racks[w] = wagon.gameObject.AddComponent<TurretRack>(); racks[w].Configure(slots, wagon.Geometry.Interior);
             }
             var manager = new GameObject("Run defenses - wagon mounts and gameplay gate").AddComponent<RunDefenses>();
             manager.Configure(run, registry, racks, types); economy.ConfigureDefenses(manager);
@@ -105,12 +100,11 @@ namespace WaitYourTurn.Editor
         }
         private static void Export(TurretRack[] racks, RunDriver run)
         {
-            var csv = new System.Text.StringBuilder("wagon,slot,localX,localY,localZ,bodyWidth,bodyHeight,bodyDepth,muzzleLocalY\n");
+            var csv = new System.Text.StringBuilder("wagon,poolSlot,placement,bodyWidth,bodyHeight,bodyDepth,muzzleFloorY,navWidth,navHeight,navDepth\n");
             for (int w = 0; w < racks.Length; w++) foreach (var mount in racks[w].Mounts)
             {
-                Vector3 p = run.Wagons[w].transform.InverseTransformPoint(mount.transform.position);
-                csv.Append(run.Wagons[w].Id).Append(',').Append(mount.Id);
-                foreach (float v in new[] { p.x, p.y, p.z, .56f, .6f, .56f, .95f }) csv.Append(',').Append(v.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture));
+                csv.Append(run.Wagons[w].Id).Append(',').Append(mount.Id).Append(",buyerXZ_at_purchase");
+                foreach (float v in new[] { .22f, .6f, .22f, .95f, .24f, .7f, .24f }) csv.Append(',').Append(v.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture));
                 csv.Append('\n');
             }
             System.IO.Directory.CreateDirectory("docs/generated"); System.IO.File.WriteAllText("docs/generated/turret-mount-dimensions.csv", csv.ToString());
