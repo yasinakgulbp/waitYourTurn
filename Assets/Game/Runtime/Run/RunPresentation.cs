@@ -12,6 +12,7 @@ namespace WaitYourTurn.Run
         private Quaternion cameraRotation;
         private float distance;
         public float Speed { get; private set; }
+        public Vector3 FollowOffset => cameraOffset;
         public float Darkness => run.Flow?.Phase switch
         { RunPhase.FadeOut => run.Flow.Progress, RunPhase.Hidden => 1, RunPhase.FadeIn => 1 - run.Flow.Progress, _ => 0 };
         public void Configure(RunDriver owner, Transform visualRoot, Camera camera)

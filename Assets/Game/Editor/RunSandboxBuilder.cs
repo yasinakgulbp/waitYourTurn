@@ -2,6 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.AI;
 using Unity.AI.Navigation;
 using WaitYourTurn.Combat;
 using WaitYourTurn.Enemies;
@@ -15,12 +16,100 @@ namespace WaitYourTurn.Editor
     public static class RunSandboxBuilder
     {
         private const string ScenePath = "Assets/Game/Scenes/RunSandbox.unity";
+        private const string TrainScenePath = "Assets/Game/Scenes/TrainSandbox.unity";
+        private const string LayoutPath = "Assets/Game/Content/FiveWagonLayout.asset";
+
+        [MenuItem("Wait Your Turn/Run/Apply Five Wagon Layout")]
+        public static void ApplyFiveLayout()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode ||
+                EditorSceneManager.GetActiveScene().path != TrainScenePath) return;
+            TrainLayout layout = AssetDatabase.LoadAssetAtPath<TrainLayout>(LayoutPath);
+            RunDriver run = Object.FindAnyObjectByType<RunDriver>();
+            if (run == null || layout == null || layout.wagons == null || layout.wagons.Length != run.Wagons.Length) return;
+            var ids = new System.Collections.Generic.HashSet<string>();
+            foreach (WagonPlacement entry in layout.wagons)
+                if (entry == null || string.IsNullOrWhiteSpace(entry.id) || !ids.Add(entry.id) ||
+                    !(entry.doorHealth > 0) || float.IsInfinity(entry.doorHealth))
+                { Debug.LogError("Invalid or duplicate wagon layout entry."); return; }
+            for (int i = 0; i < run.Wagons.Length; i++)
+            {
+                WagonRuntime wagon = run.Wagons[i]; WagonPlacement entry = layout.wagons[i];
+                wagon.transform.position = entry.position;
+                wagon.Configure(entry.id, wagon.Doors, wagon.Enemies, wagon.Area);
+                foreach (DoorController door in wagon.Doors)
+                {
+                    var health = new SerializedObject(door.Durability);
+                    health.FindProperty("startingMaxHealth").floatValue = entry.doorHealth;
+                    health.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
+            EnsureWagonNavigation();
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+        }
+
+        [MenuItem("Wait Your Turn/Run/Open Five Wagons")]
+        public static void OpenFive()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            if (File.Exists(TrainScenePath)) { EditorSceneManager.OpenScene(TrainScenePath); EnsureWagonNavigation(); return; }
+            if (!File.Exists(ScenePath)) Open();
+            TrainLayout layout = AssetDatabase.LoadAssetAtPath<TrainLayout>(LayoutPath);
+            if (layout == null)
+            {
+                layout = ScriptableObject.CreateInstance<TrainLayout>();
+                layout.wagons = new WagonPlacement[5];
+                for (int i = 0; i < 5; i++) layout.wagons[i] = new WagonPlacement
+                { id = "wagon-" + (char)('a' + i), position = Vector3.right * (10 * i), doorHealth = 10 * (i + 1) };
+                AssetDatabase.CreateAsset(layout, LayoutPath);
+            }
+            if (layout.wagons == null || layout.wagons.Length != 5)
+            { Debug.LogError("Five-wagon lab requires five layout entries."); return; }
+            var ids = new System.Collections.Generic.HashSet<string>();
+            foreach (WagonPlacement entry in layout.wagons)
+                if (entry == null || string.IsNullOrWhiteSpace(entry.id) || !ids.Add(entry.id) ||
+                    !(entry.doorHealth > 0) || float.IsInfinity(entry.doorHealth))
+                { Debug.LogError("Invalid or duplicate wagon layout entry."); return; }
+            var scene = EditorSceneManager.OpenScene(ScenePath);
+            EditorSceneManager.SaveScene(scene, TrainScenePath);
+            RunDriver run = Object.FindAnyObjectByType<RunDriver>();
+            WagonRuntime template = run.Wagons[0];
+            for (int i = 1; i < run.Wagons.Length; i++) Object.DestroyImmediate(run.Wagons[i].gameObject);
+            HealthComponent player = run.Player;
+            EnemyBrain enemyTemplate = Object.FindObjectsByType<EnemyBrain>(FindObjectsInactive.Include)[0];
+            TargetRegistry registry = Object.FindAnyObjectByType<TargetRegistry>();
+            var wagons = new WagonRuntime[layout.wagons.Length];
+            for (int i = 0; i < wagons.Length; i++)
+            {
+                WagonPlacement entry = layout.wagons[i];
+                WagonRuntime wagon = i == 0 ? template : Object.Instantiate(template);
+                wagon.name = entry.id + " - persistent gameplay";
+                wagon.transform.position = entry.position;
+                wagon.Configure(entry.id, wagon.GetComponentsInChildren<DoorController>(),
+                    wagon.GetComponentInChildren<EnemyPool>(), wagon.GetComponentInChildren<MovementArea>());
+                wagon.Enemies.Configure(enemyTemplate, wagon.Doors[0], player, registry);
+                foreach (DoorController door in wagon.Doors)
+                {
+                    var health = new SerializedObject(door.Durability);
+                    health.FindProperty("startingMaxHealth").floatValue = entry.doorHealth;
+                    health.ApplyModifiedPropertiesWithoutUndo();
+                }
+                wagons[i] = wagon;
+            }
+            run.Configure(wagons, player, player.GetComponent<PlayerMotor>(), player.GetComponent<MoveInput>(),
+                player.GetComponent<AutoAim>(), player.GetComponent<HitscanPistol>(), player.GetComponent<ProximityRepair>());
+            EnsureWagonNavigation();
+            EditorSceneManager.SaveScene(scene, TrainScenePath); AssetDatabase.SaveAssets();
+            Debug.Log("[TrainSandbox] Created five wagons from layout data; existing run flow reused.");
+        }
         [MenuItem("Wait Your Turn/Run/Open Two Wagons")]
         public static void Open()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
-            if (File.Exists(ScenePath)) { EditorSceneManager.OpenScene(ScenePath); return; }
+            if (File.Exists(ScenePath)) { EditorSceneManager.OpenScene(ScenePath); EnsureWagonNavigation(); return; }
             var scene = EditorSceneManager.OpenScene("Assets/Game/Scenes/GameplaySandbox.unity");
             EditorSceneManager.SaveScene(scene, ScenePath);
             Object.DestroyImmediate(Object.FindAnyObjectByType<GameplaySandboxController>().gameObject);
@@ -42,7 +131,7 @@ namespace WaitYourTurn.Editor
                 secondRoot.GetComponentInChildren<EnemyPool>(), secondRoot.GetComponentInChildren<MovementArea>());
             // Unity remaps door/area references within the cloned root; shared hero/registry/template remain shared.
             secondRoot.GetComponentInChildren<EnemyPool>().Configure(
-                Object.FindObjectsByType<EnemyBrain>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0],
+                Object.FindObjectsByType<EnemyBrain>(FindObjectsInactive.Include)[0],
                 second.Doors[0], player, registry);
             var doorHealth = new SerializedObject(second.Doors[0].Durability);
             doorHealth.FindProperty("startingMaxHealth").floatValue = 20;
@@ -60,8 +149,37 @@ namespace WaitYourTurn.Editor
             presentation.Configure(run, visualEnvironment, Object.FindAnyObjectByType<Camera>());
             player.gameObject.AddComponent<ShotTracer>().Configure(player.GetComponent<HitscanPistol>(), Object.FindAnyObjectByType<LineRenderer>());
             new GameObject("Run lab HUD and acceptance fixture").AddComponent<RunSandboxController>().Configure(run, spawner, presentation);
+            EnsureWagonNavigation();
             EditorSceneManager.SaveScene(scene, ScenePath); AssetDatabase.SaveAssets();
             Debug.Log("[RunSandbox] Created two persistent wagons with 10/20 HP doors, shared player and bounded pools.");
+        }
+
+        private static void EnsureWagonNavigation()
+        {
+            // AI Navigation clears shared scene-surface data in OnValidate. Each lab wagon owns an asset.
+            const string folder = "Assets/Game/Content/RunNavigation";
+            if (!AssetDatabase.IsValidFolder(folder)) AssetDatabase.CreateFolder("Assets/Game/Content", "RunNavigation");
+            NavMeshData source = AssetDatabase.LoadAssetAtPath<NavMeshData>("Assets/Game/Content/NavigationLab/ConnectedNavMesh.asset");
+            RunDriver run = Object.FindAnyObjectByType<RunDriver>();
+            var scene = EditorSceneManager.GetActiveScene();
+            bool changed = false;
+            for (int i = 0; i < run.Wagons.Length; i++)
+            {
+                NavMeshSurface surface = run.Wagons[i].GetComponentInChildren<NavMeshSurface>();
+                string path = $"{folder}/{scene.name}-{i}.asset";
+                NavMeshData data = AssetDatabase.LoadAssetAtPath<NavMeshData>(path);
+                if (data == null)
+                {
+                    data = Object.Instantiate(source);
+                    data.name = scene.name + " wagon " + i;
+                    AssetDatabase.CreateAsset(data, path);
+                }
+                if (surface.navMeshData == data) continue;
+                surface.RemoveData(); surface.navMeshData = data; surface.AddData();
+                EditorUtility.SetDirty(surface); changed = true;
+            }
+            if (changed) { EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); }
+            AssetDatabase.SaveAssets();
         }
     }
 }

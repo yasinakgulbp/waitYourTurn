@@ -4,7 +4,7 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 
 ## Öncelik mantığı
 
-2026-10-08 ek durum: M4a `RunSandbox` PC'de 10/10 istasyon geçişi ve 6 saf evre testini geçti. Kapı eşiğindeki iç zombi güvenli tamamlandı; kapı/oyuncu/mermi durumları korundu, karanlık kapısı ve terminal ölüm doğrulandı. Normal savunmada iki vagonun da zombi saldırısı gözlendi. Kullanıcının bildirdiği Play çıkışı mermi izi hatası düzeltildi; son normal ve GameOver çıkışında Console 0 hata/0 uyarı. Kullanıcı M4a tempo/atama değerlendirmesi açık; botlar uygulanmadı. Ayrıntı RUN_LAB.md.
+2026-10-08 ek durum: kullanıcı M4a PC değerlendirmesini kabul etti. M4b `TrainSandbox` beş vagonlu teknik parçası 10/10 geçişi geçti; kamera/oyuncu ataması, ayrı kapı durumları, iç zombi üyeliği ve terminal ölüm doğrulandı. 60 eşzamanlı zombilik kısa PC yük kontrolü geçti. Kullanıcı M4b değerlendirmesi açık; gerçek altı kapılı tren entegrasyonu ve botlar henüz yok. Ayrıntı RUN_LAB.md.
 
 Önce navigasyon ve kapı geçişi teknik olarak kanıtlanır; aynı aşamada kaba cihaz/kalabalık ölçümü yapılır. Ortak hasar temeli ardından minimum mobil kontrol ve tabancayla tek vagonun döngüsü birleştirilir. Kullanıcı oynanış değerlendirmesi sonrası iki vagonla istasyon akışı kanıtlanır, sonra beş vagona genişletilir. Kullanıcının güncel tercihi rutin PC kontrolü, önemli birleşik değişimde uygun zamanda Android kontrolüdür. Silah çeşitliliği, geniş spawn sistemi ve savunmalar bunu izler.
 
@@ -18,8 +18,8 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 | M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | Temel rota/kapı 10/10; A54 ilk ölçümü kayıtlı. Yeni sürekli yüzeyde vagon içi kalabalık hedef yerleşimi M3/M6 için açık |
 | M2 | Ortak can, hasar, ölüm | M1 deneme sonucu; kodu M1'e bağımlı değil | Tamamlandı; 14 test geçti, izole hitscan/can/ölüm Play kontrolü yapıldı |
 | M3 | Mobil kontrollü tek vagon döngüsü ve oynanış değerlendirmesi | M1, M2 | GameplaySandbox ilk sürümünde birleşik mekanikler 10/10 PC PASS; D15/D16 revizyonunda cam/duvar/oyuncu sınırı ve gerçek hasar-giriş-onarım odaklı PC PASS. Kullanıcı PC oynanış değerlendirmesini kabul etti; cihaz hissi sonraki uygun kontrolde |
-| M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | PC teknik kontrolü geçti: 10/10 geçiş ve 6 saf evre testi; kullanıcı tempo/atama değerlendirmesi bekleniyor. RUN_LAB.md |
-| M4b | Kanıtlanan döngüyü beş vagona genişletme | M4a değerlendirmesi | Bekliyor |
+| M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | PC teknik kontrolü geçti: 10/10 geçiş ve 6 saf evre testi; kullanıcı değerlendirmesi kabul edildi. RUN_LAB.md |
+| M4b | Kanıtlanan döngüyü beş vagona genişletme | M4a değerlendirmesi | Beş tek-kapılı lab vagonunda 10/10 geçiş + 60-zombi PC yük kontrolü PASS; kullanıcı değerlendirmesi açık. Gerçek altı kapılı geometri/çok kapı hedef seçimi entegrasyonu ayrıca açık |
 | M5 | Mobil kontrolü iyileştirme ve silah çeşitliliği | M2, M4b | Bekliyor |
 | M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M3–M5 | Bekliyor |
 | M7 | Para, mağaza, turret ve dron | M2, M4–M6 | Bekliyor |
@@ -133,6 +133,7 @@ Kabul: silah verisiyle hasar/aralık değişir; sağlam kapının camından atı
 
 ## M6 — Spawn ve enemy ölçeği
 
+- Gerçek tren/altı kapılı vagon entegrasyonunu ayrı küçük işle doğrula: kapı seçimi, kapı/istasyon spawn noktaları ve güvenli iç noktalar geometri verisinden gelsin. M4b'nin tek-kapılı lab varsayımlarını üretim geometrisine taşımadan kaldır.
 - `StationDefinition` ile vagon/tür/zaman/bütçe dağılımı; Inspector'dan ayarlanır.
 - Normalden türeyen hızlı/dayanıklı enemy profilleri; ortak brain/motor/hasar.
 - Global/vagon canlı sınırları, spawn istek kuyruğu sınırı, kare başına üretim bütçesi.
@@ -180,4 +181,4 @@ Kabul: seçilen cihaz/kalite profili/FPS ve canlı sınırı raporlanır; ölç�
 
 ## Bir sonraki somut iş
 
-**M4a:** kullanıcı M3 PC oynanış değerlendirmesini kabul etti ve sonraki aşamayı istedi. İki vagonla süreli istasyon, görünür yolculuk, karanlık pause, güvenli rastgele atama ve kalıcı vagon durumlarını birleştir. Android hissi uygun zamanda ayrıca kontrol edilecek.
+**M4b değerlendirmesi:** TrainSandbox'ta beş vagonun farklı kapı dayanıklılığı ve rastgele atama deneyimini kullanıcıyla gözle. Sonraki M5 işi mevcut tabancayı veriyle tanımlanan ortak silah/atış temeline genişletmek; turret/dron da aynı isabet ve engel kurallarını kullanacak. Android hissi uygun zamanda ayrıca kontrol edilecek. Gerçek altı kapılı tren entegrasyonu M6 kabulünden önce açık iş olarak korunur.

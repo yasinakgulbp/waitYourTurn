@@ -14,7 +14,7 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 6. [Navigasyon laboratuvarı](NAVIGATION_LAB.md): ilk uygulama, kontroller, doğrulama ve açık işler.
 7. [Can/hasar laboratuvarı](COMBAT_LAB.md): ortak kurallar ve M2 kanıtı.
 8. [Tek vagon oynanışı](GAMEPLAY_LAB.md): M3 entegrasyonu, kontroller ve açık cihaz değerlendirmesi.
-9. [İki vagon/koşu laboratuvarı](RUN_LAB.md): M4a evre, kalıcılık, atama ve doğrulama sınırları.
+9. [Vagon/koşu laboratuvarı](RUN_LAB.md): M4a iki vagon, M4b beş vagon; evre, kalıcılık, atama ve doğrulama sınırları.
 
 ## Mevcut durum
 
@@ -57,4 +57,6 @@ Yeni bir oturumda bu dizin, güncel kod, Git durumu ve Unity sahnesi birlikte ok
 
 Reklam/IAP'nin ekonomi rolü M7 öncesinde tasarlanır; servis entegrasyonu ve yayınlama çekirdek oynanış/cihaz performansı doğrulandıktan sonraki aşamalardır.
 
-2026-10-08: M4a iki vagonlu koşu sahnesi kuruldu. 10/10 geçiş + 6 saf evre testi PASS; normal iki-vagon saldırısı ve Play/GameOver kapanışında 0 hata doğrulandı. Kapı/oyuncu/mermi/iç-zombi kalıcılığı kanıtlandı; kullanıcı tempo/atama değerlendirmesi açık. Battle/botsuz mod ve en az üç bot beceri profili tasarım hedefine eklendi, bot uygulaması yapılmadı. Google Play bulut kaydı aday; entegrasyon M8/servis aşamasında. Ayrıntı [RUN_LAB.md](RUN_LAB.md).
+2026-10-08: M4a iki vagonlu koşu sahnesi kuruldu. 10/10 geçiş + 6 saf evre testi PASS; normal iki-vagon saldırısı ve Play/GameOver kapanışında 0 hata doğrulandı. Kapı/oyuncu/mermi/iç-zombi kalıcılığı kanıtlandı; kullanıcı PC değerlendirmesini kabul etti. Battle/botsuz mod ve en az üç bot beceri profili tasarım hedefine eklendi, bot uygulaması yapılmadı. Google Play bulut kaydı aday; entegrasyon M8/servis aşamasında. Ayrıntı [RUN_LAB.md](RUN_LAB.md).
+
+2026-10-08 M4b: aynı akış beş ayrı vagonla `TrainSandbox` sahnesinde kuruldu; yerleşim/kapı başlangıç canları TrainLayout verisinden uygulanır. 10/10 geçişte beş vagonun tümü ziyaret edildi ve durumlar korundu; 60 eşzamanlı zombiyle kısa PC yük kontrolü PASS (son kontrol: ortalama 4.82 ms/p95 7.38 ms, Editor tanısı). Kullanıcı değerlendirmesi açık; gerçek altı kapılı tren, botlar ve bu sürümün Android kontrolü henüz yok. Geliştirmede tutarlı tekrar Play için standart domain/sahne reload açıldı; istasyon geçişleri hâlâ reload gerektirmez.

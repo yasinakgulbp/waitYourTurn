@@ -1,4 +1,4 @@
-# İki vagon ve istasyon döngüsü — M4a
+# Vagonlar ve istasyon döngüsü — M4a / M4b
 
 2026-10-07–08. Bu sahne ortak koşu mekaniğinin laboratuvarıdır; nihai tren modeli veya tamamlanmış Battle modu değildir. Eski prototip ve GameplaySandbox korunur.
 
@@ -19,7 +19,7 @@ Başlangıç ayarları: ilk yaklaşma 10 s, savunma 60 s, kalkış uyarısı 3 s
 - Atama için sınırlı sayıda iç nokta NavMesh, oyuncu hareket alanı ve fiziksel işgal bakımından doğrulanır. Hiçbiri güvenli değilse vagon canı/zombi silinmez; koşu `Faulted` ile durup tanı gösterir. Daha kalabalık gerçek tren için doğuş politikası ve kısa koruma değerlendirmesi M4b'de açık kalır.
 - Karanlıkta ölçekli oyun saati, enemy motorları, girdi/otomatik hedefleme, onarım ve hasar durur. Evre sayacı ve görsel çevre hareketi gerçek zamanla sürer. Önceki dokunulmazlık ve zaman ölçeği geçiş sonunda geri yüklenir. Görünür yolculukta iç zombilerle savaş sürer.
 - `StationSpawner`: ilk küçük süre/bütçe adaptörü. İlk istasyonda vagon başına 8 deneme, sonraki istasyonlarda +1, en çok 20; 2 s aralık. Her pool 12 gövde, toplam 24. Taşınan zombiler aynı sınıra dahildir. Dolu/uygunsuz spawn denemesi tüketilir; sınırsız kuyruk veya sonradan ani üretim yoktur. M6 veri temelli spawn yönetiminin yerini almaz.
-- `RunPresentation`: yalnızca collider taşımayan çevre görsellerini ve kamerayı hareket ettirir. Gameplay zemini sabittir; ikinci vagon aynı baked NavMesh verisini kendi yerleşiminde kullanır. Sinematik tren/istasyon assetleri ve ses henüz bağlı değildir.
+- `RunPresentation`: yalnızca collider taşımayan çevre görsellerini ve kamerayı hareket ettirir. Gameplay zemini sabittir. İlk sürümde aynı baked NavMesh asset'i paylaşılmıştı; M4b kalıcı kayıt düzeltmesi her vagon için ayrı kopya kullanır. Sinematik tren/istasyon assetleri ve ses henüz bağlı değildir.
 
 ## Doğrulama ve sınırlar
 
@@ -33,4 +33,22 @@ Kullanıcının bildirdiği kırmızı kayıt gerçekti: Play kapanışında ayr
 
 Tekrar çalıştırma: HUD `Check 10 fast station transitions`; EditMode `Wait Your Turn → Run → Run Flow Tests`. Ayrıntılı çıktılar Git dışında `Logs/RunSandboxReport.json` ve `Logs/RunFlowTests.xml`.
 
-Para, mağaza, farklı silahlar, turret, dron, botlar ve disk/bulut kaydı henüz uygulanmadı. Bunların korunması bu testte kanıtlanmış değildir. Aynı oyuncu/vagon kimliklerinin korunması sonraki bileşenlerin bağlanacağı temeldir. Beş vagon ve gerçek altı kapılı geometriler M4b; kullanıcı tempo/şans/onarım fırsatı değerlendirmesi bekleniyor.
+Para, mağaza, farklı silahlar, turret, dron, botlar ve disk/bulut kaydı henüz uygulanmadı. Bunların korunması bu testte kanıtlanmış değildir. Aynı oyuncu/vagon kimliklerinin korunması sonraki bileşenlerin bağlanacağı temeldir. Kullanıcı M4a PC değerlendirmesini kabul ederek sonraki aşamayı istedi.
+
+## M4b — Beş vagonlu laboratuvar
+
+2026-10-08. `Wait Your Turn → Run → Open Five Wagons`, ardından Play; sahne `Assets/Game/Scenes/TrainSandbox.unity`. İki vagonlu sahne korunur. Aynı RunFlow/RunDriver yeniden kullanılır; aşama kuralları vagon sayısına göre çoğaltılmaz.
+
+`Assets/Game/Content/FiveWagonLayout.asset` başlangıç yerleşim verisidir: `wagon-a`–`wagon-e`, 10 birim aralık, kapı canları 10/20/30/40/50. Bunlar deneme değerleridir. Asset düzenlendikten sonra TrainSandbox açık ve Play kapalıyken `Apply Five Wagon Layout` sahneye uygular. Can/konum canlı koşu sırasında bu asset'e yazılmaz. Her vagon kendi kapısı, hareket alanı, NavMesh yüzeyi ve 12 gövdeli enemy pool'una sahiptir; beş vagon toplam 60 gövdeyle sınırlıdır. Kamera atanan vagonu izler. Eşit olasılık, tekrar seçilme ve lab seed'i 12345 korunur.
+
+Beş vagonda **10/10 istasyon geçişi PASS**, UTC `2026-10-08T03:22:42.1451119Z`: beş vagonun tümü ziyaret edildi; aynı oyuncu yaşamı/85 can/7 mermi, ayrı kapı canları ve içerideki düşman üyelikleri korundu. Kamera ve oyuncu hareket alanı atamayla birlikte değişti; karanlık pause, eşik tamamlama, ödülsüz dış temizlik ve terminal ölüm kontrolleri geçti. Testte yeni spawn/otomatik ateş kapalı ve oyuncu korunur; normal zorluk dengesi kanıtı değildir. İlk fixture kapı kırılmasının aynı karesinde carved eşikte spawn deneyerek başarısız oldu; fixture artık Unity'nin NavMesh güncellemesine iki kare tanır.
+
+**60 eşzamanlı zombi / 6 saniye PC yük kontrolü PASS**, UTC `2026-10-08T03:23:06.5798719Z`: beş kapı da gerçek enemy saldırısıyla hasar aldı; nav/kimlik/aktif sayı sınırı korundu. İlk saniye dışarıda bırakılan 1161 kare örneğinde ortalama **4.31 ms**, p95 **6.37 ms**. Bu Windows Editor'da kısa, yapay yük örneğidir; Android FPS, AI CPU maliyeti, uzun oturum veya vagon içinde 60 zombilik sıkışmasızlık kanıtı değildir. Önceki kalabalık hedef yerleşimi işi M6'da açıktır.
+
+Tekrar: HUD `Check 10 fast station transitions` ve `Check bounded crowd (6 seconds)`. Git dışı raporlar `Logs/TrainSandboxReport.json` / `Logs/TrainSandboxCrowdReport.json`. Editor'ın domain ve sahne reload'u kapalıyken tekrar Play başlangıcında boş akış gözlendi; standart reload açıldı (`ProjectSettings/EditorSettings.asset`). Bu ayar yalnızca geliştirme başlangıcını etkiler; oyundaki istasyon geçişinde sahne reload edilmez.
+
+Yeniden açma kontrolünde AI Navigation 2.0.14 `NavMeshSurface.OnValidate` paylaşılan sahne-surface asset bağlantılarını boşaltabildi. Önceki açık-sahne testi bu kalıcı kayıt sorununu yakalamıyordu. Builder artık iki/beş vagon sahnesindeki her surface'e `Content/RunNavigation` altında ayrı baked veri kopyası bağlar; koşu sırasında bake yoktur. Vagon geometrisi değişirse bu lab kopyaları da yeniden bake edilmeli; eski NavMesh otomatik olarak yeni geometri sayılmaz. Ortak HUD revizyonu iki vagonlu sahnede de 10/10 geçti (UTC `03:26:22.4258242Z`, nav asset ayrılmasından önce).
+
+Kalıcı nav kopyalarıyla temiz domain/sahne başlangıcından son beş-vagon **10/10 PASS** (UTC `03:30:11.2201728Z`); **60-zombi yük kontrolü tekrar PASS** (`03:30:43.7806154Z`, 1036 örnek, ortalama 4.82 ms/p95 7.38 ms). Son Play kontrolü ve çıkışında Console **0 hata / 0 uyarı**. Bu tekrar, nav kayıt düzeltmesini doğrulamak içindi; saf evre/can kuralları değişmediği için önceki EditMode testleri tekrar koşturulmadı.
+
+**Kalan entegrasyon:** bu genişletme mevcut tek kapılı lab geometrisini çoğaltır. Gerçek tren modeli, vagon başına altı kapı, geometriye ait açık spawn/güvenli iç nokta verileri ve çok kapı hedef seçimi henüz yoktur; bunlar tamamlanmış sayılmaz. Çok kapılı üretim entegrasyonu M6 spawn/rota bütçesinin kabulünden önce ayrıca doğrulanacak. Botlar, gerçek istasyon görseli ve ses bu aşamada eklenmedi. M4b kullanıcı PC değerlendirmesi ve sonraki uygun Android birleşik kontrolü açıktır.
