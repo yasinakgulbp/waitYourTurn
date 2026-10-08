@@ -147,7 +147,9 @@ namespace WaitYourTurn.Editor
                         var boundary = Cube("Window wall movement boundary", physics, new Vector3((a + b) * .5f, layout.wallHeight * .5f, sign * sideZ), new Vector3(b - a, layout.wallHeight, .18f), null, true);
                         boundary.layer = LayerMask.NameToLayer("ShotTransparent");
                         float usable = b - a - layout.windowBorder * 2;
-                        if (usable < .5f) { Metal("Solid wall", (a + b) * .5f, 0, b - a, layout.wallHeight, sign, wall); return; }
+                        // The end bays are solid bodywork on every layout, never side windows.
+                        if (a <= -half + .001f || b >= half - .001f || usable < .5f)
+                        { Metal("Solid wall", (a + b) * .5f, 0, b - a, layout.wallHeight, sign, wall); return; }
                         int panes = Mathf.CeilToInt((usable + layout.windowPost) / (layout.maxWindowWidth + layout.windowPost));
                         float paneWidth = (usable - (panes - 1) * layout.windowPost) / panes;
                         Metal("Window lower metal", (a + b) * .5f, 0, b - a, layout.windowBottom, sign, wall);

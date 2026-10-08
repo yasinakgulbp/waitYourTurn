@@ -58,3 +58,9 @@ Android build, gerçek çentik/dokunmatik ergonomi, uzun oturum ve nihai sanat b
 - F10 beş-vagon kabulü PASS (`Logs/TrainIntegration-5.txt`, 08:03:45 UTC): 46 yan pencerenin her birinde tabanca/SMG/tüfek/pompalı gerçek atışı; iki metal kenar, alt/üst paneller, kenardan 2 cm içeride/dışarıda eğik raylar; beden colliderı ve doğrudan nav geçişinin kapalı kalması. Pompalının merkez saçması metalde durur; yanından geçen diğer saçmalar bağımsızdır.
 - Aynı kontrolde tüm kapı varyantları, iki taraflı kırılma/giriş/onarım/eşik güvenliği, oyuncu sınırı, 10 istasyon geçişi ve can/SMG/mermi/iç düşman/kapı hasarı kalıcılığı ile 60 düşmanlık havuz sınırı PASS. Son Play Console yeni hata/uyarı üretmedi.
 - İnce kenar testi ilk uç camın uç duvarına 2 cm taşımasını yakaladı; dış çerçeve 0,24'e çıkarılarak giderildi. Net açıklık artık görselle uyumludur. Son sahne ve ölçü CSV'si yeniden üretildi. Android performansı bu turda ölçülmedi.
+
+## 2026-10-08 — D24 köşe ve pencere düzeltmesi
+
+Kullanıcının işaretlediği dört uç köşedeki camlar bütün vagonlardan kaldırıldı; bu bölümler tamamen metal ve atışa kapalıdır. Ara pencerelerin dış metal payı 0,24 → 0,32 m, orta dikmesi 0,12 → 0,18 m oldu; net cam genişliği yaklaşık %5–9 küçüldü. Yükseklik ve kapı açıklıkları korunur. Güncel yan pencere sayıları SixDoor/FiveDoor/FourDoor için 4/5/6; beşli sahnede 26. MODEL_CONTRACT.md ve üretilen CSV bu revizyonu esas alır; yukarıdaki 46 pencere eski kabulün tarihsel kaydıdır. F10 kontrolüne her vagonun dört köşesinde düz/eğik rayların metalde durması eklendi.
+
+Güncel kabul: 16:00:18 UTC F10 PASS; 26 cam ve dört köşe/vagon, dört silah ve düz/eğik metal rayları, beden/nav sınırı ve 10 geçiş. Kanıt: generated/window-refinement-pc-acceptance.txt. Android tekrar ölçülmedi.

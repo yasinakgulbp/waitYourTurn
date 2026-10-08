@@ -23,8 +23,8 @@ namespace WaitYourTurn.Train
         public float doorHealth = 10;
         public float windowBottom = .7f;
         public float windowTop = 1.6f;
-        public float windowBorder = .24f;
-        public float windowPost = .12f;
+        public float windowBorder = .32f;
+        public float windowPost = .18f;
         public float maxWindowWidth = 2.2f;
         public DoorSlots openings = DoorSlots.All;
         public int DoorCount

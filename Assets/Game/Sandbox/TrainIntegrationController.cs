@@ -157,6 +157,17 @@ namespace WaitYourTurn.Sandbox
                 var windowMotor=windowEnemy.GetComponent<WaitYourTurn.Navigation.AgentMotor>();
                 var resolver=new HitscanResolver();int shotMask=~(1<<LayerMask.NameToLayer("ShotTransparent"));
                 var windows=w.GetComponentsInChildren<WaitYourTurn.Train.WagonWindow>();
+                float outerDoorX=w.Doors.Max(d=>Mathf.Abs(d.transform.position.x-w.transform.position.x));
+                if(windows.Any(p=>Mathf.Abs(p.transform.position.x-w.transform.position.x)>outerDoorX))
+                {Finish(false,"End bay must not contain windows: "+w.Id);yield break;}
+                foreach(int end in new[]{-1,1})foreach(int side in new[]{-1,1})foreach(float slant in new[]{0f,.1f})
+                {
+                    Vector3 point=w.transform.position+new Vector3(end*(outerDoorX+w.Geometry.Interior.extents.x)*.5f,1.1f,side*w.Geometry.Interior.extents.z);
+                    Vector3 direction=new Vector3(slant,0,side).normalized;
+                    if(!resolver.Cast(point-direction,direction,2,shotMask,run.Player,out RaycastHit endMetal)||
+                        endMetal.collider==null||endMetal.collider.name!="Solid wall collider")
+                    {Finish(false,"End bay metal passes shots: "+w.Id);yield break;}
+                }
                 if(windows.Length==0||!windows.Any(p=>p.transform.position.z>w.transform.position.z)||!windows.Any(p=>p.transform.position.z<w.transform.position.z))
                 {Finish(false,"Windows missing on one side: "+w.Id);yield break;}
                 foreach(var aperture in windows)

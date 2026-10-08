@@ -11,9 +11,9 @@ namespace WaitYourTurn.Editor
         public static StationDefinition[] EnsurePrograms()
         {
             if (!AssetDatabase.IsValidFolder(Folder)) AssetDatabase.CreateFolder("Assets/Game/Content", "StationPrograms");
-            var normal = Profile("Normal", "normal", 24, 2.6f, 2, 1, new Color(.68f, .39f, .27f));
-            var fast = Profile("Fast", "fast", 16, 3.8f, 1, .75f, new Color(.55f, .75f, .35f));
-            var tough = Profile("Tough", "tough", 70, 1.8f, 5, 1.4f, new Color(.55f, .35f, .65f));
+            var normal = Profile("Normal", "normal", 24, 2.1f, 2, 1, new Color(.68f, .39f, .27f));
+            var fast = Profile("Fast", "fast", 16, 3f, 1, .75f, new Color(.55f, .75f, .35f));
+            var tough = Profile("Tough", "tough", 70, 1.45f, 5, 1.4f, new Color(.55f, .35f, .65f));
             return new[] { Program("Station01", 1, normal, fast, tough, 8, 2, 1),
                 Program("Station03", 3, normal, fast, tough, 10, 4, 2),
                 Program("Station06", 6, normal, fast, tough, 12, 6, 4) };

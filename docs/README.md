@@ -89,3 +89,6 @@ Reklam/IAP'nin ekonomi rolü M7 öncesinde tasarlanır; servis entegrasyonu ve y
 2026-10-08 M6: StationDefinition programları ve normal/hızlı/dayanıklı ortak profiller TrainIntegration’a bağlandı. Global/vagon/kare/kuyruk sınırları, kontrollü havuz ısınması, sonlu nav/çakışma denemesi ve dolu-vagon adaleti eklendi. EditMode ve Play kanıtları, başlangıç ayarları ve Android doğrulama sınırı [SPAWNING.md](SPAWNING.md) içinde; son PC rapor zamanları aşağıdaki M6 kaydında güncellenir.
 
 M6 son PC kanıtı: 15:33:53 UTC 26/26 kural/yolculuk testi; 15:35:13 UTC 30 istasyon/dokuz yeniden kullanım/5 yolcu PASS; 15:36:24 UTC kapı/cam/dört silah/10 geçiş/60 beden F10 PASS. Ham yerel raporların kısa kopyası docs/generated/m6-pc-acceptance.txt. Android kalabalık profili ve gerçek uzun oturum açık; sıradaki uygulama M7a.
+
+
+2026-10-08 pencere/hız düzeltmesi: bütün uç köşeler metal; ara camlar %5–9 daraltıldı (çerçeve/dikme 0,32/0,18 m). Normal/hızlı/dayanıklı hızları 2,1/3,0/1,45 m/sn. Model sözleşmesi ve ölçü CSV'si yenilendi. 16:00:18 UTC F10 PASS: 26 yan camda dört silah, metal çerçeveler ve her vagonun dört uç bölümünde düz/eğik raylar; beden/nav sınırı, kapılar ve 10 geçiş korunur. Kısa kanıt: docs/generated/window-refinement-pc-acceptance.txt. Android bu düzeltmede tekrar ölçülmedi. Sıradaki aşama M7a.

@@ -96,3 +96,7 @@ Etkilenen belgeler: ROADMAP, DECISIONS, ARCHITECTURE, GAME_DESIGN ve geliştirme
 ## 2026-10-08 — M6 teknik uygulama kaydı
 
 StationSpawner + saf SpawnSchedule mevcut Run katmanında, EnemyProfile mevcut Enemies katmanında kuruldu. Yeni doğuşlar bütün vagonlardaki taşınan bedenleri sayar; dolu vagon istekleri kuyruk yerini serbest bırakıp kısa ertelenir. Geçersiz konum en fazla üç denemeden sonra iptal edilir; station bitişi bütün bekleyen üretimi kapatır. Havuz ısınması ve aktive etme ayrı kare bütçeleriyle yapılır. Bu teknik tercih ve başlangıç sayıları nihai denge kararı değildir. Normal/hızlı/dayanıklı test değerleri, 1/3/6+ programları ve açık Android kontrolü SPAWNING.md içinde. Kullanıcının mevcut iki taraflı/4–6 kapılı tren, camdan atış, iç zombi kalıcılığı ve rutin PC kontrolü kararları korunur.
+
+## 2026-10-08 — Kullanıcı düzeltmesi: uçlar metal, daha dar cam, daha yavaş zombi
+
+D24 güncellemesi: her vagonun iki yanındaki dört uç bölüm penceresiz, tamamen metal olur; yalnız dış kapılar arasında yan cam bulunur. Dış pencere çerçevesi 0,32 m, ara dikme 0,18 m; net açıklıklar MODEL_CONTRACT.md ve sahneden üretilen ölçü listesinde kayıtlıdır. Hareket/NavMesh sınırı ve kapı camı kuralları değişmez. Zombi hareket hızları normal 2,6 → 2,1, hızlı 3,8 → 3,0, dayanıklı 1,8 → 1,45 m/sn oldu; can, vuruş, saldırı temposu ve doğuş programı değişmedi. Hızlar Inspector'dan ayarlanabilir başlangıç dengesi olarak kalır.

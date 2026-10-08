@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaitYourTurn.Enemies::WaitYourTurn.Enemies.EnemyProfile
   id: normal
   health: 24
-  speed: 2.6
+  speed: 2.1
   damage: 2
   attackInterval: 1
   windup: 0.25

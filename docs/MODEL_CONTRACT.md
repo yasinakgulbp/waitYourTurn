@@ -24,25 +24,25 @@
 | Kapı üst metal çerçevesi | Y=2,0…2,1; mermiyi engeller |
 | Yan pencere net camı | Y=0,7…1,6; net yükseklik 0,9; aşağıdaki X aralıkları |
 | Pencere alt/üst metali | Y=0…0,7 / 1,6…2,1; mermiyi engeller |
-| Duvar segmenti dış pencere çerçevesi | X'te 0,24 genişlik; tam duvar yüksekliğinde; uç duvarla örtüşmeyi önler |
-| Aynı segmentte iki camı ayıran dikme | X'te 0,12 genişlik; tam duvar yüksekliğinde |
+| Duvar segmenti dış pencere çerçevesi | X'te 0,32 genişlik; tam duvar yüksekliğinde; uç duvarla örtüşmeyi önler |
+| Aynı segmentte iki camı ayıran dikme | X'te 0,18 genişlik; tam duvar yüksekliğinde |
 | Vagonlar arası mesafe | Gövde uçları arasında 1,0 |
 
 Atış çekirdeğinin namlusu aktör kökünden Y=0,9, hedef merkezi Y=0,85'tir. Modeldeki namlu/efekt bağlantısı bu atış çizgisine uymalıdır; modelin silahını başka yüksekliğe koymak mekanik namluyu kendiliğinden değiştirmez. Büyük düşmanlar veya yüksek turret namluları için aynı tablo ve kabul kontrolleri ayrıca değerlendirilir.
 
 ## Pencerelerin X aralıkları
 
-Her iki tarafta mevcut kapılar arasında kalan duvar segmentleri kullanılır. Segmentin iki ucundan 0,24 metal ayrılır. Kalan alan, net genişliği en fazla 2,2 olan eşit camlara ve aralarında 0,12 metal dikmeye bölünür. İlk deneme ölçüleri:
+Her iki tarafta yalnız dış kapılar **arasında** kalan duvar segmentlerine pencere açılır. Vagon uçları ile dış kapılar arasındaki dört köşe tamamen metaldir; hiç bir yerleşimde burada cam veya atış açıklığı bulunmaz. Segmentin iki ucundan 0,32 metal ayrılır. Kalan alan, net genişliği en fazla 2,2 olan eşit camlara ve aralarında 0,18 metal dikmeye bölünür.
 
 | Segment | Net cam merkez X / genişlik |
 | --- | --- |
-| Sol uç (−6…−4,525) | −5,2625 / 0,995 |
-| Sağ uç (+4,525…+6) | +5,2625 / 0,995 |
-| Orta kapı mevcutken sol ara duvar (−3,075…−0,725) | −1,9 / 1,87 |
-| Orta kapı mevcutken sağ ara duvar (+0,725…+3,075) | +1,9 / 1,87 |
-| Orta kapı yokken büyük ara duvar (−3,075…+3,075) | −1,93 / 1,81; 0 / 1,81; +1,93 / 1,81 |
+| Sol uç (−6…−4,525) | Tamamen metal, pencere yok |
+| Sağ uç (+4,525…+6) | Tamamen metal, pencere yok |
+| Orta kapı mevcutken sol ara duvar (−3,075…−0,725) | −1,9 / 1,71 |
+| Orta kapı mevcutken sağ ara duvar (+0,725…+3,075) | +1,9 / 1,71 |
+| Orta kapı yokken büyük ara duvar (−3,075…+3,075) | −1,896667 / 1,716667; 0 / 1,716667; +1,896667 / 1,716667 |
 
-SixDoor iki tarafta orta kapı taşır (8 yan pencere). FiveDoor kuzey orta kapıyı kaldırır (9 pencere). FourDoor iki orta kapıyı kaldırır (10 pencere). Kapı sayısı zombi giriş sayısıdır; pencere ayrı bir zombi girişi değildir. Pencere kırılması, canı veya onarımı bu kararda yoktur.
+SixDoor iki tarafta orta kapı taşır (4 yan pencere). FiveDoor kuzey orta kapıyı kaldırır (5 pencere). FourDoor iki orta kapıyı kaldırır (6 pencere). Beşli sahnede toplam 26 yan pencere vardır. Kapı sayısı zombi giriş sayısıdır; pencere ayrı bir zombi girişi değildir. Pencere kırılması, canı veya onarımı bu kararda yoktur.
 
 ## Kesit görünümü ve bağlama
 

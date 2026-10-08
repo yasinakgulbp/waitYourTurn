@@ -10,9 +10,9 @@ Her `SpawnBand`: zombi profili, vagon indeksi (`-1`: tüm vagonlar), adet, savun
 
 | Profil | Can | Hız | Vuruş | Saldırı aralığı | Blokout rengi |
 | --- | --- | --- | --- | --- | --- |
-| Normal | 24 | 2,6 | 2 | 1 sn | Kahverengi |
-| Fast | 16 | 3,8 | 1 | 0,75 sn | Açık yeşil |
-| Tough | 70 | 1,8 | 5 | 1,4 sn | Mor |
+| Normal | 24 | 2,1 | 2 | 1 sn | Kahverengi |
+| Fast | 16 | 3,0 | 1 | 0,75 sn | Açık yeşil |
+| Tough | 70 | 1,45 | 5 | 1,4 sn | Mor |
 
 Hızda küçük 0–0,16 varyasyon vardır. Üçü aynı `EnemyBrain`, `AgentMotor`, `MeleeAttack` ve can sistemini kullanır; saldırı ön hazırlığı 0,25 sn. Renk yalnız sunumdur. Kapsül/agent boyutu tüm türlerde 1,7 × 0,6 kalır; büyük gövdeli özel tür için yalnız modeli büyütmek yeterli değildir, agent ve geçit kabulü ayrıca gerekir.
 
