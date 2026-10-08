@@ -8,6 +8,8 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 
 **D23 güncel görsel/ölçek hedefi:** kullanıcının üç yeni referansı eski prototipteki oranları düzeltir. Şimdiki TrainIntegration sade 12 × 4,2 vagon, yönü okunabilen kapsüller, 4–6 kapı varyantları ve ekran oranına uyarlanan perspektif kullanır. Güncel ölçü/model bağlama ve referanslar [VISUAL_SCALE.md](VISUAL_SCALE.md) içindedir; ilk prefabın oranları ve altı-kapı zorunluluğu artık hedef değildir.
 
+**D27/D28 güncel durum:** boş/elenmiş vagonlara yeni saldırı üretilmez; içeridekiler korunur. Rastgele atamada geçerli adaylar içinde düşmana en yüksek mesafe ve ayarlanabilir 2 sn hasar koruması kullanılır. 28 spawn/yolculuk + 40 can/onarım testi, F11 30 geçiş, F9 mağaza ve F10 birleşik çekirdek PC kabulü PASS. [Kısa kanıt](generated/occupancy-arrival-pc-acceptance.txt). Botlar henüz yok; turret → dron → Mod/Bot sırası korunur. Gelir önerileri [MONETIZATION.md](MONETIZATION.md) içinde, servisler eklenmedi.
+
 ## Okuma sırası
 
 1. [Oyun tasarımı](GAME_DESIGN.md): oyuncunun deneyimi, kurallar, henüz kesinleşmemiş detaylar.
@@ -26,6 +28,7 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 14. [Model üretimi ve bağlama sözleşmesi](MODEL_CONTRACT.md): pivot/eksen/birimler, net kapı-pencere açıklıkları, metal hacimleri, kesit görünümü ve sahneden üretilen ölçü CSV'si. D24 ile yan pencerelerden ateş edilir, metal çerçevelerden edilmez.
 
 15. [Ekonomi ve mağaza](ECONOMY.md): gerçek ölüm ödülü, sahiplik/yaşam kuşağı, satın alma/refill/yerel onarım, Inspector ayarları ve PC kanıtı.
+16. [Gelir ve kalıcı ekonomi taslağı](MONETIZATION.md): kullanıcının reklam/IAP fikirleri, doğrulanmış örnekler, önerilen sade ürün/ödül yapısı ve henüz seçilmeyen kararlar.
 
 ## Mevcut durum
 
@@ -97,3 +100,5 @@ M6 son PC kanıtı: 15:33:53 UTC 26/26 kural/yolculuk testi; 15:35:13 UTC 30 ist
 
 
 2026-10-08 M7a: saf Wallet/ShopService/KillRewards, RunEconomy bağlayıcısı ve değiştirilebilir ShopHud TrainIntegration'a bağlandı. D25 savaşta gerçek zamanlı mağaza, D26 ilk silah açma/tekrar mermi tamamlama uygulanır. 16:18:42 UTC 11 ekonomi, 16:19:17 UTC 15 silah testi PASS. 16:25:44 UTC F9 gerçek öldürme/tek ödül, iyileşme/yerel onarım/silah-refill, 10 atamada kalıcılık, eski bağlam/karanlık/ölüm reddi ve Restart sıfırlaması PASS. 16:26:30 UTC F10 önceki 26 cam/dört silah/kapı/onarım/10 geçiş/60 beden kabulü PASS; Play Console 0 hata/0 uyarı. Ayarlar ve bağımlılıklar [ECONOMY.md](ECONOMY.md), kanıt [generated/m7a-pc-acceptance.txt](generated/m7a-pc-acceptance.txt). Fiyatlar geçici; Android ergonomisi/uzun oturum, reklam-IAP kararları ve kayıt açık. Sıradaki M7b sabit turret; ardından M7c dron ve Mod/Bot.
+
+2026-10-08 D27/D28: kullanıcı boş vagonlarda biriken zombiler ve atamada ani ölüm bildirdi. Canlı savunucu kaydı üretim uygunluğunu belirler; boş/elenmiş akışlar o istasyon için kapanır, mevcut yolcular silinmez. Atamada en yüksek düşman mesafeli geçerli aday + Inspector'dan ayarlanabilir 2 sn koruma kuruldu. 17:30:01 UTC 28 spawn/yolculuk ve 17:30:11 UTC 40 can/onarım testi PASS. 17:31:13 UTC F11 boş/boşaltılan/elenen vagon, test savunucularıyla global bütçe, dokuz profil yeniden kullanımı, 30 geçişte beş yolcu ve koruma süresi PASS. 17:32:15 UTC F9 mağaza/ödül/ölüm, 17:33:02 UTC F10 26 cam/dört silah/kapı/onarım/10 geçiş/60 beden PASS; Console 0 hata/0 uyarı. [Kanıt](generated/occupancy-arrival-pc-acceptance.txt). Gerçek bot/uzak simülasyon/Android kontrolü yapılmadı. Kullanıcının reklam/IAP fikirleri ve kaynaklı sade ekonomi önerileri MONETIZATION.md içine alındı; fiyat, kalıcı ödül ve servis kararı uygulanmadı. Sıradaki M7b sabit turret.

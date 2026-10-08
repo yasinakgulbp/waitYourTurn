@@ -52,3 +52,13 @@ Android kalabalık profili ve gerçek uzun oturum hâlâ açık. Açık kapıya 
 Builder `RunEconomy` + `RunShop.asset` ve değiştirilebilir `ShopHud` ekler. Oyuncunun `HitscanWeapon.startingWeaponOnly` ayarı açıktır: ilk koşuda yalnız tabanca, diğer üç silah satın alınarak açılır. Eski izole silah labları dört silahı denemek için önceki varsayılanı korur. F10 testi geçici dört-silah erişimini sonunda geri kapatır ve yeni normal koşuya döner.
 
 Sağ üst **Shop** paneli gerçek zamanda çalışır. Zombi ödülleri cüzdana otomatik yazılır; ürünler can, mevcut vagon kapıları, SMG/tüfek/pompalı açma veya mermi tamamlamadır. Karanlık/ölümde panel kapanır; geometri, kamera ve nav sahipliği değişmez. **F9** ekonomi sahne kabulü; **F10** önceki birleşik çekirdek; **F11** spawn kabulüdür. Ayrıntı/ayarlar [ECONOMY.md](ECONOMY.md), güncel kanıt [generated/m7a-pc-acceptance.txt](generated/m7a-pc-acceptance.txt). Bu arayüz test sunumudur; nihai mobil mağaza veya cihaz ergonomisi kabulü değildir.
+
+## D27/D28 — Boş vagon ve atama güvenliği
+
+Canlı savunucusu olmayan vagona yeni üretim yapılmaz; kalan içerideki zombiler korunur. Botlar gelene kadar yalnız insanın mevcut vagonu yeni saldırı alır. Uygunluk, kamera görünürlüğü ve ilerideki uzak simülasyon ayrı sorumluluklardır; [SPAWNING.md](SPAWNING.md).
+
+Atama rastgele vagonu seçmeye devam eder; `WagonRuntime.TrySafePoint(..., avoidEnemies: true)` fizik/NavMesh bakımından geçerli yazılmış adaylar içinde en yakın düşmana mesafesi en büyük olanı seçer. Kapı eşiği yolcusunu taşıyan mevcut kullanım ilk geçerli noktayı seçmeye devam eder. Hiç uygun aday yoksa önceki Faulted tanısı korunur; düşmanlar silinerek veya oyuncu beden içine konularak gizlenmez.
+
+Sahnedeki `RunDriver.arrivalProtectionSeconds` varsayılan 2 saniyedir, 0 kapatır. İlk koşu doğuşunda verilmez; rastgele vagon atamasında yenilenir. `HealthComponent` koruması pause/debug `Invulnerable` alanından ayrıdır; karanlıkta ölçekli zaman durduğu için süre harcanmaz. Görünür zamanda ateş, onarım, hareket ve düşman takibi sürer. Restart/yeni yaşam korumayı temizler. Geçici HUD kalan süreyi gösterir; nihai sanat/UI değildir. F11 hasar reddi ve süre dolmasını, F9 mağaza/ölüm akışını, F10 önceki çekirdeği denetler. İki saniye zor vagonu kolaylaştırma garantisi değil, oyuncuya ilk tepki fırsatı veren ayarlanabilir başlangıç değeridir.
+
+PC kabulü: 2026-10-08 68 kural testi, 17:31:13 UTC F11, 17:32:15 UTC F9 ve 17:33:02 UTC F10 PASS; son Console 0 hata/0 uyarı. [Kısa kanıt](generated/occupancy-arrival-pc-acceptance.txt). Android veya gerçek bot simülasyonu bu kabulde denenmedi.

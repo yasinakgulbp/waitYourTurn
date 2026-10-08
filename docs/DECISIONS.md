@@ -31,6 +31,8 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | D23 | Yeni üç görsel kamera/ölçek/atmosfer referansı; vagon başına 4–6 kapı ve aynı gövde ölçüsü | Kullanıcı 2026-10-08: eski prototipteki oransız boyutlar korunmasın, yönü belli kapsüller kullanılabilir; görsellerde yalnız tarif edilen özellikler referanstır. Kapı sayısı ve dayanıklılık ayrı şans/zorluk araçlarıdır; ortadaki bir/iki kapı duvarla değişebilir. Telefon/tablet kadrajı uyarlanır. Deneme ölçüleri, model bağlama ve kanıt VISUAL_SCALE.md içindedir. |
 | D25 | Mağaza savaşta ve görünür yolculukta kullanılabilir; açıkken oyun sürer | Kullanıcı M7a'da seçti. Karanlık geçişte ve ölümde satın alma kapanır; vagon değişimi eski panel bağlamını geçersiz kılar. |
 | D26 | Silah ilk alımda açılır ve dolar; tekrar satın alma eksik mermiyi aynı fiyatla tamamlar | Kullanıcı M7a'da seçti. Doluyken para harcanmaz; satın alma atış beklemesini sıfırlamaz. Tabanca ücretsiz başlangıç silahıdır. |
+| D27 | Yaşayan insan/bot savunmacı olmayan vagona yeni zombi üretilmez; içeride kalanlar korunur | Kullanıcı M7a değerlendirmesinde boş/elenmiş vagonların her istasyonda dolup kaçınılmaz ölüm yaratmasını istemedi. Uygunluk görünürlüğe veya sadece insanın seçili vagonuna bağlanmaz. |
+| D28 | Atamada zombilerden en uzak fiziksel boş aday + ayarlanabilir 2 sn hasar koruması | Kullanıcı soruda onayladı. Karanlıkta süre tüketilmez; ateş/onarım sürer. Sayısal denge ileride değişebilir. |
 
 ## Teknik öneriler
 
@@ -60,7 +62,7 @@ Bu liste ilk navigasyon/hasar denemesini engellemez. İlgili özellik başlamada
 | Hedef Android cihazları | En az bir düşük ve bir orta sınıf gerçek cihaz seçmek; ölçüm olmadan sabit FPS garantisi yok. | M1 ölçüm düzeni, M6 ilk kalabalık bütçesi |
 | Vagonlar arası geçiş | D16: oyuncu atandığı vagonda kalır, kırık kapıdan istasyona çıkamaz. Gelecekte görev bazlı inme izni açıkça verilir. Zombilerin başka vagona gidip gitmeyeceği ayrı. | M3/M4 |
 | Onarımda kapanış ve saldırı | Geçitte karakter varsa kapanış bekler; ateş edilebilir. D20: varsayılan oyuncu hasarında kesilmez, kapı hasarında sıfırlanır; iki kural ayrı anahtarlardır. Sayısal denge oynanış değerlendirmesine açık. | M3 devamı / denge |
-| Doğuş güvenliği | Duvar/karakter içine doğmama + kısa doğuş koruması önerisi; içerideki zombilerin konumu korunur. | M4 |
+| Doğuş güvenliği | D28: geçerli adaylardan en yüksek düşman mesafesi + ayarlanabilir 2 sn hasar koruması kullanıcı tarafından seçildi; içerideki zombiler korunur. Gerçek oynanış dengesi açık. | M7b öncesi / denge |
 | Kalkış uyarısı | İlk öneri 60 saniye savunma sonrasında 3 saniye uyarı; fade/yavaşlama süreleri ayrı ayarlar. | M4 |
 | Düşman hedef önceliği | Atanmış vagonda oyuncu, turret veya başka hedeflerin önceliği; boş vagondaki zombi davranışı. | M3/M7 |
 | Savunmaların canı ve patlaması | Zombiler turret/drona zarar verebilir mi? Turretin mermi bitiş patlaması sadece efekt mi? Dron patlaması duvar/kapıya nasıl etki eder? | M7 |
@@ -70,13 +72,16 @@ Bu liste ilk navigasyon/hasar denemesini engellemez. İlgili özellik başlamada
 | Mağaza erişimi | D25 ile savaşta açık, oyun sürer; karanlık/ölümde kapalı. Mobil ergonomi ayrıca değerlendirilecek. | M7 değerlendirmesi |
 | Para toplama | Kullanıcı para toplama istedi; ilk öneri ödülü otomatik cüzdana yazmak. Görsel pickup/yerden toplama tercihi açık. | M7 |
 | Koşu devamı / metagelişim | Hangi kazanımların kaldığı ve devam beklentisi erken kâğıt üzerinde seçilir; disk kaydı ihtiyaç kadar uygulanır. | M4a öncesi tasarım, M8 uygulama |
-| Ödüllü reklam / IAP'nin ekonomi rolü | Kullanıcı M7a sorusunda fikirlerini ayrıca yazacağını belirtti. Ürün/tekrar sınırı/denge etkisi açık; bu sırada ayarlanabilir reklamsız çekirdek kurulur, avantaj veya servis varsayılmaz. | M7 tasarım, M9 entegrasyon |
+| Ödüllü reklam / IAP'nin ekonomi rolü | Kullanıcının Battle sonuç 3×, hikâye devam/3×, reklam kaldırma ve yardım teklifi fikirleri alındı. Kaynaklı öneriler MONETIZATION.md içinde; kalıcı ödül, ürün, fiyat ve tekrar sınırı henüz seçilmedi. | M7/M8 tasarım, M9 entegrasyon |
 
 ## 2026-10-08 — D24: yan pencerelerden atış
 
 İki taraftaki yan pencerelerden ateş edilir; metal çerçeve/dikme/alt-üst paneller mermiyi durdurur. Kullanıcının D23 sonrasındaki açık isteğiyle önceki dekoratif/opak pencere davranışı değiştirilir. Pencereler zombi veya oyuncu geçişi değildir; cam kırılması/onarımı eklenmez. Oyuncu ve ileride savunmalar ortak raycast geometrisini kullanır. Modelcinin pivot, ölçek, net cam ve metal hacimleri [MODEL_CONTRACT.md](MODEL_CONTRACT.md) ve üretilen ölçü CSV'sinde kayıtlıdır. Doğrulama: dört silahla tüm pencereler, metal kenarlar/dikmeler, eğik raylar ve pencere üzerinden beden/nav geçişinin kapalı olması; mevcut istasyon/kalıcılık kabulü de tekrar çalıştırılır.
 
 ## Bilinen tasarım riskleri
+
+- M7a'da boş vagonlara da yeni üretim yapılması kullanıcı oyununda ani ölüm yarattı; D27 uygunluğu ve D28 doğuş koruması M7b öncesi ele alınır. Botlar bu temel kurala bağımlıdır, sorunun geçici çözümü sayılmaz.
+- Battle sonucu ödül 3× ve hikâyede reklamla devam/3× kullanıcının hedef fikirleridir; tekrar sınırı/kalıcı ödül/fiyat netleşmedi. Ödüllü reklam reddinden hemen sonra zorunlu reklam önerisi kabul edilmiş uygulama değildir; bağımsız ve sınırlı doğal geçiş yerleşimi öneriliyor. Araştırma/alternatifler MONETIZATION.md içinde.
 
 - Kalıcı kapı hasarı ve rastgele vagon ataması, oyuncuyu çok tehlikeli bir vagona getirebilir. Bu istenen risk/şans hissini destekler; anında kaçınılmaz ölüm olmaması için doğuş güvenliği gerekir.
 - Turretler eski vagonlarda kaldığından oyuncu dışında öldürme/ödül devam edebilir. Karanlıkta tüm oynanış durur; görünür zamanda bu etki ekonomi dengesiyle değerlendirilir.

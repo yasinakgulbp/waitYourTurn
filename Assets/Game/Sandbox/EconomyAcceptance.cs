@@ -66,7 +66,7 @@ namespace WaitYourTurn.Sandbox
             economy.Wallet.Reset(1000);
             int before = economy.Wallet.Balance;
             if (!CheckThat(Buy(heal) == PurchaseResult.Unavailable && economy.Wallet.Balance == before, "Full health charged currency")) yield break;
-            player.Invulnerable = false;
+            player.Invulnerable = false; player.SetDamageProtection(0);
             player.TryApplyDamage(new DamageContext(90, default, Team.Enemy, 103, player.LifeVersion)); player.Invulnerable = true;
             ulong request = economy.NextRequest(); ulong context = economy.Context;
             if (!CheckThat(economy.Buy(heal, context, request) == PurchaseResult.Success && player.Current == 40 &&
@@ -120,7 +120,7 @@ namespace WaitYourTurn.Sandbox
             if (!CheckThat(!run.Flow.Terminal && run.Assignments == 10 && economy.Wallet.Balance == paid && gun.IsOwned(1) &&
                 gun.Rounds == rounds && gun.Reserve == reserve && run.Wagons.Select((w, i) => w.Geometry.StationSpawn(0) == positions[i]).All(x => x), "Currency/inventory/ammo changed across 10 assignments")) yield break;
             if (!CheckThat(economy.Buy(repair, oldContext, economy.NextRequest()) == PurchaseResult.StaleContext, "Old wagon shop request accepted")) yield break;
-            player.Invulnerable = false;
+            player.Invulnerable = false; player.SetDamageProtection(0);
             player.TryApplyDamage(new DamageContext(10000, default, Team.Enemy, 106, player.LifeVersion));
             if (!CheckThat(!economy.CanShop && Buy(heal) == PurchaseResult.Closed && economy.Wallet.Balance == paid, "Death allows shop/resurrection")) yield break;
             run.Restart();

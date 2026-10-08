@@ -1,0 +1,19 @@
+D27/D28 PC acceptance - Unity 6000.6.4f1 - TrainIntegration, 5 wagons, 26 side windows
+Date: 2026-10-08. Times below are UTC.
+SpawnAndJourneyTests : Passed, 28 passed, 0 failed, ended 2026-10-08 17:30:01Z
+HealthAndRepairTests : Passed, 40 passed, 0 failed, ended 2026-10-08 17:30:11Z
+
+SpawnAcceptance
+2026-10-08T17:31:13.5669970Z
+PASS: Empty wagons suppress new spawn without removing survivors; occupied wagon still spawns; synthetic living occupants exercise global 9, wagon 3, queue 4, frame 2 limits; 3 profiles / 9 same-object reuse cycles; stale life rejected; invalid nav leaves pool intact; kill frees one slot; 30 station cycles retain 5 original passengers; arrival protection rejects damage and expires in gameplay time; registry matches active bodies; fixed 60-object pool, peak 7 active. PC only; Android profile pending.
+
+EconomyAcceptance
+2026-10-08T17:32:15.2854755Z
+PASS: Actual pistol kill + owned-defense credit; pooled life/replay/foreign-owner/cleanup; heal 10->40,50->80,80->100; full/unfunded/duplicate reject; current-wagon repair; weapon unlock/refill/cooldown; 10 assignments preserve currency/inventory/ammo; dark/death/old context reject; new run resets. PC only.
+
+TrainIntegration-5
+2026-10-08T17:33:02.2020778Z
+PASS: Door variants 4,5,6,5,4: repair/glass; every bilateral window passes all four guns, metal edges/panels block straight/oblique rays, movement/nav remain closed; bilateral door entry/thresholds and player boundary; responsive camera; 10 cycles visiting 5 wagons; HP/SMG/ammo/survivors/door damage preserved; full 60-enemy pool bound.
+
+Observed: normal single-human wagon receives new attacks; neighboring empty wagons remain quiet. Final Play Console: 0 warnings, 0 errors.
+Limits: PC technical checks only; accelerated cycles are not a long-session/device profile. No real bots, remote combat simulation, Android performance/ergonomics, final balance, persistence, rewarded ad or IAP service validated.

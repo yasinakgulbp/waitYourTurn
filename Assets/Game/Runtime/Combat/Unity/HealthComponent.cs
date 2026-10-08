@@ -10,6 +10,7 @@ namespace WaitYourTurn.Combat
         [SerializeField] private Team team;
         private Health health;
         private bool notifying;
+        private float damageProtectedUntil;
         private Health Model => health ?? (health = new Health(startingMaxHealth, team));
 
         public float Current => Model.Current;
@@ -21,6 +22,14 @@ namespace WaitYourTurn.Combat
         public Team Team => Model.Team;
         public EntityIdentity Identity => new EntityIdentity(EntityId.ToULong(GetEntityId()), LifeVersion);
         public bool Invulnerable { get => Model.Invulnerable; set { if (!notifying) Model.Invulnerable = value; } }
+        // Separate from pause/debug invulnerability; scaled time preserves protection while gameplay is paused.
+        public float DamageProtectionRemaining => Mathf.Max(0, damageProtectedUntil - Time.time);
+        public bool SetDamageProtection(float seconds)
+        {
+            if (notifying || seconds < 0 || float.IsNaN(seconds) || float.IsInfinity(seconds) ||
+                float.IsInfinity(Time.time + seconds) || seconds > 0 && !IsAlive) return false;
+            damageProtectedUntil = Time.time + seconds; return true;
+        }
         public event Action<HealthSnapshot> HealthChanged;
         public event Action<DeathNotice> Died;
 
@@ -29,6 +38,7 @@ namespace WaitYourTurn.Combat
         public DamageResult TryApplyDamage(DamageContext context)
         {
             if (notifying) return DamageResult.Reject(DamageRejection.NotificationInProgress);
+            if (IsAlive && DamageProtectionRemaining > 0) return DamageResult.Reject(DamageRejection.Invulnerable);
             DamageResult result = Model.TryApplyDamage(context);
             if (!result.Applied) return result;
             unchecked { DamageRevision++; }
@@ -63,6 +73,7 @@ namespace WaitYourTurn.Combat
         public bool ResetForSpawn(float maximum, Team newTeam)
         {
             if (notifying || !Model.ResetForSpawn(maximum, newTeam)) return false;
+            damageProtectedUntil = 0;
             NotifyChanged();
             return true;
         }

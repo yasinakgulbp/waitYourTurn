@@ -6,6 +6,27 @@ namespace WaitYourTurn.Tests
 {
     public sealed class HealthTests
     {
+        [Test]
+        public void TimedProtectionIsIndependentFromPauseFlagAndCannotLeakAcrossLives()
+        {
+            var body = new GameObject("Protection test").AddComponent<HealthComponent>();
+            try
+            {
+                Assert.That(body.SetDamageProtection(2), Is.True);
+                body.Invulnerable = true; body.Invulnerable = false;
+                Assert.That(body.TryApplyDamage(new DamageContext(10, default, Team.Enemy, 1, body.LifeVersion)).Rejection,
+                    Is.EqualTo(DamageRejection.Invulnerable));
+                Assert.That(body.SetDamageProtection(float.NaN), Is.False);
+                Assert.That(body.SetDamageProtection(-1), Is.False);
+                Assert.That(body.DamageProtectionRemaining, Is.GreaterThan(0));
+                body.ResetForSpawn(100, Team.Player);
+                Assert.That(body.DamageProtectionRemaining, Is.Zero);
+                Assert.That(body.TryApplyDamage(new DamageContext(10, default, Team.Enemy, 2, body.LifeVersion)).Applied, Is.True);
+                body.SetDamageProtection(2); body.SetDamageProtection(0);
+                Assert.That(body.TryApplyDamage(new DamageContext(10, default, Team.Enemy, 3, body.LifeVersion)).Applied, Is.True);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(body.gameObject); }
+        }
         private static DamageContext Hit(Health target, float amount, Team sourceTeam = Team.Enemy) =>
             new DamageContext(amount, new EntityIdentity(123, 1), sourceTeam, 1, target.LifeVersion);
 

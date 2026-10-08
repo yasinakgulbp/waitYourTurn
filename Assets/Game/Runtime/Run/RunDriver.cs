@@ -21,6 +21,8 @@ namespace WaitYourTurn.Run
         [SerializeField] private RunTimings timings = new RunTimings();
         [SerializeField] private int seed = 12345;
         [SerializeField] private int initialWagonIndex;
+        [SerializeField, Min(0)] private float arrivalProtectionSeconds = 2;
+        public float ArrivalProtectionSeconds => arrivalProtectionSeconds;
         public void ConfigureInitialWagon(int index) => initialWagonIndex = index;
         private System.Random random;
         private bool gateClosed;
@@ -51,6 +53,7 @@ namespace WaitYourTurn.Run
             random = new System.Random(seed); Assignments = 0; Failure = null;
             foreach (WagonRuntime wagon in wagons)
             {
+                wagon.SetDefender(null);
                 wagon.Enemies.ClearAlive(); wagon.SetStationAccess(false);
                 foreach (DoorController door in wagon.Doors) door.Durability.ResetForSpawn(door.Durability.Maximum, Team.Neutral);
             }
@@ -81,11 +84,13 @@ namespace WaitYourTurn.Run
         }
         private bool Assign(WagonRuntime wagon, bool count)
         {
-            if (!player.IsAlive || !wagon.TrySafePoint(player, out Vector3 point))
+            if (!player.IsAlive || !wagon.TrySafePoint(player, out Vector3 point, true))
             { Failure = "No clear player spawn inside the assigned wagon."; return false; }
             repair.Cancel(); repair.SetDoor(wagon.NearestDoor(point));
             motor.SetMovementArea(wagon.Area); motor.Place(point); aim.ClearTarget();
-            CurrentWagon = wagon;
+            if (CurrentWagon != null && CurrentWagon.Defender == player) CurrentWagon.SetDefender(null);
+            CurrentWagon = wagon; wagon.SetDefender(player);
+            if (count) player.SetDamageProtection(arrivalProtectionSeconds);
             foreach (WagonRuntime coach in wagons) coach.Enemies.SetScope(coach.Id, coach == wagon);
             if (count) Assignments++;
             Assigned?.Invoke(wagon); return true;

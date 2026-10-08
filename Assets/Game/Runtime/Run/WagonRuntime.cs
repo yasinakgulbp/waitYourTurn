@@ -22,6 +22,10 @@ namespace WaitYourTurn.Run
         public DoorController[] Doors => doors;
         public EnemyPool Enemies => enemies;
         public MovementArea Area => movementArea;
+        // Occupancy is gameplay state, not camera visibility. A future bot registers its own health here.
+        public HealthComponent Defender { get; private set; }
+        public bool HasLivingDefender => Defender != null && Defender.IsAlive;
+        public void SetDefender(HealthComponent defender) => Defender = defender;
         public void Configure(string id, DoorController[] entries, EnemyPool pool, MovementArea area)
         { wagonId = id; doors = entries; enemies = pool; movementArea = area; }
         public void SetStationAccess(bool allowed) { foreach (DoorController door in doors) door.Portal.SetStationAccess(allowed); }
@@ -35,9 +39,10 @@ namespace WaitYourTurn.Run
             }
             return nearest;
         }
-        public bool TrySafePoint(HealthComponent movingBody, out Vector3 point)
+        public bool TrySafePoint(HealthComponent movingBody, out Vector3 point, bool avoidEnemies = false)
         {
             Physics.SyncTransforms();
+            point = default; bool found = false; float bestClearance = -1;
             for (int i = 0; i < (geometry != null ? geometry.SafePositionCount : 17); i++)
             {
                 Vector3 local = i == 0 ? new Vector3(0, 0.05f, 5.5f) :
@@ -57,9 +62,19 @@ namespace WaitYourTurn.Run
                     if (nearby[j].GetComponentInParent<HealthComponent>() == movingBody) continue;
                     blocked = true; break;
                 }
-                if (!blocked) { point = candidate; return true; }
+                if (blocked) continue;
+                if (!avoidEnemies) { point = candidate; return true; }
+                float clearance = float.MaxValue;
+                foreach (var enemy in enemies.Active)
+                {
+                    if (!enemy.Health.IsAlive) continue;
+                    Vector3 delta = enemy.transform.position - candidate; delta.y = 0;
+                    clearance = Mathf.Min(clearance, delta.sqrMagnitude);
+                }
+                if (!found || clearance > bestClearance)
+                { found = true; bestClearance = clearance; point = candidate; }
             }
-            point = default; return false;
+            return found;
         }
         public bool ResolveDeparture()
         {

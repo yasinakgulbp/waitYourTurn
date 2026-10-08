@@ -2,7 +2,7 @@ using System;
 
 namespace WaitYourTurn.Run
 {
-    public enum SpawnResult { Spawned, CapacityFull, InvalidPosition }
+    public enum SpawnResult { Spawned, CapacityFull, InvalidPosition, Unoccupied }
     public readonly struct SpawnStream
     {
         public readonly int Wagon, Profile, Count;
@@ -33,6 +33,7 @@ namespace WaitYourTurn.Run
         public int Spawned { get; private set; }
         public int Dropped { get; private set; }
         public int Attempts { get; private set; }
+        public int SuppressedStreams { get; private set; }
         public SpawnSchedule(SpawnStream[] source, int capacity, int retries, float delay)
         {
             if (source == null || source.Length == 0 || source.Length > 1024 || capacity < 1 || capacity > 256 || retries < 1 ||
@@ -66,6 +67,9 @@ namespace WaitYourTurn.Run
                 int index = request.Stream; queued[index] = false;
                 Attempts++;
                 var result = spawn(request);
+                // No deferred invasion when an empty wagon is assigned later. A new station builds fresh streams.
+                if (result == SpawnResult.Unoccupied)
+                { emitted[index] = streams[index].Count; failures[index] = 0; SuppressedStreams++; continue; }
                 if (result == SpawnResult.Spawned) { Spawned++; emitted[index]++; failures[index] = 0; continue; }
                 if (result == SpawnResult.InvalidPosition && ++failures[index] >= maxFailures)
                 { Dropped++; emitted[index]++; failures[index] = 0; continue; }

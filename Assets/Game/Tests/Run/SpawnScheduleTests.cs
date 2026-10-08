@@ -9,6 +9,31 @@ namespace WaitYourTurn.Tests
     public sealed class SpawnScheduleTests
     {
         [Test]
+        public void EmptyWagonCancelsItsStationStreamWithoutBacklogOrStarvingOccupiedWagon()
+        {
+            var streams = new[] { new SpawnStream(0, 0, 100, 0, .01f), new SpawnStream(1, 0, 3, 0, .1f) };
+            var schedule = new SpawnSchedule(streams, 1, 3, .01f);
+            int emptyCalls = 0, occupied = 0;
+            for (int frame = 0; frame < 20; frame++)
+                schedule.Tick(frame, 1, r => { if (r.Wagon == 0) { emptyCalls++; return SpawnResult.Unoccupied; }
+                    occupied++; return SpawnResult.Spawned; });
+            Assert.That(emptyCalls, Is.EqualTo(1)); Assert.That(occupied, Is.EqualTo(3));
+            Assert.That(schedule.SuppressedStreams, Is.EqualTo(1)); Assert.That(schedule.Dropped, Is.Zero);
+            schedule.Tick(100, 8, _ => throw new Exception("Empty station stream must stay cancelled"));
+            var next = new SpawnSchedule(streams, 1, 3, .01f);
+            next.Tick(0, 1, _ => SpawnResult.Spawned); Assert.That(next.Spawned, Is.EqualTo(1));
+        }
+        [Test]
+        public void DefenderEliminationRejectsAlreadyQueuedRequests()
+        {
+            var schedule = new SpawnSchedule(new[] { new SpawnStream(0, 0, 5, 0, .1f) }, 1, 3, .1f);
+            schedule.Tick(0, 1, _ => SpawnResult.Spawned);
+            schedule.Tick(.2f, 1, _ => SpawnResult.CapacityFull);
+            schedule.Tick(.4f, 1, _ => SpawnResult.Unoccupied);
+            schedule.Tick(5, 1, _ => throw new Exception("Eliminated defender cannot receive new enemies"));
+            Assert.That(schedule.Spawned, Is.EqualTo(1)); Assert.That(schedule.SuppressedStreams, Is.EqualTo(1));
+        }
+        [Test]
         public void HugeTimeJumpStillHonorsPerFrameBudgetAndQueueBound()
         {
             var streams = new SpawnStream[10];

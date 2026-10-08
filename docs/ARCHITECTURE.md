@@ -164,7 +164,15 @@ Rastgele atama evre başına bir kez yapılır. Oyuncu prefabı yeniden yaratıl
 
 Kararlaştırıldı: karanlık geçişte oynanış durur, görünür yolculukta savaş devam eder. `GameplayGate`: fade başlangıcından görüntü/kontrol geri gelene kadar AI/atış/hasar/onarım/spawn zamanları durur; geçiş sunumu ve tren sesi ilerler. Geri açılınca bekleyen saldırı veya spawn birikimi aynı karede patlamaz. Sadece oyuncuyu dokunulmaz yapıp turretlerin karanlıkta para üretmesine izin verilmez. İstasyon dışındaki sunum geometrisi oynanışı süren vagonlar ile çarpışmaz.
 
-İçeride düşmanlar korunduğundan yeni vagonun doğuş noktası güvenli seçilir. Öneri: kısa yerel doğuş koruması; yakınlık ve düşman saldırılarıyla birlikte M4'te doğrulanır. Ölüm/koşu bitişi kararma coroutine'inin oyuncuyu yeniden doğurmasını engeller.
+İçeride düşmanlar korunduğundan D28 ile yeni vagonun doğuş noktası geçerli adaylar içinde düşmandan en uzak seçilir ve ayarlanabilir hasar koruması verilir. Ölüm/koşu bitişi kararma akışının oyuncuyu yeniden doğurmasını engeller.
+
+## Vagon uygunluğu ve atama güvenliği
+
+M7a değerlendirmesi sonrası `WagonRuntime.Defender` yaşayan insan/bot canını taşır; `HasLivingDefender` üretim uygunluğudur. `RunDriver` insan atamasında eski kaydı bırakıp yenisini yazar; Restart temizler. Bot modu kendi HealthComponent'ini kaydedecek; bu kayıt tek başına bot AI'ı veya zombi bot-hedef seçimi uygulamaz. `StationSpawner` hem veri hem eski lab yolunda uygunluğu denetler. Saf schedule `Unoccupied` sonucunda ilgili istasyon akışını iptal eder; kapasite doluluğu veya geçersiz nav saymaz ve sonraya saldırı biriktirmez. Sonraki istasyon yeni program açar.
+
+İnsan atamasında `TrySafePoint(..., avoidEnemies: true)` yazılmış/geçerli/çakışmasız adayların en yüksek en-yakın-düşman mesafesini seçer; eşik-zombi taşıma eski ilk-geçerli-aday yolunu kullanır. `HealthComponent.SetDamageProtection` süreli hasar engelidir; pause/debug `Invulnerable` bayrağından ayrıdır, ölçekli zamanla donar ve yeni yaşamda temizlenir. Süreyi RunDriver Inspector ayarı belirler; sağlık UI/ateş/onarım bağımlılığı yoktur.
+
+Mod/Bot aşamasında atamalar tüm canlı katılımcılar için tek koordinatörden yapılmalı; bir vagonun insan kaydı yaşayan bot kaydını ezmemeli. Şimdiki RunDriver tek insanı yönetir ve multiplayer/bot atama koordinatörü değildir.
 
 ## Ekonomi işlemi
 

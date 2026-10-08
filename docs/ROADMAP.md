@@ -156,6 +156,8 @@ Kabul: yanlış veriler anlaşılır tanıyla reddedilir; geçersiz nav spawn so
 
 ## M7 — Ekonomi ve savunmalar
 
+M7b öncesi 2026-10-08 kullanıcı denetimi: boş/elenmiş savunmacı vagonuna yeni üretim kapatılır; içerideki kalanlar korunur. Güvenli atama en uzak boş adayı seçer, ayarlanabilir 2 sn hasar koruması ateş/onarımı durdurmaz. Bu düzeltmenin PC kabulü yeni turret geliştirmesinden önce kayda alınır. Tamamlanmış kabul olmayan sürüm PASS sayılmaz.
+
 Bu aşama üç küçük parçaya bölünür:
 
 1. **M7a PC teknik kabulü geçti:** cüzdan/ölüm ödülü/mağaza işlemi; heal, mevcut vagon kapı onarımı ve silah satın alma/refill. Savaşta gerçek zamanlı mağaza, karanlık/ölümde kapalı; ilk silah alımı açar, tekrar alım eksik mermiyi aynı fiyatla tamamlar. 11 ekonomi + 15 silah testi ve F9/F10 sahne kabulleri PASS; ayrıntı ECONOMY.md.
@@ -165,6 +167,8 @@ Bu aşama üç küçük parçaya bölünür:
 Kabul: aynı ölüm tek ödül; çift dokunma çift ücret/ürün üretmez. Dolu slot/tam can/sınır/yetersiz para satın alımı para kaybettirmez. Toplu tamir yalnızca güncel vagonu etkiler. Turretler vagonlarında kalır ve görüş engelini önemser. Dron oyuncuyla taşınır; hedef ölürse/kalmazsa kilitlenmez; patlama/ödül bir kez uygulanır. Ürün davranışları UI kapalıyken de çalışır.
 
 ## M8 — Denge ve kayıt
+
+M7a sonrası gelir taslağı [MONETIZATION.md](MONETIZATION.md) içinde: kullanıcının Battle sonuç 3×, hikâyede devam/3× ve zorunlu reklam kaldırma fikirleri; araştırılan Bullet Echo/The Tower örnekleri ve sade ekonomi önerisi. Koşu parası ile kalıcı sonuç ödülü ayrılır; premium para, meta harcamaları, ürün fiyatları ve reklam sıklığı henüz seçilmedi. Tek teslim ve uygulama kapanması sınırları kayıt/sonuç tasarımında ele alınır.
 
 - İlk birkaç istasyonun tür/tempo/ödül/fiyat dengesi; canlı limitini sürekli büyütmeden zorluk artışı.
 - Vagon şansı, güvenli doğuş, ücretsiz onarım ve eski vagon turret gelirlerini birlikte oynayarak değerlendir.
@@ -199,4 +203,4 @@ D24 revizyonu tamamlandı: iki taraftaki yan camlar atışı geçirir, metal dik
 
 **Güncel M6 durumu:** veri programları, üç ortak zombi profili, global/vagon/kare sınırları, sonlu doğuş denemesi ve kontrollü havuz ısınması PC’de doğrulandı. İçeridekiler canlı limitine dahil. Kod/Inspector bağlama, ilk test değerleri ve yeniden çalıştırma bilgileri [SPAWNING.md](SPAWNING.md) içinde. Android performansı ve gerçek uzun oturum açık; kısa PC kabulü bunların kanıtı değildir.
 
-**Bir sonraki uygulama M7b:** sabit normal/gelişmiş turret; slot/kurulum sınırı, ortak atış geometrisi, mermi bitişi ve oyuncu ödül sahipliği. M7a PC kabulü tamamlandı; kurallar/ayarlar/kanıt [ECONOMY.md](ECONOMY.md) içinde. M7b → M7c dron → Mod/Bot sırası korunur. Reklam/IAP fikirlerini kullanıcı ayrıca yazacak; ürün/ödül avantajı kesinleştirilmedi ve servis eklenmedi. Android ergonomisi ve ekonomik denge sonraki değerlendirmede açık kalır.
+**Bir sonraki uygulama M7b sabit turret:** normal/gelişmiş turret, slot/kurulum sınırı, ortak atış geometrisi, mermi bitişi ve oyuncu ödül sahipliği. Öncesindeki D27/D28 kapısı PC'de geçti: 68 kural testi, boş/elenmiş vagon üretimi ve koruma süresiyle F11 30 geçiş, F9 mağaza ve F10 önceki çekirdek PASS; [kanıt](generated/occupancy-arrival-pc-acceptance.txt). M7a kuralları/ayarları [ECONOMY.md](ECONOMY.md) içinde. M7b → M7c dron → Mod/Bot sırası korunur. Kullanıcının reklam/IAP fikirleri ve kaynaklı alternatifler [MONETIZATION.md](MONETIZATION.md) içinde; kalıcı ödül/ürün/fiyat henüz seçilmedi ve servis eklenmedi. Android ergonomisi ve ekonomik denge sonraki değerlendirmede açık kalır.

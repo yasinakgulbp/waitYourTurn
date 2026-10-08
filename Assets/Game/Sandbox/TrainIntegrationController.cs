@@ -50,6 +50,8 @@ namespace WaitYourTurn.Sandbox
             if(checking||result.StartsWith("FAIL")||run.Failure!=null)
                 GUI.Label(new Rect(12,82,width-24,45),run.Failure??(checking?"Checking integration…":result),label);
             if(spawner.Diagnostic!=null)GUI.Label(new Rect(12,82,width-24,45),spawner.Diagnostic,label);
+            if(!checking&&!run.Flow.Paused&&run.Player.DamageProtectionRemaining>0)
+                GUI.Label(new Rect(12,82,width-24,30),$"Arrival shield: {run.Player.DamageProtectionRemaining:F1}s",label);
             GUI.matrix=oldMatrix;
             if(presentation.Darkness>0)
             {

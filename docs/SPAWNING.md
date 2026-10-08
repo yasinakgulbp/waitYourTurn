@@ -6,7 +6,15 @@ Güncelleme: 2026-10-08. Hedef sahne `Assets/Game/Scenes/TrainIntegration.unity`
 
 `Assets/Game/Content/StationPrograms` içindeki varlıklar Inspector'dan düzenlenir. Sahnedeki `Bounded station spawner` program listesini taşır. En büyük `firstStation <= mevcut istasyon` olan program seçilir: Station01 → 1–2, Station03 → 3–5, Station06 → 6 ve sonrası. Son program tekrar eder; sonsuza kadar otomatik artan sayılar eklenmedi. Bunlar ilk test değerleridir, nihai denge değildir.
 
-Her `SpawnBand`: zombi profili, vagon indeksi (`-1`: tüm vagonlar), adet, savunmanın başlangıcına göre ilk saniye ve doğuş aralığıdır. Adet vagon başınadır; sadece başarılı doğuş veya sınırlı denemeden sonra iptal edilen istek bütçeyi tüketir. Savunma bittiğinde yetişmemiş doğuşlar sonraki istasyona taşınmaz.
+Her `SpawnBand`: zombi profili, vagon indeksi (`-1`: tüm vagonlar), adet, savunmanın başlangıcına göre ilk saniye ve doğuş aralığıdır. Adet vagon başınadır; başarılı doğuş veya sınırlı denemeden sonra iptal edilen istek bütçeyi tüketir. D27 ile canlı savunucusu olmayan vagonun akışı o istasyon için tamamen kapatılır. Savunma bittiğinde yetişmemiş doğuşlar sonraki istasyona taşınmaz.
+
+## D27 — Canlı savunucu uygunluğu
+
+`WagonRuntime.Defender` ve `HasLivingDefender` kamera görünürlüğünden bağımsızdır. Şimdilik yalnız oyuncunun atandığı vagonda savunucu vardır; bot uygulaması henüz yoktur. Boş veya savunucusu ölmüş vagona yeni zombi üretilmez. Mevcut zombiler silinmez; kalkışta dışarıdakiler normal şekilde temizlenir, içeridekiler yolcu olarak kalır ve global/vagon canlı limitlerini kullanır.
+
+`StationSpawner` uygunluğu kapasite/nav denemesinden önce kontrol eder. `SpawnResult.Unoccupied`, `SpawnSchedule` içinde ilgili akışın kalanını kapatır; `SuppressedStreams` sayacı artar. Konum hatası/uyarı veya tekrar deneme borcu oluşmaz; diğer vagonların üretimi sürer. Yeni istasyon yeni çizelge açar. İstasyon ortasında yeniden savunucu eklenen kapatılmış akış o istasyonda açılmaz; mevcut atama karanlık geçiştedir. Eski lab fallback'i de boş vagonları atlar.
+
+İleride Mod/Bot her canlı katılımcıyı doğru vagona kaydeder; bu kayıt tek başına bot hareketi veya zombi-bot hedefleme uygulaması değildir. Yalnız turret bulunan boş vagonun yeni saldırı çekmesi ayrıca seçilmemiştir; mevcut kural canlı katılımcı ister. Görünmeyen vagon simülasyonu bu düzeltmenin parçası değildir; havuz ve kalan bedenler hâlâ mevcut bütçelerle çalışır.
 
 | Profil | Can | Hız | Vuruş | Saldırı aralığı | Blokout rengi |
 | --- | --- | --- | --- | --- | --- |
@@ -32,7 +40,7 @@ Hızda küçük 0–0,16 varyasyon vardır. Üçü aynı `EnemyBrain`, `AgentMot
 
 EditMode: **Ctrl+Shift+F11**, `Wait Your Turn → Run → Run Spawn Tests`; rapor `Logs/SpawnAndJourneyTests.xml`. Spawn kuralları ile mevcut yolculuk/kamera grubunu birlikte çalıştırır. Sonuç 26/26 PASS (2026-10-08 15:33:53 UTC); kuyruk adaleti testinin ilk sürümde yakaladığı dolu-vagon kilitlenmesi düzeltildi.
 
-Play: **F11**, `Logs/SpawnAcceptance.txt`. Üç profilin aynı nesnede dokuz kez yeniden kullanımı; eski yaşam hasarı, geçersiz nav, ölümle kapasite açılması, gerçek global/vagon/kare sınırları ve hedef kayıtları denetlenir. 30 hızlandırılmış istasyon döngüsünde beş orijinal içerideki zombi korunur. Stres programı geçicidir (global 9/vagon 3/kuyruk 4/kare 2); test normal ayarlara temiz Restart ile döner. Son doğrulama zamanı geliştirme kaydına yazılır.
+Play: **F11**, `Logs/SpawnAcceptance.txt`. Üç profilin aynı nesnede dokuz kez yeniden kullanımı; eski yaşam hasarı, geçersiz nav, ölümle kapasite açılması, gerçek global/vagon/kare sınırları ve hedef kayıtları denetlenir. D27 ek kontrolü normal oyuncu vagonunun üretimini, boş/boşaltılan/elenen vagonlarda üretimin durmasını ve mevcut bedenlerin korunmasını denetler. Global stres için diğer vagonlara yalnız can bileşeni taşıyan test savunucuları kaydedilir; bunlar bot değildir ve üretim kuralını atlatmaz. 30 hızlandırılmış istasyon döngüsünde beş orijinal içerideki zombi korunur; D28 korumasında hasar reddi ve görünür oynanış zamanında süre dolması kontrol edilir. Stres programı geçicidir (global 9/vagon 3/kuyruk 4/kare 2); test normal ayarlara temiz Restart ile döner. Son doğrulama zamanı geliştirme kaydına yazılır.
 
 Play **F10** mevcut kapı/yan cam/dört silah/oyuncu sınırı/onarım ve 10 geçiş kabulüdür; 60 eşzamanlı bedenlik havuz da doldurulur. Bu kontrol yeni director kapalıyken önceki çekirdeğin korunmasını ölçer; F11 director entegrasyonunu ayrıca ölçer.
 
@@ -43,3 +51,5 @@ M7a: profillerde `reward` alanı normal/hızlı/dayanıklı için 8/10/20 başla
 Son M6 Play kanıtı: 2026-10-08 15:35:13 UTC PASS; üç profil/dokuz nesne yeniden kullanımı, 30 istasyon, beş kalıcı yolcu, global 9/vagon 3/kuyruk 4/kare 2 ve sabit 60 nesne. Console Play sonunda 0 hata/0 uyarı.
 
 Son çekirdek regresyonu: 2026-10-08 15:36:24 UTC F10 PASS; 46 yan pencere/dört silah, 4/5/6 kapı varyantları, 10 vagon geçişinde kalıcılık ve 60 bedenlik sabit havuz. Kısa kanıt kopyası [generated/m6-pc-acceptance.txt](generated/m6-pc-acceptance.txt).
+
+D27/D28 güncel PC doğrulaması: 2026-10-08 17:30:01 UTC 28 spawn/yolculuk ve 17:30:11 UTC 40 can/onarım testi PASS. 17:31:13 UTC F11 boş/boşaltılan/elenmiş vagonlarda yeni üretimin durması, mevcut bedenlerin korunması, test savunucularıyla global 9/vagon 3/kuyruk 4/kare 2, dokuz profil yeniden kullanımı, 30 geçişte beş yolcu ve koruma hasar reddi/süre dolması PASS. 17:32:15 UTC F9 mağaza, 17:33:02 UTC F10 güncel 26 cam/dört silah/kapı/10 geçiş/60 beden PASS; Console 0 hata/0 uyarı. [Kısa kanıt](generated/occupancy-arrival-pc-acceptance.txt). Hızlandırılmış döngü uzun oturum veya Android performans kanıtı değildir.

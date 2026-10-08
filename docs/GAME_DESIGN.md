@@ -8,7 +8,7 @@ Otomasyonla istasyonlar arasında hareket eden bir trende zombi salgını sıras
 
 Her vagon ayrı bir kimliğe, kapılara ve savunma kurulum noktalarına sahiptir. Kapıların maksimum canı vagonun güvenliğini belirler. Şans, her yolculukta oyuncunun hangi vagona atanacağını belirler.
 
-Görsel/yerleşim hedefi ilk prototip `Assets/Scenes/SampleScene 2.unity` sahnesidir: uzun dikdörtgen vagonlar, oyuncuyu izleyen kamera, trenin iki yanındaki istasyon alanlarından saldırılar ve vagon başına altı kapı. Kare/tek kapılı/tek taraflı test sahneleri bu hedefin yerine geçmez. 2026-10-08 karşılaştırması, mevcut lab varsayımları ve gerçek geometriye geçiş kabulü `VISION_AND_INTEGRATION.md` içinde kayıtlıdır.
+İlk prototip `Assets/Scenes/SampleScene 2.unity` yerleşim referansıdır: uzun dikdörtgen vagonlar, oyuncuyu izleyen kamera ve trenin iki yanından saldırılar. Güncel D23 görselleri fiziksel oranları ve 4–6 kapılı vagon hedefini belirler; ölçüler VISUAL_SCALE.md ve MODEL_CONTRACT.md içindedir. Kare/tek kapılı/tek taraflı test sahneleri bu hedefin yerine geçmez. 2026-10-08 karşılaştırması ve gerçek geometriye geçiş kabulü `VISION_AND_INTEGRATION.md` içinde kayıtlıdır.
 
 Kararlaştırıldı: oynanış zemini sabit kalır, çevre/istasyonun görsel hareketi tren yolculuğunu oluşturur. İçeri girmiş zombiler yolculukta trende kalır; dışarıdakiler istasyonda bırakılır.
 
@@ -63,6 +63,18 @@ Her zombi doğarken bir `WagonId` alır. Sırf oyuncu yer değiştirdi diye tüm
 
 Kararlaştırıldı: kalkış sınırında içerideki zombiler trende kalır. Dışarıdakiler istasyonda bırakılır ve görünmez olduklarında ödülsüz havuza döner. Geçitteki zombi için içeride/dışarıda olma durumu geçiş tamamlanmasıyla kesinleştirilir; ayrıntılı teknik kural `ARCHITECTURE.md` içindedir.
 
+## Boş vagon ve güvenli atama
+
+2026-10-08 kullanıcı geri bildirimi: bir vagonda yaşayan insan/bot savunmacı yoksa o vagona **yeni zombi üretilmez**. Önceki saldırıdan kalan içerideki zombiler ve kapı hasarı korunur; sonraki istasyonda o vagona yaşayan biri atanırsa yeni saldırı tekrar başlayabilir. Savunmacı öldüğü anda yeni üretim uygunluğu kapanır; var olan dış/iç zombiler anında silinmez ve normal kalkış kuralını izler. Boş vagonun birikmiş spawn bütçesi sonraki atamada topluca boşaltılmaz. Turretin tek başına vagonu saldırı hedefi saydırması seçilmedi; şimdiki uygunluk insan/bot canına aittir.
+
+Kullanıcıyla seçildi: vagon atamasında bedenle çakışmayan yazılmış adaylar arasında en yakın zombiye uzaklığı en yüksek nokta seçilir; ardından varsayılan **2 saniye**, Inspector'dan ayarlanabilir hasar koruması verilir. Süre karanlıkta tükenmez; görünür oynanışta ateş/onarım sürer. Bu, çok dolu bir vagonun her zaman kazanılabilir olacağını garanti etmez; vagon riski korunur. Hiç fiziksel boş aday bulunamaması ayrı, açık tanılı bir durumdur.
+
+## Battle botları ve uzak vagonlar
+
+Mevcut sahne ortak mekanikleri tek insanla doğrulayan ortamdır; henüz tamamlanmış Battle modu veya savaşan bot yoktur. Sıra M7b turret → M7c dron → Mod/Bot'tur. Botlar en az üç beceri profiliyle hareket/ateş/onarım/ekonominin ortak kurallarını kullanacak; elenen bot tekrar yaşayan sayılmayacak. Rastgele atama canlı katılımcıları vagonlara dağıtacak, boş vagon olabilir; bir vagona iki yaşayan katılımcı atama ve eleneni geri doğurma kuralı varsayılmaz.
+
+Görünürlük, savunmacı varlığı ve simülasyon üç ayrı kavramdır. Oyuncu vagonu ve görünen komşulardaki aksiyon sunulur. Uzak vagonların modeli/VFX/ses maliyeti azaltılabilir; kapı/mermi/can/öldürme/ödül durumu görünmediği için sıfırlanamaz. Önce ortak bot davranışı doğrulanacak, sonra ölçümle uzak simülasyon seviyesi geliştirilecek. Yaklaşık savaş hesabı yakın savaşla farklı sonuç üretebilir; karşılaştırma testi olmadan eşdeğer sayılmaz. Uzak → görünür geçişte yeni zombi/ölüm/ödül yaratmadan kayıtlı durum gösterilmelidir. Bu optimizasyon henüz uygulanmadı.
+
 ## Can, silah ve hasar
 
 Oyuncu, kapı, zombi ve gerektiğinde turret aynı hasar sözleşmesini kullanır. Maksimum can ile mevcut can ayrıdır. Yelek gibi zırh, bağışıklık veya maksimum can artışı sonradan aynı sözleşmeye eklenen etkilerdir; ilk aşamada hepsi uygulanmaz.
@@ -96,7 +108,7 @@ Satın alma yalnızca uygulanabilir ürün için para düşer. Yetersiz para, do
 
 Kararlaştırıldı (D25): mağaza savaşta ve görünür yolculukta kullanılabilir, oyun devam eder. Karanlık geçişte/ölümde alım kapanır. D26: ilk silah alımı açıp doldurur; tekrar alım eksik mermiyi aynı fiyatla tamamlar, doluyken para harcanmaz. M7a ilk uygulamada ödülü otomatik cüzdana ekler; fiziksel pickup uygulanmadı. Ayarlanabilir fiyat/ödüller, bağlama ve PC kanıtı [ECONOMY.md](ECONOMY.md) içinde.
 
-Ödüllü reklam/IAP fikirlerini kullanıcı ayrıca yazacak. Ekonomi etkisi ve teslim kuralları tasarımda açık kalır; M7a ayarlanabilir temel cüzdan/mağazayı kurar, belirli reklam ödülü veya ücretli avantaj varsaymaz. Servis entegrasyonu sonraki yayın aşamasındadır.
+Kullanıcının Battle sonuç 3×, hikâye devam/3×, reklam kaldırma ve yardım teklifi fikirleri alındı. Ekonomi etkisi, kalıcı harcamalar ve teslim sınırları açık; kaynaklı alternatifler MONETIZATION.md içindedir. M7a yalnız koşu cüzdanı/mağazadır; servis entegrasyonu M9 aşamasındadır.
 
 ## Etap verisi ve kalıcılık
 
@@ -110,4 +122,4 @@ Koşular arası kalıcı kazanımlar açık kalır; uygulama kapanınca devam i�
 
 Kayıt için ilk kullanıcı seçimi mevcut koşuya devam, ölümde yeni koşudur; kalıcı geliştirmeler henüz seçilmedi. Kullanıcı ardından Google Play ile kayıt sağlayıcısını değerlendirmek istediğini ve ayrıntıda emin olmadığını belirtti. Sağlayıcı kesinleşmedi. [Google Play Games Saved Games](https://developer.android.com/games/pgs/savedgames) ilerleme verisini Google sunucularına kaydetme/geri alma ve bağlantı geldikten sonra senkronlama sunar; oyunun kendi durum verisini yazıp okuması ve yerel/bulut çakışmasını yönetmesi gerekir. Oturum açmak tek başına bizim koşu durumumuzu otomatik kaydetmez. Uygulama M8'de, Google adaptörü doğrulaması/kurulumu uygun servis aşamasında yapılır; M4 runtime Google SDK'sına bağlanmaz.
 
-Atama önerisi: tüm vagonlar eşit olasılıklı, aynı vagon tekrar çıkabilir. Doğuş noktası duvar içinde veya karakterle çakışacak şekilde seçilmez. İçeride zombiler taşınacaksa güvenli doğuş/çok kısa koruma ayrıca tasarlanmalıdır.
+Mevcut atama: tüm vagonlar eşit olasılıklı, aynı vagon tekrar çıkabilir. Doğuş noktası duvar içinde veya karakterle çakışacak şekilde seçilmez. D28 ile geçerli adaylarda en yüksek düşman mesafesi ve ayarlanabilir 2 saniye hasar koruması kullanılır. Battle çoklu katılımcı ataması Mod/Bot aşamasında tek canlı savunucu/vagon kuralıyla koordine edilecek; insan ataması bir botun kaydını rastgele ezmemeli.

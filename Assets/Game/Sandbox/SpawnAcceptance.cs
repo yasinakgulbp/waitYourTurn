@@ -19,6 +19,7 @@ namespace WaitYourTurn.Sandbox
         private StationDefinition[] original;
         private StationDefinition stress;
         private TrainIntegrationController integration;
+        private HealthComponent[] fixtureDefenders;
         private string status;
         public void Configure(RunDriver owner, StationSpawner director, TargetRegistry targets)
         { run = owner; spawner = director; registry = targets; }
@@ -65,6 +66,28 @@ namespace WaitYourTurn.Sandbox
             stress.bands = profiles.Select(p => new SpawnBand { profile = p, count = 30, firstAt = 0, interval = .02f }).ToArray();
             spawner.ConfigurePrograms(new[] { stress }); spawner.enabled = true;
             run.Restart(new RunTimings { initialApproach = .2f, defense = 300 }); run.Player.Invulnerable = true;
+            // Production eligibility: only the current human has a living defender before bots are implemented.
+            float emptyDeadline = Time.realtimeSinceStartup + 2;
+            while (Time.realtimeSinceStartup < emptyDeadline) { FreezeEnemies(); yield return null; }
+            if (run.CurrentWagon.Enemies.Active.Count != stress.wagonLiveLimit ||
+                run.Wagons.Any(w => w != run.CurrentWagon && w.Enemies.Active.Count != 0) || spawner.SuppressedStreams == 0)
+            { Finish(false, "Empty wagons received new enemies or occupied wagon did not fill"); yield break; }
+            var occupied = run.CurrentWagon; int beforeEmpty = spawner.Spawned;
+            occupied.SetDefender(null);
+            float noDefenderDeadline = Time.realtimeSinceStartup + .5f;
+            while (Time.realtimeSinceStartup < noDefenderDeadline) { FreezeEnemies(); yield return null; }
+            if (spawner.Spawned != beforeEmpty || occupied.Enemies.Active.Count != stress.wagonLiveLimit)
+            { Finish(false, "Vacating wagon removed survivors or created new enemies"); yield break; }
+            // Global stress needs actual health-only fixture occupants, not a production spawn-policy bypass.
+            run.Restart(new RunTimings { initialApproach = .2f, defense = 300 }); run.Player.Invulnerable = true;
+            fixtureDefenders = new HealthComponent[run.Wagons.Length];
+            for (int i = 0; i < run.Wagons.Length; i++)
+            {
+                if (run.Wagons[i] == run.CurrentWagon) continue;
+                var body = new GameObject("Acceptance occupant - not a bot").AddComponent<HealthComponent>();
+                body.ResetForSpawn(100, Team.Player); body.Invulnerable = true;
+                fixtureDefenders[i] = body; run.Wagons[i].SetDefender(body);
+            }
             float deadline = Time.realtimeSinceStartup + 5;
             while (spawner.TotalActive < stress.globalLiveLimit && Time.realtimeSinceStartup < deadline)
             {
@@ -78,7 +101,15 @@ namespace WaitYourTurn.Sandbox
             int produced = spawner.Spawned;
             yield return new WaitForSeconds(.4f);
             if (spawner.Spawned != produced || !BoundsHold()) { Finish(false, "Full-capacity schedule exceeded its limit"); yield break; }
-            var victim = run.Wagons.SelectMany(w => w.Enemies.Active).First();
+            var eliminated = fixtureDefenders.First(d => d != null);
+            var vacant = run.Wagons.First(w => w.Defender == eliminated);
+            int carried = vacant.Enemies.Active.Count;
+            eliminated.Invulnerable = false;
+            eliminated.TryApplyDamage(new DamageContext(1000, default, Team.Enemy, 403, eliminated.LifeVersion));
+            yield return new WaitForSeconds(.4f);
+            if (vacant.HasLivingDefender || vacant.Enemies.Active.Count != carried || spawner.Spawned != produced)
+            { Finish(false, "Eliminated occupant still attracts new enemies or loses existing bodies"); yield break; }
+            var victim = run.CurrentWagon.Enemies.Active.First();
             victim.Health.TryApplyDamage(new DamageContext(1000, default, Team.Player, 402, victim.Health.LifeVersion));
             deadline = Time.realtimeSinceStartup + 2;
             while (spawner.Spawned == produced && Time.realtimeSinceStartup < deadline) { FreezeEnemies(); yield return null; }
@@ -113,7 +144,33 @@ namespace WaitYourTurn.Sandbox
                 yield return null;
             }
             if (run.Assignments < 30 || run.Flow.Terminal) { Finish(false, "30-cycle stress did not complete: " + run.Failure); yield break; }
-            Finish(true, $"3 profiles / 9 same-object reuse cycles; stale life rejected; invalid nav leaves pool intact; global 9, wagon 3, queue 4, frame 2 limits; kill frees one slot; 30 station cycles retain {survivors.Length} original passengers; registry matches active bodies; fixed {run.Wagons.Sum(w => w.Enemies.CreatedCount)}-object pool, peak {peak} active. PC only; Android profile pending.");
+            // Pause time must not consume arrival protection; expiration uses visible gameplay time.
+            spawner.enabled = false;
+            float protectedBefore = run.Player.DamageProtectionRemaining;
+            if (run.ArrivalProtectionSeconds > 0 && protectedBefore <= 0)
+            { Finish(false, "Assignment did not grant arrival protection"); yield break; }
+            float pauseDeadline = Time.realtimeSinceStartup + .2f;
+            while (run.Flow.Paused && Time.realtimeSinceStartup < pauseDeadline) yield return null;
+            if (run.Flow.Paused && Mathf.Abs(protectedBefore - run.Player.DamageProtectionRemaining) > .01f)
+            { Finish(false, "Dark transition consumed protection time"); yield break; }
+            while (run.Flow.Paused) yield return null;
+            // Hold the approach so another accelerated assignment cannot renew the protection under test.
+            enabled = false;
+            foreach (var w in run.Wagons) foreach (var enemy in w.Enemies.Active) enemy.SetPaused(true);
+            run.Player.Invulnerable = false;
+            float hp = run.Player.Current;
+            if (run.ArrivalProtectionSeconds > 0 &&
+                run.Player.TryApplyDamage(new DamageContext(1, default, Team.Enemy, 404, run.Player.LifeVersion)).Applied)
+            { enabled = true; Finish(false, "Fresh arrival protection allowed damage"); yield break; }
+            run.Player.Invulnerable = true;
+            // The RunDriver clock is intentionally disabled only for this fixed-duration expiry check.
+            run.enabled = false;
+            yield return new WaitForSeconds(run.Player.DamageProtectionRemaining + .05f);
+            run.Player.Invulnerable = false;
+            bool expired = run.Player.TryApplyDamage(new DamageContext(1, default, Team.Enemy, 405, run.Player.LifeVersion)).Applied;
+            run.enabled = true; enabled = true;
+            if (!expired || run.Player.Current != hp - 1) { Finish(false, "Arrival protection never expired"); yield break; }
+            Finish(true, $"Empty wagons suppress new spawn without removing survivors; occupied wagon still spawns; synthetic living occupants exercise global 9, wagon 3, queue 4, frame 2 limits; 3 profiles / 9 same-object reuse cycles; stale life rejected; invalid nav leaves pool intact; kill frees one slot; 30 station cycles retain {survivors.Length} original passengers; arrival protection rejects damage and expires in gameplay time; registry matches active bodies; fixed {run.Wagons.Sum(w => w.Enemies.CreatedCount)}-object pool, peak {peak} active. PC only; Android profile pending.");
         }
         private TrainIntegrationController GetComponentInScene() => FindAnyObjectByType<TrainIntegrationController>();
         private void FreezeEnemies()
@@ -136,6 +193,8 @@ namespace WaitYourTurn.Sandbox
             if (pass) Debug.Log("[SpawnAcceptance] " + message); else Debug.LogError("[SpawnAcceptance] " + message);
             spawner.enabled = false; spawner.ConfigurePrograms(original); spawner.enabled = true;
             if (stress != null) Destroy(stress);
+            if (fixtureDefenders != null) foreach (var defender in fixtureDefenders) if (defender != null) Destroy(defender.gameObject);
+            fixtureDefenders = null;
             run.ControlsAllowed = run.AimAllowed = true; run.Repair.enabled = true; run.Restart();
             if (integration != null) integration.enabled = true; checking = false;
         }

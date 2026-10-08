@@ -24025,6 +24025,7 @@ MonoBehaviour:
     fadeIn: 1.5
   seed: 12345
   initialWagonIndex: 2
+  arrivalProtectionSeconds: 2
 --- !u!4 &376818473
 Transform:
   m_ObjectHideFlags: 0

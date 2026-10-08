@@ -25,6 +25,7 @@ namespace WaitYourTurn.Run
         public int Pending => schedule?.Pending ?? 0;
         public int Spawned => schedule?.Spawned ?? 0;
         public int Dropped => schedule?.Dropped ?? 0;
+        public int SuppressedStreams => schedule?.SuppressedStreams ?? 0;
         public string Diagnostic { get; private set; }
         public StationDefinition Definition => definition;
         public StationDefinition[] Programs => programs;
@@ -65,6 +66,7 @@ namespace WaitYourTurn.Run
             int budget = Mathf.Min(maximumBudgetPerWagon, initialBudgetPerWagon + station - 1);
             for (int i = 0; i < run.Wagons.Length; i++)
             {
+                if (!run.Wagons[i].HasLivingDefender) continue;
                 if (attempted[i] >= budget) continue;
                 run.Wagons[i].SpawnOutside(attempted[i]++); Attempts++;
             }
@@ -91,6 +93,7 @@ namespace WaitYourTurn.Run
         private SpawnResult TrySpawn(SpawnRequest request)
         {
             var wagon = run.Wagons[request.Wagon];
+            if (!wagon.HasLivingDefender) return SpawnResult.Unoccupied;
             if (totalActive >= definition.globalLiveLimit || activeCounts[request.Wagon] >= definition.wagonLiveLimit || !wagon.Enemies.CanRent)
                 return SpawnResult.CapacityFull;
             // Each retry uses another authored anchor; neither moving scenery nor windows are spawn sources.
