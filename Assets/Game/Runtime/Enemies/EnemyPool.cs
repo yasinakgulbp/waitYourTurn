@@ -11,6 +11,8 @@ namespace WaitYourTurn.Enemies
     {
         [SerializeField] private EnemyBrain template;
         [SerializeField] private DoorController door;
+        [SerializeField] private WagonGeometry geometry;
+        private NavMeshPath entryPath;
         [SerializeField] private HealthComponent player;
         [SerializeField] private TargetRegistry registry;
         [SerializeField, Min(1)] private int capacity = 12;
@@ -33,8 +35,10 @@ namespace WaitYourTurn.Enemies
         public void SetPaused(bool paused) { foreach (EnemyBrain enemy in active) enemy.SetPaused(paused); }
         public void Configure(EnemyBrain prefab, DoorController entry, HealthComponent hero, TargetRegistry targets)
         { template = prefab; door = entry; player = hero; registry = targets; }
+        public void ConfigureGeometry(WagonGeometry space) => geometry = space;
         private void Awake()
         {
+            entryPath = new NavMeshPath();
             for (int i = 0; i < capacity; i++)
             {
                 EnemyBrain enemy = Instantiate(template, transform);
@@ -50,8 +54,10 @@ namespace WaitYourTurn.Enemies
             // Validate before renting/activating. A invalid request neither grows nor drains the pool.
             var filter = new NavMeshQueryFilter { agentTypeID = template.AgentTypeId, areaMask = template.AreaMask };
             if (!NavMesh.SamplePosition(point, out NavMeshHit hit, 0.5f, filter)) return false;
+            DoorController entry = geometry != null ? geometry.SelectEntry(hit.position, AgentTypeId, AreaMask, entryPath) : door;
+            if (entry == null) return false;
             EnemyBrain enemy = available.Pop();
-            if (!enemy.Spawn(hit.position, door, player, spawnSequence++ % capacity))
+            if (!enemy.Spawn(hit.position, entry, player, spawnSequence++ % capacity, geometry))
             { enemy.Despawn(); enemy.gameObject.SetActive(false); available.Push(enemy); return false; }
             enemy.gameObject.SetActive(true);
             enemy.SetScope(wagonId, playerPresent);

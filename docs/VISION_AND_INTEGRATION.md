@@ -1,6 +1,8 @@
 # Görsel hedef ve gerçek vagon entegrasyonu
 
-2026-10-08 kullanıcı hatırlatması. Yeni oturumlarda GAME_DESIGN ve ROADMAP ile birlikte okunur. Bu belge test sahnesinin alışkanlıkla nihai ürün kabul edilmesini önler; aşağıdaki açık işler tamamlanmış sayılmaz.
+2026-10-08 kullanıcı hatırlatması. Yeni oturumlarda GAME_DESIGN ve ROADMAP ile birlikte okunur. Bu belge test sahnesinin alışkanlıkla nihai ürün kabul edilmesini önler. Aşağıdaki denetim uygulama öncesinin kaydıdır; güncel uygulama ve kanıt [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md) içindedir.
+
+M6a artık `TrainIntegration` sahnesinde uygulanmıştır: referansın gerçek vagon modeli/oranları ve oyuncu kamerası, her vagonda altı kapı, iki kesintisiz platform, gerçek iç hacim ve geometriye ait doğuş/güvenli konumlar. İki ve beş vagon PC kabulü geçti; beş vagonda 10 geçiş ve 60 düşmanlık havuz sınırı doğrulandı. Kullanıcının yeni kadraj/oynama hissi değerlendirmesi ve birleşimin Android kontrolü henüz yapılmadı. Bot politikası aşağıda hâlâ açık uygulamadır.
 
 ## Değişmeyen hedef
 
@@ -10,7 +12,7 @@ Referans sahnede kullanılan mevcut içerikler arasında `Assets/ueni istasyon/y
 
 Kod/sahne incelemesi: referans Main Camera perspektif, kaydedilmiş FOV 40, X eğimi 70°; `CameraFollow` oyuncunun X konumunu izler ve Y/Z konumunu korur. Sahnede Cinemachine Brain de vardır. Bunlar kaydedilmiş referans değerlerdir, bu incelemede canlı kamera sonucu yeniden oynatılmadı. Entegrasyonda kamera hareketinin tek sahibi seçilmeli; eski CameraFollow ve yeni takip birlikte aynı kamerayı sürmemeli. Nihai kadraj kullanıcı değerlendirmesiyle doğrulanır; laboratuvarın ortografik çapraz kamera açısı otomatik hedef değildir.
 
-## 2026-10-08 kod denetimi: genel temel ve lab varsayımları
+## 2026-10-08 uygulama öncesi kod denetimi: genel temel ve lab varsayımları
 
 Ortak Health/hasar, silah/mermi, kapı dayanıklılığı/onarımı, evre saati ve havuz yaşam döngüsü yeniden kullanılacak temeldir. Geometriye bağımlı aşağıdaki parçalar ayrıca uyarlanmalıdır; tek kapı testleri bunların üretim uyumunu kanıtlamaz.
 
@@ -25,7 +27,7 @@ Ortak Health/hasar, silah/mermi, kapı dayanıklılığı/onarımı, evre saati 
 
 `MovementArea` yerel dikdörtgen sınır verisini destekler; gerçek ölçülerle kurulmalıdır. `WagonRuntime.Doors` dizisi ve en yakın onarım kapısı seçimi vardır; dizinin varlığı çok kapılı enemy hedef seçiminin tamamlandığı anlamına gelmez. Yeni geometride NavMesh yeniden bake edilir; eski baked veriyi kopyalayıp zemini görsel olarak uzatmak kabul edilmez.
 
-## Bir sonraki uygulama: M6a entegrasyon kabulü
+## M6a için seçilen entegrasyon kabulü
 
 Mevcut küçük laboratuvarlar regresyon için korunur. Daha fazla lab dekoru veya mağaza/turret/bot özelliğinden önce **gerçek yerleşime yakın oynanabilir entegrasyon** hazırlanır:
 
@@ -39,6 +41,6 @@ Bu kabul geçmeden tek taraflı lab PASS sonuçları çok kapılı/iki taraflı 
 
 Botlar unutulmadı ve henüz uygulanmadı. Sıra: M6a gerçek vagon/iki taraf → M6 spawn ve savaş ölçeği → M7 ekonomi/savunmalar → Mod/Bot aşaması. Tam Battle botu bu ortak kurallarla hareket eder, hedef seçer, ateş eder, kapı onarır ve alışveriş yapar; üç beceri profili ve eleme/sıralama ayrıca doğrulanır. Basit bot kontrolü uygun olduğunda daha erken küçük bir deneme olabilir; bu henüz seçilmiş yeni bir aşama değildir. Şimdiki boş vagonlar gelecekteki bot deneyiminin temsilcisi sayılmaz.
 
-## Bu incelemenin sınırı
+## Uygulama öncesi incelemenin sınırı
 
 Bu adım kaynak kodu, referans sahne verilerini ve plan belgelerini karşılaştırdı. Runtime kodu/sahneler değiştirilmedi; yeni geometri veya kamera tamamlanmış sayılmadı, yeni Play/Android testi yapılmadı. İlgili lab varsayımları somut olarak kaydedildi ve M6a sıradaki zorunlu entegrasyon kabulü yapıldı.

@@ -12,6 +12,8 @@ namespace WaitYourTurn.Run
         [SerializeField, Min(.1f)] private float cruiseSpeed = 5;
         [SerializeField, Min(2)] private float sceneryRepeat = 20;
         [SerializeField] private Camera view;
+        [SerializeField] private bool followPlayerAlongTrain;
+        public void ConfigurePlayerFollow(bool follow) => followPlayerAlongTrain = follow;
         private Vector3 environmentOrigin, stationOrigin, sceneryOrigin, cameraOffset;
         private Quaternion cameraRotation;
         private float distance;
@@ -59,7 +61,9 @@ namespace WaitYourTurn.Run
                     stationVisuals.position = stationOrigin + axis * StationOffset;
                 }
             }
-            view.transform.SetPositionAndRotation(run.CurrentWagon.transform.position + cameraOffset, cameraRotation);
+            Vector3 cameraPosition = run.CurrentWagon.transform.position + cameraOffset;
+            if (followPlayerAlongTrain) cameraPosition.x = run.Player.transform.position.x + cameraOffset.x;
+            view.transform.SetPositionAndRotation(cameraPosition, cameraRotation);
         }
     }
 }

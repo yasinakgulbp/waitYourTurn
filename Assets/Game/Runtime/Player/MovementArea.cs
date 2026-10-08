@@ -7,6 +7,7 @@ namespace WaitYourTurn.Player
     {
         [SerializeField] private Vector2 minimum = new Vector2(-3.9f, 1.1f);
         [SerializeField] private Vector2 maximum = new Vector2(3.9f, 8.9f);
+        public void Configure(Vector2 min, Vector2 max) { minimum = min; maximum = max; }
         public Vector3 Constrain(Vector3 worldCenter, float worldRadius)
         {
             Vector3 local = transform.InverseTransformPoint(worldCenter);

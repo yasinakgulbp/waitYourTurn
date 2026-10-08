@@ -14,6 +14,9 @@ namespace WaitYourTurn.Run
         [SerializeField] private DoorController[] doors;
         [SerializeField] private EnemyPool enemies;
         [SerializeField] private MovementArea movementArea;
+        [SerializeField] private WagonGeometry geometry;
+        public WagonGeometry Geometry => geometry;
+        public void ConfigureGeometry(WagonGeometry space) { geometry = space; enemies.ConfigureGeometry(space); }
         private readonly Collider[] nearby = new Collider[32];
         public string Id => wagonId;
         public DoorController[] Doors => doors;
@@ -35,11 +38,11 @@ namespace WaitYourTurn.Run
         public bool TrySafePoint(HealthComponent movingBody, out Vector3 point)
         {
             Physics.SyncTransforms();
-            for (int i = 0; i < 17; i++)
+            for (int i = 0; i < (geometry != null ? geometry.SafePositionCount : 17); i++)
             {
                 Vector3 local = i == 0 ? new Vector3(0, 0.05f, 5.5f) :
                     new Vector3(-2.4f + ((i - 1) % 4) * 1.6f, 0.05f, 2.5f + ((i - 1) / 4) * 1.5f);
-                Vector3 candidate = transform.TransformPoint(local);
+                Vector3 candidate = geometry != null ? geometry.SafePosition(i) : transform.TransformPoint(local);
                 var filter = new NavMeshQueryFilter { agentTypeID = enemies.AgentTypeId, areaMask = enemies.AreaMask };
                 if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, 0.15f, filter)) continue;
                 candidate = hit.position + Vector3.up * 0.05f;
@@ -71,7 +74,7 @@ namespace WaitYourTurn.Run
             enemies.RemoveStationOutsiders();
             return true;
         }
-        public bool SpawnOutside(int slot) => enemies.TrySpawn(transform.TransformPoint(
+        public bool SpawnOutside(int slot) => enemies.TrySpawn(geometry != null ? geometry.StationSpawn(slot) : transform.TransformPoint(
             new Vector3((slot % 3 - 1) * 1.2f, 0, -4 - (slot / 3) % 3)));
     }
 }

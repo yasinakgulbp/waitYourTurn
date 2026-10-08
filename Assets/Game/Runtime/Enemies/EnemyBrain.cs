@@ -13,6 +13,7 @@ namespace WaitYourTurn.Enemies
         [SerializeField] private AgentMotor motor;
         [SerializeField] private MeleeAttack attack;
         private DoorController door;
+        private WagonGeometry geometry;
         private HealthComponent player;
         private Vector3 doorOffset;
         private float targetAngle;
@@ -30,8 +31,9 @@ namespace WaitYourTurn.Enemies
         public int AgentTypeId => motor.Agent.agentTypeID;
         public int AreaMask => motor.Agent.areaMask;
         public EnemyState State { get; private set; }
-        public bool IsInside => door != null && door.Portal.IsInside(transform.position);
-        public bool NeedsSafeDeparture => door != null && (!IsInside || door.Portal.IsInPassage(transform.position, motor.Agent.radius));
+        public bool IsInside => geometry != null ? geometry.Contains(transform.position) : door != null && door.Portal.IsInside(transform.position);
+        private bool InPassage => geometry != null ? geometry.InPassage(transform.position, motor.Agent.radius) : door.Portal.IsInPassage(transform.position, motor.Agent.radius);
+        public bool NeedsSafeDeparture => door != null && (!IsInside || InPassage);
         public void SetScope(string wagonId, bool hasPlayer) { WagonId = wagonId; SetPlayerPresent(hasPlayer); }
         public void SetPlayerPresent(bool present)
         {
@@ -66,9 +68,10 @@ namespace WaitYourTurn.Enemies
             attack.Cancel();
             motor.Stop();
         }
-        public bool Spawn(Vector3 position, DoorController entry, HealthComponent hero, int slot)
+        public bool Spawn(Vector3 position, DoorController entry, HealthComponent hero, int slot, WagonGeometry space = null)
         {
             door = entry;
+            geometry = space;
             player = hero;
             doorOffset = new Vector3((slot % 3 - 1) * 0.65f, 0, -(slot / 3) * 0.65f);
             targetAngle = slot * 2.399963f;
@@ -97,6 +100,7 @@ namespace WaitYourTurn.Enemies
             attack.ResetAttack();
             motor.Clear();
             door = null;
+            geometry = null;
             player = null;
             State = EnemyState.Dormant;
         }
@@ -118,10 +122,13 @@ namespace WaitYourTurn.Enemies
             portalRevision = portal.Revision;
             attackTarget = null;
             if (!motor.Ready) { State = EnemyState.WaitingForRoute; return; }
-            if (IsInside && !portal.IsInPassage(transform.position, motor.Agent.radius)) onBoard = true;
-            if (portal.ClosePending && portal.IsInPassage(transform.position, motor.Agent.radius))
+            if (IsInside && !InPassage) onBoard = true;
+            // Finish crossing before attacking a nearby player, otherwise melee range can park a body in the doorway.
+            EntryPortal occupiedPortal = geometry != null ? geometry.PassageAt(transform.position, motor.Agent.radius) :
+                portal.IsInPassage(transform.position, motor.Agent.radius) ? portal : null;
+            if (occupiedPortal != null && (occupiedPortal.ClosePending || IsInside))
             {
-                motor.GoTo(portal.InsideDestination, routeChanged);
+                motor.GoTo(occupiedPortal.InsideDestination, routeChanged);
                 State = EnemyState.EnteringWagon;
                 return;
             }
@@ -131,7 +138,7 @@ namespace WaitYourTurn.Enemies
                 if (assigned && door.Durability.IsAlive && attack.CanReach(door.Durability))
                 { motor.Stop(); attackTarget = door.Durability; State = EnemyState.AttackingDoor; }
                 else
-                { motor.GoTo(assigned ? approach : portal.OutsideApproach + doorOffset - portal.transform.forward, routeChanged);
+                { motor.GoTo(assigned ? approach : portal.OutsideApproach + portal.transform.TransformDirection(doorOffset) - portal.transform.forward, routeChanged);
                     State = EnemyState.ApproachingDoor; }
                 return;
             }
@@ -149,8 +156,12 @@ namespace WaitYourTurn.Enemies
             // Nearby attack range, rather than an exact occupied grid point, completes pursuit.
             Vector3 offset = new Vector3(Mathf.Sin(targetAngle), 0, Mathf.Cos(targetAngle)) * 0.8f;
             Vector3 goal = player.transform.position + offset;
-            float inward = Vector3.Dot(goal - portal.transform.position, portal.transform.forward);
-            if (inward < 0.6f) goal += portal.transform.forward * (0.6f - inward);
+            if (geometry != null) goal = geometry.Constrain(goal, motor.Agent.radius + .1f);
+            else
+            {
+                float inward = Vector3.Dot(goal - portal.transform.position, portal.transform.forward);
+                if (inward < 0.6f) goal += portal.transform.forward * (0.6f - inward);
+            }
             motor.GoTo(goal, routeChanged);
             State = motor.HasRoute ? EnemyState.SeekingPlayer : EnemyState.WaitingForRoute;
         }

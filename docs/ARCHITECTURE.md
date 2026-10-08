@@ -138,6 +138,8 @@ AI kararları başlangıç denemesi olarak dağıtılmış 0.1–0.25 saniye ara
 
 ## Spawn, pooling ve istasyon yaşam döngüsü
 
+M6a uygulamasında `WagonGeometry` (Train assembly) gerçek yerel iç hacmi, kapı listesini, istasyon doğuş çapalarını ve güvenli iç adayları taşır; Player/Enemies/Run bağımlılığı yoktur. `EnemyPool` doğuşta aynı taraftaki erişilebilir kendi-vagon girişini yeniden kullanılan NavMeshPath ile seçer. `EnemyBrain` üyelikte bütün hacmi, eşik güvenliğinde tüm kapıları kontrol eder; portal yarı düzlemi yalnız eski tek-kapılı lab fallback'idir. `WagonRuntime` geometri çapalarını kullanır. `MovementArea` oyuncunun kaldırılabilir sınır kuralı olarak ayrı kalır. Platformlar kesintisiz ortak NavMesh'tir; sahiplik WagonId/geometri verisidir. Sabit collider/nav ile hareketli sunum ayrıdır. Kamera X takibini yalnız RunPresentation sürer. Sahne bağlama/kurulum ve kanıt: [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md).
+
 `SpawnDirector` programı uygular; `EnemyFactory` havuzdan alıp tam `SpawnContext` ile başlatır: runtime kuşağı, `WagonId`, tür, hedef profili, etap çarpanları, istasyon kimliği ve ödül sahibi.
 
 Kurulum sırası: veriyi doğrula → uygun spawn/rota adayını bul → canlı sınırı kontrol et → havuzdan al → tüm durumu sıfırla → nav zemine yerleştir → kayıt/aktivasyon. NavMesh'e uygun olmayan nokta sınırlı sayıda yeniden denenir; sonsuz deneme veya duvarın ötesindeki en yakın polygona rastgele atama yapılmaz.
