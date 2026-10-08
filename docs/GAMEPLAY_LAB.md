@@ -8,14 +8,14 @@ Sahne: `Assets/Game/Scenes/GameplaySandbox.unity`. Açılış: **Wait Your Turn 
 - En yakın **görüşü açık** zombi otomatik hedeflenir ve vurulur. Sağ joystick gerekmez. Sağlam/onarılmış kapının üst camından dışarıya ateş edilir; alt dolu panel ve duvar görüşü/isabeti keser. Oyuncu kendi kapısına hasar vermez (D15).
 - Oyuncu kapı sağlam/kırık/onarılmış olsa da vagon içinde yürür (D16). Bu sınır zombiler veya mermiler için ek collider değildir. İleride görev kodu `PlayerMotor.SetMovementArea(null)` ile izni açabilir; yeni vagonda o vagonun alanı atanır.
 - İlk deneme tabancası: 2 hasar, 0.35 s atış aralığı, 10 m menzil, 8 mermi; şarjör boşalınca 1.2 s otomatik doldurma, sınırsız yedek mermi. Bunlar Inspector ayarlarıdır, nihai denge değildir.
-- Kırık kapının iç tarafındaki sarı işarete yakın durmak 3 saniyelik onarımı başlatır. Uzaklaşma/ölüm ilerlemeyi sıfırlar; yarım onarım can vermez. HUD yalnızca ilerlemeyi okur.
+- Hasarlı sağlam veya kırık kapının iç tarafındaki sarı işarete yakın durmak 3 saniyelik onarımı başlatır; savaşta ve görünür yolculukta da kullanılabilir. Uzaklaşma/ölüm/hedef değişimi ilerlemeyi sıfırlar; yarım onarım can vermez. D20: varsayılan oyuncu hasarı onarımı kesmez, kapı hasarı ilerlemeyi sıfırlar; hasar yine uygulanır. HUD yalnızca ilerlemeyi okur. Sağlam kapı normal iyileştirmeyle kimliğini korur; kırık kapının yeniden kurulması açıkça yeni dayanıklılık yaşamıdır.
 - Başlangıçta 3 zombi vardır. `+1 / +6` deneme üretimi ve `Restart` yeni test koşusu içindir. İstasyon spawn programı veya mağaza değildir.
 
 ## Sistemdeki sorumluluklar
 
 | Parça | Sorumluluk / bağımlılık |
 | --- | --- |
-| `DoorController` (Train) | Ortak dayanıklılık → kırılma/açılma, açık yeni yaşamla onarım, 3 dış saldırı konumu. NavMesh algoritması veya zombi türü bilmez. |
+| `DoorController` (Train) | Ortak dayanıklılık → kırılma/açılma, sağlam kapıda iyileştirme veya kırık kapıda açık yeni yaşamla onarım, 3 dış saldırı konumu. NavMesh algoritması veya zombi türü bilmez. |
 | `ProximityRepair` (Train) | Oyuncu canlı mı/yakın mı, süre ve iptal; HUD olmadan da çalışır. |
 | `EntryPortal` / `AgentMotor` (Navigation) | Carving/collider ve güvenli eşik kapanışı; yalnızca agent hareketini sürme. Yeni brain üzerinde eski `PortalNavigator` yoktur. |
 | `DoorPanels` (Train) | Portal açık/kapalı durumuna göre alt fizik/atış panelini ve üst cam görselini açar/kapatır. Kapı canı veya oyuncu izni kararı vermez. |
@@ -53,3 +53,11 @@ Güncel sürüm **PASS**, WindowsEditor, UTC `2026-10-07T18:53:55.9235675Z`: bu 
 **Henüz tamamlandı sayılmayanlar:** sol dokunmatik kontrolün cihaz hissi ve eğlence değerlendirmesi kullanıcı denemesi gerektirir. Bu turda Android build yapılmadı. Karakter animasyonu, satın alınmış silah VFX'leri, nihai HUD ve denge cilası bu teknik parçada tamamlandı sayılmaz. M3 kullanıcı değerlendirmesi bitmeden M4 kapsamı açılmaz.
 
 2026-10-07 kullanıcı oynanışı izleyip iyi çalıştığını belirtti ve sonraki aşamaya geçilmesini istedi. M3 PC değerlendirmesi kabul edildi; dokunmatik cihaz hissi uygun zamanda ayrıca kontrol edilecek.
+
+## D20 — hasarlı kapı bakımı ve ayrı kesilme kuralları
+
+2026-10-08: yakınlık onarımı artık kırılmamış hasarlı kapıda da çalışır. Inspector'da `Interrupt On Door Damage` varsayılan açık, `Interrupt On Actor Damage` kapalıdır. Koddan `SetDamageInterruption(onDoorDamage, onActorDamage)` ile ayrı ayarlanır; politika gerçekten değişirse eski ilerleme iptal edilir. Süre ve menzil mevcut Inspector alanlarıdır. Oyuncuya hasar uygulanmaya devam eder; ölümü onarımı iptal eder. Kapıya her uygulanmış darbe süreyi sıfırlar; engellenen darbe sıfırlamaz. Hasarla aynı karede iyileştirme yapılması darbeyi gizlemez. Süre kontrolü saldırıların Update adımından sonra LateUpdate'ta yapılır; yeni fizik sorgusu veya NavMesh yeniden kurma eklenmez.
+
+**32/32 PASS**, WindowsEditor EditMode, UTC `2026-10-08 04:53:16Z`: 14 mevcut can testi ve 18 onarım vakası. Kapsam: iki kesilme ayarının dört birleşimi, varsayılan oyuncu hasarında devam, tamamlanma anındaki darbe, tekrarlı kapı hasarı, menzil/ölüm/hedef/yaşam değişimi, duraklama, aynı politikanın ilerlemeyi koruması ve sağlam/kırık kapının yaşam kimliği. Yeniden çalıştırma: **Wait Your Turn → Gameplay → Run Repair Tests** (`Ctrl+Shift+F9`); rapor `Logs/HealthAndRepairTests.xml`.
+
+**PASS**, TrainSandbox Editor Play, UTC `2026-10-08T04:53:50.1185416Z`: hasarlı sağlam kapının süreli bakımı, varsayılan hasar kesilmesi ve gerçek can kaybı, tamamlanmadan can verilmemesi, sağlam kapıda aynı yaşam, kırık kapıda tek yeni yaşam, eşikte gerçek CharacterController varken kapanışın beklemesi ve alan boşalınca kapanması. HUD'daki `Check damaged door / repair interruptions` veya Play'de `F9` çalıştırır; rapor `Logs/TrainSandboxRepairReport.json`. Console'da runtime hata/uyarı yoktu. Eski tek vagon fixture'larında giriş/oyuncu hasarı doğrulandıktan sonra düşman yalnızca onarım kontrolü sırasında durdurulur; böylece alternatif kesilme politikaları da test aşamalarını birbirine karıştırmaz. Bu turda uzun döngü/kalabalık ve Android testleri tekrarlanmadı.

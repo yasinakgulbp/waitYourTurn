@@ -110,6 +110,8 @@ namespace WaitYourTurn.Sandbox
                 if (!enemy.IsInside || player.Current >= player.Maximum)
                 { Finish(false, cycle - 1, "Enemy did not enter and damage the player."); yield break; }
 
+                // Damage/entry was verified above. Isolate repair from continued player hits.
+                enemy.SetPaused(true);
                 motor.Place(door.RepairPosition + Vector3.up * 0.05f);
                 yield return new WaitForSeconds(0.8f);
                 if (repair.Progress <= 0) { Finish(false, cycle - 1, "Proximity repair did not start."); yield break; }
@@ -197,6 +199,7 @@ namespace WaitYourTurn.Sandbox
             deadline = Time.time + 12;
             while (!enemy.IsInside && Time.time < deadline) yield return null;
             if (!enemy.IsInside) { FinishDefense(false, "Player boundary also blocked zombie entry."); yield break; }
+            enemy.SetPaused(true); // Isolate closure from combat, independent of the selected interruption policy.
             motor.Place(door.RepairPosition + Vector3.up * 0.05f);
             deadline = Time.time + 6;
             while (door.Portal.IsOpen && Time.time < deadline) yield return null;

@@ -16,6 +16,8 @@ namespace WaitYourTurn.Combat
         public float Maximum => Model.Maximum;
         public bool IsAlive => Model.IsAlive;
         public uint LifeVersion => Model.LifeVersion;
+        /// <summary>Changes only for applied damage, including a lethal hit. Healing never hides a hit.</summary>
+        public ulong DamageRevision { get; private set; }
         public Team Team => Model.Team;
         public EntityIdentity Identity => new EntityIdentity(EntityId.ToULong(GetEntityId()), LifeVersion);
         public bool Invulnerable { get => Model.Invulnerable; set { if (!notifying) Model.Invulnerable = value; } }
@@ -29,6 +31,7 @@ namespace WaitYourTurn.Combat
             if (notifying) return DamageResult.Reject(DamageRejection.NotificationInProgress);
             DamageResult result = Model.TryApplyDamage(context);
             if (!result.Applied) return result;
+            unchecked { DamageRevision++; }
             EntityIdentity target = Identity;
             notifying = true;
             try

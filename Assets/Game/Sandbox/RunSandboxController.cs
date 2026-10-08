@@ -20,10 +20,14 @@ namespace WaitYourTurn.Sandbox
         private string result = "WASD/left joystick. Automatic aim, fire and reload. Repair near yellow marker.";
         public void Configure(RunDriver owner, StationSpawner spawn, RunPresentation visual)
         { run = owner; spawner = spawn; presentation = visual; }
+        private void Update()
+        {
+            if (!checking && run.Flow != null && Input.GetKeyDown(KeyCode.F9)) StartCoroutine(CheckRepair());
+        }
         private void OnGUI()
         {
             if (run.Flow == null || run.CurrentWagon == null) return;
-            Rect panel = new Rect(12, 12, 455, 290 + run.Wagons.Length * 25);
+            Rect panel = new Rect(12, 12, 455, 315 + run.Wagons.Length * 25);
             run.Player.GetComponent<MoveInput>().BlockedScreenArea = panel;
             GUILayout.BeginArea(panel, GUI.skin.box);
             GUILayout.Label($"{run.Wagons.Length} WAGONS | STATION {run.Flow.Station} | {run.CurrentWagon.Id} | {run.Flow.Phase} {run.Flow.Remaining:F1}s");
@@ -42,6 +46,7 @@ namespace WaitYourTurn.Sandbox
                 if (GUILayout.Button(weapon.WeaponName(i))) { weapon.Equip(i); run.Player.GetComponent<AutoAim>().ClearTarget(); }
             GUILayout.EndHorizontal();
             if (weapon.WeaponCount > 1 && GUILayout.Button("Check all weapons / glass / walls")) StartCoroutine(CheckWeapons());
+            if (GUILayout.Button("Check damaged door / repair interruptions")) StartCoroutine(CheckRepair());
             if (GUILayout.Button("Check 10 fast station transitions")) StartCoroutine(CheckTransitions());
             if (GUILayout.Button("Check bounded crowd (6 seconds)")) StartCoroutine(CheckCrowd());
             if (GUILayout.Button("Kill player (visible gameplay)"))
@@ -59,6 +64,48 @@ namespace WaitYourTurn.Sandbox
             }
             if (run.Flow.Phase == RunPhase.GameOver)
                 GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2, 250, 60), "KOŞU BİTTİ — Restart run");
+        }
+        private IEnumerator CheckRepair()
+        {
+            checking = true; spawner.enabled = false; run.ControlsAllowed = run.AimAllowed = false;
+            run.Restart(new RunTimings { initialApproach = 300 }); run.Player.Invulnerable = true;
+            yield return null;
+            var door = run.CurrentWagon.Doors[0]; var health = door.Durability;
+            var motor = run.Player.GetComponent<PlayerMotor>(); uint life = health.LifeVersion;
+            motor.Place(door.RepairPosition + Vector3.up * .05f);
+            health.TryApplyDamage(new DamageContext(health.Maximum * .5f, default, Team.Enemy, 1, life));
+            yield return null; yield return null;
+            float damaged = health.Current;
+            yield return new WaitForSeconds(1);
+            if (run.Repair.Progress <= 0 || health.Current != damaged || door.Portal.IsOpen)
+            { Finish(false, "Damaged intact door did not start timed repair without partial healing.", "Repair"); yield break; }
+            float progressBeforeHit = run.Repair.Progress;
+            run.Player.Invulnerable = false;
+            run.Player.TryApplyDamage(new DamageContext(1, default, Team.Enemy, 2, run.Player.LifeVersion));
+            health.TryApplyDamage(new DamageContext(1, default, Team.Enemy, 3, life));
+            yield return null; yield return null;
+            bool shouldInterrupt = run.Repair.InterruptOnDoorDamage || run.Repair.InterruptOnActorDamage;
+            if ((shouldInterrupt ? run.Repair.Progress > .1f : run.Repair.Progress < progressBeforeHit) ||
+                health.Current != damaged - 1 || run.Player.Current != 99)
+            { Finish(false, "Damage/repair interruption policy was not respected.", "Repair"); yield break; }
+            float deadline = Time.time + 4;
+            while (health.Current < health.Maximum && Time.time < deadline) yield return null;
+            if (health.Current != health.Maximum || health.LifeVersion != life || door.Portal.IsOpen)
+            { Finish(false, "Intact maintenance changed identity or failed to restore/keep the closed door.", "Repair"); yield break; }
+
+            health.TryApplyDamage(new DamageContext(1000, default, Team.Enemy, 3, life));
+            motor.Place(door.Portal.transform.position + new Vector3(0, .05f, .25f));
+            yield return null; yield return null;
+            deadline = Time.time + 4;
+            while (!health.IsAlive && Time.time < deadline) yield return null;
+            if (!health.IsAlive || health.LifeVersion != life + 1 || !door.Portal.IsOpen || !door.Portal.ClosePending)
+            { Finish(false, "Broken repair did not create one life or closed on a doorway occupant.", "Repair"); yield break; }
+            motor.Place(door.RepairPosition + Vector3.up * .05f);
+            deadline = Time.time + 2;
+            while (door.Portal.IsOpen && Time.time < deadline) yield return null;
+            if (door.Portal.IsOpen)
+            { Finish(false, "Repaired doorway failed to close after clearance.", "Repair"); yield break; }
+            Finish(true, "Damaged intact maintenance, configured damage policy without partial healing, same-life healing, broken reconstruction and occupied-doorway clearance passed.", "Repair");
         }
         private IEnumerator CheckWeapons()
         {

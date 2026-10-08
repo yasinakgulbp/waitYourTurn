@@ -17,6 +17,7 @@ namespace WaitYourTurn.Train
         public HealthComponent Durability => durability;
         public EntryPortal Portal => portal;
         public Vector3 RepairPosition => repairPoint.position;
+        public bool NeedsRepair => durability.Current < durability.Maximum;
         public DoorState State => !durability.IsAlive ? DoorState.Broken :
             portal.ClosePending ? DoorState.WaitingForClearance : DoorState.Intact;
         public event Action Changed;
@@ -64,7 +65,9 @@ namespace WaitYourTurn.Train
 
         public bool TryRepair()
         {
-            if (durability.IsAlive) return false;
+            if (!NeedsRepair) return false;
+            // An intact door keeps its identity and attack reservations while being maintained.
+            if (durability.IsAlive) return durability.TryHeal(durability.Maximum) > 0f;
             // Repair is an explicit new durability life, never ordinary healing of a dead target.
             return durability.ResetForSpawn(durability.Maximum, Team.Neutral);
         }
