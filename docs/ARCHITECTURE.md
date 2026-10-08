@@ -2,6 +2,8 @@
 
 Bu belge hedef yapıyı tarif eder; adı geçen sistemlerin bir kısmı henüz uygulanmadı. Uygulanan navigation, ortak can/hasar, tek vagon ve iki vagonlu koşu bileşenlerinin gerçek doğrulama sınırları `NAVIGATION_LAB.md`, `COMBAT_LAB.md`, `GAMEPLAY_LAB.md` ve `RUN_LAB.md` içinde listelenir. Kesin tasarım kararları `DECISIONS.md` içinde, doğrulama işleri `ROADMAP.md` içindedir.
 
+D22: görsel/yerleşim referansı ilk prototiptir; kare/tek kapılı laboratuvar ürün mimarisi kabul edilmez. Mevcut EnemyPool/EnemyBrain'in tek kapı bağı, portal yarı düzleminden üyelik ve sabit doğuş/güvenli noktalar henüz gerçek iki taraflı/altı kapılı geometriye genellenmemiştir. Somut denetim `VISION_AND_INTEGRATION.md` içindedir. M6a bu sınırları ve prototipe uygun oyuncu kamerasını yeni özelliklerden önce doğrular; döngü/hasar testlerinin geçmesi bu entegrasyonun kanıtı değildir.
+
 ## Temel yaklaşım
 
 Her sistem kendi durumunu yönetir; diğer sistemlerin iç değişkenlerini düzenlemez. Açık metotlar ve dar sözleşmeler üzerinden işlem yapılır. Sonuçlar tipli olaylarla bildirilir. Her şeyi tek bir global event bus'a bağlamak veya her sınıfa arayüz eklemek hedef değildir.

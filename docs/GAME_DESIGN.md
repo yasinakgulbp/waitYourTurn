@@ -8,6 +8,8 @@ Otomasyonla istasyonlar arasında hareket eden bir trende zombi salgını sıras
 
 Her vagon ayrı bir kimliğe, kapılara ve savunma kurulum noktalarına sahiptir. Kapıların maksimum canı vagonun güvenliğini belirler. Şans, her yolculukta oyuncunun hangi vagona atanacağını belirler.
 
+Görsel/yerleşim hedefi ilk prototip `Assets/Scenes/SampleScene 2.unity` sahnesidir: uzun dikdörtgen vagonlar, oyuncuyu izleyen kamera, trenin iki yanındaki istasyon alanlarından saldırılar ve vagon başına altı kapı. Kare/tek kapılı/tek taraflı test sahneleri bu hedefin yerine geçmez. 2026-10-08 karşılaştırması, mevcut lab varsayımları ve gerçek geometriye geçiş kabulü `VISION_AND_INTEGRATION.md` içinde kayıtlıdır.
+
 Kararlaştırıldı: oynanış zemini sabit kalır, çevre/istasyonun görsel hareketi tren yolculuğunu oluşturur. İçeri girmiş zombiler yolculukta trende kalır; dışarıdakiler istasyonda bırakılır.
 
 ## Mod hedefleri — 2026-10-07 ek vizyon
@@ -41,12 +43,12 @@ Kararlaştırıldı: karanlık geçişte oynanış durur; görünür yolculukta 
 - Sağlam kapı zombi yürüyüşünü engeller, **üst camından dışarıya ateş edilebilir**. Kapının alt dolu paneli ve vagon duvarları mermiyi engeller. Oyuncu ve kapı önüne kurulan turretler zombileri kapıyı kırmadan vurabilir; kapı dayanıklılığı bu savunma için zaman kazandırır (D15).
 - Oyuncu ilk kapsamda kapı sağlam/kırık/onarılmış olsa da atandığı vagondan dışarı yürüyemez. Bu, düşman geçişi ve atıştan ayrı bir hareket iznidir. İleride istasyona inilen görevlerde izin açıkça değiştirilebilir (D16).
 - Örnek: 10 canlık kapıyı 8 hasarlık güçlü zombi iki vuruşta, 2 hasarlık zayıf zombi beş vuruşta kırar.
-- Can sıfıra düşünce kapı `Broken` olur, geçiş açılır. Kapı nesnesi yok edilmez; aynı kimlikle onarılabilir.
-- Oyuncu kırık kapının yakınına gelip yaklaşık 3 saniye alanda kalırsa onarım tamamlanır; slider ilerlemeyi gösterir.
+- Can sıfıra düşünce kapı `Broken` olur, geçiş açılır. Kapı nesnesi/kalıcı kapı kimliği korunur; kırık kapı yeniden kurulunca hasar çekirdeğinde yeni dayanıklılık yaşamı başlar.
+- Oyuncu hasarlı sağlam veya kırık kapının yakınına gelip yaklaşık 3 saniye alanda kalırsa onarım tamamlanır; slider ilerlemeyi gösterir. Sağlam kapı bakımında dayanıklılık yaşamı korunur.
 - Uzaklaşma, ölüm veya vagon değişimi onarımı iptal eder. Yarım onarım kapıya can vermez; yeniden denemede sayaç sıfırdan başlar.
 - Öneri: tamir sırasında ateş edilebilir; tetik alanında olmak gerekir, ayrıca tuşa basmak gerekmez.
 - Geçitte bir karakter varken kapı onun içine kapatılmaz. Onarım hazır olduğunda yeni girişler durdurulur, geçitte olanlar güvenle tamamlar; fiziksel kapanış alan boşaldığında uygulanır. Sıkışma politikası ilk testte doğrulanır.
-- Öneri: başarılı onarım maksimum canı doldurur. Hasar almış ama kırılmamış kapıya yakınlıkla onarım ilk kapsamda yoktur; mağaza ürünü onu da doldurur.
+- D20: başarılı onarım maksimum canı doldurur. Varsayılan oyuncu hasarı onarımı kesmez; kapı hasarı ilerlemeyi sıfırlar. İki kesilme kuralı ayrı ayarlanabilir. Hasar yine uygulanır; ölüm onarımı iptal eder. Savaşın/dalganın bitmesi şart değildir.
 - Ücretsiz yakınlık onarımının bedeli oyuncunun zamanı ve konumudur. Anlık ücretli tamir aynı yerel onarım kurallarını kullanır; tıkanmış geçitte collider zorla kapatılmaz.
 
 ## Zombiler

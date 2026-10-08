@@ -21,7 +21,8 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 | M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | PC teknik kontrolü geçti: 10/10 geçiş ve 6 saf evre testi; kullanıcı değerlendirmesi kabul edildi. RUN_LAB.md |
 | M4b | Kanıtlanan döngüyü beş vagona genişletme | M4a değerlendirmesi | Beş tek-kapılı lab vagonunda 10/10 geçiş + 60-zombi PC yük kontrolü PASS; kullanıcı teknik aşamayı kabul ederek M5'i istedi. Gerçek altı kapılı geometri/çok kapı hedef seçimi entegrasyonu ayrıca açık |
 | M5 | Mobil kontrolü iyileştirme ve silah çeşitliliği | M2, M4b | PC teknik parça PASS: 13 silah testi, dört profil cam/duvar/alt panel kontrolü ve sınırlı mermili 10/10 vagon geçişi. D19 uygulanır; mevcut sol kontrol korunur. Kullanıcı/cihaz değerlendirmesi açık. WEAPONS_LAB.md |
-| M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M3–M5 | Bekliyor |
+| M6a | İlk prototipe uygun gerçek vagon/kamera; iki taraf ve altı kapı entegrasyonu | M3–M5 temel kuralları | Sıradaki zorunlu kabul; lab varsayımları denetlendi, uygulama henüz yapılmadı. VISION_AND_INTEGRATION.md |
+| M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M6a kabulü | Bekliyor |
 | M7 | Para, mağaza, turret ve dron | M2, M4–M6 | Bekliyor |
 | Mod/Bot | Battle için komşu vagon botları, en az 3 beceri profili ve eleme/sıralama; botsuz ilerleme modu politikası | M4b ortak döngü, M5/M6 savaş, M7 ekonomi | Tasarım hedefi kaydedildi; ortak mekanikler sağlamlaştıktan sonra ayrı aşama. Gerçek multiplayer veya matchmaking henüz kapsamda değil |
 | M8 | Etap dengesi, kayıt ve koşu deneyimi | M4–M7 | Bekliyor |
@@ -131,9 +132,20 @@ Kabul: beş vagonun durumları birbirine karışmaz; atama geçerli konum seçer
 
 Kabul: silah verisiyle hasar/aralık değişir; sağlam kapının camından atış geçer, dolu alt panel/duvar arkasına isabet olmaz. Aynı atış engeli kuralı oyuncu/turret/dron için kullanılır. Efektin colliderı ikinci hasar oluşturmaz. Pompalı saçması kasıtlı biçimde çoklu isabet edebilir; collider tekrarları sonucu büyütmez. Düşük FPS'de ateş temposu kontrolden çıkmaz. Mobilde hareket+ateş+onarım birlikte oynanabilir.
 
+## M6a — Gerçek vagon, kamera ve iki taraflı giriş
+
+2026-10-08 D22 ile ayrı kabul olarak öne alındı. Referans `Assets/Scenes/SampleScene 2.unity`; kare/tek kapılı labın görünümü ürün hedefi değildir. Kod denetimi ve bileşen bazında uyarlama listesi `VISION_AND_INTEGRATION.md` içindedir.
+
+- Mevcut labları koru; referans oranlarıyla uzun dikdörtgen vagon, altı kapı, iki taraflı istasyon zemini ve oyuncuyu izleyen kamera kur. Kamera hareketinin tek sahibi olsun; oyuncu yürüyüşü ve vagon ataması birlikte doğrulansın.
+- Kapı seçimini tek havuz kapısı varsayımından ayır. Portal eşiği ile gerçek vagon iç hacmi/üyeliğini ayır; karşı istasyon yarı düzlem nedeniyle içerisi sayılmasın. Kapı bekleme ofsetleri portalın yerel eksenlerine uysun.
+- Doğuş ve güvenli iç adaylar gerçek geometriye ait açık çapalar/veriden gelsin. Collider/MovementArea/NavMesh yeni yerleşime göre kurulsun; eski baked lab verisi ölçeklenmiş modele geçerli sayılmasın.
+- Önce bir vagonda iki yönden saldırı/altı kapı; sonra en az iki gerçek oranlı vagonda istasyon geçişi/kalıcılık. Ardından beş vagona uygula. Yeni enemy türü veya ekonomi sistemi bu kabulü kapatmanın parçası değil.
+
+Kabul: iki tarafta eşzamanlı doğru doğuş/rota, bağımsız kapı canı ve hasar/onarım/giriş; tüm kapılarda cam/duvar/alt panel atış kuralı; oyuncunun içeride kalması; iki yöndeki dış/iç/eşik kalkış kararları; güvenli atama ve kamera takibi; sabit gameplay zemini/ayrı görsel hareket; havuz sınırı ve durum kalıcılığı. Referansa yakın kadraj kullanıcıyla değerlendirilir. Bu kabul geçmeden yeni mağaza/turret/bot geliştirmesine geçilmez.
+
 ## M6 — Spawn ve enemy ölçeği
 
-- Gerçek tren/altı kapılı vagon entegrasyonunu ayrı küçük işle doğrula: D21 uyarınca trenin iki tarafından da saldırı mümkün olmalı. Her iki tarafın yürünebilir istasyon alanları, kapı seçimi, kapı/istasyon spawn noktaları ve güvenli iç noktalar geometri verisinden gelsin. M4b'nin tek taraflı/tek-kapılı lab varsayımlarını üretim geometrisine taşımadan kaldır.
+- M6a'da doğrulanan iki taraflı/altı kapılı geometri verilerini kullan; M4b'nin tek taraflı/tek kapılı lab varsayımlarına geri dönme.
 - `StationDefinition` ile vagon/tür/zaman/bütçe dağılımı; Inspector'dan ayarlanır.
 - Normalden türeyen hızlı/dayanıklı enemy profilleri; ortak brain/motor/hasar.
 - Global/vagon canlı sınırları, spawn istek kuyruğu sınırı, kare başına üretim bütçesi.
@@ -181,4 +193,4 @@ Kabul: seçilen cihaz/kalite profili/FPS ve canlı sınırı raporlanır; ölç�
 
 ## Bir sonraki somut iş
 
-**M5 değerlendirmesi:** TrainSandbox'ta dört silahı, sınırlı mermiyi ve otomatik doldurmayı kullanıcıyla gözle. Sonraki M6'nın ilk küçük işi gerçek altı kapılı vagon geometrisi, kapı seçimi ve açık spawn/güvenli iç nokta verileri; ardından veri temelli spawn bütçesi ve enemy profilleri. Ortak silahı gerçek turret/dronda kullanma M7'de doğrulanır. Android kontrol/efekt maliyeti uygun zamanda ayrıca kontrol edilecek.
+**M6a entegrasyonu:** önce ilk prototipe uygun bir dikdörtgen vagon, oyuncu kamerası, iki istasyon tarafı ve altı kapı; ardından iki vagonla mevcut döngü/kalıcılık. VISION_AND_INTEGRATION.md denetimindeki tek kapı, sabit koordinat ve üyelik varsayımları bu işte kaldırılır. M5 silahlarının gerçek geometrideki davranışı da burada gözlenir. M6 spawn/tür/bütçe → M7 ekonomi/savunma → Mod/Bot sırası korunur. Android birleşik kontrolü uygun zamanda ayrıca yapılır.

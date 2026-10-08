@@ -4,6 +4,8 @@ Güncelleme: 2026-10-08. Doküman dili Türkçe; kod, tip adları ve commit mesa
 
 Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştirmek; yeni mekanikler eklenirken önceki mekaniklerin korunmasını sağlamak.
 
+**Görsel hedef ilk prototiptir; TrainSandbox nihai oyun değildir.** Yeni geliştirmeden önce [görsel hedef ve entegrasyon denetimi](VISION_AND_INTEGRATION.md) okunur. Sıradaki kabul: M6a, gerçek oranlı vagon + prototipe uygun oyuncu kamerası + iki taraf + altı kapı. Mevcut tek kapı testleri bu entegrasyonun yerine geçmez.
+
 ## Okuma sırası
 
 1. [Oyun tasarımı](GAME_DESIGN.md): oyuncunun deneyimi, kurallar, henüz kesinleşmemiş detaylar.
@@ -16,6 +18,7 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 8. [Tek vagon oynanışı](GAMEPLAY_LAB.md): M3 entegrasyonu, kontroller ve açık cihaz değerlendirmesi.
 9. [Vagon/koşu laboratuvarı](RUN_LAB.md): M4a iki vagon, M4b beş vagon; evre, kalıcılık, atama ve doğrulama sınırları.
 10. [Silah laboratuvarı](WEAPONS_LAB.md): M5 ortak hitscan/pellet, dört silah tanımı, sınırlı yedek ve doğrulama.
+11. [Görsel hedef ve entegrasyon](VISION_AND_INTEGRATION.md): referans prototip, somut lab varsayımları, M6a kabulü ve bot sırası.
 
 ## Mevcut durum
 
@@ -67,3 +70,5 @@ Reklam/IAP'nin ekonomi rolü M7 öncesinde tasarlanır; servis entegrasyonu ve y
 2026-10-08 D20 onarım devamı (`18a9bab`): hasarlı sağlam kapıya da süreli onarım; varsayılan oyuncu hasarında devam, kapı hasarında sıfırlama, iki ayrı ayar. 32 can/onarım vakası ve TrainSandbox kapı/işgal kontrolü PASS. Ayrıntı [GAMEPLAY_LAB.md](GAMEPLAY_LAB.md).
 
 2026-10-08 D02 yolculuk sunumu tamamlaması: yalnız travers hareketi eksikti; istasyon platformu sabit colliderın görünümünden ayrıldı, yol zemini/çevresi de hareket eder. İstasyon döngülenmez, duruşta hizalanır; yeni istasyon tam karanlıkta yerleştirilir. 11 evre/hareket vakası ve beş-vagonda 10 geçiş PASS; collider/nav/spawn sabitliği denetlendi. D21 ile trenin iki tarafından saldırı hedefi kayda alındı; gerçek iki taraflı/altı kapılı geometri M6'da açık. Ayrıntı ve model bağlama kuralları [RUN_LAB.md](RUN_LAB.md), sahiplik [ARCHITECTURE.md](ARCHITECTURE.md), kesin kararlar [DECISIONS.md](DECISIONS.md). Android ve nihai görsel his değerlendirmesi ayrıca yapılacak.
+
+2026-10-08 D22 hedef denetimi: ilk prototipin kamera/yerleşimi ile yeni kod karşılaştırıldı. Tek kapı enemy bağı, portal yarı düzleminden üyelik, sabit doğuş/iç noktalar ve vagon merkezine bağlı kamera gerçek geometri için açık uyarlamalardır. M6a ayrı ve sıradaki kabul olarak öne alındı; bu entegrasyon geçmeden yeni mağaza/turret/bot özelliğine geçilmeyecek. GAME_DESIGN'daki eski kırık-kapıya-özel onarım açıklaması D20 ile düzeltildi. Bu incelemede runtime/sahne değişikliği ve yeni Play testi yoktur. Ayrıntı [VISION_AND_INTEGRATION.md](VISION_AND_INTEGRATION.md).
