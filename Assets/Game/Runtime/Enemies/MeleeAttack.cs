@@ -16,9 +16,21 @@ namespace WaitYourTurn.Enemies
         private float impactAt;
         private float nextAttackAt;
         private ulong attackId;
+        private bool defaultsCaptured;
+        private Vector4 defaults;
         public float Range => range;
+        public float Damage => damage;
+        public float Interval => interval;
         public bool WindingUp => pending != null;
         public void Configure(HealthComponent health) => source = health;
+        public void ApplyProfile(EnemyProfile profile)
+        {
+            if (!defaultsCaptured) { defaults = new Vector4(damage, interval, windup, range); defaultsCaptured = true; }
+            damage = profile != null ? profile.damage : defaults.x;
+            interval = profile != null ? profile.attackInterval : defaults.y;
+            windup = profile != null ? profile.windup : defaults.z;
+            range = profile != null ? profile.range : defaults.w;
+        }
         public void ResetAttack() { pending = null; impactAt = nextAttackAt = 0f; attackId = 0; }
         public void Cancel() => pending = null;
         public bool CanReach(HealthComponent target)

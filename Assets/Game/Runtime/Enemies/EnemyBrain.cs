@@ -12,12 +12,18 @@ namespace WaitYourTurn.Enemies
         [SerializeField] private HealthComponent health;
         [SerializeField] private AgentMotor motor;
         [SerializeField] private MeleeAttack attack;
+        [SerializeField] private Renderer blockoutBody;
+        private MaterialPropertyBlock tint;
+        private float defaultHealth;
+        private bool defaultsCaptured;
+        private Color defaultTint;
         private DoorController door;
         private WagonGeometry geometry;
         private HealthComponent player;
         private Vector3 doorOffset;
         private float targetAngle;
         private float nextDecision;
+        private float decisionPhase;
         private uint portalRevision;
         private HealthComponent attackTarget;
         private bool spawned;
@@ -27,6 +33,8 @@ namespace WaitYourTurn.Enemies
         public bool OnBoard => onBoard;
         public bool Paused => paused;
         public string WagonId { get; private set; }
+        public EnemyProfile Profile { get; private set; }
+        public int SpawnStation { get; private set; }
         public HealthComponent Health => health;
         public int AgentTypeId => motor.Agent.agentTypeID;
         public int AreaMask => motor.Agent.areaMask;
@@ -38,14 +46,14 @@ namespace WaitYourTurn.Enemies
         public void SetPlayerPresent(bool present)
         {
             playerPresent = present;
-            attackTarget = null; attack.Cancel(); nextDecision = Time.time;
+            attackTarget = null; attack.Cancel(); nextDecision = Time.time + decisionPhase;
         }
         public void SetPaused(bool value)
         {
             if (paused == value) return;
             paused = value;
             if (value) motor.Stop();
-            else { nextDecision = Time.time; portalRevision = uint.MaxValue; }
+            else { nextDecision = Time.time + decisionPhase; portalRevision = uint.MaxValue; }
         }
         public bool RetainForTravel(Vector3 safeInterior)
         {
@@ -57,6 +65,16 @@ namespace WaitYourTurn.Enemies
 
         public void Configure(HealthComponent life, AgentMotor movement, MeleeAttack melee)
         { health = life; motor = movement; attack = melee; }
+        public void ConfigureBlockout(Renderer body) => blockoutBody = body;
+        public void PrepareWarmup() { CaptureDefaults(); attack.ApplyProfile(null); }
+        private void CaptureDefaults()
+        {
+            if (defaultsCaptured) return;
+            defaultsCaptured = true;
+            defaultHealth = health.Maximum;
+            defaultTint = blockoutBody != null ? blockoutBody.sharedMaterial.color : Color.white;
+            if (blockoutBody != null) tint = new MaterialPropertyBlock();
+        }
         private void OnEnable() => health.Died += OnDeath;
         private void OnDisable() => health.Died -= OnDeath;
         private void OnDeath(DeathNotice death)
@@ -68,8 +86,12 @@ namespace WaitYourTurn.Enemies
             attack.Cancel();
             motor.Stop();
         }
-        public bool Spawn(Vector3 position, DoorController entry, HealthComponent hero, int slot, WagonGeometry space = null)
+        public bool Spawn(Vector3 position, DoorController entry, HealthComponent hero, int slot, WagonGeometry space = null,
+            EnemyProfile profile = null, int station = 0)
         {
+            if (profile != null && !profile.Valid) return false;
+            CaptureDefaults();
+            Profile = profile; SpawnStation = station;
             door = entry;
             geometry = space;
             player = hero;
@@ -78,15 +100,22 @@ namespace WaitYourTurn.Enemies
             attackTarget = null;
             paused = false; onBoard = false; playerPresent = true;
             attack.ResetAttack();
-            if (!health.ResetForSpawn(health.Maximum, Team.Enemy)) return false;
+            attack.ApplyProfile(profile);
+            if (!health.ResetForSpawn(profile != null ? profile.health : defaultHealth, Team.Enemy)) return false;
+            if (blockoutBody != null)
+            {
+                tint.SetColor("_Color", profile != null ? profile.blockoutTint : defaultTint);
+                blockoutBody.SetPropertyBlock(tint);
+            }
             // Register colliders at the new spawn, rather than at the previous pooled life position.
             transform.position = position;
             gameObject.SetActive(true);
             if (!motor.TryPlace(position)) return false;
-            motor.Agent.speed = 2.6f + slot % 5 * 0.12f;
+            motor.Agent.speed = (profile != null ? profile.speed : 2.6f) + slot % 5 * 0.04f;
             motor.Agent.avoidancePriority = 30 + slot % 30;
             portalRevision = uint.MaxValue;
-            nextDecision = Time.time + slot % 5 * 0.03f;
+            decisionPhase = slot % 5 * .03f;
+            nextDecision = Time.time + decisionPhase;
             State = EnemyState.ApproachingDoor;
             spawned = true;
             return true;
@@ -96,6 +125,7 @@ namespace WaitYourTurn.Enemies
             if (door != null) door.ReleaseAttackPosition(this);
             spawned = false;
             paused = false; onBoard = false; WagonId = null;
+            Profile = null; SpawnStation = 0;
             attackTarget = null;
             attack.ResetAttack();
             motor.Clear();

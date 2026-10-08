@@ -74,7 +74,8 @@ namespace WaitYourTurn.Run
             enemies.RemoveStationOutsiders();
             return true;
         }
-        public bool SpawnOutside(int slot) => enemies.TrySpawn(geometry != null ? geometry.StationSpawn(slot) : transform.TransformPoint(
-            new Vector3((slot % 3 - 1) * 1.2f, 0, -4 - (slot / 3) % 3)));
+        public bool SpawnOutside(int slot, EnemyProfile profile = null, int station = 0) => enemies.TrySpawn(
+            geometry != null ? geometry.StationSpawn(slot) : transform.TransformPoint(
+            new Vector3((slot % 3 - 1) * 1.2f, 0, -4 - (slot / 3) % 3)), profile, station);
     }
 }

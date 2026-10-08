@@ -6,16 +6,18 @@ using WaitYourTurn.Train;
 
 namespace WaitYourTurn.Enemies
 {
-    /// <summary>Bounded M3 factory. Death returns in LateUpdate, outside the health notification stack.</summary>
+    /// <summary>Bounded factory. Death returns in LateUpdate, outside the health notification stack.</summary>
     public sealed class EnemyPool : MonoBehaviour
     {
         [SerializeField] private EnemyBrain template;
         [SerializeField] private DoorController door;
         [SerializeField] private WagonGeometry geometry;
         private NavMeshPath entryPath;
+        private readonly Collider[] spawnOverlap = new Collider[16];
         [SerializeField] private HealthComponent player;
         [SerializeField] private TargetRegistry registry;
         [SerializeField, Min(1)] private int capacity = 12;
+        [SerializeField] private bool incrementalWarmup;
         private readonly List<EnemyBrain> all = new List<EnemyBrain>(12);
         private readonly List<EnemyBrain> active = new List<EnemyBrain>(12);
         private readonly Stack<EnemyBrain> available = new Stack<EnemyBrain>(12);
@@ -24,6 +26,8 @@ namespace WaitYourTurn.Enemies
         private string wagonId = "lab-wagon";
         public IReadOnlyList<EnemyBrain> Active => active;
         public int CreatedCount => all.Count;
+        public int Capacity => capacity;
+        public bool CanRent => available.Count > 0;
         public int DeathCount { get; private set; }
         public int AgentTypeId => template.AgentTypeId;
         public int AreaMask => template.AreaMask;
@@ -36,28 +40,38 @@ namespace WaitYourTurn.Enemies
         public void Configure(EnemyBrain prefab, DoorController entry, HealthComponent hero, TargetRegistry targets)
         { template = prefab; door = entry; player = hero; registry = targets; }
         public void ConfigureGeometry(WagonGeometry space) => geometry = space;
+        public void ConfigureIncrementalWarmup() => incrementalWarmup = true;
         private void Awake()
         {
             entryPath = new NavMeshPath();
-            for (int i = 0; i < capacity; i++)
-            {
-                EnemyBrain enemy = Instantiate(template, transform);
-                enemy.name = "Pooled Zombie " + (i + 1);
-                enemy.gameObject.SetActive(false);
-                all.Add(enemy);
-                available.Push(enemy);
-            }
+            if (!incrementalWarmup) while (WarmOne()) { }
         }
-        public bool TrySpawn(Vector3 point)
+        public bool WarmOne()
+        {
+            if (all.Count >= capacity) return false;
+            EnemyBrain enemy = Instantiate(template, transform);
+            enemy.name = "Pooled Zombie " + (all.Count + 1);
+            enemy.gameObject.SetActive(false);
+            enemy.PrepareWarmup();
+            all.Add(enemy); available.Push(enemy); return true;
+        }
+        public bool TrySpawn(Vector3 point, EnemyProfile profile = null, int station = 0)
         {
             if (!player.IsAlive || available.Count == 0) return false;
-            // Validate before renting/activating. A invalid request neither grows nor drains the pool.
+            // Validate before renting/activating. An invalid request neither grows nor drains the pool.
             var filter = new NavMeshQueryFilter { agentTypeID = template.AgentTypeId, areaMask = template.AreaMask };
             if (!NavMesh.SamplePosition(point, out NavMeshHit hit, 0.5f, filter)) return false;
+            if (profile != null)
+            {
+                // A spawn may not materialize inside another body or static geometry. Try another authored anchor later.
+                int overlaps = Physics.OverlapCapsuleNonAlloc(hit.position + Vector3.up * .35f,
+                    hit.position + Vector3.up * 1.35f, .3f, spawnOverlap, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+                if (overlaps > 0) return false;
+            }
             DoorController entry = geometry != null ? geometry.SelectEntry(hit.position, AgentTypeId, AreaMask, entryPath) : door;
             if (entry == null) return false;
             EnemyBrain enemy = available.Pop();
-            if (!enemy.Spawn(hit.position, entry, player, spawnSequence++ % capacity, geometry))
+            if (!enemy.Spawn(hit.position, entry, player, spawnSequence++ % capacity, geometry, profile, station))
             { enemy.Despawn(); enemy.gameObject.SetActive(false); available.Push(enemy); return false; }
             enemy.gameObject.SetActive(true);
             enemy.SetScope(wagonId, playerPresent);
