@@ -20,7 +20,7 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | D12 | Dış incelemeler öneridir; değişiklikler oyun hedefi ve somut gerekçeyle seçilir | Kullanıcının tercihi. Model uzlaşması veya nezaket tasarım kararının kanıtı değildir. |
 | D13 | Sol joystick ile hareket, en yakın görüşü açık zombiye otomatik nişan ve ateş | Kullanıcı M3 için seçti; masaüstünde WASD/ok tuşları aynı hareket girdisine bağlanır. Sağ joystick gerekmez. |
 | D14 | İlk tabanca sınırlı şarjör, sınırsız yedek mermi ve otomatik doldurma kullanır | Kullanıcı M3 için seçti. İlk lab değerleri deneme ayarıdır: 8 mermi, 1.2 s doldurma, 0.35 s atış aralığı. |
-| D15 | Sağlam kapının üst camından dışarıdaki zombilere ateş edilir; alt dolu panel ve vagon duvarları atışı keser | Kullanıcı M3 değerlendirmesinde netleştirdi. Oyuncu ve ileride kapı önündeki turretler zombileri kapı kırılmadan vurabilir. Kapının yürüyüş engeli ile atış engeli ayrıdır. |
+| D15 | Sağlam kapının üst camından dışarıdaki zombilere ateş edilir; alt dolu panel ve vagon metalleri atışı keser | Kullanıcı M3 değerlendirmesinde netleştirdi. Oyuncu ve ileride kapı önündeki turretler zombileri kapı kırılmadan vurabilir. Kapının yürüyüş engeli ile atış engeli ayrıdır. Başlangıçta tüm yan duvar opaktı; D24 yan pencere açıklıklarını ayrıca geçirgen yapar. |
 | D16 | Oyuncu ilk kapsamda atandığı vagondan dışarı yürüyemez; kapı kırılması bu izni değiştirmez | Kullanıcı M3 değerlendirmesinde seçti. Hareket alanı ayrı ve isteğe bağlıdır; ileride istasyona inme görevi bu sınırı kaldırabilir/değiştirebilir. Zombi girişini veya atışı engelleyen ek fizik duvarı kurulmaz. |
 | D17 | Kayıt hedefi mevcut koşuya devam, ölümde yeni koşu; kalıcı geliştirmeler ayrıca tasarlanır | Kullanıcının ilk seçimi; ardından sağlayıcı/ayrıntılarda emin olmadığını belirtti. Google Play Games Saved Games adaydır, kesin sağlayıcı seçilmedi ve M4'te disk/bulut entegrasyonu yapılmaz. |
 | D18 | Ortak temel üzerinde botlu hayatta kalma yarışı (Battle) ve botsuz tek oyunculu ilerleme/hikâye modu hedeflenir | Kullanıcının yeni vizyonu: tren giriş sunumu, nickli komşu vagon rakipleri, son hayatta kalan/sıralama; en az 3 bot beceri profili. Gerçek ağ oyuncuları bu talepten çıkarılmaz. M4a önce ortak döngüyü kanıtlar; mod/bot aşaması ayrı kurulur. |
@@ -69,6 +69,10 @@ Bu liste ilk navigasyon/hasar denemesini engellemez. İlgili özellik başlamada
 | Para toplama | Kullanıcı para toplama istedi; ilk öneri ödülü otomatik cüzdana yazmak. Görsel pickup/yerden toplama tercihi açık. | M7 |
 | Koşu devamı / metagelişim | Hangi kazanımların kaldığı ve devam beklentisi erken kâğıt üzerinde seçilir; disk kaydı ihtiyaç kadar uygulanır. | M4a öncesi tasarım, M8 uygulama |
 | Ödüllü reklam / IAP'nin ekonomi rolü | Verilen ürünler, tekrar sınırları ve denge etkisi erkenden seçilir; entegrasyon daha sonra yapılır. | M7 öncesi tasarım, M9 entegrasyon |
+
+## 2026-10-08 — D24: yan pencerelerden atış
+
+İki taraftaki yan pencerelerden ateş edilir; metal çerçeve/dikme/alt-üst paneller mermiyi durdurur. Kullanıcının D23 sonrasındaki açık isteğiyle önceki dekoratif/opak pencere davranışı değiştirilir. Pencereler zombi veya oyuncu geçişi değildir; cam kırılması/onarımı eklenmez. Oyuncu ve ileride savunmalar ortak raycast geometrisini kullanır. Modelcinin pivot, ölçek, net cam ve metal hacimleri [MODEL_CONTRACT.md](MODEL_CONTRACT.md) ve üretilen ölçü CSV'sinde kayıtlıdır. Doğrulama: dört silahla tüm pencereler, metal kenarlar/dikmeler, eğik raylar ve pencere üzerinden beden/nav geçişinin kapalı olması; mevcut istasyon/kalıcılık kabulü de tekrar çalıştırılır.
 
 ## Bilinen tasarım riskleri
 

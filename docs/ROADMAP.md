@@ -195,4 +195,6 @@ Kabul: seçilen cihaz/kalite profili/FPS ve canlı sınırı raporlanır; ölç�
 
 D23 ölçek/kadraj revizyonu M6 öncesine eklendi: yeni üç kullanıcı referansına yakın blok vagon, 1,7 boyunda kapsüller, 4–6 kapı ve responsive perspektif. Altı kapı sabiti sonraki verilerde varsayılmaz; M6 doğuş/kapı listelerini mevcut geometriden okur. Güncel ölçüler ve revizyon kanıtı VISUAL_SCALE.md içindedir.
 
+D24 revizyonu tamamlandı: iki taraftaki yan camlar atışı geçirir, metal dikme/çerçeve/paneller engeller; pencere zombi geçidi değildir. 39 kural testi ve 46 pencerenin dört silahla kontrol edildiği beş-vagon/10-geçiş/60-düşman PC kabulü PASS (2026-10-08 08:03:45 UTC). Model ölçüleri MODEL_CONTRACT.md ve üretilen CSV'de tutulur. Sonraki M6 veri/bütçe sistemi bu sabit geometriyi kullanır; pencere sayısını kapı/spawn sayısı gibi saymaz.
+
 **M6 spawn/tür/bütçe:** TrainIntegration'ın gerçek iki taraflı/altı kapılı geometrisini kullanarak StationDefinition, ortak enemy profilleri ve global/vagon/kare üretim bütçesi. İçeride kalanlar canlı sınırına dahil; geçersiz doğuş sınırlı denenir. M6a'nın PC teknik kabulü geçti; yeni kadraj/oynama hissi kullanıcı değerlendirmesine açık. M7 ekonomi/savunma → Mod/Bot sırası korunur. Android birleşik kontrolü uygun zamanda ayrıca yapılır. Güncel bağlama ve test kanıtı TRAIN_INTEGRATION.md içindedir.

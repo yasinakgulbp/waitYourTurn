@@ -6,6 +6,8 @@ M6a artık `TrainIntegration` sahnesinde uygulanmıştır: referansın gerçek v
 
 ## Değişmeyen hedef
 
+D24 ile yan pencerelerin camından ateş, metal dikme/çerçeve ve dolu panellerde engel kararı eklendi. Eski denetimdeki tüm yan duvarın atışı kesmesi ifadesi bu açıklıklarda geçerli değildir. Modelcinin ölçü/pivot ve net açıklık kaynağı [MODEL_CONTRACT.md](MODEL_CONTRACT.md) ile üretilen CSV'dir.
+
 D23 güncellemesi: ilk prototipin oran kusurları nihai hedef değildir. Kullanıcının üç yeni görseli kamera/karakter-vagon oranı ve atmosfer için yeni referanstır; vagonlar aynı gövdede 4–6 kapı kullanabilir. Güncel blok sahne ve bağlama: [VISUAL_SCALE.md](VISUAL_SCALE.md). Aşağıdaki altı kapı/prefab ölçüsü ifadeleri ilk entegrasyon denetiminin tarihsel kapsamıdır.
 
 Görsel/yerleşim referansı **Assets/Scenes/SampleScene 2.unity** içindeki ilk prototiptir: uzun dikdörtgen vagonlardan oluşan tren, oyuncuyu izleyen kamera ve trenin iki yanındaki istasyon zeminlerinden gelen zombiler. Her vagonda altı kapı hedefi vardır. Kare, tek kapılı, tek taraflı TrainSandbox nihai görünüm veya üretim geometrisi değildir. Sonraki modeller/ışık/efekt çalışması bu referansın üzerine yapılır. Mobil girdi, otomatik nişan/ateş ve hasarla kırılan kapılar için güncel kullanıcı kararları geçerlidir.

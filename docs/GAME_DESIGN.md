@@ -42,7 +42,7 @@ Kararlaştırıldı: karanlık geçişte oynanış durur; görünür yolculukta 
 
 D23: aynı gövde ölçüsünde vagon başına 4–6 kapı bulunabilir; her iki yanda dış çiftler korunur, bir veya iki orta kapı sağlam duvarla değişebilir. Kapı sayısı, kapı canından ayrı şans/zorluk ayarıdır. Az kapı daha az giriş cephesi sağlar; kendiliğinden güvenlik garantisi değildir. Kamera/ölçek ve yalnız referans olarak alınan görseller VISUAL_SCALE.md içindedir.
 
-- Sağlam kapı zombi yürüyüşünü engeller, **üst camından dışarıya ateş edilebilir**. Kapının alt dolu paneli ve vagon duvarları mermiyi engeller. Oyuncu ve kapı önüne kurulan turretler zombileri kapıyı kırmadan vurabilir; kapı dayanıklılığı bu savunma için zaman kazandırır (D15).
+- Sağlam kapı zombi yürüyüşünü engeller, **üst camından dışarıya ateş edilebilir**. D24 ile iki taraftaki yan pencere camlarından da ateş edilir; metal dikmeler, çerçeveler, kapı alt paneli ve duvarın dolu metalleri mermiyi engeller. Pencereler beden geçişi değildir. Oyuncu ve kapı önüne kurulan turretler zombileri kapıyı kırmadan vurabilir; kapı dayanıklılığı bu savunma için zaman kazandırır (D15/D24).
 - Oyuncu ilk kapsamda kapı sağlam/kırık/onarılmış olsa da atandığı vagondan dışarı yürüyemez. Bu, düşman geçişi ve atıştan ayrı bir hareket iznidir. İleride istasyona inilen görevlerde izin açıkça değiştirilebilir (D16).
 - Örnek: 10 canlık kapıyı 8 hasarlık güçlü zombi iki vuruşta, 2 hasarlık zayıf zombi beş vuruşta kırar.
 - Can sıfıra düşünce kapı `Broken` olur, geçiş açılır. Kapı nesnesi/kalıcı kapı kimliği korunur; kırık kapı yeniden kurulunca hasar çekirdeğinde yeni dayanıklılık yaşamı başlar.
@@ -76,7 +76,7 @@ Satın alınmış Hovl projectile assetleri görsel sunumda korunur. Gerçek vur
 ## Turret ve dron
 
 - Vagonların önceden tanımlı boş kurulum noktaları vardır; serbest yerleştirme ilk kapsamda yoktur.
-- Normal ve gelişmiş turret: 360 derece dönebilir; menzilinde, görüşü açık en yakın düşmanı hedefler. Sağlam kapının üst camından dışarıya ateş edebilir; dolu alt panel ve duvar arkasındaki hedefi vuramaz. Kapı önüne kurulum temel savunma taktiğidir; aynı atış geometrisi oyuncu silahlarıyla paylaşılır.
+- Normal ve gelişmiş turret: 360 derece dönebilir; menzilinde, görüşü açık en yakın düşmanı hedefler. Sağlam kapı camından ve yan pencere açıklığından ateş edebilir; metal dikme/çerçeve veya dolu panel arkasındaki hedefi vuramaz. Kapı önüne kurulum temel savunma taktiğidir; aynı atış geometrisi oyuncu silahlarıyla paylaşılır. Turretin gerçek namlu yüksekliği kendi aşamasında açıklıklarla sınanır.
 - Her ürünün ateş aralığı, hasarı ve mermi kapasitesi ayrı veridir. Örnek kapasite 50, örnek aralık 1 saniye; kesin denge değeri değildir.
 - Örnek sınır her turret türünden 2 adet; kapsamın oyuncu başına mı vagon başına mı olduğu ayrıca kararlaştırılacak.
 - Mermisi biten turret bir kez kapanır, patlama efekti oynatır ve slotu boşaltır. Efektin alan hasarı vermesi ayrıca tasarlanır.

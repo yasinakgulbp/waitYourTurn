@@ -1,6 +1,6 @@
 # Görsel hedef, fiziksel ölçek ve kapı varyantları
 
-2026-10-08 kullanıcı referansları: [1](references/train-visual-target-01.jpeg), [2](references/train-visual-target-02.jpeg), [3](references/train-visual-target-03.jpeg). Bunlar yapay zekâ görselleridir; kamera, oran, görünür tehdit alanı ve ilerideki ışık atmosferini anlatır. Resimde görülen dron, eşya, UI metni, kapı onaran kişiler veya pencere davranışı yeni bir mekanik kararı değildir. D15 gereği atış kapı camından geçer, duvardan geçmez.
+2026-10-08 kullanıcı referansları: [1](references/train-visual-target-01.jpeg), [2](references/train-visual-target-02.jpeg), [3](references/train-visual-target-03.jpeg). Bunlar yapay zekâ görselleridir; kamera, oran, görünür tehdit alanı ve ilerideki ışık atmosferini anlatır. Resimde görülen dron, eşya, UI metni veya kapı onaran kişiler yeni bir mekanik kararı değildir. **D24 sonraki kullanıcı açıklaması:** kapı camının yanında iki tarafın yan pencereleri de atışı geçirir; metal dikmeler/çerçeveler ve dolu paneller geçirimsizdir. Pencereler beden/NavMesh geçişi açmaz. Güncel ölçü ve model teslimi [MODEL_CONTRACT.md](MODEL_CONTRACT.md) içindedir.
 
 İlk prototip oyun yerleşimi/davranış referansı olarak korunur. Eski modelin fiziksel oranlarını birebir koruma şartı yeni görsellerle kaldırıldı. `TrainIntegration` artık hedef oranlarını sınayan sade, değiştirilebilir blok modeller kullanır. Nihai sanat yapılmaz.
 
@@ -27,7 +27,7 @@ Bu değerler tasarım denemesidir, değişmez gerçek dünya zorunluluğu veya s
 - FiveDoor: kuzey orta kapı yok; can 20.
 - FourDoor: her iki orta kapı yok; can 40.
 
-Dayanıklılık ve kapı sayısı ayrı ayarlardır; test değerleri final zorluk dengesi değildir. Kaldırılan kapı gerçek duvar olur; portal, kapı canı ve spawn çapası üretilmez. Inspector'dan veri değiştikten sonra **Build Five Wagons** ile collider/NavMesh/sahne yeniden oluşturulur. Bu, elde düzenlenmiş sahneyi koruyan güncelleme aracı veya oyun sırasında kapı açıp kapatma sistemi değildir. Beş-vagon dizilimi 4/5/6/5/4; başlangıç ortadadır, böylece iki komşu görülebilir. Rastgele sonraki atama kuralları korunur.
+Dayanıklılık ve kapı sayısı ayrı ayarlardır; test değerleri final zorluk dengesi değildir. Kaldırılan kapı D24 ile pencereli duvar olur; portal, kapı canı ve spawn çapası üretilmez. Inspector'dan veri değiştikten sonra **Build Five Wagons** ile collider/NavMesh/sahne yeniden oluşturulur. Bu, elde düzenlenmiş sahneyi koruyan güncelleme aracı veya oyun sırasında kapı açıp kapatma sistemi değildir. Beş-vagon dizilimi 4/5/6/5/4; başlangıç ortadadır, böylece iki komşu görülebilir. Rastgele sonraki atama kuralları korunur.
 
 ## Ekran ve sunum
 
@@ -39,7 +39,7 @@ Gece atmosferi için okunabilir koyu platform/açık vagon ve sıcak giriş işa
 
 Kamera matematiği 16:9, 20:9, 4:3 ve 3:4 oranlarında korunan hacim testiyle kontrol edilir. Bu, bütün telefon/tabletlerde dokunmatik ergonomi ve FPS kanıtı değildir; gerçek cihaz kontrolü ayrıca yapılır. F10 kabulü kapı varyantlarında onarım/cam, kapatılmış orta duvarlar ve mevcut istasyon/kalıcılık/havuz kurallarını sınar. Önceki küçük geometri PASS sonuçları bu yeni ölçünün kanıtı sayılmaz.
 
-2026-10-08 doğrulaması:
+2026-10-08 D23 doğrulama geçmişi (yan pencereler opakken):
 
 - Can/onarım/geometri/yerleşim grubu 38/38 PASS (`Logs/HealthAndRepairTests.xml`, 07:11:00 UTC).
 - Yolculuk/kamera grubu 15/15 PASS (`Logs/JourneyTests.xml`, 07:10:52 UTC); dört ekran oranında sekiz köşenin korunması dahil.
@@ -47,3 +47,14 @@ Kamera matematiği 16:9, 20:9, 4:3 ve 3:4 oranlarında korunan hacim testiyle ko
 - Unity 16:9 yatay telefon ve 4:3 tablet önizlemelerinde tüm aktif vagon, yakın yaklaşma alanları ve HUD kadrajı gözle kontrol edildi. Ortadaki başlangıç vagonunda iki komşunun uçları görünür; dizinin ucunda doğal olarak tek komşu vardır. Son Play Console: 0 hata, 0 uyarı.
 
 Android build, gerçek çentik/dokunmatik ergonomi, uzun oturum ve nihai sanat bu revizyonda test edilmedi. Eski lablar ve orijinal prototip değişmedi. Güncel sahne `Train-5.asset` bake'ini kullanır; başka vagon sayısı için ilgili Build komutu o sayının bake'ini yeniden üretir.
+
+## D24 yan pencere revizyonu ve güncel kabul
+
+İki tarafta kapı dışındaki duvarlara gerçek atış açıklıkları eklendi. Net cam yüksekliği Y=0,7…1,6; alt/üst metal, 0,24 dış çerçeveler ve 0,12 orta dikmeler atışı durdurur. Güney görünümü kesit olarak kalır; fiziksel açıklık kuzeyle aynıdır. Camın saydam görünümü ile atış kuralı ayrıdır. Tam yan hareket/nav sınırı korunur; pencere kırılması veya yeni zombi giriş yolu yoktur. Model sözleşmesi ve üretilen ölçüler [MODEL_CONTRACT.md](MODEL_CONTRACT.md) içindedir.
+
+2026-10-08 son D24 doğrulaması:
+
+- 39/39 can/onarım/geometri/yerleşim testi PASS (`Logs/HealthAndRepairTests.xml`, 07:57:21 UTC); pencere yüksekliği ve metal payı doğrulaması eklendi. Kamera/yolculuk saf kodu değişmedi; önceki 15 test bu turda tekrar çalıştırılmadı.
+- F10 beş-vagon kabulü PASS (`Logs/TrainIntegration-5.txt`, 08:03:45 UTC): 46 yan pencerenin her birinde tabanca/SMG/tüfek/pompalı gerçek atışı; iki metal kenar, alt/üst paneller, kenardan 2 cm içeride/dışarıda eğik raylar; beden colliderı ve doğrudan nav geçişinin kapalı kalması. Pompalının merkez saçması metalde durur; yanından geçen diğer saçmalar bağımsızdır.
+- Aynı kontrolde tüm kapı varyantları, iki taraflı kırılma/giriş/onarım/eşik güvenliği, oyuncu sınırı, 10 istasyon geçişi ve can/SMG/mermi/iç düşman/kapı hasarı kalıcılığı ile 60 düşmanlık havuz sınırı PASS. Son Play Console yeni hata/uyarı üretmedi.
+- İnce kenar testi ilk uç camın uç duvarına 2 cm taşımasını yakaladı; dış çerçeve 0,24'e çıkarılarak giderildi. Net açıklık artık görselle uyumludur. Son sahne ve ölçü CSV'si yeniden üretildi. Android performansı bu turda ölçülmedi.

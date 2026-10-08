@@ -86,10 +86,11 @@ namespace WaitYourTurn.Sandbox
                 var enemy=wagon.Enemies.Active[wagon.Enemies.Active.Count-1];enemy.SetPaused(true);
                 var door=wagon.Doors[i];motor.Place(door.RepairPosition+Vector3.up*.05f);Physics.SyncTransforms();
                 if(!run.Weapon.HasSight(enemy.Health)){Finish(false,$"Door {i+1}: glass blocks sight");yield break;}
-                motor.Place(wagon.transform.TransformPoint(new Vector3(-1,.05f,0)));Physics.SyncTransforms();
-                // Off-axis line through the adjacent solid side wall must not become a glass shortcut.
+                float jambX=wagon.Doors[0].transform.position.x-wagon.transform.position.x-.76f;
+                motor.Place(wagon.transform.TransformPoint(new Vector3(jambX,.05f,0)));Physics.SyncTransforms();
+                // The metal next to a doorway remains opaque even when wall windows pass shots.
                 var enemyMotor=enemy.GetComponent<WaitYourTurn.Navigation.AgentMotor>();
-                Vector3 wallTarget=wagon.transform.TransformPoint(new Vector3(-1,0,Mathf.Sign(wagon.Geometry.StationSpawn(i).z-wagon.transform.position.z)*4.5f));
+                Vector3 wallTarget=wagon.transform.TransformPoint(new Vector3(jambX,0,Mathf.Sign(wagon.Geometry.StationSpawn(i).z-wagon.transform.position.z)*4.5f));
                 if(!enemyMotor.TryPlace(wallTarget)){Finish(false,"Wall fixture cannot place enemy");yield break;}
                 Physics.SyncTransforms();if(run.Weapon.HasSight(enemy.Health)){Finish(false,"Solid wagon wall passes shots");yield break;}
                 enemyMotor.TryPlace(wagon.Geometry.StationSpawn(i));enemy.SetPaused(false);
@@ -140,14 +141,73 @@ namespace WaitYourTurn.Sandbox
                     var enemy=w.Enemies.Active[w.Enemies.Active.Count-1];enemy.SetPaused(true);Physics.SyncTransforms();
                     if(!run.Weapon.HasSight(enemy.Health)){Finish(false,"Variant glass sight failed: "+w.Id);yield break;}
                 }
-                // A removed center opening must be an actual solid wall, on either side.
+                // Removed doors become window walls, retaining metal below the clear aperture.
                 foreach(int sign in new[]{-1,1})
                 {
                     if(w.Doors.Any(d=>Mathf.Abs(d.transform.position.x-w.transform.position.x)<.1f&&Mathf.Sign(d.transform.position.z-w.transform.position.z)==sign))continue;
-                    Vector3 p=w.transform.position+Vector3.up*.85f;
+                    Vector3 p=w.transform.position+Vector3.up*.35f;
                     if(!Physics.Linecast(p+Vector3.forward*sign*.4f,p+Vector3.forward*sign*(w.Geometry.Interior.extents.z+1),
-                        out RaycastHit wallHit,~(1<<LayerMask.NameToLayer("ShotTransparent")),QueryTriggerInteraction.Ignore)||!wallHit.collider.name.Contains("Wall segment collider"))
+                        out RaycastHit wallHit,~(1<<LayerMask.NameToLayer("ShotTransparent")),QueryTriggerInteraction.Ignore)||!wallHit.collider.name.Contains("Window lower metal"))
                     {Finish(false,"Removed center door left a wall gap: "+w.Id);yield break;}
+                }
+                w.Enemies.ClearAlive();
+                if(!w.SpawnOutside(0)){Finish(false,"Window fixture spawn failed");yield break;}
+                var windowEnemy=w.Enemies.Active[0];windowEnemy.SetPaused(true);
+                var windowMotor=windowEnemy.GetComponent<WaitYourTurn.Navigation.AgentMotor>();
+                var resolver=new HitscanResolver();int shotMask=~(1<<LayerMask.NameToLayer("ShotTransparent"));
+                var windows=w.GetComponentsInChildren<WaitYourTurn.Train.WagonWindow>();
+                if(windows.Length==0||!windows.Any(p=>p.transform.position.z>w.transform.position.z)||!windows.Any(p=>p.transform.position.z<w.transform.position.z))
+                {Finish(false,"Windows missing on one side: "+w.Id);yield break;}
+                foreach(var aperture in windows)
+                {
+                    Vector3 center=aperture.transform.position;
+                    float sign=Mathf.Sign(center.z-w.transform.position.z);
+                    // Every gun uses the same real collider path: glass takes damage, either metal edge does not.
+                    foreach(float offset in new[]{0f,-(aperture.ClearSize.x*.5f+aperture.FrameWidth*.5f),aperture.ClearSize.x*.5f+aperture.FrameWidth*.5f})
+                    {
+                        Vector3 inside=new Vector3(center.x+offset,.05f,center.z-sign);
+                        Vector3 outside=new Vector3(center.x+offset,0,center.z+sign*1.6f);
+                        motor.Place(inside);
+                        if(!windowMotor.TryPlace(outside)){Finish(false,"Window target outside navigation");yield break;}
+                        Physics.SyncTransforms();bool glass=offset==0;
+                        for(int gun=0;gun<run.Weapon.WeaponCount;gun++)
+                        {
+                            windowEnemy.Health.ResetForSpawn(1000,Team.Enemy);
+                            run.Weapon.ResetWeapon();run.Weapon.Equip(gun);
+                            ShotNotice primary=default;System.Action<ShotNotice> capture=notice=>{if(notice.Pellet==0)primary=notice;};
+                            run.Weapon.Fired+=capture;
+                            bool sight=run.Weapon.HasSight(windowEnemy.Health);
+                            bool fired=run.Weapon.TryFire(windowEnemy.transform.position+Vector3.up*.85f-run.Weapon.Muzzle);
+                            run.Weapon.Fired-=capture;
+                            // Shotgun side pellets may go around thin metal; the central ray must stop on it.
+                            if(sight!=glass||!fired||(glass&&windowEnemy.Health.Current>=1000)||
+                                (!glass&&(Mathf.Abs(primary.End.z-center.z)>.11f||(run.Weapon.Definition.pellets==1&&windowEnemy.Health.Current<1000))))
+                            {Finish(false,$"Window/metal actual {run.Weapon.DisplayName} shot failed: {w.Id}/{aperture.name}/offset {offset}");yield break;}
+                        }
+                    }
+                    // Lower/upper metal and oblique rays at both sides of each exact aperture edge.
+                    foreach(float y in new[]{center.y-aperture.ClearSize.y*.5f-.1f,center.y+aperture.ClearSize.y*.5f+.1f})
+                        if(!resolver.Cast(new Vector3(center.x,y,center.z-sign),Vector3.forward*sign,3,shotMask,run.Player,out RaycastHit metal)||metal.collider==null||!metal.collider.name.Contains("metal"))
+                        {Finish(false,"Window horizontal metal passes shots: "+aperture.name);yield break;}
+                    foreach(int edge in new[]{-1,1})foreach(float inset in new[]{-.02f,.02f})
+                    {
+                        float x=center.x+edge*(aperture.ClearSize.x*.5f-inset);
+                        Vector3 direction=new Vector3(.1f,0,sign).normalized;
+                        Vector3 point=new Vector3(x,center.y,center.z);
+                        bool hit=resolver.Cast(point-direction, direction,2,shotMask,run.Player,out RaycastHit oblique);
+                        // Target bodies are at normal aim height, away from this high-frame precision ray.
+                        if((hit&&oblique.collider!=null&&oblique.collider.name.Contains("post"))!=(inset<0))
+                        {Finish(false,$"Oblique window edge mismatch: {w.Id}/{aperture.name}/edge {edge}/inset {inset}/hit {(oblique.collider!=null?oblique.collider.name:"none")}");yield break;}
+                    }
+                    Vector3 boundaryStart=new Vector3(center.x,.85f,center.z-sign);
+                    if(!Physics.Linecast(boundaryStart,boundaryStart+Vector3.forward*sign*2,out RaycastHit movement,Physics.AllLayers,QueryTriggerInteraction.Ignore)||
+                        !movement.collider.name.Contains("movement boundary"))
+                    {Finish(false,"Window lost its movement boundary: "+aperture.name);yield break;}
+                    var query=new UnityEngine.AI.NavMeshQueryFilter{agentTypeID=windowEnemy.GetComponent<UnityEngine.AI.NavMeshAgent>().agentTypeID,areaMask=UnityEngine.AI.NavMesh.AllAreas};
+                    Vector3 navOutside=new Vector3(center.x,0,center.z+sign*1.3f),navInside=new Vector3(center.x,0,center.z-sign);
+                    if(!UnityEngine.AI.NavMesh.SamplePosition(navOutside,out var navStart,.2f,query)||!UnityEngine.AI.NavMesh.SamplePosition(navInside,out var navEnd,.2f,query)||
+                        !UnityEngine.AI.NavMesh.Raycast(navStart.position,navEnd.position,out _,query))
+                    {Finish(false,"Window created a zombie navigation opening: "+aperture.name);yield break;}
                 }
                 w.Enemies.ClearAlive();
             }
@@ -186,7 +246,7 @@ namespace WaitYourTurn.Sandbox
             yield return new WaitForSeconds(2);
             if(run.Wagons.Any(w=>w.Enemies.Active.Count!=12||w.Enemies.CreatedCount!=12||w.Enemies.Active.Any(e=>e.WagonId!=w.Id||!e.GetComponent<WaitYourTurn.Navigation.AgentMotor>().Ready)))
             {Finish(false,"Full bilateral crowd lost its navigation / wagon scope / capacity");yield break;}
-            Finish(true,$"Door variants {string.Join(",",run.Wagons.Select(w=>w.Doors.Length))}: repair/glass/solid removed openings; bilateral entry/thresholds and player boundary; responsive camera; 10 cycles visiting {visited.Count} wagons; HP/SMG/ammo/survivors/door damage preserved; full {run.Wagons.Length*12}-enemy pool bound.");
+            Finish(true,$"Door variants {string.Join(",",run.Wagons.Select(w=>w.Doors.Length))}: repair/glass; every bilateral window passes all four guns, metal edges/panels block straight/oblique rays, movement/nav remain closed; bilateral door entry/thresholds and player boundary; responsive camera; 10 cycles visiting {visited.Count} wagons; HP/SMG/ammo/survivors/door damage preserved; full {run.Wagons.Length*12}-enemy pool bound.");
         }
         private void Finish(bool pass,string detail)
         {

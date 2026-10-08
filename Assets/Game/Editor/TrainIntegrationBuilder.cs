@@ -45,7 +45,7 @@ namespace WaitYourTurn.Editor
             var lab = EditorSceneManager.OpenScene("Assets/Game/Scenes/TrainSandbox.unity");
             var oldRun = Object.FindAnyObjectByType<RunDriver>();
             var hero = Object.Instantiate(oldRun.Player.gameObject);
-            var template = Object.Instantiate(Object.FindObjectsByType<EnemyBrain>(FindObjectsInactive.Include).First().gameObject);
+            var template = Object.Instantiate(Object.FindObjectsByType<EnemyBrain>(FindObjectsInactive.Include, FindObjectsSortMode.None).First().gameObject);
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
             SceneManager.SetActiveScene(scene);
             SceneManager.MoveGameObjectToScene(hero, scene); SceneManager.MoveGameObjectToScene(template, scene);
@@ -75,12 +75,11 @@ namespace WaitYourTurn.Editor
             var scenery = new GameObject("Journey scenery - no physics").transform;
             var fixedTrain = new GameObject("Train and station - fixed gameplay navigation");
             var wagons = new WagonRuntime[count];
-            var centers = new float[count]; float cursor = 0;
+            float cursor = 0;
             for (int i = 0; i < count; i++)
             {
                 var layout = layouts[LayoutIndex(i)];
                 if (i > 0) cursor += layouts[LayoutIndex(i - 1)].length * .5f + 1 + layout.length * .5f;
-                centers[i] = cursor;
                 var root = new GameObject("wagon-" + (char)('a' + i)); root.transform.SetParent(fixedTrain.transform, false); root.transform.localPosition = Vector3.right * cursor;
                 var visual = new GameObject("Replaceable visuals - no gameplay ownership").transform; visual.SetParent(root.transform, false);
                 var physics = new GameObject("Fixed gameplay geometry").transform; physics.SetParent(root.transform, false);
@@ -97,7 +96,7 @@ namespace WaitYourTurn.Editor
                     Cube("Coupling", visual, new Vector3(sign * (half + .4f), .15f, 0), new Vector3(.8f, .25f, .55f), trim, false);
                     Cube("Warm end lamp", visual, new Vector3(sign * (half + .12f), .9f, 0), new Vector3(.05f, .3f, .18f), yellow, false);
                 }
-                var doors = new List<DoorController>(); var spawns = new List<Transform>();
+                var doors = new List<DoorController>(); var spawns = new List<Transform>(); int windowIndex = 0;
                 // Compact array stays ordered by position, alternating sides; no phantom doorway for a missing slot.
                 for (int slot = 0; slot < 6; slot++)
                 {
@@ -119,11 +118,11 @@ namespace WaitYourTurn.Editor
                     float visualHeight = side == 0 ? 1.15f : layout.wallHeight;
                     var solid = Cube("Lower panel", entry.transform, new Vector3(0, .3f, 0), new Vector3(width, .6f, .16f), red, true);
                     solid.AddComponent<NavMeshModifier>().ignoreFromBuild = true;
-                    var window = Cube("Shoot-through glass", entry.transform, new Vector3(0, .6f + (visualHeight - .6f) * .5f, 0), new Vector3(width - .15f, visualHeight - .6f, .08f), glass, false);
+                    var window = Cube("Shoot-through glass", entry.transform, new Vector3(0, .6f + (visualHeight - .6f) * .5f, 0), new Vector3(width, visualHeight - .6f, .08f), glass, false);
                     entry.AddComponent<DoorPanels>().Configure(portal, solid, window);
                     for (int edge = -1; edge <= 1; edge += 2)
-                        Cube("Door jamb", visual, new Vector3(x + edge * (width * .5f + .035f), visualHeight * .5f, sign * sideZ), new Vector3(.07f, visualHeight, .22f), trim, false);
-                    Cube("Door header", visual, new Vector3(x, visualHeight, sign * sideZ), new Vector3(width + .14f, .1f, .22f), trim, false);
+                        Metal("Door jamb", x + edge * (width * .5f + .035f), 0, .07f, layout.wallHeight, sign, trim);
+                    Metal("Door top frame", x, layout.wallHeight - .1f, width, .1f, sign, trim);
                     Cube("Repair floor strip", entry.transform, new Vector3(0, .01f, .72f), new Vector3(.6f, .02f, .09f), yellow, false);
                     Cube("Sill", physics, new Vector3(x, -.1f, sign * (sideZ + .1f)), new Vector3(width, .2f, .25f), null, true);
                     spawns.Add(Anchor("Station spawn " + spawns.Count, root.transform, new Vector3(x, 0, sign * (sideZ + 2))));
@@ -144,12 +143,29 @@ namespace WaitYourTurn.Editor
                     void Wall(float a, float b)
                     {
                         if (b <= a) return;
-                        Cube("Wall segment collider", physics, new Vector3((a + b) * .5f, layout.wallHeight * .5f, sign * sideZ), new Vector3(b - a, layout.wallHeight, .18f), null, true);
-                        float h = side == 0 ? 1.15f : layout.wallHeight;
-                        Cube("Wall segment visual", visual, new Vector3((a + b) * .5f, h * .5f, sign * sideZ), new Vector3(b - a, h, .18f), wall, false);
-                        Cube("Wall rim", visual, new Vector3((a + b) * .5f, h, sign * sideZ), new Vector3(b - a, .1f, .25f), trim, false);
-                        if (b - a > 1)
-                            Cube("Opaque window inset - wall blocks shots", visual, new Vector3((a + b) * .5f, h * .7f, sign * (sideZ - .1f)), new Vector3((b - a) * .7f, h * .3f, .04f), glass, false);
+                        // Full static movement/nav boundary; the weapon mask excludes only this layer.
+                        var boundary = Cube("Window wall movement boundary", physics, new Vector3((a + b) * .5f, layout.wallHeight * .5f, sign * sideZ), new Vector3(b - a, layout.wallHeight, .18f), null, true);
+                        boundary.layer = LayerMask.NameToLayer("ShotTransparent");
+                        float usable = b - a - layout.windowBorder * 2;
+                        if (usable < .5f) { Metal("Solid wall", (a + b) * .5f, 0, b - a, layout.wallHeight, sign, wall); return; }
+                        int panes = Mathf.CeilToInt((usable + layout.windowPost) / (layout.maxWindowWidth + layout.windowPost));
+                        float paneWidth = (usable - (panes - 1) * layout.windowPost) / panes;
+                        Metal("Window lower metal", (a + b) * .5f, 0, b - a, layout.windowBottom, sign, wall);
+                        Metal("Window upper metal", (a + b) * .5f, layout.windowTop, b - a, layout.wallHeight - layout.windowTop, sign, wall);
+                        Metal("Window edge post", a + layout.windowBorder * .5f, 0, layout.windowBorder, layout.wallHeight, sign, trim);
+                        Metal("Window edge post", b - layout.windowBorder * .5f, 0, layout.windowBorder, layout.wallHeight, sign, trim);
+                        for (int p = 0; p < panes; p++)
+                        {
+                            float left = a + layout.windowBorder + p * (paneWidth + layout.windowPost);
+                            var aperture = Anchor($"Window {(side == 0 ? "south" : "north")} {windowIndex++}", physics,
+                                new Vector3(left + paneWidth * .5f, (layout.windowBottom + layout.windowTop) * .5f, sign * sideZ));
+                            aperture.gameObject.AddComponent<WagonWindow>().Configure(new Vector3(paneWidth, layout.windowTop - layout.windowBottom, .18f),
+                                Mathf.Min(layout.windowPost, layout.windowBorder));
+                            float top = Mathf.Min(layout.windowTop, side == 0 ? 1.15f : layout.wallHeight);
+                            Cube("Shoot-through window glass", visual, new Vector3(left + paneWidth * .5f, (layout.windowBottom + top) * .5f, sign * sideZ),
+                                new Vector3(paneWidth, top - layout.windowBottom, .06f), glass, false);
+                            if (p + 1 < panes) Metal("Window middle post", left + paneWidth + layout.windowPost * .5f, 0, layout.windowPost, layout.wallHeight, sign, trim);
+                        }
                     }
                 }
                 var area = root.AddComponent<MovementArea>(); area.Configure(new Vector2(-half + .2f, -sideZ + .09f), new Vector2(half - .2f, sideZ - .09f));
@@ -159,6 +175,14 @@ namespace WaitYourTurn.Editor
                 var space = root.AddComponent<WagonGeometry>(); space.Configure(new Bounds(new Vector3(0, 1, 0), new Vector3(layout.length - .4f, 3, layout.width)), doors.ToArray(), spawns.ToArray(), safe.ToArray());
                 var pool = new GameObject("Enemy pool capacity 12").AddComponent<EnemyPool>(); pool.transform.SetParent(root.transform, false); pool.Configure(template.GetComponent<EnemyBrain>(), doors[0], player, registry);
                 var wagon = root.AddComponent<WagonRuntime>(); wagon.Configure(root.name, doors.ToArray(), pool, area); wagon.ConfigureGeometry(space); wagons[i] = wagon;
+                void Metal(string name, float x, float bottom, float width, float height, float sign, Material material)
+                {
+                    var collider = Cube(name + " collider", physics, new Vector3(x, bottom + height * .5f, sign * sideZ), new Vector3(width, height, .18f), null, true);
+                    // The continuous boundary above is the nav source; shot metal never opens navigation.
+                    collider.AddComponent<NavMeshModifier>().ignoreFromBuild = true;
+                    float top = Mathf.Min(bottom + height, sign < 0 ? 1.15f : layout.wallHeight);
+                    if (top > bottom) Cube(name + " visual", visual, new Vector3(x, (bottom + top) * .5f, sign * sideZ), new Vector3(width, top - bottom, .18f), material, false);
+                }
             }
             int LayoutIndex(int i) => count == 5 ? new[] { 2, 1, 0, 1, 2 }[i] : i % layouts.Length;
             float start = -layouts[LayoutIndex(0)].length * .5f, end = cursor + layouts[LayoutIndex(count - 1)].length * .5f;
@@ -207,7 +231,29 @@ namespace WaitYourTurn.Editor
             }
             new GameObject("Integration HUD and checks").AddComponent<TrainIntegrationController>().Configure(run, spawner, presentation);
             EditorSceneManager.SaveScene(scene, ScenePath); AssetDatabase.SaveAssets(); Selection.activeGameObject = hero;
+            ExportModelGuide(wagons);
             Debug.Log($"[TrainIntegration] Built {count} scale-reference wagons; doors {string.Join(",", wagons.Select(w => w.Doors.Length))}; bilateral geometry freshly baked.");
+        }
+
+        private static void ExportModelGuide(WagonRuntime[] wagons)
+        {
+            var csv = new System.Text.StringBuilder("wagon,doorCount,kind,name,centerX,centerY,centerZ,sizeX,sizeY,sizeZ,blocksShots,blocksMovement\n");
+            foreach (var wagon in wagons)
+            {
+                foreach (var window in wagon.GetComponentsInChildren<WagonWindow>())
+                    Row("window_clear_opening", window.name, wagon.transform.InverseTransformPoint(window.transform.position), window.ClearSize, false, true);
+                foreach (var box in wagon.GetComponentsInChildren<BoxCollider>())
+                    Row("physics_box", box.name, wagon.transform.InverseTransformPoint(box.transform.TransformPoint(box.center)),
+                        Vector3.Scale(box.size, box.transform.lossyScale), box.gameObject.layer != LayerMask.NameToLayer("ShotTransparent"), true);
+                void Row(string kind, string name, Vector3 pos, Vector3 size, bool shots, bool movement)
+                {
+                    csv.Append(wagon.Id).Append(',').Append(wagon.Doors.Length).Append(',').Append(kind).Append(',').Append(name.Replace(',', '_'));
+                    foreach (float value in new[] { pos.x, pos.y, pos.z, size.x, size.y, size.z }) csv.Append(',').Append(value.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture));
+                    csv.Append(',').Append(shots ? "true" : "false").Append(',').Append(movement ? "true" : "false").Append('\n');
+                }
+            }
+            System.IO.Directory.CreateDirectory("docs/generated");
+            System.IO.File.WriteAllText("docs/generated/train-model-dimensions.csv", csv.ToString());
         }
 
         private static void ReplaceActorVisual(GameObject actor, Material material, bool player)
@@ -242,6 +288,14 @@ namespace WaitYourTurn.Editor
             EnsureFolder(ArtFolder);
             floor = Material("Floor", new Color(.23f, .27f, .3f)); wall = Material("Wall", new Color(.3f, .35f, .39f)); trim = Material("Trim", new Color(.12f, .16f, .19f));
             red = Material("Door", new Color(.6f, .08f, .065f)); glass = Material("Glass", new Color(.12f, .3f, .37f)); ground = Material("Platform", new Color(.075f, .095f, .115f));
+            if (glass.GetFloat("_Mode") == 0)
+            {
+                Color tint = glass.color; tint.a = .28f; glass.color = tint;
+                glass.SetFloat("_Mode", 2); glass.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                glass.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha); glass.SetInt("_ZWrite", 0);
+                glass.SetOverrideTag("RenderType", "Transparent"); glass.EnableKeyword("_ALPHABLEND_ON");
+                glass.renderQueue = 3000; EditorUtility.SetDirty(glass);
+            }
             rail = Material("Rail", new Color(.38f, .43f, .48f)); yellow = Material("Marker", new Color(.95f, .62f, .12f), true);
             heroMat = Material("Player", new Color(.2f, .8f, .42f)); enemyMat = Material("Enemy", new Color(.68f, .39f, .27f));
         }

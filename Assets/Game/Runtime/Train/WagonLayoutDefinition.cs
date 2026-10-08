@@ -21,6 +21,11 @@ namespace WaitYourTurn.Train
         public float doorWidth = 1.45f;
         public float outerDoorX = 3.8f;
         public float doorHealth = 10;
+        public float windowBottom = .7f;
+        public float windowTop = 1.6f;
+        public float windowBorder = .24f;
+        public float windowPost = .12f;
+        public float maxWindowWidth = 2.2f;
         public DoorSlots openings = DoorSlots.All;
         public int DoorCount
         {
@@ -30,6 +35,9 @@ namespace WaitYourTurn.Train
         public float DoorX(int slot) => (slot / 2 - 1) * outerDoorX;
         public bool Valid => Finite(length) && Finite(width) && Finite(wallHeight) &&
             Finite(doorWidth) && Finite(outerDoorX) && Finite(doorHealth) &&
+            Finite(windowBottom) && Finite(windowTop) && Finite(windowBorder) && Finite(windowPost) && Finite(maxWindowWidth) &&
+            windowBottom >= .6f && windowTop > windowBottom + .2f && windowTop < wallHeight &&
+            windowBorder >= .24f && windowPost >= .08f && maxWindowWidth >= .5f &&
             length >= 8 && width >= 3 && wallHeight >= 1.7f && doorWidth >= 1 &&
             doorHealth > 0 && outerDoorX > doorWidth + .3f &&
             outerDoorX + doorWidth * .5f < length * .5f - .3f &&

@@ -23,6 +23,21 @@ namespace WaitYourTurn.Tests
             finally { Object.DestroyImmediate(layout); }
         }
         [Test]
+        public void WindowMustStayWithinWallAndHavePhysicalMetalFrames()
+        {
+            var layout = ScriptableObject.CreateInstance<WagonLayoutDefinition>();
+            try
+            {
+                Assert.IsTrue(layout.Valid);
+                layout.windowTop = layout.wallHeight; Assert.IsFalse(layout.Valid);
+                layout.windowTop = 1.6f; layout.windowBottom = 1.5f; Assert.IsFalse(layout.Valid);
+                layout.windowBottom = .7f; layout.windowPost = 0; Assert.IsFalse(layout.Valid);
+                layout.windowPost = .12f; layout.windowBorder = 0; Assert.IsFalse(layout.Valid);
+                layout.windowBorder = .24f; layout.maxWindowWidth = float.NaN; Assert.IsFalse(layout.Valid);
+            }
+            finally { Object.DestroyImmediate(layout); }
+        }
+        [Test]
         public void InvalidDimensionsAndUnsupportedDoorMasksAreRejectedBeforeBake()
         {
             var layout = ScriptableObject.CreateInstance<WagonLayoutDefinition>();

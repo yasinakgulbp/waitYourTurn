@@ -6,6 +6,8 @@ Sahne: `Assets/Game/Scenes/TrainIntegration.unity`. Orijinal `SampleScene 2` ve 
 
 ## İlk M6a referansı ve kurulum geçmişi
 
+D24 güncel ek: iki tarafta ateş edilebilir yan pencereler vardır; camları çevreleyen metal ayrı atış colliderlarıdır, sürekli `ShotTransparent` sınır ise beden/nav geçişini kapatır. Eksik orta kapı, yeni zombi girişi açmadan pencereli duvara dönüşür. Ölçüler ve model teslimi [MODEL_CONTRACT.md](MODEL_CONTRACT.md); F10 bütün pencerelerde dört silahı ve metal kenarları da kontrol eder.
+
 `TrainIntegrationBuilder`, referans sahnedeki ilk `Vagons` çocuğunu (`Assets/Scripts/Door/yenivagonlar/PF_Wagon_01a_301.prefab`) görsel olarak kopyalar. Eski gameplay scriptleri/colliderları entegrasyon kopyasından çıkarılır; kaynak prefab değişmez. Sahne ölçeğinde gövde yaklaşık 6,39 × 2,71; kapı genişliği yaklaşık 0,92; üç giriş iki yanda karşılıklıdır. 7,41 birim vagon aralığı referans yerleşime dayanır. Kapı X konumları/genişlikleri gerçek `DOORS` renderer bounds verisinden alınır.
 
 Kamera referansın perspektif FOV 40 / 70° eğimini kullanır. `RunPresentation` tek takip sahibidir; kamera X'i oyuncuyu izler, Y/Z kadrajı sabittir. Eski `CameraFollow`/Cinemachine sürücüsü yeni kameraya eklenmez. Yeşil kapsül, beyaz zombi ve kırmızı/cam panel görselleri geçici test sunumudur; vagon gövdesi gerçek prototip modelidir. Kadraj ve oynama hissi kullanıcı değerlendirmesine açıktır.

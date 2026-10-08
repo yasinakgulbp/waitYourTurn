@@ -18,4 +18,9 @@ MonoBehaviour:
   doorWidth: 1.45
   outerDoorX: 3.8
   doorHealth: 20
+  windowBottom: 0.7
+  windowTop: 1.6
+  windowBorder: 0.24
+  windowPost: 0.12
+  maxWindowWidth: 2.2
   openings: 55

@@ -2,7 +2,7 @@
 
 Bu belge hedef yapıyı tarif eder; adı geçen sistemlerin bir kısmı henüz uygulanmadı. Uygulanan navigation, ortak can/hasar, tek vagon ve iki vagonlu koşu bileşenlerinin gerçek doğrulama sınırları `NAVIGATION_LAB.md`, `COMBAT_LAB.md`, `GAMEPLAY_LAB.md` ve `RUN_LAB.md` içinde listelenir. Kesin tasarım kararları `DECISIONS.md` içinde, doğrulama işleri `ROADMAP.md` içindedir.
 
-D22: görsel/yerleşim referansı ilk prototiptir; kare/tek kapılı laboratuvar ürün mimarisi kabul edilmez. Mevcut EnemyPool/EnemyBrain'in tek kapı bağı, portal yarı düzleminden üyelik ve sabit doğuş/güvenli noktalar henüz gerçek iki taraflı/altı kapılı geometriye genellenmemiştir. Somut denetim `VISION_AND_INTEGRATION.md` içindedir. M6a bu sınırları ve prototipe uygun oyuncu kamerasını yeni özelliklerden önce doğrular; döngü/hasar testlerinin geçmesi bu entegrasyonun kanıtı değildir.
+D22 hedef denetimi: kare/tek kapılı laboratuvar ürün mimarisi kabul edilmez. Denetimde saptanan tek kapı bağı, portal yarı düzleminden üyelik ve sabit doğuş/güvenli noktalar M6a'da WagonGeometry ile iki tarafa/çok kapıya genellendi. D23 güncel ölçek/kamera referansıdır; D24 yan pencereden atışı ekler. Somut geçmiş `VISION_AND_INTEGRATION.md`, güncel geometri/model bağlama `VISUAL_SCALE.md` ve `MODEL_CONTRACT.md` içindedir. Döngü/hasar testlerinin geçmesi tek başına yeni geometri entegrasyonunun kanıtı sayılmaz.
 
 ## Temel yaklaşım
 
@@ -173,6 +173,8 @@ Kararlaştırıldı: karanlık geçişte oynanış durur, görünür yolculukta 
 Toplu kapı onarımı yalnızca işlem anındaki oyuncu vagonunda çalışır. Tam can, dolu slot, sınır dolması ve yetersiz para durumunda ürün verilmez/para çekilmez. Gerçek para IAP, bu cüzdana doğrudan callback ile yazılmaz; sonraki aşamada doğrulanmış ürün teslim katmanı kullanılır.
 
 ## Teknik kaynaklar
+
+D24 yan pencereler: sürekli `ShotTransparent` statik sınır yalnız beden/nav geçişini kapatır; normal katmandaki metal alt/üst kutular ve dikmeler ortak hitscan rayını keser. Render camı collider taşımaz. `WagonWindow` yalnız net açıklık ölçüsü/konumu işaretidir, Update veya AI kuralı yoktur. `TrainIntegrationBuilder` bu geometriyi `WagonLayoutDefinition` pencere ölçülerinden kurar; çalışma anında bake veya ek pencere başına sorgu sistemi eklenmedi. Hedefleme ve gerçek atış aynı resolver/mask ile yapılır. Model sözleşmesi MODEL_CONTRACT.md; builder başlangıç geometrisinin yerel kutularını docs/generated/train-model-dimensions.csv dosyasına çıkarır.
 
 - [Unity NavMeshLink](https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/NavMeshLink.html): kontrollü bağlantı, activation ve uç konum güncellemesi.
 - [Unity NavMeshSurface](https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/NavMeshSurface.html): yüzeylerin geometri ve agent türüyle oluşturulması.
