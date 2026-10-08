@@ -1,6 +1,6 @@
 {
     "name": "WaitYourTurn.Weapon.Tests",
-    "references": ["WaitYourTurn.Combat", "WaitYourTurn.Combat.Unity", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
+    "references": ["WaitYourTurn.Combat", "WaitYourTurn.Combat.Unity", "WaitYourTurn.Defenses", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
     "includePlatforms": ["Editor"],
     "overrideReferences": true,
     "precompiledReferences": ["nunit.framework.dll"],

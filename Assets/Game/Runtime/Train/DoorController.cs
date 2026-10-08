@@ -48,18 +48,20 @@ namespace WaitYourTurn.Train
         {
             for (int i = 0; i < attackers.Length; i++)
                 if (attackers[i] == actor)
-                { point = portal.OutsideApproach + portal.transform.right * ((i - 1) * 0.65f); return true; }
+                { point = AttackPosition(i); return true; }
             if (durability.IsAlive)
                 for (int i = 0; i < attackers.Length; i++)
                     if (attackers[i] == null)
                     {
                         attackers[i] = actor;
-                        point = portal.OutsideApproach + portal.transform.right * ((i - 1) * 0.65f);
+                        point = AttackPosition(i);
                         return true;
                     }
             point = portal.OutsideApproach;
             return false;
         }
+        private Vector3 AttackPosition(int index) => portal.OutsideApproach +
+            portal.transform.right * (index == 0 ? 0 : index == 1 ? -.6f : .6f);
         public void ReleaseAttackPosition(UnityEngine.Object actor)
         { for (int i = 0; i < attackers.Length; i++) if (attackers[i] == actor) attackers[i] = null; }
 

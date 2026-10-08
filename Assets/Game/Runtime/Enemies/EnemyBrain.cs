@@ -144,6 +144,13 @@ namespace WaitYourTurn.Enemies
                 Decide();
             }
             attack.Tick(attackTarget);
+            if (attackTarget != null)
+            {
+                Vector3 facing = State == EnemyState.AttackingDoor ? door.Portal.transform.forward : attackTarget.transform.position - transform.position;
+                facing.y = 0;
+                if (facing.sqrMagnitude > .001f)
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(facing), 360 * Time.deltaTime);
+            }
         }
         private void Decide()
         {
@@ -165,7 +172,8 @@ namespace WaitYourTurn.Enemies
             if (!onBoard && !IsInside && !portal.AcceptsEntry)
             {
                 bool assigned = door.TryGetAttackPosition(this, out Vector3 approach);
-                if (assigned && door.Durability.IsAlive && attack.CanReach(door.Durability))
+                Vector3 remaining = approach - transform.position; remaining.y = 0;
+                if (assigned && remaining.sqrMagnitude <= .24f * .24f && door.Durability.IsAlive && attack.CanReach(door.Durability))
                 { motor.Stop(); attackTarget = door.Durability; State = EnemyState.AttackingDoor; }
                 else
                 { motor.GoTo(assigned ? approach : portal.OutsideApproach + portal.transform.TransformDirection(doorOffset) - portal.transform.forward, routeChanged);

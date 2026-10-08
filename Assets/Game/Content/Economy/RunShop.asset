@@ -57,3 +57,9 @@ MonoBehaviour:
     effect: 3
     weaponIndex: -1
     turretIndex: 1
+  - id: drone
+    label: Companion drone
+    price: 180
+    effect: 4
+    weaponIndex: -1
+    turretIndex: -1

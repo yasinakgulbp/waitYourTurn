@@ -10,6 +10,9 @@ namespace WaitYourTurn.Run
         [SerializeField] private RunDriver run;
         [SerializeField] private ShopCatalog catalog;
         [SerializeField] private RunDefenses defenses;
+        [SerializeField] private RunDrone drone;
+        public RunDrone Drone => drone;
+        public void ConfigureDrone(RunDrone defense) => drone = defense;
         public RunDefenses Defenses => defenses;
         public void ConfigureDefenses(RunDefenses turrets) => defenses = turrets;
         private readonly Wallet wallet = new Wallet();
@@ -76,6 +79,7 @@ namespace WaitYourTurn.Run
                     return false;
                 case ShopEffect.Weapon: return run.Weapon.CanGrantOrRefill(product.WeaponIndex);
                 case ShopEffect.Turret: return defenses != null && defenses.CanBuy(product.TurretIndex);
+                case ShopEffect.Drone: return drone != null && drone.CanBuy;
                 default: return false;
             }
         }
@@ -92,6 +96,7 @@ namespace WaitYourTurn.Run
                     return repaired;
                 case ShopEffect.Weapon: return run.Weapon.TryGrantOrRefill(product.WeaponIndex);
                 case ShopEffect.Turret: return defenses != null && defenses.TryBuy(product.TurretIndex);
+                case ShopEffect.Drone: return drone != null && drone.TryBuy();
                 default: return false;
             }
         }

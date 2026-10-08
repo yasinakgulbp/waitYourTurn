@@ -94,7 +94,7 @@ Satın alınmış Hovl projectile assetleri görsel sunumda korunur. Gerçek vur
 - Mermisi biten turret bir kez kapanır, patlama efekti oynatır ve slotu boşaltır. D29: bitiş patlaması yakındaki zombilere bir kez alan hasarı verir.
 - Oyuncuda en fazla 1 dron; oyuncuyu yumuşak takip ve küçük uçuş salınımlarıyla izler. Yakındaki erişilebilir/görüşü açık düşmana ateş eder.
 - Dronun mermisi bitince kamikaze durumu başlar. Hedef varsa ona giderek bir kez alan hasarı verir; hedef yoksa sınırlı süre bekler ve güvenle kapanır. Hedefin arada ölmesi, oyuncunun ölmesi ve vagon değişimi tanımlı durumlar olmalıdır.
-- Dron uçuş görseliyle hasarın duvarlardan geçmesi birbirinden ayrı konudur; kamikazenin kapı/duvar ilişkisi uygulamadan önce belirlenir.
+- D32: kamikaze erişebileceği en yakın zombiye gider; kapalı kapı/cam/metal uçuşu engeller. Süre içinde hedef bulunamaz/ulaşılamazsa hasarsız kapanır; metal patlamayı da keser. Süre/hız/hasar ayarlanabilir; ayrıntılar DRONE.md.
 
 ## Para ve mağaza
 

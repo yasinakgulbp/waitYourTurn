@@ -1,0 +1,2 @@
+unit,visualWidth,visualHeight,visualDepth,flightRadius,hoverRootY,muzzleRootY,muzzleFloorY,bobAmplitude,physicalCollider
+metres,0.66,0.288,0.66,0.14,1.95,-0.18,1.77,0.05,none_swept_volume

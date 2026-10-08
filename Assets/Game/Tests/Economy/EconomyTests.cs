@@ -16,6 +16,18 @@ namespace WaitYourTurn.Tests
             public bool TryApply(ShopProduct product) { Calls++; During?.Invoke(); return Applies; }
         }
         private static readonly ShopProduct Product = new ShopProduct("heal", 30, ShopEffect.Heal);
+        [Test] public void DroneUsesExistingTransactionAndAvailabilityGuards()
+        {
+            var product = new ShopProduct("drone", 180, ShopEffect.Drone);
+            Assert.That(product.Valid, Is.True);
+            var wallet = new Wallet(); wallet.Reset(1000); var effects = new Effects();
+            var shop = new ShopService(wallet, effects); shop.SetContext(1);
+            Assert.That(shop.Buy(product, 1, 1, true), Is.EqualTo(PurchaseResult.Success));
+            Assert.That(shop.Buy(product, 1, 1, true), Is.EqualTo(PurchaseResult.Duplicate));
+            effects.Available = false;
+            Assert.That(shop.Buy(product, 1, 2, true), Is.EqualTo(PurchaseResult.Unavailable));
+            Assert.That(wallet.Balance, Is.EqualTo(820)); Assert.That(effects.Calls, Is.EqualTo(1));
+        }
         [Test] public void TurretProductRequiresAnExplicitTypeAndUsesTransactionalGuard()
         {
             Assert.That(new ShopProduct("turret", 90, ShopEffect.Turret).Valid, Is.False);

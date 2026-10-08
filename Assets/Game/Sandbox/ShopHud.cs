@@ -31,6 +31,8 @@ namespace WaitYourTurn.Sandbox
             Matrix4x4 old = GUI.matrix;
             GUI.matrix = Matrix4x4.TRS(offset, Quaternion.identity, new Vector3(scale, scale, 1));
             GUI.Label(new Rect(width - 285, 48, 140, 28), $"Coins: {economy.Wallet.Balance}", new GUIStyle(GUI.skin.label) { fontSize = 17 });
+            if (economy.Drone != null && economy.Drone.Actor.Occupied)
+                GUI.Label(new Rect(12, 108, width - 305, 25), $"Drone: {economy.Drone.Actor.State} | Ammo {economy.Drone.Actor.Weapon.Rounds}");
             GUI.enabled = economy.CanShop;
             if (GUI.Button(new Rect(width - 98, 48, 86, 32), open ? "Close shop" : "Shop"))
             { if (open) Close(); else { open = true; context = economy.Context; message = "Real time: keep moving / repairing."; } }

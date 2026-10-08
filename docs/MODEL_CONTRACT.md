@@ -71,3 +71,11 @@ Kurulum artık sabit pad kullanmaz: satın alma anındaki oyuncu X/Z konumu, vag
 Lokomotif pivotu X=63, Y=0, Z=0 (son vagon ucundan 1 m boşlukla); gövde **8 × 2 × 4,2 m**, kapalı tavan üst kotu 2,3 m, havalandırma üstü 2,34 m. Burun +X. Bu aşamada yalnız görsel bilgisayar kontrol odasıdır: collider, Health, WagonRuntime, zombi spawnı veya NavMesh kaynağı taşımaz. Model kendi görsel köküne giydirilir; oynanabilir vagonlar listesine eklenmez.
 
 `Replaceable turret visual` yalnız sanat çocukları taşır. `Aiming head` 360 derece Y ekseninde döner, ileri yön +Z; fizik kökü döndürülmez. Model collider/NavMeshAgent/hasar scripti eklemez. Namlu pivotu bugünkü mekanik ışının kökteki X/Z ve Y=0,9 konumuna uymalı; görünen namlu ucunu değiştirmek mekanik başlangıcı değiştirmez. Muzzle socket gelecekte değişirse ortak silah ve metal/cam kabulü birlikte güncellenir. Patlama kozmetiktir; gerçek yarıçap TurretDefinition verisidir. Kurulum/atış kapı onarımını veya geçidi kapatmamalı; model tesliminde F12 ve F10 tekrar çalıştırılır. Dron ölçüleri M7c'de eklenir.
+
+## D32 — Dron model sözleşmesi
+
+Tek bağımsız mekanik kök: ölçek 1, +Z ileri, +Y yukarı; oyuncunun vagondaki konumunu takip eder. Kök Y=1,95 m, salınım yalnız `Replaceable drone visual` çocuğundadır. Görsel sınır yaklaşık 0,66 × 0,288 × 0,66 m; uçuş sorgu yarıçapı 0,14 m. Dron hedef/collider/NavMeshAgent/rigidbody değildir; bedenlere takılmaz, dünya geometrisi küre taramasıyla uçuşu engeller. Sanat modeline collider, Health veya hasar scripti eklenmez.
+
+`Mechanical muzzle` köke göre (0; −0,18; 0), normal takipte zemin Y=1,77 m. `HitscanWeapon` bu soketten gerçek ışın çıkarır. Soket görsel salınım veya rotor/head altına taşınmaz. `Aiming head` +Z namlu yönü, Y dönüşü; model namlusu aynı mekanik başlangıca uyar. Bob ±0,05 m; model değişimi silah başlangıcını, kamikaze hacmini ve hasarı değiştirmez. Efekt yarıçapı kozmetiktir; mekanik patlama DroneDefinition'dadır. Turretler mevcut varsayılan Y=0,9 m namlu kuralını korur; ortak silaha yeni isteğe bağlı soket eklenmesi bunları taşımadı.
+
+Ölçü kaynağı `generated/drone-model-dimensions.csv`; davranış ve ayarlar DRONE.md. Model tesliminde F8 dron ve F10 cam/metal kabulü yeniden çalıştırılır.

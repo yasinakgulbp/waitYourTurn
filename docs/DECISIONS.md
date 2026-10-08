@@ -127,3 +127,7 @@ Tren +X yönüne gider; kuyruktan başa kapı/can dizilimi 6/10 → 5/20 → 5/2
 Normal koşu her Restart'ta yeni rastgele tohum ve rastgele ilk vagon kullanır. Önceki 12345 sabit tohumu her oyunda aynı diziyi üretiyordu. Sabit tohum testlerde açık seçenek olarak korunur; fixture sonunda normal ayar geri yüklenir. Aynı vagonun tesadüfen tekrar seçilmesi mümkündür; sıra garantisi yoktur. ActualRunSeed ileride kayıtla RNG devamını çözmek için tek başına yeterli değildir; M8 mevcut RNG konumunu da korumalıdır.
 
 Deneme kolaylığı için başlangıç parası RunShop.asset üzerinden geçici 1000 yapıldı; yayın dengesi kabulü değildir. Güncel model ölçüleri MODEL_CONTRACT ve üretilen CSV'lerdedir. Bu düzeltmelerden sonra sonraki mekanik M7c drondur.
+
+## 2026-10-08 — D32: dron kamikazesi ve engeller
+
+Kullanıcı onayı: mermisi biten dron erişebildiği en yakın zombiye gider; kapalı kapı/metalden geçmez, uygun hedef bulamazsa kısa süre arayıp kapanır. Patlama metalin arkasına hasar vermez. Süre ve değerler ayarlanır. İlk uygulama doğrudan küre taramasıyla açık yolu seçer; duvar üstünden geçmez, NavMesh veya karmaşık rota araması eklemez. Cam mermi geçirir ama fiziksel uçuşu engeller. Karanlıkta süre durur; kayıp hedef/atama süreyi sıfırlamaz. Oyuncuda bir dron, oyuncuyla kalıcılık, ortak atış/ödül ve yeniden kullanılan tek aktör. Ayrıntılar DRONE.md.

@@ -20,6 +20,7 @@ namespace WaitYourTurn.Combat
         [SerializeField] private WeaponDefinition[] definitions;
         [SerializeField] private LayerMask hitMask = Physics.AllLayers;
         [SerializeField] private bool startingWeaponOnly;
+        [SerializeField] private Transform muzzleSocket;
         private readonly HitscanResolver resolver = new HitscanResolver();
         private WeaponState[] states;
         private bool[] owned;
@@ -52,7 +53,8 @@ namespace WaitYourTurn.Combat
             equipped = index; return true;
         }
         public float Range => State.Spec.Range;
-        public Vector3 Muzzle => transform.position + Vector3.up * .9f;
+        public Vector3 Muzzle => muzzleSocket != null ? muzzleSocket.position : transform.position + Vector3.up * .9f;
+        public void ConfigureMuzzle(Transform socket) => muzzleSocket = socket;
         public event Action<ShotNotice> Fired;
         public void Configure(HealthComponent source, HealthComponent creditedOwner = null)
         { owner = source; rewardOwner = creditedOwner; }

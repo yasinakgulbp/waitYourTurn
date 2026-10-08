@@ -40,3 +40,4 @@ RadialDamage en fazla 128 hedef/yaşam snapshot'ı alır; callback sırasında y
 - Test fixture'ı tekrarlanabilir sabit tohum kullanabilir; sonunda normal rastgele koşu ayarını geri getirir. Normal oyunda her Restart yeni tohum ve rastgele ilk vagon kullanır.
 
 Model ölçüleri `MODEL_CONTRACT.md` ve `generated/turret-mount-dimensions.csv` içindedir. Nihai model/efekt/ses aynı fizik/atış köküne giydirilir. Android ergonomisi, uzun oturum ve nihai denge açık.
+M7c oyuncu dronu ayrı RunDrone adaptörüyle aynı savunma modülüne eklendi. Turret sahiplik/yerinde kalıcılığı korunur; ayrıntı ve testler [DRONE.md](DRONE.md).
