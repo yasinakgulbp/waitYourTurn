@@ -194,3 +194,7 @@ D24 yan pencereler: sürekli `ShotTransparent` statik sınır yalnız beden/nav 
 - Yerel doğrulama: `Library/PackageCache/com.unity.ai.navigation@134dd6a3b97b/Runtime/{NavMeshSurface,NavMeshLink}.cs`; paket 2.0.14. Library yolları Git kaynağı değildir ve başka makinede hash değişebilir. Webdeki 2.0 serisi belgeleri şu anda 2.0.15'e yönlenir; kullanılan API'ler kurulu pakette ayrıca kontrol edildi.
 
 M6 kuyruk kuralı: dolu kapasite kuyrukta yer tutarak başka vagonu kilitlemez; istek kendi sabit akış durumunda kısa ertelenir. Geçersiz nav/çakışma başka yazılmış çapada sonlu denenir; kapasite doluluğu bu denemeleri tüketmez. Defense biter bitmez çizelge kapanır, sonraki istasyon yeni çizelgeyle başlar. Havuzdan çıkış Instantiate yapmaz; ısınmanın ayrıca kare bütçesi vardır.
+
+## M7b uygulanan savunma sınırı
+
+`WaitYourTurn.Defenses` → Combat + Combat.Unity; ters bağımlılık yoktur. Run → Defenses ile `RunDefenses` mevcut evre/atama ve mağaza bağlamını kurar. Economy çekirdeği yalnız sayısal turret tip indeksini taşıyan ürün bilir; sahne/kurulum/ateş işlemi Run adaptöründen geçer. Turretler her vagonun TurretRack durumudur, insan atamasında temizlenmez; yeni RunFlow kimliğinde temizlenir. Aynı ortak NearestVisibleTarget oyuncu ve turret için kullanılır. RadialDamage gerçek tek hasar/yaşam/ödül yolunu kullanır; presentation hasar uygulamaz. Ölçüler, sınırlar ve PC kanıtı [DEFENSES.md](DEFENSES.md) içinde.

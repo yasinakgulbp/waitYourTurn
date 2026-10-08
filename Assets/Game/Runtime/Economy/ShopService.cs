@@ -1,16 +1,17 @@
 namespace WaitYourTurn.Economy
 {
-    public enum ShopEffect { Heal, RepairWagon, Weapon }
+    public enum ShopEffect { Heal, RepairWagon, Weapon, Turret }
     public enum PurchaseResult { Success, Closed, StaleContext, Duplicate, InvalidProduct, Unavailable, InsufficientFunds, Busy, ApplyFailed }
     public readonly struct ShopProduct
     {
         public readonly string Id;
-        public readonly int Price, WeaponIndex;
+        public readonly int Price, WeaponIndex, TurretIndex;
         public readonly ShopEffect Effect;
-        public ShopProduct(string id, int price, ShopEffect effect, int weaponIndex = -1)
-        { Id = id; Price = price; Effect = effect; WeaponIndex = weaponIndex; }
+        public ShopProduct(string id, int price, ShopEffect effect, int weaponIndex = -1, int turretIndex = -1)
+        { Id = id; Price = price; Effect = effect; WeaponIndex = weaponIndex; TurretIndex = turretIndex; }
         public bool Valid => !string.IsNullOrWhiteSpace(Id) && Price > 0 &&
-            (Effect == ShopEffect.Heal || Effect == ShopEffect.RepairWagon || Effect == ShopEffect.Weapon && WeaponIndex > 0);
+            (Effect == ShopEffect.Heal || Effect == ShopEffect.RepairWagon || Effect == ShopEffect.Weapon && WeaponIndex > 0 ||
+                Effect == ShopEffect.Turret && TurretIndex >= 0);
     }
     public interface IShopEffects
     {

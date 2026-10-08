@@ -11,7 +11,8 @@ namespace WaitYourTurn.Run
         [Min(1)] public int price;
         public ShopEffect effect;
         public int weaponIndex = -1;
-        public ShopProduct Product => new ShopProduct(id, price, effect, weaponIndex);
+        public int turretIndex = -1;
+        public ShopProduct Product => new ShopProduct(id, price, effect, weaponIndex, turretIndex);
     }
     [CreateAssetMenu(menuName = "Wait Your Turn/Shop Catalog")]
     public sealed class ShopCatalog : ScriptableObject

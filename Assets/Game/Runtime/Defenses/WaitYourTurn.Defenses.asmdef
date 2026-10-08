@@ -1,0 +1,6 @@
+{
+    "name": "WaitYourTurn.Defenses",
+    "rootNamespace": "WaitYourTurn.Defenses",
+    "references": ["WaitYourTurn.Combat", "WaitYourTurn.Combat.Unity"],
+    "autoReferenced": false
+}

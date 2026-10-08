@@ -1,0 +1,23 @@
+M7b fixed turret PC acceptance — 2026-10-08
+Platform: Unity Editor Windows. Android performance/touch ergonomics/final balance pending.
+
+WeaponTests : result=Passed, passed=20, failed=0, start=2026-10-08 18:08:39Z, end=2026-10-08 18:08:39Z
+EconomyTests : result=Passed, passed=12, failed=0, start=2026-10-08 18:09:05Z, end=2026-10-08 18:09:05Z
+
+TurretAcceptance
+2026-10-08T18:09:49.9119085Z
+PASS: Normal/advanced purchases use 50/80 finite rounds; occupied/remote/per-type caps reject without charge; actual glass shot credits owner; 3 zombies enter around installed geometry; dark gate and 10 assignments preserve mounts/ammo; old wagon owner reward; 3-shot fixture exhausts once, blasts two enemies once and credits kill; same actor redeploy resets life/ammo; death closes; Restart clears all 24 fixed mount actors. PC only; final balance and Android pending.
+
+EconomyAcceptance
+2026-10-08T18:10:11.9150844Z
+PASS: Actual pistol kill + owned-defense credit; pooled life/replay/foreign-owner/cleanup; heal 10->40,50->80,80->100; full/unfunded/duplicate reject; current-wagon repair; weapon unlock/refill/cooldown; 10 assignments preserve currency/inventory/ammo; dark/death/old context reject; new run resets. PC only.
+
+TrainIntegration-5
+2026-10-08T18:10:59.2060062Z
+PASS: Door variants 4,5,6,5,4: repair/glass; every bilateral window passes all four guns, metal edges/panels block straight/oblique rays, movement/nav remain closed; bilateral door entry/thresholds and player boundary; responsive camera; 10 cycles visiting 5 wagons; HP/SMG/ammo/survivors/door damage preserved; full 60-enemy pool bound.
+
+SpawnAcceptance
+2026-10-08T18:12:48.4393728Z
+PASS: Empty wagons suppress new spawn without removing survivors; occupied wagon still spawns; synthetic living occupants exercise global 9, wagon 3, queue 4, frame 2 limits; 3 profiles / 9 same-object reuse cycles; stale life rejected; invalid nav leaves pool intact; kill frees one slot; 30 station cycles retain 5 original passengers; arrival protection rejects damage and expires in gameplay time; registry matches active bodies; fixed 60-object pool, peak 7 active. PC only; Android profile pending.
+
+Scene review: 0 existing serialized records removed; 12 existing records changed only to add rack/pad/manager/economy references. Existing geometry/NavMesh records unchanged; NavMesh asset not rebuilt.

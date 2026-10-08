@@ -28,6 +28,7 @@ namespace WaitYourTurn.Combat
         private ulong attackId, triggerId;
         private bool firing;
         public bool Paused { get; set; }
+        public LayerMask HitMask => hitMask;
         public int EquippedIndex => equipped;
         public int WeaponCount => definitions == null || definitions.Length == 0 ? 1 : definitions.Length;
         public WeaponState State { get { EnsureInitialized(); return states[equipped]; } }

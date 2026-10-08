@@ -37,22 +37,25 @@ namespace WaitYourTurn.Sandbox
             GUI.enabled = true;
             if (open && context == economy.Context && economy.CanShop)
             {
-                Rect panel = new Rect(width - 285, 95, 273, 310);
+                var items = economy.Catalog.items;
+                Rect panel = new Rect(width - 285, 95, 273, items.Length * 40 + 110);
                 input.ModalBlockedScreenArea = new Rect(offset.x + panel.x * scale, offset.y + panel.y * scale, panel.width * scale, panel.height * scale);
                 GUI.Box(panel, "SHOP - test prices");
-                var items = economy.Catalog.items;
                 for (int i = 0; i < items.Length; i++)
                 {
                     var item = items[i];
                     GUI.enabled = economy.CanApply(item.Product) && economy.Wallet.Available >= item.price;
-                    if (GUI.Button(new Rect(panel.x + 10, panel.y + 30 + i * 45, panel.width - 20, 40), $"{item.label}  ({item.price})"))
+                    if (GUI.Button(new Rect(panel.x + 10, panel.y + 30 + i * 40, panel.width - 20, 36), $"{item.label}  ({item.price})"))
                     {
                         var result = economy.Buy(i, context, economy.NextRequest());
                         message = result == PurchaseResult.Success ? "Purchased: " + item.label : result.ToString();
                     }
                 }
                 GUI.enabled = true;
-                GUI.Label(new Rect(panel.x + 10, panel.y + 265, panel.width - 20, 40), message,
+                if (economy.Defenses != null)
+                    GUI.Label(new Rect(panel.x + 10, panel.y + 30 + items.Length * 40, panel.width - 20, 40),
+                        economy.Defenses.PurchaseHint, new GUIStyle(GUI.skin.label) { wordWrap = true });
+                GUI.Label(new Rect(panel.x + 10, panel.yMax - 35, panel.width - 20, 30), message,
                     new GUIStyle(GUI.skin.label) { wordWrap = true });
             }
             else input.ModalBlockedScreenArea = default;

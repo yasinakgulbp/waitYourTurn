@@ -9,6 +9,9 @@ namespace WaitYourTurn.Run
     {
         [SerializeField] private RunDriver run;
         [SerializeField] private ShopCatalog catalog;
+        [SerializeField] private RunDefenses defenses;
+        public RunDefenses Defenses => defenses;
+        public void ConfigureDefenses(RunDefenses turrets) => defenses = turrets;
         private readonly Wallet wallet = new Wallet();
         private KillRewards rewards;
         private ShopService shop;
@@ -72,6 +75,7 @@ namespace WaitYourTurn.Run
                     foreach (var door in run.CurrentWagon.Doors) if (door.NeedsRepair) return true;
                     return false;
                 case ShopEffect.Weapon: return run.Weapon.CanGrantOrRefill(product.WeaponIndex);
+                case ShopEffect.Turret: return defenses != null && defenses.CanBuy(product.TurretIndex);
                 default: return false;
             }
         }
@@ -87,6 +91,7 @@ namespace WaitYourTurn.Run
                     if (repaired) run.Repair.Cancel();
                     return repaired;
                 case ShopEffect.Weapon: return run.Weapon.TryGrantOrRefill(product.WeaponIndex);
+                case ShopEffect.Turret: return defenses != null && defenses.TryBuy(product.TurretIndex);
                 default: return false;
             }
         }

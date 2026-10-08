@@ -16,6 +16,16 @@ namespace WaitYourTurn.Tests
             public bool TryApply(ShopProduct product) { Calls++; During?.Invoke(); return Applies; }
         }
         private static readonly ShopProduct Product = new ShopProduct("heal", 30, ShopEffect.Heal);
+        [Test] public void TurretProductRequiresAnExplicitTypeAndUsesTransactionalGuard()
+        {
+            Assert.That(new ShopProduct("turret", 90, ShopEffect.Turret).Valid, Is.False);
+            var product = new ShopProduct("turret", 90, ShopEffect.Turret, turretIndex: 0);
+            Assert.That(product.Valid, Is.True);
+            var wallet = new Wallet(); wallet.Reset(100); var effects = new Effects(); var shop = new ShopService(wallet, effects);
+            shop.SetContext(1); Assert.That(shop.Buy(product, 1, 1, true), Is.EqualTo(PurchaseResult.Success));
+            Assert.That(shop.Buy(product, 1, 1, true), Is.EqualTo(PurchaseResult.Duplicate));
+            Assert.That(wallet.Balance, Is.EqualTo(10)); Assert.That(effects.Calls, Is.EqualTo(1));
+        }
         [Test] public void WalletRejectsNegativeOverspendAndOverflow()
         {
             var wallet = new Wallet(); Assert.That(wallet.Reset(-1), Is.False);

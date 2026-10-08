@@ -1,6 +1,6 @@
 {
     "name": "WaitYourTurn.Sandbox",
     "rootNamespace": "WaitYourTurn.Sandbox",
-    "references": ["WaitYourTurn.Navigation", "WaitYourTurn.Combat", "WaitYourTurn.Combat.Unity", "WaitYourTurn.Train", "WaitYourTurn.Enemies", "WaitYourTurn.Player", "WaitYourTurn.Run", "WaitYourTurn.Economy"],
+    "references": ["WaitYourTurn.Navigation", "WaitYourTurn.Combat", "WaitYourTurn.Combat.Unity", "WaitYourTurn.Train", "WaitYourTurn.Enemies", "WaitYourTurn.Player", "WaitYourTurn.Run", "WaitYourTurn.Economy", "WaitYourTurn.Defenses"],
     "autoReferenced": false
 }

@@ -17,17 +17,8 @@ namespace WaitYourTurn.Player
             if (Time.time >= nextSelection)
             {
                 nextSelection = Time.time + 0.15f;
-                target = null;
-                float closest = pistol.Range * pistol.Range;
-                foreach (HealthComponent candidate in registry.Targets)
-                {
-                    if (candidate == null || !candidate.IsAlive) continue;
-                    float distance = (candidate.transform.position - transform.position).sqrMagnitude;
-                    if (distance >= closest || !pistol.HasSight(candidate)) continue;
-                    closest = distance;
-                    target = candidate;
-                    targetLife = candidate.LifeVersion;
-                }
+                target = NearestVisibleTarget.Select(registry, pistol, transform.position);
+                if (target != null) targetLife = target.LifeVersion;
             }
             if (target == null || !target.IsAlive || target.LifeVersion != targetLife || !pistol.HasSight(target)) return;
             Vector3 direction = target.transform.position + Vector3.up * 0.85f - pistol.Muzzle;

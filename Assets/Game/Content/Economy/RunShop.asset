@@ -20,23 +20,40 @@ MonoBehaviour:
     price: 30
     effect: 0
     weaponIndex: -1
+    turretIndex: -1
   - id: repair
     label: Repair wagon doors
     price: 40
     effect: 1
     weaponIndex: -1
+    turretIndex: -1
   - id: smg
     label: SMG / refill
     price: 60
     effect: 2
     weaponIndex: 1
+    turretIndex: -1
   - id: rifle
     label: Rifle / refill
     price: 100
     effect: 2
     weaponIndex: 2
+    turretIndex: -1
   - id: shotgun
     label: Shotgun / refill
     price: 90
     effect: 2
     weaponIndex: 3
+    turretIndex: -1
+  - id: turret-normal
+    label: Normal turret
+    price: 90
+    effect: 3
+    weaponIndex: -1
+    turretIndex: 0
+  - id: turret-advanced
+    label: Advanced turret
+    price: 160
+    effect: 3
+    weaponIndex: -1
+    turretIndex: 1

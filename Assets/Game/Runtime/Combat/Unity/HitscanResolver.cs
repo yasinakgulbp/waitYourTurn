@@ -26,6 +26,20 @@ namespace WaitYourTurn.Combat
         }
         public static bool Hostile(HealthComponent owner, HealthComponent target) =>
             owner != null && target != null && target.IsAlive && target.Team != Team.Neutral && target.Team != owner.Team;
+        public bool BlockedByGeometry(Vector3 start, Vector3 end, LayerMask mask)
+        {
+            Vector3 delta = end - start;
+            if (delta.sqrMagnitude < .0001f) return false;
+            int count = Physics.RaycastNonAlloc(start, delta.normalized, hits, delta.magnitude, mask, QueryTriggerInteraction.Ignore);
+            if (count == hits.Length) return true;
+            for (int i = 0; i < count; i++)
+            {
+                var health = hits[i].collider.GetComponentInParent<HealthComponent>();
+                // Combatants do not shield each other from a radial blast. Neutral door metal still does.
+                if (health == null || health.Team == Team.Neutral) return true;
+            }
+            return false;
+        }
         public static Vector3 PelletDirection(Vector3 forward, int pellet, int count, float degrees, ulong shot)
         {
             forward.Normalize();

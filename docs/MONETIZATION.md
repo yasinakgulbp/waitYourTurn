@@ -6,9 +6,13 @@
 
 - Battle: ölüm/koşu sonucu ödülünü isteğe bağlı video ile 3× alma.
 - Hikâye: ölümde isteğe bağlı video ile devam; devam seçilmezse sonuç ödülünü video ile 3× alma.
-- Ödüllü reklam reddedilirse geçiş reklamı fikri; ayrıca ana menüde uygun fiyatlı zorunlu reklam kaldırma ürünü.
+- D30 ile kullanıcı yeniden seçti: ödüllü reklam reddedilirse kısa sonuç geçiş reklamı; ayrıca ana menüde uygun fiyatlı zorunlu reklam kaldırma ürünü.
 - Hikâyede istasyonlar arasında ara sıra dron gibi bir yardım teklifi. Drona tıklamak ücretsiz teslim mi, reklam açmak mı demek henüz seçilmedi; bir anda reklam açılacağı varsayılmaz.
 - Az sayıda anlaşılır kaynak/ürün; Bullet Echo hissi referans, karmaşık teklif/para birimi yığını hedef değil.
+
+## Güncel çalışma kararı (D30)
+
+Önce oyun mekaniği tamamlanır; IAP ekonomi/ürün/fiyat tasarımı ileride kullanıcıyla seçilir. Reklam sağlayıcısı tercihi Unity Ads; ilk yayın ve IAP faturalandırma hedefi Google Play. Henüz SDK veya ödeme entegrasyonu yok. Kullanıcının reddin ardından kısa geçiş reklamı tercihi, aşağıdaki eski bağımsız yerleşim önerisinin yerine çalışma hedefidir; sıklık/sonuç akışı ve güncel sağlayıcı kuralları servis aşamasında doğrulanır.
 
 ## Doğrulanmış örnekler ve sınırları
 
@@ -32,12 +36,12 @@ Kaynaklar 2026-10-08'de kontrol edildi. Bir ürünün kullanımda olması bizim 
 
 Ürün sırası önerisi: zorunlu reklam kaldırma → karakter/silah/dron kozmetik paketi → içerik üretim kapasitesi oluşursa küçük, tek ücretsiz/ücretli yollu sezon bileti. Karakterler eklenirse küçük yan yeteneklerle farklı oyun tarzı verebilir; ücretli karakterin daha güçlü olması Battle adaletini etkiler. Önce ortak denge ve ücretsiz kazanma yolu gerekir. Sandıklar ne vereceği belli koleksiyon ekonomisi olmadan anlamlı değil; ilk sürümde açık içerikli doğrudan ürün daha anlaşılır.
 
-## Reklam yerleşimi önerileri
+## Önceki reklam yerleşimi önerileri — D30 kullanıcı tercihi ayrıca geçerli
 
 - Battle 3× yalnız kalıcı sonuç ödülüne uygulanır; yarışın sırasını veya aktif koşu parası/hasarını değiştirmez. Örneğin temel sonuç 100 ise tamamlanan reklam toplamı 300 yapar; zaten verilen 100 üzerine 300 daha eklenmez. XP, görev ve başka ödüllerin otomatik çarpılması ayrıca seçilmelidir.
 - Hikâyede ilk deneme: koşu başına en fazla bir video devamı; devam edilirse sonuç henüz teslim edilmez. Nihai bitişte en fazla bir 3× teklif. Aynı ölüm ekranında iki reklamı arka arkaya zorlamayalım. Battle'da ölümden dirilme eleme kuralını bozacağından önerilmez.
 - Dron yardım teklifi yalnız güvenli geçiş anında, açık ödül ve etkileşimle; sıklık/koşu sınırı ayarlanabilir. Varsayılan olarak savaşta popup açılmaz. Normal mağaza dronunun limit/mermi/teslim API'sini paylaşır.
-- Ödüllü reklamı reddetmek otomatik “oyuncu reklam izlemez” sınıflandırması yapmaya yetmez. Reddin hemen ardından zorunlu reklam açma önerisini almayalım. Geçiş reklamı bağımsız sıklık/oturum sınırıyla, sonuçtan menüye doğal geçişte değerlendirilsin; az önce ödüllü video izlendiyse ek reklam gösterilmesin.
+- Ödüllü reklamı reddetmek otomatik “oyuncu reklam izlemez” sınıflandırması yapmaya yetmez. Bu önceki öneri D30 ile kullanıcı tarafından seçilmedi; kullanıcı reddin ardından kısa sonuç geçiş reklamı istiyor. Geçiş reklamı bağımsız sıklık/oturum sınırıyla, sonuçtan menüye doğal geçişte değerlendirilsin; az önce ödüllü video izlendiyse ek reklam gösterilmesin.
 - Reklam kaldırma ürünü yalnız zorunlu geçiş reklamını kaldıracaksa adı/açıklaması bunu söylemeli; isteğe bağlı ödüllü videoların kaldığı açık olmalı. Reklam izlemeden bütün bonusları teslim eden daha geniş ürün başka bir fiyat/değer önerisidir.
 - Reklam bulunamazsa/hata/erken kapatma olursa temel ödül ve normal devam düğmesi çalışır; sonradan savaşın ortasında reklam açılmaz.
 

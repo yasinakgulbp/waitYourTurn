@@ -45,3 +45,7 @@ Satın alma, geçerli katalog ürünü + güncel atama bağlamı + monoton istek
 - Play **F10**: önceki kapı/cam/metal/beden/onarım ve 10 istasyon/60 beden kabulü.
 
 M7a raporları ve UTC zamanları [generated/m7a-pc-acceptance.txt](generated/m7a-pc-acceptance.txt) içinde. 16:9 PC görünümü kontrol edildi. Android dokunmatik ergonomisi, uzun oturum, nihai fiyat dengesi veya reklam/IAP denenmedi. M7a değerlendirmesinde kullanıcı reklam/IAP fikirlerini iletti; araştırma ve sade ekonomi seçenekleri [MONETIZATION.md](MONETIZATION.md) içinde, henüz servis/kalıcı ürün uygulanmadı. D27/D28 boş-vagon/güvenli atama kabulü ve 17:32:15 UTC F9 mağaza regresyonu PASS; [kanıt](generated/occupancy-arrival-pc-acceptance.txt). Sıradaki M7b sabit turretler, ardından M7c dron ve Mod/Bot aşamasıdır.
+
+## M7b güncellemesi
+
+Mağaza artık yedi ürün taşır: normal turret 90, gelişmiş turret 160 (geçici fiyatlar). `ShopEffect.Turret` açık `turretIndex` ister; uygulanabilirlik ve işlem RunDefenses üzerinden güncel vagon/pad/kota/yaşam/evreyi kontrol eder. Başarısız kurulum para tüketmez. Eski vagondaki turretin gerçek öldürmeleri yakalanmış insan sahipliğiyle aynı KillRewards yoluna gelir. Kontroller 12 ekonomi/20 silah vakasına genişledi; F9 regresyonu da PASS. Ayrıntılar ve F12 sahne kabulü [DEFENSES.md](DEFENSES.md) içindedir. Yeni panel hâlâ geçici test UI'sidir; dokunmatik ergonomi açık. Sıradaki M7c dron.

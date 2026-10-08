@@ -65,8 +65,8 @@ Bu liste ilk navigasyon/hasar denemesini engellemez. İlgili özellik başlamada
 | Doğuş güvenliği | D28: geçerli adaylardan en yüksek düşman mesafesi + ayarlanabilir 2 sn hasar koruması kullanıcı tarafından seçildi; içerideki zombiler korunur. Gerçek oynanış dengesi açık. | M7b öncesi / denge |
 | Kalkış uyarısı | İlk öneri 60 saniye savunma sonrasında 3 saniye uyarı; fade/yavaşlama süreleri ayrı ayarlar. | M4 |
 | Düşman hedef önceliği | Atanmış vagonda oyuncu, turret veya başka hedeflerin önceliği; boş vagondaki zombi davranışı. | M3/M7 |
-| Savunmaların canı ve patlaması | Zombiler turret/drona zarar verebilir mi? Turretin mermi bitiş patlaması sadece efekt mi? Dron patlaması duvar/kapıya nasıl etki eder? | M7 |
-| Turret sınırının kapsamı | Her türden 2 adet örneği: oyuncu başına mı vagon başına mı? Öneri vagon/slot başına, koşu toplamı ayrıca sınırlı. | M7 |
+| Savunmaların canı ve patlaması | D29: turret hedef alınmaz; mermi bitişi yakındaki zombilere hasar verir. Dron davranışı M7c öncesi ayrıca seçilir. | M7 |
+| Turret sınırının kapsamı | D29: vagon başına her türden en fazla 2; global koşu kotası eklenmedi. | M7 |
 | Mobil kontrol hissi | Şema D13 ile seçildi; sol joystick ve otomatik ateşin ergonomisi kullanıcı/cihaz denemesinde değerlendirilir. | M3 değerlendirmesi |
 | Silah çeşitlerinin mermisi | D19 sınırlı yedek; D26 ilk alım açar, tekrar alım eksik mermiyi aynı fiyatla tamamlar. Sayısal denge açık. | M7/M8 |
 | Mağaza erişimi | D25 ile savaşta açık, oyun sürer; karanlık/ölümde kapalı. Mobil ergonomi ayrıca değerlendirilecek. | M7 değerlendirmesi |
@@ -81,7 +81,7 @@ Bu liste ilk navigasyon/hasar denemesini engellemez. İlgili özellik başlamada
 ## Bilinen tasarım riskleri
 
 - M7a'da boş vagonlara da yeni üretim yapılması kullanıcı oyununda ani ölüm yarattı; D27 uygunluğu ve D28 doğuş koruması M7b öncesi ele alınır. Botlar bu temel kurala bağımlıdır, sorunun geçici çözümü sayılmaz.
-- Battle sonucu ödül 3× ve hikâyede reklamla devam/3× kullanıcının hedef fikirleridir; tekrar sınırı/kalıcı ödül/fiyat netleşmedi. Ödüllü reklam reddinden hemen sonra zorunlu reklam önerisi kabul edilmiş uygulama değildir; bağımsız ve sınırlı doğal geçiş yerleşimi öneriliyor. Araştırma/alternatifler MONETIZATION.md içinde.
+- Battle sonucu ödül 3× ve hikâyede reklamla devam/3× kullanıcının hedef fikirleridir; tekrar sınırı/kalıcı ödül/fiyat netleşmedi. D30 kullanıcı tercihi reddin ardından kısa sonuç geçiş reklamıdır; bağımsız yerleşim eski teknik öneridir, seçilmiş karar değildir. Araştırma/alternatifler MONETIZATION.md içinde.
 
 - Kalıcı kapı hasarı ve rastgele vagon ataması, oyuncuyu çok tehlikeli bir vagona getirebilir. Bu istenen risk/şans hissini destekler; anında kaçınılmaz ölüm olmaması için doğuş güvenliği gerekir.
 - Turretler eski vagonlarda kaldığından oyuncu dışında öldürme/ödül devam edebilir. Karanlıkta tüm oynanış durur; görünür zamanda bu etki ekonomi dengesiyle değerlendirilir.
@@ -107,3 +107,11 @@ StationSpawner + saf SpawnSchedule mevcut Run katmanında, EnemyProfile mevcut E
 ## 2026-10-08 — Kullanıcı düzeltmesi: uçlar metal, daha dar cam, daha yavaş zombi
 
 D24 güncellemesi: her vagonun iki yanındaki dört uç bölüm penceresiz, tamamen metal olur; yalnız dış kapılar arasında yan cam bulunur. Dış pencere çerçevesi 0,32 m, ara dikme 0,18 m; net açıklıklar MODEL_CONTRACT.md ve sahneden üretilen ölçü listesinde kayıtlıdır. Hareket/NavMesh sınırı ve kapı camı kuralları değişmez. Zombi hareket hızları normal 2,6 → 2,1, hızlı 3,8 → 3,0, dayanıklı 1,8 → 1,45 m/sn oldu; can, vuruş, saldırı temposu ve doğuş programı değişmedi. Hızlar Inspector'dan ayarlanabilir başlangıç dengesi olarak kalır.
+
+## 2026-10-08 — D29: sabit turret kapsamı
+
+Kullanıcı seçimi: normal ve gelişmiş turret için **vagon başına her türden 2** sınırı; şimdilik düşmanlar yalnız oyuncu/kapılara saldırır. Mermi bitiş patlaması yakındaki zombilere hasar verir. Dron kamikazesi ayrı M7c işidir. Teknik uygulama: mevcut ortak atış/metal-cam geometrisi, tek alan hasarı ve yakalanmış sahip yaşamıyla ödül; kurulum aktörleri yeniden kullanılır. Sayısal değerler ve PC kabulü [DEFENSES.md](DEFENSES.md) içinde. Turret ölüm/yeniden başlangıç ve vagon kalıcılığı aynı Run akışına bağlanır.
+
+## 2026-10-08 — D30: gelir planının ertelenmesi ve sağlayıcı tercihi
+
+Kullanıcı odağı önce oyun olarak seçti; IAP ekonomisi/ürün/fiyat henüz kararlaştırılmadı. İlk yayın Google Play, IAP teslimi onun faturalandırmasıyla hedeflenir. Reklam için Unity Ads tercih edilir; bu sağlayıcının gelir üstünlüğü doğrulanmış sayılmaz. Kullanıcı Battle 3×, hikâye devam/3× tekliflerini ve teklif reddinden sonra kısa sonuç geçiş reklamı fikrini yeniden belirtti. Önceki bağımsız reklam yerleşimi önerisi kullanıcı tarafından seçilmiş karar değildir; yeni tercih esas alınır. Gösterim sıklığı, reklam kaldırma hakkı, reklam yok/hata akışı ve güncel platform kuralları M9 somut servis tasarımında doğrulanır. Bu aşamada SDK eklenmedi.
