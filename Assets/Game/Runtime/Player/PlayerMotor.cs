@@ -13,16 +13,25 @@ namespace WaitYourTurn.Player
         [SerializeField] private MovementArea movementArea;
         private CharacterController body;
         private float vertical;
+        [SerializeField] private bool worldControl;
+        private Vector3 worldMove;
+        public void ConfigureWorldControl(HealthComponent actor, float moveSpeed)
+        { health = actor; speed = moveSpeed; worldControl = true; }
+        public void SetWorldMove(Vector3 direction) { direction.y = 0; worldMove = Vector3.ClampMagnitude(direction, 1); }
         public void Configure(MoveInput controls, HealthComponent hero, Camera camera)
         { input = controls; health = hero; view = camera; }
         private void Awake() => body = GetComponent<CharacterController>();
         public void SetMovementArea(MovementArea area) => movementArea = area;
         private void Update()
         {
-            if (!health.IsAlive || !input.InputEnabled) return;
-            Vector3 forward = view.transform.forward; forward.y = 0; forward.Normalize();
-            Vector3 right = view.transform.right; right.y = 0; right.Normalize();
-            Vector3 motion = (right * input.Move.x + forward * input.Move.y) * speed;
+            if (!health.IsAlive || (!worldControl && !input.InputEnabled)) return;
+            Vector3 motion = worldMove * speed;
+            if (!worldControl)
+            {
+                Vector3 forward = view.transform.forward; forward.y = 0; forward.Normalize();
+                Vector3 right = view.transform.right; right.y = 0; right.Normalize();
+                motion = (right * input.Move.x + forward * input.Move.y) * speed;
+            }
             vertical = body.isGrounded ? -2f : Mathf.Max(-20, vertical - 9.81f * Time.deltaTime);
             motion.y = vertical;
             MoveDisplacement(motion * Time.deltaTime);

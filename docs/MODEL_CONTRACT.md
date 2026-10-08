@@ -66,7 +66,7 @@ Kurulum artık sabit pad kullanmaz: satın alma anındaki oyuncu X/Z konumu, vag
 
 ## Tren dizilimi ve lokomotif
 
-İlerleme yönü +X (ekranda sağ), görsel çevre −X akar. Kuyruk→baş dizilimi: wagon-a 6 kapı/10 can, b 5/20, c 5/26, d 4/32, e 4/40. Merkezler X=0/13/26/39/52. Dayanıklılık her layout assetinde ayarlanır; turretteki sayılar kapı sayısından türetilmez. En iyi wagon-e'nin sağında lokomotif, solunda wagon-d görünür; henüz bot eklenmediği için komşu vagon boş olabilir.
+İlerleme yönü +X (ekranda sağ), görsel çevre −X akar. Kuyruk→baş dizilimi: wagon-a 6 kapı/10 can, b 5/20, c 5/26, d 4/32, e 4/40. Merkezler X=0/13/26/39/52. Dayanıklılık her layout assetinde ayarlanır; turretteki sayılar kapı sayısından türetilmez. En iyi wagon-e'nin sağında lokomotif, solunda wagon-d görünür; Battle modunda yaşayan katılımcılar ayrı vagonlara atanır; eleme sonrası komşu boş olabilir.
 
 Lokomotif pivotu X=63, Y=0, Z=0 (son vagon ucundan 1 m boşlukla); gövde **8 × 2 × 4,2 m**, kapalı tavan üst kotu 2,3 m, havalandırma üstü 2,34 m. Burun +X. Bu aşamada yalnız görsel bilgisayar kontrol odasıdır: collider, Health, WagonRuntime, zombi spawnı veya NavMesh kaynağı taşımaz. Model kendi görsel köküne giydirilir; oynanabilir vagonlar listesine eklenmez.
 
@@ -79,3 +79,7 @@ Tek bağımsız mekanik kök: ölçek 1, +Z ileri, +Y yukarı; oyuncunun vagonda
 `Mechanical muzzle` köke göre (0; −0,18; 0), normal takipte zemin Y=1,77 m. `HitscanWeapon` bu soketten gerçek ışın çıkarır. Soket görsel salınım veya rotor/head altına taşınmaz. `Aiming head` +Z namlu yönü, Y dönüşü; model namlusu aynı mekanik başlangıca uyar. Bob ±0,05 m; model değişimi silah başlangıcını, kamikaze hacmini ve hasarı değiştirmez. Efekt yarıçapı kozmetiktir; mekanik patlama DroneDefinition'dadır. Turretler mevcut varsayılan Y=0,9 m namlu kuralını korur; ortak silaha yeni isteğe bağlı soket eklenmesi bunları taşımadı.
 
 Ölçü kaynağı `generated/drone-model-dimensions.csv`; davranış ve ayarlar DRONE.md. Model tesliminde F8 dron ve F10 cam/metal kabulü yeniden çalıştırılır.
+
+## D33 — Bot karakter modeli
+
+Botlar insanla aynı mekanik ölçüye sahiptir: zemin kökü, ölçek 1, +Z yüz yönü; 1,7 m boy / 0,6 m çap kapsül görseli. Aynı CharacterController, hareket alanı, Y=0,9 m varsayılan namlu ve onarım mesafeleri kullanılır. `Replaceable actor visuals` altındaki model/siluet/renk değiştirilebilir; collider, CharacterController, Health, motor, aim, gun veya repair bu görsel altına taşınmaz. Animasyon root motion ile mekanik kökü sürmez. Bot profil rengi görsel yardımcıdır; beceri, hasar veya takım collider katmanından çıkarılmaz. Ad etiketi ayrı HUD sunumudur. Model tesliminde F7 bot ve F10 geometri/atış kabulü birlikte çalıştırılır; davranış ve profil ayarları BOTS.md.

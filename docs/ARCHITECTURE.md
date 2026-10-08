@@ -168,11 +168,11 @@ Kararlaştırıldı: karanlık geçişte oynanış durur, görünür yolculukta 
 
 ## Vagon uygunluğu ve atama güvenliği
 
-M7a değerlendirmesi sonrası `WagonRuntime.Defender` yaşayan insan/bot canını taşır; `HasLivingDefender` üretim uygunluğudur. `RunDriver` insan atamasında eski kaydı bırakıp yenisini yazar; Restart temizler. Bot modu kendi HealthComponent'ini kaydedecek; bu kayıt tek başına bot AI'ı veya zombi bot-hedef seçimi uygulamaz. `StationSpawner` hem veri hem eski lab yolunda uygunluğu denetler. Saf schedule `Unoccupied` sonucunda ilgili istasyon akışını iptal eder; kapasite doluluğu veya geçersiz nav saymaz ve sonraya saldırı biriktirmez. Sonraki istasyon yeni program açar.
+`WagonRuntime.Defender` yaşayan insan/bot canını taşır; `HasLivingDefender` üretim uygunluğudur. Mod/Bot ile `SetDefender` aktif havuz beyinlerinin gerçek hedefini de günceller; uzaktaki insanın canına bağlı kalmaz. Savunmacısız vagonun yaşayan zombileri bekler. `StationSpawner` hem veri hem eski lab yolunda uygunluğu denetler. Saf schedule `Unoccupied` sonucunda ilgili istasyon akışını iptal eder; kapasite doluluğu veya geçersiz nav saymaz ve sonraya saldırı biriktirmez. Sonraki istasyon yeni program açar.
 
 İnsan atamasında `TrySafePoint(..., avoidEnemies: true)` yazılmış/geçerli/çakışmasız adayların en yüksek en-yakın-düşman mesafesini seçer; eşik-zombi taşıma eski ilk-geçerli-aday yolunu kullanır. `HealthComponent.SetDamageProtection` süreli hasar engelidir; pause/debug `Invulnerable` bayrağından ayrıdır, ölçekli zamanla donar ve yeni yaşamda temizlenir. Süreyi RunDriver Inspector ayarı belirler; sağlık UI/ateş/onarım bağımlılığı yoktur.
 
-Mod/Bot aşamasında atamalar tüm canlı katılımcılar için tek koordinatörden yapılmalı; bir vagonun insan kaydı yaşayan bot kaydını ezmemeli. Şimdiki RunDriver tek insanı yönetir ve multiplayer/bot atama koordinatörü değildir.
+Mod/Bot uygulamasında `RunMatch` bütün yaşayan katılımcıları tek koordinatörden atar. `RunDriver` insan seçimini bu adaptöre devreder; `RunFlow` Battle politikası bilmez. Önce bütün yeni konumlar doğrulanır, sonra botlar ve insan atanır ve tek Assigned bildirimi çıkar. İnsan kaydı bot kaydını ezmez. `BattleRoster` saf eleme/sıra/atama kurallarıdır; `BotController` ortak PlayerMotor/AutoAim/ProximityRepair/HitscanWeapon ve Wallet/ShopService/KillRewards üzerinden karar uygular. Yeni bir hasar veya zombi sistemi oluşturulmadı. Inspector verisi BotProfile, ayrıntılar BOTS.md. Görünmeyen vagon simülasyonunu seyreltme henüz uygulanmadı; bu beş vagonlu ilk sürüm tam simülasyondur.
 
 ## Ekonomi işlemi
 

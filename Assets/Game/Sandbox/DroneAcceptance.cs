@@ -32,7 +32,7 @@ namespace WaitYourTurn.Sandbox
         private void OnGUI() { if (checking) GUI.Label(new Rect(20, 120, Screen.width - 40, 40), "Drone check: " + status); }
         private IEnumerator Check()
         {
-            checking = true; status = "door alignment / shop / glass shot";
+            run.Match?.SetSuppressed(true); checking = true; status = "door alignment / shop / glass shot";
             restoreFixedSeed = run.UseFixedSeed; restoreRandomInitial = run.RandomInitialWagon;
             run.ConfigureRandomAssignments(true, false);
             hud = FindAnyObjectByType<TrainIntegrationController>(); shopHud = FindAnyObjectByType<ShopHud>();
@@ -183,7 +183,7 @@ namespace WaitYourTurn.Sandbox
             if (fast != null) Destroy(fast); if (fastWeapon != null) Destroy(fastWeapon); original = fast = null; fastWeapon = null;
             foreach (var w in run.Wagons) foreach (var door in w.Doors) door.Durability.Invulnerable = false;
             spawner.enabled = true; run.ControlsAllowed = run.AimAllowed = true; run.Repair.enabled = true;
-            run.ConfigureRandomAssignments(restoreFixedSeed, restoreRandomInitial); run.Restart();
+            run.ConfigureRandomAssignments(restoreFixedSeed, restoreRandomInitial); run.Match?.SetSuppressed(false); run.Restart();
             if (hud != null) hud.enabled = true; if (shopHud != null) shopHud.enabled = true; checking = false;
         }
     }

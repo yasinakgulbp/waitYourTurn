@@ -1,0 +1,31 @@
+2026-10-08 — Mod/Bot PC acceptance
+Unity 6000.6.4f1 / TrainIntegration / 5 wagons / 1 human + 4 local bots / 3 skill profiles.
+Run EditMode assembly: 33 passed, 0 failed; 2026-10-08 20:32:17Z.
+Battle result policy D33 approved by user. Same-frame elimination batch shares rank.
+
+BotAcceptance.txt
+2026-10-08T20:33:55.1707201Z
+PASS: 5 unique participants / 3 profiles; real glass kill credits bot only, metal blocks; zombie attacks assigned bot; actor damage preserves repair, door damage cancels; actual AI moves, repairs and purchases shared guns; death ranks/releases defender; no new empty-wagon spawn and survivors retained; 10 dark assignments preserve identity/ammo/money and never respawn eliminated; human win/loss, solo isolation and same-object restart passed. PC only; distant simulation, long-session balance and Android pending.
+
+TrainIntegration-5.txt
+2026-10-08T20:34:53.0893989Z
+PASS: Door variants 6,5,5,4,4: repair/glass; every bilateral window passes all four guns, metal edges/panels block straight/oblique rays, movement/nav remain closed; bilateral door entry/thresholds and player boundary; responsive camera; 10 cycles visiting 5 wagons; HP/SMG/ammo/survivors/door damage preserved; full 60-enemy pool bound.
+
+SpawnAcceptance.txt
+2026-10-08T20:36:23.2132821Z
+PASS: Empty wagons suppress new spawn without removing survivors; occupied wagon still spawns; synthetic living occupants exercise global 9, wagon 3, queue 4, frame 2 limits; 3 profiles / 9 same-object reuse cycles; stale life rejected; invalid nav leaves pool intact; kill frees one slot; 30 station cycles retain 5 original passengers; arrival protection rejects damage and expires in gameplay time; registry matches active bodies; fixed 60-object pool, peak 7 active. PC only; Android profile pending.
+
+TurretAcceptance.txt
+2026-10-08T20:36:53.5922162Z
+PASS: Normal/advanced purchases at exact buyer XZ use 50/80 finite rounds; owner walks through small collider; occupied/outside/per-type caps reject without charge; actual glass shot credits owner; 3 zombies enter around installed geometry; dark gate and 10 assignments preserve positions/ammo; old wagon owner reward; 3-shot fixture exhausts once, blasts two enemies once and credits kill; same actor redeploy resets life/ammo; death closes; Restart clears all 20 pooled actors. PC only; final balance and Android pending.
+
+DroneAcceptance.txt
+2026-10-08T20:37:34.2165535Z
+PASS: First zombie centers/faces closed door; drone purchase costs once, 60 rounds, duplicate blocked; actual glass shot credits owner; smooth follow and four wall corners stay clear; dark pauses movement/clock/fire/shop; 10 assignments preserve same actor/ammo; one-round fixture dives, blasts two targets once and credits kill; rebuy resets life/ammo; lost target/reassignment preserve finite deadline and close without explosion; closed door allows bullet but blocks dive until configurable timeout; death/restart clear companion. PC only; balance/Android pending.
+
+EconomyAcceptance.txt
+2026-10-08T20:40:20.1143898Z
+PASS: Actual pistol kill + owned-defense credit; pooled life/replay/foreign-owner/cleanup; heal 10->40,50->80,80->100; full/unfunded/duplicate reject; current-wagon repair; weapon unlock/refill/cooldown; 10 assignments preserve currency/inventory/ammo; dark/death/old context reject; new run resets. PC only.
+
+Console at Play exit: 0 errors / 0 warnings. Existing train geometry and NavMesh assets preserved.
+Scope: PC integration only; no new Android measurement, long-session balance or performance claim. All five wagons currently use real simulation; distant-wagon approximation/culling remains pending. Bot AI uses shared movement, gun, repair, health and shop rules; no networking. M8 save/resume is next.

@@ -48,6 +48,11 @@ namespace WaitYourTurn.Enemies
             playerPresent = present;
             attackTarget = null; attack.Cancel(); nextDecision = Time.time + decisionPhase;
         }
+        public void SetDefender(HealthComponent defender)
+        {
+            if (player == defender && playerPresent == (defender != null)) return;
+            player = defender; SetPlayerPresent(defender != null);
+        }
         public void SetPaused(bool value)
         {
             if (paused == value) return;
@@ -137,7 +142,8 @@ namespace WaitYourTurn.Enemies
         private void Update()
         {
             if (!spawned || !health.IsAlive || paused) return;
-            if (!player.IsAlive) { attack.Cancel(); motor.Stop(); return; }
+            if (!playerPresent || player == null || !player.IsAlive)
+            { attackTarget = null; attack.Cancel(); motor.Stop(); State = EnemyState.WaitingForRoute; return; }
             if (Time.time >= nextDecision)
             {
                 nextDecision = Time.time + 0.15f;

@@ -131,3 +131,7 @@ Deneme kolaylığı için başlangıç parası RunShop.asset üzerinden geçici 
 ## 2026-10-08 — D32: dron kamikazesi ve engeller
 
 Kullanıcı onayı: mermisi biten dron erişebildiği en yakın zombiye gider; kapalı kapı/metalden geçmez, uygun hedef bulamazsa kısa süre arayıp kapanır. Patlama metalin arkasına hasar vermez. Süre ve değerler ayarlanır. İlk uygulama doğrudan küre taramasıyla açık yolu seçer; duvar üstünden geçmez, NavMesh veya karmaşık rota araması eklemez. Cam mermi geçirir ama fiziksel uçuşu engeller. Karanlıkta süre durur; kayıp hedef/atama süreyi sıfırlamaz. Oyuncuda bir dron, oyuncuyla kalıcılık, ortak atış/ödül ve yeniden kullanılan tek aktör. Ayrıntılar DRONE.md.
+
+## 2026-10-08 — D33: Battle elemesi ve sonuç
+
+Kullanıcı soruda onayladı: insan ölünce sırası gösterilip koşu biter; bütün botlar elenip yalnız insan kalınca birincilikle biter. Aynı karede elenenler aynı sırayı paylaşır. Teknik uygulama ölüm bayraklarını kare sonunda toplar; son iki katılımcı birlikte ölürse yaşayan kazanan ilan etmez, ortak sıra ve beraberlik gösterir. Ölü katılımcı aynı koşuda yeniden doğmaz. Yeni atama tüm yaşayan katılımcıları çakışmadan dağıtır; boş vagonlar yeni atamada seçilebilir. Yerel botlu Battle ile botsuz ilerleme modu ortak RunFlow kullanır. BOTS.md uygulama/sınır/ayar kaydıdır; gerçek multiplayer, sonuç reklamı veya kalıcı ödül eklenmedi.

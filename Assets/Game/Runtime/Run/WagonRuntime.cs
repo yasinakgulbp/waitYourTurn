@@ -22,10 +22,10 @@ namespace WaitYourTurn.Run
         public DoorController[] Doors => doors;
         public EnemyPool Enemies => enemies;
         public MovementArea Area => movementArea;
-        // Occupancy is gameplay state, not camera visibility. A future bot registers its own health here.
+        // Occupancy and enemy pursuit share one authority, independent of camera visibility.
         public HealthComponent Defender { get; private set; }
         public bool HasLivingDefender => Defender != null && Defender.IsAlive;
-        public void SetDefender(HealthComponent defender) => Defender = defender;
+        public void SetDefender(HealthComponent defender) { Defender = defender; enemies.SetDefender(defender); }
         public void Configure(string id, DoorController[] entries, EnemyPool pool, MovementArea area)
         { wagonId = id; doors = entries; enemies = pool; movementArea = area; }
         public void SetStationAccess(bool allowed) { foreach (DoorController door in doors) door.Portal.SetStationAccess(allowed); }

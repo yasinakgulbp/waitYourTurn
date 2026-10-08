@@ -18,6 +18,9 @@ namespace WaitYourTurn.Run
         [SerializeField] private AutoAim aim;
         [SerializeField] private HitscanWeapon pistol;
         [SerializeField] private ProximityRepair repair;
+        [SerializeField] private RunMatch match;
+        public RunMatch Match => match;
+        public void ConfigureMatch(RunMatch participants) => match = participants;
         [SerializeField] private RunTimings timings = new RunTimings();
         [SerializeField] private int seed = 12345;
         [SerializeField] private bool useFixedSeed = true;
@@ -67,6 +70,7 @@ namespace WaitYourTurn.Run
             }
             player.ResetForSpawn(player.Maximum, Team.Player); pistol.ResetWeapon(); repair.Cancel(); aim.ClearTarget();
             Flow = new RunFlow(overrideTimings ?? timings); Flow.Changed += OnPhase;
+            match?.BeginRun(ActualRunSeed);
             int first = randomInitialWagon ? random.Next(wagons.Length) : Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1);
             if (!Assign(wagons[first], false)) { Flow.Fail(); return; }
             OnPhase(RunPhase.Approach);
@@ -93,16 +97,25 @@ namespace WaitYourTurn.Run
         }
         private bool Assign(WagonRuntime wagon, bool count)
         {
+            if (match != null && match.Active)
+            {
+                if (match.TryAssign(Array.IndexOf(wagons, wagon), count)) return true;
+                Failure = "No clear complete participant assignment."; return false;
+            }
             if (!player.IsAlive || !wagon.TrySafePoint(player, out Vector3 point, true))
             { Failure = "No clear player spawn inside the assigned wagon."; return false; }
+            ApplyPlayerAssignment(wagon, point, count); return true;
+        }
+        public void ApplyPlayerAssignment(WagonRuntime wagon, Vector3 point, bool count)
+        {
             repair.Cancel(); repair.SetDoor(wagon.NearestDoor(point));
             motor.SetMovementArea(wagon.Area); motor.Place(point); aim.ClearTarget();
             if (CurrentWagon != null && CurrentWagon.Defender == player) CurrentWagon.SetDefender(null);
             CurrentWagon = wagon; wagon.SetDefender(player);
             if (count) player.SetDamageProtection(arrivalProtectionSeconds);
-            foreach (WagonRuntime coach in wagons) coach.Enemies.SetScope(coach.Id, coach == wagon);
+            foreach (WagonRuntime coach in wagons) coach.Enemies.SetScope(coach.Id, coach.HasLivingDefender);
             if (count) Assignments++;
-            Assigned?.Invoke(wagon); return true;
+            Assigned?.Invoke(wagon);
         }
         private void SetGate(bool closed)
         {
@@ -114,6 +127,7 @@ namespace WaitYourTurn.Run
                 previousTimeScale = Time.timeScale;
                 Time.timeScale = 0;
                 Protect(player);
+                if (match != null && match.Active) foreach (var bot in match.Bots) if (bot.Health.IsAlive) Protect(bot.Health);
                 foreach (WagonRuntime wagon in wagons)
                 {
                     foreach (DoorController door in wagon.Doors) Protect(door.Durability);

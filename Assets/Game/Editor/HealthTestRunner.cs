@@ -17,6 +17,8 @@ namespace WaitYourTurn.Editor
         public static void RunJourneyTests() => Execute("WaitYourTurn.Run.Tests", "JourneyTests");
         [MenuItem("Wait Your Turn/Run/Run Spawn Tests %#F11")]
         public static void RunSpawnTests() => Execute("WaitYourTurn.Run.Tests", "SpawnAndJourneyTests");
+        [MenuItem("Wait Your Turn/Battle/Run Battle Rules Tests %&F7")]
+        public static void RunBattleTests() => Execute("WaitYourTurn.Run.Tests", "BattleAndRunTests");
 
         [MenuItem("Wait Your Turn/Weapons/Run Weapon Tests %#F10")]
         public static void RunWeaponTests() => Execute("WaitYourTurn.Weapon.Tests", "WeaponTests");

@@ -32,7 +32,7 @@ namespace WaitYourTurn.Sandbox
         private void OnGUI() { if (checking) GUI.Label(new Rect(20, 120, Screen.width - 40, 40), "Turret check: " + status); }
         private IEnumerator Check()
         {
-            checking = true; status = "shop / live shot / capacity";
+            run.Match?.SetSuppressed(true); checking = true; status = "shop / live shot / capacity";
             restoreFixedSeed = run.UseFixedSeed; restoreRandomInitial = run.RandomInitialWagon;
             int previousSeed = run.ActualRunSeed;
             run.Restart();
@@ -188,7 +188,7 @@ namespace WaitYourTurn.Sandbox
             if (fast != null) Destroy(fast); if (fastWeapon != null) Destroy(fastWeapon);
             original = fast = null; fastWeapon = null;
             defenses.enabled = true; spawner.enabled = true; run.ControlsAllowed = run.AimAllowed = true;
-            run.Repair.enabled = true; run.ConfigureRandomAssignments(restoreFixedSeed, restoreRandomInitial); run.Restart();
+            run.Repair.enabled = true; run.ConfigureRandomAssignments(restoreFixedSeed, restoreRandomInitial); run.Match?.SetSuppressed(false); run.Restart();
             if (hud != null) hud.enabled = true; if (shopHud != null) shopHud.enabled = true; checking = false;
         }
     }

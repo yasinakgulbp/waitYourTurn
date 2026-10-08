@@ -32,6 +32,12 @@ namespace WaitYourTurn.Enemies
         public event System.Action<DeathNotice, int> Killed;
         public int AgentTypeId => template.AgentTypeId;
         public int AreaMask => template.AreaMask;
+        public HealthComponent Defender => playerPresent ? player : null;
+        public void SetDefender(HealthComponent defender)
+        {
+            player = defender; playerPresent = defender != null;
+            foreach (var enemy in active) enemy.SetDefender(defender);
+        }
         public void SetScope(string id, bool hasPlayer)
         {
             wagonId = id; playerPresent = hasPlayer;
@@ -59,7 +65,7 @@ namespace WaitYourTurn.Enemies
         }
         public bool TrySpawn(Vector3 point, EnemyProfile profile = null, int station = 0)
         {
-            if (!player.IsAlive || available.Count == 0) return false;
+            if (player != null && !player.IsAlive || available.Count == 0) return false;
             // Validate before renting/activating. An invalid request neither grows nor drains the pool.
             var filter = new NavMeshQueryFilter { agentTypeID = template.AgentTypeId, areaMask = template.AreaMask };
             if (!NavMesh.SamplePosition(point, out NavMeshHit hit, 0.5f, filter)) return false;

@@ -226,6 +226,7 @@ namespace WaitYourTurn.Editor
             economy.Configure(run, ShopContentBuilder.EnsureCatalog());
             TurretContentBuilder.Install(run, registry, economy, spawner);
             DroneContentBuilder.Install(run, registry, economy, spawner);
+            BotContentBuilder.Install(run, registry, economy, spawner);
             new GameObject("Replaceable shop HUD").AddComponent<ShopHud>().Configure(economy, hero.GetComponent<MoveInput>());
             var presentation = new GameObject("Journey presentation - single camera owner").AddComponent<RunPresentation>(); presentation.Configure(run, track, camera); presentation.ConfigureJourney(station, scenery); presentation.ConfigurePlayerFollow(true);
             presentation.ConfigureFraming(new Bounds(new Vector3(0, .4f, 0), new Vector3(layouts.Max(x => x.length) + 3, 2.4f, maxWidth + 4)));

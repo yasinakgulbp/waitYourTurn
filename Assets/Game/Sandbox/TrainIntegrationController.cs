@@ -30,7 +30,7 @@ namespace WaitYourTurn.Sandbox
             Vector2 offset=new Vector2(safe.x,Screen.height-safe.yMax);
             float width=safe.width/scale,height=safe.height/scale;
             var input=run.Player.GetComponent<MoveInput>();
-            input.BlockedScreenArea=new Rect(offset.x,offset.y,safe.width,90*scale);
+            input.BlockedScreenArea=new Rect(offset.x,offset.y,safe.width,110*scale);
             input.SecondaryBlockedScreenArea=new Rect(offset.x+safe.width*.28f,offset.y+safe.height-62*scale,safe.width*.72f,62*scale);
             Matrix4x4 oldMatrix=GUI.matrix;
             GUI.matrix=Matrix4x4.TRS(offset,Quaternion.identity,new Vector3(scale,scale,1));
@@ -65,7 +65,7 @@ namespace WaitYourTurn.Sandbox
             restoreFixedSeed=run.UseFixedSeed;restoreRandomInitial=run.RandomInitialWagon;
             run.ConfigureRandomAssignments(true, false);
             restoreStartingWeaponOnly=run.Weapon.StartingWeaponOnly;run.Weapon.ConfigureInventory(false);
-            checking=true;spawner.enabled=false;run.ControlsAllowed=run.AimAllowed=false;run.Repair.enabled=false;
+            run.Match?.SetSuppressed(true); checking = true;spawner.enabled=false;run.ControlsAllowed=run.AimAllowed=false;run.Repair.enabled=false;
             run.Restart(new RunTimings{initialApproach=.2f,defense=300});run.Player.Invulnerable=true;
             yield return new WaitForSeconds(.6f);
             var wagon=run.CurrentWagon;var motor=run.Player.GetComponent<PlayerMotor>();
@@ -275,7 +275,7 @@ namespace WaitYourTurn.Sandbox
             result=(pass?"PASS: ":"FAIL: ")+detail;Directory.CreateDirectory("Logs");
             File.WriteAllText($"Logs/TrainIntegration-{run.Wagons.Length}.txt",System.DateTime.UtcNow.ToString("O")+"\n"+result);
             if(pass)Debug.Log("[TrainIntegration] "+result);else Debug.LogError("[TrainIntegration] "+result);
-            checking=false;run.ConfigureRandomAssignments(restoreFixedSeed,restoreRandomInitial);run.Weapon.ConfigureInventory(restoreStartingWeaponOnly);run.Repair.enabled=true;spawner.enabled=true;run.ControlsAllowed=run.AimAllowed=true;run.Restart();
+            checking=false;run.ConfigureRandomAssignments(restoreFixedSeed,restoreRandomInitial);run.Weapon.ConfigureInventory(restoreStartingWeaponOnly);run.Repair.enabled=true;spawner.enabled=true;run.ControlsAllowed=run.AimAllowed=true;run.Match?.SetSuppressed(false); run.Restart();
         }
     }
 }

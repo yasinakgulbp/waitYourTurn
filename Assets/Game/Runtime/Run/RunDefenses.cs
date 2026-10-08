@@ -38,6 +38,14 @@ namespace WaitYourTurn.Run
         public bool CanBuy(int index) => isActiveAndEnabled && run.Flow != null && !run.Flow.Paused && run.Player.IsAlive &&
             index >= 0 && index < definitions.Length && CurrentRack != null && CurrentRack.CanDeploy(definitions[index], run.Player);
         public bool TryBuy(int index) => CanBuy(index) && CurrentRack.TryDeploy(definitions[index], run.Player, registry);
+        private TurretRack RackFor(WagonRuntime wagon)
+        { for (int i = 0; i < run.Wagons.Length; i++) if (run.Wagons[i] == wagon) return racks[i]; return null; }
+        public bool CanBuyFor(int index, HealthComponent owner, WagonRuntime wagon) =>
+            isActiveAndEnabled && run.Flow != null && !run.Flow.Paused && owner != null && owner.IsAlive &&
+            wagon != null && wagon.Defender == owner && index >= 0 && index < definitions.Length &&
+            RackFor(wagon) != null && RackFor(wagon).CanDeploy(definitions[index], owner);
+        public bool TryBuyFor(int index, HealthComponent owner, WagonRuntime wagon) =>
+            CanBuyFor(index, owner, wagon) && RackFor(wagon).TryDeploy(definitions[index], owner, registry);
         public string PurchaseHint
         {
             get

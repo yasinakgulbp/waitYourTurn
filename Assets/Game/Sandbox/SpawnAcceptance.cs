@@ -29,7 +29,7 @@ namespace WaitYourTurn.Sandbox
         { if (checking) GUI.Label(new Rect(20, 95, Screen.width - 40, 35), "M6: " + status); }
         private IEnumerator Check()
         {
-            checking = true; status = "profile reset / bounded station stress";
+            run.Match?.SetSuppressed(true); checking = true; status = "profile reset / bounded station stress";
             integration = GetComponentInScene(); if (integration != null) integration.enabled = false;
             original = spawner.Programs;
             spawner.enabled = true; run.ControlsAllowed = run.AimAllowed = false; run.Repair.enabled = false;
@@ -195,7 +195,7 @@ namespace WaitYourTurn.Sandbox
             if (stress != null) Destroy(stress);
             if (fixtureDefenders != null) foreach (var defender in fixtureDefenders) if (defender != null) Destroy(defender.gameObject);
             fixtureDefenders = null;
-            run.ControlsAllowed = run.AimAllowed = true; run.Repair.enabled = true; run.Restart();
+            run.ControlsAllowed = run.AimAllowed = true; run.Repair.enabled = true; run.Match?.SetSuppressed(false); run.Restart();
             if (integration != null) integration.enabled = true; checking = false;
         }
     }

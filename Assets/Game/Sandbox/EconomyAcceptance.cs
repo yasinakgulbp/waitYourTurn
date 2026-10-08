@@ -24,7 +24,7 @@ namespace WaitYourTurn.Sandbox
         private void Update() { if (!checking && Input.GetKeyDown(KeyCode.F9)) StartCoroutine(Check()); }
         private IEnumerator Check()
         {
-            checking = true;
+            run.Match?.SetSuppressed(true); checking = true;
             views = new Behaviour[] { FindAnyObjectByType<ShopHud>(), FindAnyObjectByType<TrainIntegrationController>(), FindAnyObjectByType<SpawnAcceptance>() };
             enabledViews = views.Select(v => v != null && v.enabled).ToArray();
             foreach (var view in views) if (view != null) view.enabled = false;
@@ -140,7 +140,7 @@ namespace WaitYourTurn.Sandbox
             if (pass) Debug.Log("[Economy] " + message); else Debug.LogError("[Economy] " + message);
             checking = false;
             if (views != null) for (int i = 0; i < views.Length; i++) if (views[i] != null) views[i].enabled = enabledViews[i];
-            spawner.enabled = true; run.Repair.enabled = true; run.ControlsAllowed = run.AimAllowed = true; run.Restart();
+            spawner.enabled = true; run.Repair.enabled = true; run.ControlsAllowed = run.AimAllowed = true; run.Match?.SetSuppressed(false); run.Restart();
         }
     }
 }
