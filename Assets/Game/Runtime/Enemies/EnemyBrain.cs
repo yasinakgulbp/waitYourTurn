@@ -20,11 +20,38 @@ namespace WaitYourTurn.Enemies
         private uint portalRevision;
         private HealthComponent attackTarget;
         private bool spawned;
+        private bool paused;
+        private bool playerPresent = true;
+        private bool onBoard;
+        public bool OnBoard => onBoard;
+        public bool Paused => paused;
+        public string WagonId { get; private set; }
         public HealthComponent Health => health;
         public int AgentTypeId => motor.Agent.agentTypeID;
         public int AreaMask => motor.Agent.areaMask;
         public EnemyState State { get; private set; }
         public bool IsInside => door != null && door.Portal.IsInside(transform.position);
+        public bool NeedsSafeDeparture => door != null && (!IsInside || door.Portal.IsInPassage(transform.position, motor.Agent.radius));
+        public void SetScope(string wagonId, bool hasPlayer) { WagonId = wagonId; SetPlayerPresent(hasPlayer); }
+        public void SetPlayerPresent(bool present)
+        {
+            playerPresent = present;
+            attackTarget = null; attack.Cancel(); nextDecision = Time.time;
+        }
+        public void SetPaused(bool value)
+        {
+            if (paused == value) return;
+            paused = value;
+            if (value) motor.Stop();
+            else { nextDecision = Time.time; portalRevision = uint.MaxValue; }
+        }
+        public bool RetainForTravel(Vector3 safeInterior)
+        {
+            if (!health.IsAlive || (!onBoard && !IsInside)) return false;
+            if (NeedsSafeDeparture && !motor.TryPlace(safeInterior)) return false;
+            onBoard = true; attackTarget = null; attack.Cancel(); nextDecision = Time.time;
+            return true;
+        }
 
         public void Configure(HealthComponent life, AgentMotor movement, MeleeAttack melee)
         { health = life; motor = movement; attack = melee; }
@@ -35,6 +62,7 @@ namespace WaitYourTurn.Enemies
             if (door != null) door.ReleaseAttackPosition(this);
             State = EnemyState.Dead;
             attackTarget = null;
+            paused = false; onBoard = false; playerPresent = true;
             attack.Cancel();
             motor.Stop();
         }
@@ -45,6 +73,7 @@ namespace WaitYourTurn.Enemies
             doorOffset = new Vector3((slot % 3 - 1) * 0.65f, 0, -(slot / 3) * 0.65f);
             targetAngle = slot * 2.399963f;
             attackTarget = null;
+            paused = false; onBoard = false; playerPresent = true;
             attack.ResetAttack();
             if (!health.ResetForSpawn(health.Maximum, Team.Enemy)) return false;
             // Register colliders at the new spawn, rather than at the previous pooled life position.
@@ -63,6 +92,7 @@ namespace WaitYourTurn.Enemies
         {
             if (door != null) door.ReleaseAttackPosition(this);
             spawned = false;
+            paused = false; onBoard = false; WagonId = null;
             attackTarget = null;
             attack.ResetAttack();
             motor.Clear();
@@ -72,7 +102,7 @@ namespace WaitYourTurn.Enemies
         }
         private void Update()
         {
-            if (!spawned || !health.IsAlive) return;
+            if (!spawned || !health.IsAlive || paused) return;
             if (!player.IsAlive) { attack.Cancel(); motor.Stop(); return; }
             if (Time.time >= nextDecision)
             {
@@ -88,13 +118,14 @@ namespace WaitYourTurn.Enemies
             portalRevision = portal.Revision;
             attackTarget = null;
             if (!motor.Ready) { State = EnemyState.WaitingForRoute; return; }
+            if (IsInside && !portal.IsInPassage(transform.position, motor.Agent.radius)) onBoard = true;
             if (portal.ClosePending && portal.IsInPassage(transform.position, motor.Agent.radius))
             {
                 motor.GoTo(portal.InsideDestination, routeChanged);
                 State = EnemyState.EnteringWagon;
                 return;
             }
-            if (!IsInside && !portal.AcceptsEntry)
+            if (!onBoard && !IsInside && !portal.AcceptsEntry)
             {
                 bool assigned = door.TryGetAttackPosition(this, out Vector3 approach);
                 if (assigned && door.Durability.IsAlive && attack.CanReach(door.Durability))
@@ -105,17 +136,22 @@ namespace WaitYourTurn.Enemies
                 return;
             }
             door.ReleaseAttackPosition(this);
-            if (!IsInside)
+            if (!onBoard && !IsInside)
             {
                 motor.GoTo(portal.InsideDestination, routeChanged);
                 State = EnemyState.EnteringWagon;
                 return;
             }
+            if (!playerPresent)
+            { motor.Stop(); State = EnemyState.WaitingForRoute; return; }
             if (attack.CanReach(player))
             { motor.Stop(); attackTarget = player; State = EnemyState.AttackingPlayer; return; }
             // Nearby attack range, rather than an exact occupied grid point, completes pursuit.
             Vector3 offset = new Vector3(Mathf.Sin(targetAngle), 0, Mathf.Cos(targetAngle)) * 0.8f;
-            motor.GoTo(player.transform.position + offset, routeChanged);
+            Vector3 goal = player.transform.position + offset;
+            float inward = Vector3.Dot(goal - portal.transform.position, portal.transform.forward);
+            if (inward < 0.6f) goal += portal.transform.forward * (0.6f - inward);
+            motor.GoTo(goal, routeChanged);
             State = motor.HasRoute ? EnemyState.SeekingPlayer : EnemyState.WaitingForRoute;
         }
     }

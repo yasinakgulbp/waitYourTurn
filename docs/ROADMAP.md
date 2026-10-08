@@ -4,9 +4,11 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 
 ## Öncelik mantığı
 
-Önce navigasyon ve kapı geçişi teknik olarak kanıtlanır; aynı aşamada kaba cihaz/kalabalık ölçümü yapılır. Ortak hasar temeli ardından minimum mobil kontrol ve tabancayla tek vagonun döngüsü birleştirilir. Telefonda oynanış değerlendirmesi sonrası iki vagonla istasyon akışı kanıtlanır, sonra beş vagona genişletilir. Silah çeşitliliği, geniş spawn sistemi ve savunmalar bunu izler.
+2026-10-08 ek durum: M4a `RunSandbox` PC'de 10/10 istasyon geçişi ve 6 saf evre testini geçti. Kapı eşiğindeki iç zombi güvenli tamamlandı; kapı/oyuncu/mermi durumları korundu, karanlık kapısı ve terminal ölüm doğrulandı. Normal savunmada iki vagonun da zombi saldırısı gözlendi. Kullanıcının bildirdiği Play çıkışı mermi izi hatası düzeltildi; son normal ve GameOver çıkışında Console 0 hata/0 uyarı. Kullanıcı M4a tempo/atama değerlendirmesi açık; botlar uygulanmadı. Ayrıntı RUN_LAB.md.
 
-İlk oynanabilir hedef: **bir vagon + bir kapı + bir zombi türü + minimum mobil kontrol + oyuncu tabancası; kapı kırılır, zombi girer, oyuncu hasar alır/vurur, kapı onarılır ve rota doğru değişir.** Bu tamamlanıp telefonda değerlendirilmeden dron, çoklu silah ve mağaza yapılmaz.
+Önce navigasyon ve kapı geçişi teknik olarak kanıtlanır; aynı aşamada kaba cihaz/kalabalık ölçümü yapılır. Ortak hasar temeli ardından minimum mobil kontrol ve tabancayla tek vagonun döngüsü birleştirilir. Kullanıcı oynanış değerlendirmesi sonrası iki vagonla istasyon akışı kanıtlanır, sonra beş vagona genişletilir. Kullanıcının güncel tercihi rutin PC kontrolü, önemli birleşik değişimde uygun zamanda Android kontrolüdür. Silah çeşitliliği, geniş spawn sistemi ve savunmalar bunu izler.
+
+İlk oynanabilir hedef: **bir vagon + bir kapı + bir zombi türü + minimum mobil kontrol + oyuncu tabancası; kapı kırılır, zombi girer, oyuncu hasar alır/vurur, kapı onarılır ve rota doğru değişir.** Bu tamamlanıp kullanıcı değerlendirmesi yapılmadan dron, çoklu silah ve mağaza yapılmaz; cihaz hissi kontrolü ayrıca korunur.
 
 ## Aşama tablosu
 
@@ -16,11 +18,12 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 | M1 | NavMesh/kapı geçişi ve kaba cihaz/kalabalık ölçümü | M0 | Temel rota/kapı 10/10; A54 ilk ölçümü kayıtlı. Yeni sürekli yüzeyde vagon içi kalabalık hedef yerleşimi M3/M6 için açık |
 | M2 | Ortak can, hasar, ölüm | M1 deneme sonucu; kodu M1'e bağımlı değil | Tamamlandı; 14 test geçti, izole hitscan/can/ölüm Play kontrolü yapıldı |
 | M3 | Mobil kontrollü tek vagon döngüsü ve oynanış değerlendirmesi | M1, M2 | GameplaySandbox ilk sürümünde birleşik mekanikler 10/10 PC PASS; D15/D16 revizyonunda cam/duvar/oyuncu sınırı ve gerçek hasar-giriş-onarım odaklı PC PASS. Kullanıcı PC oynanış değerlendirmesini kabul etti; cihaz hissi sonraki uygun kontrolde |
-| M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | Bekliyor |
+| M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | PC teknik kontrolü geçti: 10/10 geçiş ve 6 saf evre testi; kullanıcı tempo/atama değerlendirmesi bekleniyor. RUN_LAB.md |
 | M4b | Kanıtlanan döngüyü beş vagona genişletme | M4a değerlendirmesi | Bekliyor |
 | M5 | Mobil kontrolü iyileştirme ve silah çeşitliliği | M2, M4b | Bekliyor |
 | M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M3–M5 | Bekliyor |
 | M7 | Para, mağaza, turret ve dron | M2, M4–M6 | Bekliyor |
+| Mod/Bot | Battle için komşu vagon botları, en az 3 beceri profili ve eleme/sıralama; botsuz ilerleme modu politikası | M4b ortak döngü, M5/M6 savaş, M7 ekonomi | Tasarım hedefi kaydedildi; ortak mekanikler sağlamlaştıktan sonra ayrı aşama. Gerçek multiplayer veya matchmaking henüz kapsamda değil |
 | M8 | Etap dengesi, kayıt ve koşu deneyimi | M4–M7 | Bekliyor |
 | M9 | Mobil performans ve yayın hazırlığı | Önceki aşamalar | Bekliyor |
 
@@ -30,6 +33,8 @@ Performans ölçümü M1'den itibaren başlar; M9'a ertelenmez. Pooling M3'te te
 
 - Minimum mobil kontrol ve ilk tabanca kuralı M3 için seçildi: sol joystick + otomatik nişan/ateş; sınırlı şarjör + sınırsız yedek + otomatik doldurma (D13/D14). Tam silah çeşitliliği M5'te uygulanır.
 - M4a öncesinde koşudan koşuya korunacak kazanımlar ve uygulama kapanınca devam beklentisi kâğıt üzerinde netleştirilir. Kayıt sistemi M8'de uygulanır.
+- D17: ilk hedef mevcut koşuya devam ve ölümde yeni koşu; meta kazanımlar açık. Google Play Games Saved Games adaydır, kullanıcı sağlayıcıda emin değil; M8 kayıt tasarımı yerel/bulut adaptörünü gameplayden ayırır.
+- D18: gelecekte varsayılan Battle/botlu yarış ile botsuz ilerleme modu; en az üç bot beceri profili. M4a laboratuvarı ortak döngüyü kanıtlar. Bot hareket/ateş/onarım/mağaza aynı kuralları kullanacak, rakip/sıralama politikası döngü motoruna gömülmeyecek.
 - M7 öncesinde ödüllü reklam/IAP ürünleri, tekrar sınırları ve ekonomi etkisi kullanıcıyla tasarlanır. Entegrasyon M9'da kalır; kesinleşmemiş ödül/fiyat uydurulmaz.
 - Her oturum tek, küçük bir kabul hedefiyle başlar. Teknik deneme sonuç vermiyorsa kapsam genişletilmez; bulgu ve sonraki deneme kaydedilir.
 - İlk M0/M1 işlerinin gerçek süreleri görüldükten sonra süre aralıkları çıkarılır. Şimdiden dayanaksız gün/hafta tahmini verilmez.

@@ -1,6 +1,6 @@
 # Mimari ve sistem sözleşmeleri
 
-Bu belge hedef yapıyı tarif eder; adı geçen sistemlerin bir kısmı henüz uygulanmadı. Uygulanan navigation, ortak can/hasar ve ilk tek-vagon bileşenlerinin gerçek doğrulama sınırları `NAVIGATION_LAB.md`, `COMBAT_LAB.md` ve `GAMEPLAY_LAB.md` içinde listelenir. Kesin tasarım kararları `DECISIONS.md` içinde, doğrulama işleri `ROADMAP.md` içindedir.
+Bu belge hedef yapıyı tarif eder; adı geçen sistemlerin bir kısmı henüz uygulanmadı. Uygulanan navigation, ortak can/hasar, tek vagon ve iki vagonlu koşu bileşenlerinin gerçek doğrulama sınırları `NAVIGATION_LAB.md`, `COMBAT_LAB.md`, `GAMEPLAY_LAB.md` ve `RUN_LAB.md` içinde listelenir. Kesin tasarım kararları `DECISIONS.md` içinde, doğrulama işleri `ROADMAP.md` içindedir.
 
 ## Temel yaklaşım
 
@@ -141,6 +141,10 @@ Global ve vagon başına canlı sınırları, spawn bütçesi ve kare başına �
 Bir istasyonun bitmesi bütün treni yeniden yüklemez. `StationRuntime` kendi spawn programını ve dış zombilerini kapatır. `OnBoard` zombiler vagon kaydında devam eder. Yeni istasyonun başlangıcı eski zamanlayıcılardan bağımsızdır.
 
 ## Koşu durumu, atama ve görünmez geçiş
+
+M4a uygulaması: `WaitYourTurn.Run` ayrı assembly; `RunFlow` saf evre/süre kuralları, `RunDriver` sahne adaptörü, `WagonRuntime` vagon bağlamı, `StationSpawner` sınırlı ilk spawn adaptörü, `RunPresentation` görsel hareket. Combat/Navigation/Train/Player/Enemies çekirdekleri Run'a veya Sandbox'a referans vermez. HUD yalnızca gözlemler/test sürer. Gerçek uygulama ayrıntıları ve geçici hedefleme/doğuş sınırları `RUN_LAB.md` içinde.
+
+Mod hedefleri ortak çekirdeğin üstünde ayrı politikalar olacaktır: Battle bot aktörleri/eleme/sıralama ve botsuz ilerleme. Şimdiki tek insan ölümü koşuyu bitirir; gelecekte bot ölümü bütün koşuyu bitirmemeli, mod politikası bunu seçmelidir. Zombi brain'i kendi vagon hedef bağlamını kullanır; başka vagondaki oyuncuya global takip yapmaz. Botlar aynı hareket/hasar/atış/onarım kurallarını girdi/karar adaptörüyle kullanacak; Google kayıt SDK'sı bu kurallara bağımlılık olarak girmez.
 
 `RunState`: etap, seed, evre. `PlayerState`: can, para, ekipman, dron. `WagonState`: kapı canları, turret slotları/mermileri ve içerideki düşmanların canlı runtime kayıtları. Aynı sahnede korunan nesneler ilk uygulamadır; tüm dünyayı diskten yeniden kurmak ilk aşama değildir.
 

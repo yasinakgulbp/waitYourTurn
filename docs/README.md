@@ -1,6 +1,6 @@
 # Wait Your Turn — geliştirme kaydı
 
-Güncelleme: 2026-10-07. Doküman dili Türkçe; kod, tip adları ve commit mesajları İngilizce.
+Güncelleme: 2026-10-08. Doküman dili Türkçe; kod, tip adları ve commit mesajları İngilizce.
 
 Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştirmek; yeni mekanikler eklenirken önceki mekaniklerin korunmasını sağlamak.
 
@@ -14,6 +14,7 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 6. [Navigasyon laboratuvarı](NAVIGATION_LAB.md): ilk uygulama, kontroller, doğrulama ve açık işler.
 7. [Can/hasar laboratuvarı](COMBAT_LAB.md): ortak kurallar ve M2 kanıtı.
 8. [Tek vagon oynanışı](GAMEPLAY_LAB.md): M3 entegrasyonu, kontroller ve açık cihaz değerlendirmesi.
+9. [İki vagon/koşu laboratuvarı](RUN_LAB.md): M4a evre, kalıcılık, atama ve doğrulama sınırları.
 
 ## Mevcut durum
 
@@ -55,3 +56,5 @@ Yeni bir oturumda bu dizin, güncel kod, Git durumu ve Unity sahnesi birlikte ok
 | 2026-10-07 | M3 kullanıcı geri bildirimi: cam kapı ve vagon sınırı | PC odaklı birleşik kontrol PASS | D15: sağlam/onarılmış camdan dış zombiye gerçek atış; alt panel/duvar engeli. D16: oyuncu sağlam/kırık/onarılmış kapıdan dışarı çıkamaz, zombi girişi korunur; görev için alan kaldırılabilir. Gerçek zombi kapı hasarı → kırılma → giriş → yakınlık onarımı da geçti. UTC 18:53:55; GAMEPLAY_LAB.md. Önceki 10 döngü bu revizyonda yeniden çalıştırılmadı; Android denenmedi. |
 
 Reklam/IAP'nin ekonomi rolü M7 öncesinde tasarlanır; servis entegrasyonu ve yayınlama çekirdek oynanış/cihaz performansı doğrulandıktan sonraki aşamalardır.
+
+2026-10-08: M4a iki vagonlu koşu sahnesi kuruldu. 10/10 geçiş + 6 saf evre testi PASS; normal iki-vagon saldırısı ve Play/GameOver kapanışında 0 hata doğrulandı. Kapı/oyuncu/mermi/iç-zombi kalıcılığı kanıtlandı; kullanıcı tempo/atama değerlendirmesi açık. Battle/botsuz mod ve en az üç bot beceri profili tasarım hedefine eklendi, bot uygulaması yapılmadı. Google Play bulut kaydı aday; entegrasyon M8/servis aşamasında. Ayrıntı [RUN_LAB.md](RUN_LAB.md).

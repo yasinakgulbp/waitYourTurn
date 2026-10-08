@@ -10,6 +10,12 @@ Her vagon ayrı bir kimliğe, kapılara ve savunma kurulum noktalarına sahiptir
 
 Kararlaştırıldı: oynanış zemini sabit kalır, çevre/istasyonun görsel hareketi tren yolculuğunu oluşturur. İçeri girmiş zombiler yolculukta trende kalır; dışarıdakiler istasyonda bırakılır.
 
+## Mod hedefleri — 2026-10-07 ek vizyon
+
+Ortak tren/kapı/zombi/silah/koşu temeli iki moda hizmet edecek. Kullanıcı ilk varsayılan hedef olarak **Battle** düşündüğünü belirtti: nickli botlar komşu vagonlarda oynar, oyuncu hayatta kalanlar arasında birinci olmaya çalışır. En az üç bot beceri profili (başlangıç/orta/iyi düzeyi) hedeflenir. “Trene bin” giriş sunumu, yükleme ve yarış atmosferi daha sonraki arayüz aşamasıdır. Bu yerel bot hedefi için gerçek multiplayer, matchmaking veya ağ sunucusu henüz talep edilmiş değildir.
+
+**Tek oyunculu ilerleme/hikâye:** rakip bot yoktur; rastgele vagon, kalıcı koşu ekipmanı ve daha ileri istasyonlara ulaşma odağı korunur. Mevcut M4a laboratuvarı ortak döngünün tek insanla kanıtıdır, tamamlanmış Battle/hikâye modu sayılmaz. Botların ateş/onarım/ekonomi kuralları oyuncuyla aynı çekirdeği kullanmalı; zombi AI'ına çevrimiçi kullanıcı varsayımı gömülmemeli. Bot ölüm elemesi, eşitlik/sıralama ve vagon atamasının yarış adaleti uygulama öncesinde ayrıca seçilir. 5 vagon temel hedef, 10 vagon olası genişleme; kesin sayı henüz seçilmedi.
+
 ## İstasyon ve yolculuk döngüsü
 
 Kararlaştırıldı: tren istasyonda süreye bağlı bekler; ilk savunma 60 saniyedir, tüm zombilerin ölmesi kalkış için zorunlu değildir. Süreler veriden ayarlanır. Bu, otomasyon hikayesiyle uyumludur ve kalan tek bir düşmanın döngüyü kilitlemesini önler. İleride farklı istasyonlar için ayrı bitiş kuralları eklenebilir.
@@ -96,6 +102,8 @@ Zorluk yalnızca her istasyonda daha çok düşman üretmek değildir: aynı can
 
 Kararlaştırıldı: oyuncunun canı, parası, silahı ve dronu onunla gider. Kapı hasarı ve turretler kurulu oldukları vagonda kalır. İçeri girmiş zombiler de vagon durumuna dahildir. Mimari oyuncu ve vagon durumlarını ayrı saklar; istasyon değişimi koşuyu sıfırlamaz. Koşu içindeki kalıcılık ile uygulama kapanıp açılınca devam etme farklı özelliklerdir; disk kayıt M8 kapsamıdır.
 
-Koşular arasında korunacak kazanımlar ve uygulama kapanınca devam beklentisi M4a öncesinde tasarlanacak. İlk istasyon döngüsü iki vagonla kanıtlanıp sonra beş vagona genişletilecek; bu geliştirme sırası hedef tren kapsamını küçültmez.
+Koşular arası kalıcı kazanımlar açık kalır; uygulama kapanınca devam için ilk hedef aşağıda kayıtlıdır. İlk istasyon döngüsü iki vagonla kanıtlanıp sonra beş vagona genişletilecek; bu geliştirme sırası hedef tren kapsamını küçültmez.
+
+Kayıt için ilk kullanıcı seçimi mevcut koşuya devam, ölümde yeni koşudur; kalıcı geliştirmeler henüz seçilmedi. Kullanıcı ardından Google Play ile kayıt sağlayıcısını değerlendirmek istediğini ve ayrıntıda emin olmadığını belirtti. Sağlayıcı kesinleşmedi. [Google Play Games Saved Games](https://developer.android.com/games/pgs/savedgames) ilerleme verisini Google sunucularına kaydetme/geri alma ve bağlantı geldikten sonra senkronlama sunar; oyunun kendi durum verisini yazıp okuması ve yerel/bulut çakışmasını yönetmesi gerekir. Oturum açmak tek başına bizim koşu durumumuzu otomatik kaydetmez. Uygulama M8'de, Google adaptörü doğrulaması/kurulumu uygun servis aşamasında yapılır; M4 runtime Google SDK'sına bağlanmaz.
 
 Atama önerisi: tüm vagonlar eşit olasılıklı, aynı vagon tekrar çıkabilir. Doğuş noktası duvar içinde veya karakterle çakışacak şekilde seçilmez. İçeride zombiler taşınacaksa güvenli doğuş/çok kısa koruma ayrıca tasarlanmalıdır.

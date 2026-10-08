@@ -13,14 +13,22 @@ namespace WaitYourTurn.Navigation
         [SerializeField] private Transform outsideApproach;
         [SerializeField] private Transform insideDestination;
         private readonly Collider[] occupants = new Collider[16];
+        private bool stationAccess = true;
 
         public event Action Changed;
         public bool IsOpen { get; private set; }
         public bool ClosePending { get; private set; }
-        public bool AcceptsEntry => IsOpen && !ClosePending;
+        public bool AcceptsEntry => IsOpen && !ClosePending && stationAccess;
+        public bool StationAccess => stationAccess;
         public Vector3 OutsideApproach => outsideApproach.position;
         public Vector3 InsideDestination => insideDestination.position;
         public uint Revision { get; private set; }
+        public void SetStationAccess(bool allowed)
+        {
+            if (stationAccess == allowed) return;
+            stationAccess = allowed;
+            NotifyChanged();
+        }
 
         public void Configure(NavMeshObstacle navigationCut, BoxCollider obstruction,
             Transform approach, Transform destination)

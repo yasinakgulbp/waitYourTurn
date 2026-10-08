@@ -18,9 +18,19 @@ namespace WaitYourTurn.Enemies
         private readonly List<EnemyBrain> active = new List<EnemyBrain>(12);
         private readonly Stack<EnemyBrain> available = new Stack<EnemyBrain>(12);
         private int spawnSequence;
+        private bool playerPresent = true;
+        private string wagonId = "lab-wagon";
         public IReadOnlyList<EnemyBrain> Active => active;
         public int CreatedCount => all.Count;
         public int DeathCount { get; private set; }
+        public int AgentTypeId => template.AgentTypeId;
+        public int AreaMask => template.AreaMask;
+        public void SetScope(string id, bool hasPlayer)
+        {
+            wagonId = id; playerPresent = hasPlayer;
+            foreach (EnemyBrain enemy in active) enemy.SetScope(id, hasPlayer);
+        }
+        public void SetPaused(bool paused) { foreach (EnemyBrain enemy in active) enemy.SetPaused(paused); }
         public void Configure(EnemyBrain prefab, DoorController entry, HealthComponent hero, TargetRegistry targets)
         { template = prefab; door = entry; player = hero; registry = targets; }
         private void Awake()
@@ -44,6 +54,7 @@ namespace WaitYourTurn.Enemies
             if (!enemy.Spawn(hit.position, door, player, spawnSequence++ % capacity))
             { enemy.Despawn(); enemy.gameObject.SetActive(false); available.Push(enemy); return false; }
             enemy.gameObject.SetActive(true);
+            enemy.SetScope(wagonId, playerPresent);
             active.Add(enemy);
             registry.Register(enemy.Health);
             return true;
@@ -71,6 +82,12 @@ namespace WaitYourTurn.Enemies
             for (int i = active.Count - 1; i >= 0; i--) ReturnAt(i);
             DeathCount = 0;
             spawnSequence = 0;
+        }
+        public void RemoveStationOutsiders()
+        {
+            // Station cleanup is never a kill/reward. Inside decisions must be captured before calling.
+            for (int i = active.Count - 1; i >= 0; i--)
+                if (!active[i].OnBoard) ReturnAt(i);
         }
         private void OnDestroy()
         {

@@ -22,6 +22,8 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | D14 | İlk tabanca sınırlı şarjör, sınırsız yedek mermi ve otomatik doldurma kullanır | Kullanıcı M3 için seçti. İlk lab değerleri deneme ayarıdır: 8 mermi, 1.2 s doldurma, 0.35 s atış aralığı. |
 | D15 | Sağlam kapının üst camından dışarıdaki zombilere ateş edilir; alt dolu panel ve vagon duvarları atışı keser | Kullanıcı M3 değerlendirmesinde netleştirdi. Oyuncu ve ileride kapı önündeki turretler zombileri kapı kırılmadan vurabilir. Kapının yürüyüş engeli ile atış engeli ayrıdır. |
 | D16 | Oyuncu ilk kapsamda atandığı vagondan dışarı yürüyemez; kapı kırılması bu izni değiştirmez | Kullanıcı M3 değerlendirmesinde seçti. Hareket alanı ayrı ve isteğe bağlıdır; ileride istasyona inme görevi bu sınırı kaldırabilir/değiştirebilir. Zombi girişini veya atışı engelleyen ek fizik duvarı kurulmaz. |
+| D17 | Kayıt hedefi mevcut koşuya devam, ölümde yeni koşu; kalıcı geliştirmeler ayrıca tasarlanır | Kullanıcının ilk seçimi; ardından sağlayıcı/ayrıntılarda emin olmadığını belirtti. Google Play Games Saved Games adaydır, kesin sağlayıcı seçilmedi ve M4'te disk/bulut entegrasyonu yapılmaz. |
+| D18 | Ortak temel üzerinde botlu hayatta kalma yarışı (Battle) ve botsuz tek oyunculu ilerleme/hikâye modu hedeflenir | Kullanıcının yeni vizyonu: tren giriş sunumu, nickli komşu vagon rakipleri, son hayatta kalan/sıralama; en az 3 bot beceri profili. Gerçek ağ oyuncuları bu talepten çıkarılmaz. M4a önce ortak döngüyü kanıtlar; mod/bot aşaması ayrı kurulur. |
 
 ## Teknik öneriler
 
@@ -38,6 +40,7 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | T09 | M1'de kaba Android kalabalık ölçümü, maliyetlerin ayrılması | Ölçüm olmadan NavMesh değiştirilmez veya mobil performans kanıtlandı denmez. |
 | T10 | Minimum mobil kontrol/tabanca M3'e alınır; kullanıcıyla oynanış değerlendirmesi | M3: hareket–ateş–onarım deneyimi; M5: kontrol iyileştirme/silah çeşitliliği. |
 | T11 | M4a iki vagonla döngü; M4b beş vagona genişletme | Önce atama/kalıcılık/yolculuk kanıtlanır, sonra geometri ve yük genişler. |
+| T12 | Botlu yarış nick/karar/hareketle canlı hissi verir; bilgisayar rakipleri olduğu anlaşılır | Gerçek çevrimiçi insan eşleşmesi diye sunmak güven beklentisini bozabilir. Bu açıklık teknik öneridir; kullanıcı tarafından ayrıca seçilmiş sayılmaz. |
 
 ## Uygulama öncesi veya ilgili aşamada netleştirilecekler
 
