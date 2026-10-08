@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7fd37da2db75d14f934cf31d2c403c7, type: 3}
+  m_Name: Fast
+  m_EditorClassIdentifier: WaitYourTurn.Enemies::WaitYourTurn.Enemies.EnemyProfile
+  id: fast
+  health: 16
+  speed: 3.8
+  damage: 1
+  attackInterval: 0.75
+  windup: 0.25
+  range: 1.6
+  blockoutTint: {r: 0.55, g: 0.75, b: 0.35, a: 1}

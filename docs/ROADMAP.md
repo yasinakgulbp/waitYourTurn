@@ -22,7 +22,7 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 | M4b | Kanıtlanan döngüyü beş vagona genişletme | M4a değerlendirmesi | Beş tek-kapılı lab vagonunda 10/10 geçiş + 60-zombi PC yük kontrolü PASS; kullanıcı teknik aşamayı kabul ederek M5'i istedi. Gerçek altı kapılı geometri/çok kapı hedef seçimi entegrasyonu ayrıca açık |
 | M5 | Mobil kontrolü iyileştirme ve silah çeşitliliği | M2, M4b | PC teknik parça PASS: 13 silah testi, dört profil cam/duvar/alt panel kontrolü ve sınırlı mermili 10/10 vagon geçişi. D19 uygulanır; mevcut sol kontrol korunur. Kullanıcı/cihaz değerlendirmesi açık. WEAPONS_LAB.md |
 | M6a | Hedef vagon/kamera ve iki taraflı çok kapı entegrasyonu | M3–M5 temel kuralları | İlk altı-kapılı entegrasyon PASS. D23 yeni oran/kapsül/4–6 kapı revizyonu da beş-vagonda PASS: 10 geçiş, durum kalıcılığı ve 60 düşman sınırı. 38 can/onarım/geometri/yerleşim + 15 yolculuk/kamera testi PASS; 16:9/4:3 Editor kadrajı görüldü. Kullanıcı his ve Android değerlendirmesi açık. VISUAL_SCALE.md, TRAIN_INTEGRATION.md |
-| M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M6a kabulü | Bekliyor |
+| M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M6a kabulü | PC teknik kabulü: üç ortak profil, veri programı ve sınırlı director kuruldu; 26 kural/yolculuk testi, 30 istasyon/5 yolcu/60 sabit havuz ve eski birleşik kabul PASS. Android kalabalık profili henüz yapılmadı; SPAWNING.md |
 | M7 | Para, mağaza, turret ve dron | M2, M4–M6 | Bekliyor |
 | Mod/Bot | Battle için komşu vagon botları, en az 3 beceri profili ve eleme/sıralama; botsuz ilerleme modu politikası | M4b ortak döngü, M5/M6 savaş, M7 ekonomi | Tasarım hedefi kaydedildi; ortak mekanikler sağlamlaştıktan sonra ayrı aşama. Gerçek multiplayer veya matchmaking henüz kapsamda değil |
 | M8 | Etap dengesi, kayıt ve koşu deneyimi | M4–M7 | Bekliyor |
@@ -145,7 +145,7 @@ Kabul: iki tarafta eşzamanlı doğru doğuş/rota, bağımsız kapı canı ve h
 
 ## M6 — Spawn ve enemy ölçeği
 
-- M6a'da doğrulanan iki taraflı/altı kapılı geometri verilerini kullan; M4b'nin tek taraflı/tek kapılı lab varsayımlarına geri dönme.
+- M6a/D23 ile doğrulanan iki taraflı/4–6 kapılı geometri verilerini kullan; M4b'nin tek taraflı/tek kapılı lab varsayımlarına geri dönme.
 - `StationDefinition` ile vagon/tür/zaman/bütçe dağılımı; Inspector'dan ayarlanır.
 - Normalden türeyen hızlı/dayanıklı enemy profilleri; ortak brain/motor/hasar.
 - Global/vagon canlı sınırları, spawn istek kuyruğu sınırı, kare başına üretim bütçesi.
@@ -197,4 +197,6 @@ D23 ölçek/kadraj revizyonu M6 öncesine eklendi: yeni üç kullanıcı referan
 
 D24 revizyonu tamamlandı: iki taraftaki yan camlar atışı geçirir, metal dikme/çerçeve/paneller engeller; pencere zombi geçidi değildir. 39 kural testi ve 46 pencerenin dört silahla kontrol edildiği beş-vagon/10-geçiş/60-düşman PC kabulü PASS (2026-10-08 08:03:45 UTC). Model ölçüleri MODEL_CONTRACT.md ve üretilen CSV'de tutulur. Sonraki M6 veri/bütçe sistemi bu sabit geometriyi kullanır; pencere sayısını kapı/spawn sayısı gibi saymaz.
 
-**M6 spawn/tür/bütçe:** TrainIntegration'ın gerçek iki taraflı/altı kapılı geometrisini kullanarak StationDefinition, ortak enemy profilleri ve global/vagon/kare üretim bütçesi. İçeride kalanlar canlı sınırına dahil; geçersiz doğuş sınırlı denenir. M6a'nın PC teknik kabulü geçti; yeni kadraj/oynama hissi kullanıcı değerlendirmesine açık. M7 ekonomi/savunma → Mod/Bot sırası korunur. Android birleşik kontrolü uygun zamanda ayrıca yapılır. Güncel bağlama ve test kanıtı TRAIN_INTEGRATION.md içindedir.
+**Güncel M6 durumu:** veri programları, üç ortak zombi profili, global/vagon/kare sınırları, sonlu doğuş denemesi ve kontrollü havuz ısınması PC’de doğrulandı. İçeridekiler canlı limitine dahil. Kod/Inspector bağlama, ilk test değerleri ve yeniden çalıştırma bilgileri [SPAWNING.md](SPAWNING.md) içinde. Android performansı ve gerçek uzun oturum açık; kısa PC kabulü bunların kanıtı değildir.
+
+**Bir sonraki uygulama M7a:** cüzdan, gerçek ölümden tek ödül ve mağaza işlemleri (iyileşme, güncel vagon kapı onarımı, silah). Satın alma/erişim/ödül kuralları başlamadan kullanıcıyla netleşir. M7b sabit turret → M7c dron → Mod/Bot sırası korunur. Henüz bu özelliklerin kodu yazılmadı.

@@ -35,7 +35,7 @@ namespace WaitYourTurn.Sandbox
             var label=new GUIStyle(GUI.skin.label){fontSize=16};
             GUI.Label(new Rect(12,8,width-220,24),$"{run.CurrentWagon.Id} / STATION {run.Flow.Station} / {run.CurrentWagon.Doors.Length} DOORS",label);
             GUI.Label(new Rect(12,32,width-24,24),$"{run.Flow.Phase} {run.Flow.Remaining:F1}s | HP {run.Player.Current:F0} | {run.Weapon.DisplayName} {run.Weapon.Rounds} | Repair {run.Repair.Progress:P0}",label);
-            GUI.Label(new Rect(12,56,width-24,23),$"Doors: {string.Join("  ",run.CurrentWagon.Doors.Select((d,i)=>$"{i+1}:{d.Durability.Current:F0}"))} | Enemies {run.CurrentWagon.Enemies.Active.Count}/12",new GUIStyle(label){fontSize=12});
+            GUI.Label(new Rect(12,56,width-24,23),$"Doors: {string.Join("  ",run.CurrentWagon.Doors.Select((d,i)=>$"{i+1}:{d.Durability.Current:F0}"))} | Enemies {run.CurrentWagon.Enemies.Active.Count}/{run.CurrentWagon.Enemies.Capacity} | Train {spawner.TotalActive} | Queue {spawner.Pending} | F11: spawn checks",new GUIStyle(label){fontSize=12});
             GUI.enabled=!checking;
             if(GUI.Button(new Rect(width-180,8,76,25),"Restart")){spawner.enabled=true;run.ControlsAllowed=run.AimAllowed=true;run.Repair.enabled=true;run.Restart();}
             if(GUI.Button(new Rect(width-98,8,86,25),"Check (F10)"))StartCoroutine(Check());
@@ -45,6 +45,7 @@ namespace WaitYourTurn.Sandbox
             GUI.enabled=true;
             if(checking||result.StartsWith("FAIL")||run.Failure!=null)
                 GUI.Label(new Rect(12,82,width-24,45),run.Failure??(checking?"Checking integration…":result),label);
+            if(spawner.Diagnostic!=null)GUI.Label(new Rect(12,82,width-24,45),spawner.Diagnostic,label);
             GUI.matrix=oldMatrix;
             if(presentation.Darkness>0)
             {

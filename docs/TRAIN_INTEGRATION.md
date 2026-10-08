@@ -17,7 +17,7 @@ Unity menüsü: **Wait Your Turn → Integration → Build One/Two/Five Wagons**
 ## Sahiplik ve bağımlılıklar
 
 - `WagonGeometry` (Train): yerel gerçek iç hacim, kapı adayları, istasyon doğuş çapaları ve güvenli iç konumlar. Player/Enemies/Run bağımlılığı yoktur.
-- `EnemyPool`: yalnız kendi vagonunun geometrisinden erişilebilir giriş seçer. Yol sorgusu spawn sırasında yeniden kullanılan `NavMeshPath` ile yapılır; her kare bütün kapılarda path araması yoktur. Aynı tarafta tam rotası olan en yakın yaklaşma noktası seçilir. Sonraki taktik profillerinin açık kapıyı tercih etmesi M6 işidir.
+- `EnemyPool`: yalnız kendi vagonunun geometrisinden erişilebilir giriş seçer. Yol sorgusu spawn sırasında yeniden kullanılan `NavMeshPath` ile yapılır; her kare bütün kapılarda path araması yoktur. Aynı tarafta tam rotası olan en yakın yaklaşma noktası seçilir. Açık kapıyı tercih eden yeniden yönelme mevcut üç sayısal profilin parçası değildir; sonraki ayrı taktik davranışı olarak açık kalır.
 - `EnemyBrain`: gerçek iç hacim üyeliği ile portal eşiğini ayırır. Karşı platform/komşu vagon içerisi sayılmaz. Bekleme ofseti portalın yerel eksenindedir. İç takip hedefi vagon sınırlarına alınır. İçeri geçen düşman oyuncuya saldırmadan önce eşiği temizler.
 - `WagonRuntime`: doğuş/güvenli konumlar sahnedeki çapaları kullanır; en yakın onarım kapısı kendi kapı listesinden seçilir (D23: 4–6). Kalkışta içerideki/eşikte içeri girmiş bedenler tutulur; dışarıdakiler ödülsüz havuza döner. İşgal edilen eşik kapanmadan önce güvenli iç aday kontrolü yapılır.
 - `MovementArea`: oyuncu sınırı ayrı, kaldırılabilir bir hareket kuralıdır. Kırık kapı bunu kaldırmaz. Yeni geometri düzenlenirken MovementArea ve iç hacim birlikte kontrol edilir.
@@ -39,8 +39,10 @@ EditMode: mevcut can/onarım grubuna iki döndürülmüş/ölçeklenmiş vagon s
 
 Güncel kesintisiz platformla iki vagon kabulü 06:05:32 UTC, beş vagon kabulü 06:08:40 UTC geçti. İkisinde de 10 atama, tüm vagonların ziyaret edilmesi, altı kapı kuralları ve durum kalıcılığı doğrulandı. Son kapasite kontrolünde sırasıyla 24 ve 60 eşzamanlı düşman nav/vagon bağlamını korudu; 13. düşman her vagon havuzunda reddedildi. Yolculuk/evre regresyonu 06:12:03 UTC: 11/11 PASS. Son Play ve EditMode kontrollerinde Console yeni hata/uyarı üretmedi.
 
-Henüz doğrulanmayanlar: bu yeni birleşimin Android performansı/uzun oturumu, farklı zombi türleri, gerçek botlar, nihai UI/kadraj/animasyon hissi. Kısa PC kabulü Android FPS kanıtı değildir.
+Henüz doğrulanmayanlar: bu yeni birleşimin Android performansı/uzun oturumu, gerçek botlar, nihai UI/kadraj/animasyon hissi. Kısa PC kabulü Android FPS kanıtı değildir.
 
-## Sonraki iş: M6
+## M6 bağlantısı ve sıradaki iş
 
-Mevcut `StationSpawner` küçük, sınırlı M4 adaptörüdür; programlı tür dağılımı veya global üretim kuyruğu değildir. Bir sonraki uygulama `StationDefinition` verisi, ortak enemy profilleri, global/vagon canlı sınırı ve kare başına üretim bütçesidir. Bu sahnenin `WagonGeometry` doğuş/kapı verisini kullanır; tek kapılı lab koordinatlarına dönülmez. İçeride taşınan düşmanlar canlı bütçesine dahil edilir. Açık kapıya yeniden hedef seçimi ayrı taktik davranışı olarak eklenir; mevcut en yakın erişilebilir giriş seçimiyle karıştırılmaz.
+`StationSpawner` artık `StationDefinition` programlarını uygular; `EnemyPool` aynı bounded factory olarak kullanılır. Inspector program listesi, üç ortak zombi profili, global/vagon/kare sınırı, kontrollü ısınma ve sonlu konum denemesi bu sahneye bağlıdır. Eski lab fallback’i korunur. Pencere sayısı doğuş/kapı sayısı değildir; aynı `WagonGeometry` çapaları kullanılır. Ayrıntı ve PC kanıtı [SPAWNING.md](SPAWNING.md) içindedir.
+
+Android kalabalık profili ve gerçek uzun oturum hâlâ açık. Açık kapıya taktik yeniden yönelme ayrı bir davranış işidir; mevcut en yakın erişilebilir kendi-vagon girişi seçimiyle karıştırılmaz. Sonraki uygulama M7a ekonomi/mağaza, ardından turret/dron ve botlardır.

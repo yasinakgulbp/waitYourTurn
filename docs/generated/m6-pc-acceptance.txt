@@ -1,0 +1,12 @@
+M6 PC acceptance, Unity 6000.6.4f1, TrainIntegration, 5 wagons
+Rules: 26 passed / 0 failed; 2026-10-08 15:33:53Z
+
+Spawn director:
+2026-10-08T15:35:13.7454589Z
+PASS: 3 profiles / 9 same-object reuse cycles; stale life rejected; invalid nav leaves pool intact; global 9, wagon 3, queue 4, frame 2 limits; kill frees one slot; 30 station cycles retain 5 original passengers; registry matches active bodies; fixed 60-object pool, peak 9 active. PC only; Android profile pending.
+
+Existing gameplay regression:
+2026-10-08T15:36:24.0543433Z
+PASS: Door variants 4,5,6,5,4: repair/glass; every bilateral window passes all four guns, metal edges/panels block straight/oblique rays, movement/nav remain closed; bilateral door entry/thresholds and player boundary; responsive camera; 10 cycles visiting 5 wagons; HP/SMG/ammo/survivors/door damage preserved; full 60-enemy pool bound.
+
+Limits: PC technical checks only. Android FPS/heat/memory and a real long session remain pending.

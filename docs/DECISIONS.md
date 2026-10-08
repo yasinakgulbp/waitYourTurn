@@ -92,3 +92,7 @@ Kullanıcı mantıklı bulunan önerilerin belgelere işlenmesini istedi. Öncek
 Eklenenler: kontrol/mermi, koşu devamı/metagelişim ve reklam/IAP ekonomi tasarımının erken konuşulması; riskle orantılı otomatik/elle test ayrımı. Korunanlar: NavMesh başlangıç tercihi, ortak hasar/yaşam döngüsü kuralları, pooling eklendiği anda temizlik kontrolü ve dronun oyun kimliğindeki önemi. Waypoint'e erken geçiş, gerekli yaşam döngüsü doğrulamalarını erteleme ve dronu otomatik yayın kapsamından çıkarma alınmadı.
 
 Etkilenen belgeler: ROADMAP, DECISIONS, ARCHITECTURE, GAME_DESIGN ve geliştirme kaydı. Kod değişmedi; yeni kabul koşulları henüz denenmedi ve hiçbir geliştirme aşaması tamamlandı işaretlenmedi.
+
+## 2026-10-08 — M6 teknik uygulama kaydı
+
+StationSpawner + saf SpawnSchedule mevcut Run katmanında, EnemyProfile mevcut Enemies katmanında kuruldu. Yeni doğuşlar bütün vagonlardaki taşınan bedenleri sayar; dolu vagon istekleri kuyruk yerini serbest bırakıp kısa ertelenir. Geçersiz konum en fazla üç denemeden sonra iptal edilir; station bitişi bütün bekleyen üretimi kapatır. Havuz ısınması ve aktive etme ayrı kare bütçeleriyle yapılır. Bu teknik tercih ve başlangıç sayıları nihai denge kararı değildir. Normal/hızlı/dayanıklı test değerleri, 1/3/6+ programları ve açık Android kontrolü SPAWNING.md içinde. Kullanıcının mevcut iki taraflı/4–6 kapılı tren, camdan atış, iç zombi kalıcılığı ve rutin PC kontrolü kararları korunur.

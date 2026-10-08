@@ -173,7 +173,7 @@ namespace WaitYourTurn.Editor
                 for (int x = 0; x < 10; x++) for (int z = 0; z < 3; z++)
                     safe.Add(Anchor("Safe " + safe.Count, root.transform, new Vector3(Mathf.Lerp(-half + .85f, half - .85f, x / 9f), .05f, (z - 1) * (sideZ - .85f))));
                 var space = root.AddComponent<WagonGeometry>(); space.Configure(new Bounds(new Vector3(0, 1, 0), new Vector3(layout.length - .4f, 3, layout.width)), doors.ToArray(), spawns.ToArray(), safe.ToArray());
-                var pool = new GameObject("Enemy pool capacity 12").AddComponent<EnemyPool>(); pool.transform.SetParent(root.transform, false); pool.Configure(template.GetComponent<EnemyBrain>(), doors[0], player, registry);
+                var pool = new GameObject("Enemy pool capacity 12").AddComponent<EnemyPool>(); pool.transform.SetParent(root.transform, false); pool.Configure(template.GetComponent<EnemyBrain>(), doors[0], player, registry); pool.ConfigureIncrementalWarmup();
                 var wagon = root.AddComponent<WagonRuntime>(); wagon.Configure(root.name, doors.ToArray(), pool, area); wagon.ConfigureGeometry(space); wagons[i] = wagon;
                 void Metal(string name, float x, float bottom, float width, float height, float sign, Material material)
                 {
@@ -213,6 +213,7 @@ namespace WaitYourTurn.Editor
             hero.transform.position = wagons[initial].transform.position + Vector3.up * .05f;
             hero.GetComponent<PlayerMotor>().SetMovementArea(wagons[initial].Area);
             var spawner = new GameObject("Bounded station spawner").AddComponent<StationSpawner>(); spawner.Configure(run);
+            spawner.ConfigurePrograms(StationContentBuilder.EnsurePrograms());
             var presentation = new GameObject("Journey presentation - single camera owner").AddComponent<RunPresentation>(); presentation.Configure(run, track, camera); presentation.ConfigureJourney(station, scenery); presentation.ConfigurePlayerFollow(true);
             presentation.ConfigureFraming(new Bounds(new Vector3(0, .4f, 0), new Vector3(layouts.Max(x => x.length) + 3, 2.4f, maxWidth + 4)));
             Bounds previewVolume = presentation.FramingVolume; previewVolume.Expand(new Vector3(1.3f, 0, 0));
@@ -230,6 +231,7 @@ namespace WaitYourTurn.Editor
                 }
             }
             new GameObject("Integration HUD and checks").AddComponent<TrainIntegrationController>().Configure(run, spawner, presentation);
+            new GameObject("Spawn acceptance - F11").AddComponent<SpawnAcceptance>().Configure(run, spawner, registry);
             EditorSceneManager.SaveScene(scene, ScenePath); AssetDatabase.SaveAssets(); Selection.activeGameObject = hero;
             ExportModelGuide(wagons);
             Debug.Log($"[TrainIntegration] Built {count} scale-reference wagons; doors {string.Join(",", wagons.Select(w => w.Doors.Length))}; bilateral geometry freshly baked.");
@@ -268,6 +270,7 @@ namespace WaitYourTurn.Editor
             var visual = new GameObject("Replaceable actor visuals - no colliders").transform; visual.SetParent(actor.transform, false);
             var body = GameObject.CreatePrimitive(PrimitiveType.Capsule); body.name = "Body 1.7m x 0.6m"; body.transform.SetParent(visual, false);
             body.transform.localPosition = new Vector3(0, .85f, 0); body.transform.localScale = new Vector3(.6f, .85f, .6f); body.GetComponent<Renderer>().sharedMaterial = material; Object.DestroyImmediate(body.GetComponent<Collider>());
+            if (!player) actor.GetComponent<EnemyBrain>().ConfigureBlockout(body.GetComponent<Renderer>());
             Cube("Facing nose", visual, new Vector3(0, 1.1f, .38f), new Vector3(.22f, .16f, .3f), player ? yellow : red, false);
             Cube("Forward stripe", visual, new Vector3(0, 1.71f, .1f), new Vector3(.1f, .035f, .4f), yellow, false);
             if (player)

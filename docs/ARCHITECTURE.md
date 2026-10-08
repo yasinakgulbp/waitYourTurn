@@ -21,7 +21,7 @@ flowchart TD
     Boot[GameBootstrap: referansları kurar] --> Flow[RunFlow: evreleri yönetir]
     Boot --> Gameplay[Oynanış bileşenleri]
     Config[Tasarım verileri] --> Gameplay
-    Flow --> Station[StationRuntime ve SpawnDirector]
+    Flow --> Station[StationSpawner ve SpawnSchedule]
     Flow --> Journey[JourneyPresentation]
     Flow --> State[RunState / PlayerState / WagonState]
     Brain[EnemyBrain] --> Nav[NavigationMotor ve EntryPortal]
@@ -142,19 +142,19 @@ D23 ile fiziksel authoring `WagonLayoutDefinition` varlıklarından gelir: gövd
 
 M6a uygulamasında `WagonGeometry` (Train assembly) gerçek yerel iç hacmi, kapı listesini, istasyon doğuş çapalarını ve güvenli iç adayları taşır; Player/Enemies/Run bağımlılığı yoktur. `EnemyPool` doğuşta aynı taraftaki erişilebilir kendi-vagon girişini yeniden kullanılan NavMeshPath ile seçer. `EnemyBrain` üyelikte bütün hacmi, eşik güvenliğinde tüm kapıları kontrol eder; portal yarı düzlemi yalnız eski tek-kapılı lab fallback'idir. `WagonRuntime` geometri çapalarını kullanır. `MovementArea` oyuncunun kaldırılabilir sınır kuralı olarak ayrı kalır. Platformlar kesintisiz ortak NavMesh'tir; sahiplik WagonId/geometri verisidir. Sabit collider/nav ile hareketli sunum ayrıdır. Kamera X takibini yalnız RunPresentation sürer. Sahne bağlama/kurulum ve kanıt: [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md).
 
-`SpawnDirector` programı uygular; `EnemyFactory` havuzdan alıp tam `SpawnContext` ile başlatır: runtime kuşağı, `WagonId`, tür, hedef profili, etap çarpanları, istasyon kimliği ve ödül sahibi.
+`SpawnDirector`/`EnemyFactory` sorumluluklarının M6 karşılığı `StationSpawner` + saf `SpawnSchedule` ve mevcut `EnemyPool`’dur; ikinci bir framework eklenmedi. `StationDefinition` zaman/tür/vagon/adet/limit verisini, `EnemyProfile` ortak brain’in can/hız/saldırı ayarını taşır. Yaşam kuşağı `Health.LifeVersion`, sahiplik `WagonId`, profil ve doğuş istasyonu havuz çıkışında atanır. Etap çarpanları ve ödül sahipliği gereken M7/M8 işi olarak ayrıca bağlanır; mevcut olmayan bir `SpawnContext` sınıfı varmış sayılmaz. Ayrıntı [SPAWNING.md](SPAWNING.md).
 
 Kurulum sırası: veriyi doğrula → uygun spawn/rota adayını bul → canlı sınırı kontrol et → havuzdan al → tüm durumu sıfırla → nav zemine yerleştir → kayıt/aktivasyon. NavMesh'e uygun olmayan nokta sınırlı sayıda yeniden denenir; sonsuz deneme veya duvarın ötesindeki en yakın polygona rastgele atama yapılmaz.
 
 Global ve vagon başına canlı sınırları, spawn bütçesi ve kare başına üretim sınırı vardır. Sınır dolunca istek program kuralıyla ertelenir veya atlanır; bekleyen kuyruk da sınırlıdır. Trende kalan zombiler global canlı sınırına dahildir. Dışarıda bırakılanlar yeni istasyon bütçesine sızmaz.
 
-Ölümde canlı kaydı derhal çıkar; kısa ölüm efekti/corpse ayrı bütçeyle kalabilir. Geri vermede sağlık, davranış, path, hedef, portal/slot, zamanlayıcı, ses, animasyon, subscription ve eski coroutine işlemleri sıfırlanır. Stale callback yaşam kuşağı kontrolüyle etkisiz kalır.
+Ölümde brain/atak durur; `EnemyPool` sağlık bildiriminin dışında LateUpdate’de hedef kaydını çıkarıp bedeni iade eder. Bu aralıktaki ölü beden kapasitede korumacı olarak hâlâ sayılır. Kısa ölüm efekti/corpse ileride ayrı bütçeyle kalabilir. Geri vermede sağlık, davranış, path, hedef, portal/slot, zamanlayıcı, ses, animasyon, subscription ve eski coroutine işlemleri sıfırlanır. Stale callback yaşam kuşağı kontrolüyle etkisiz kalır.
 
-Bir istasyonun bitmesi bütün treni yeniden yüklemez. `StationRuntime` kendi spawn programını ve dış zombilerini kapatır. `OnBoard` zombiler vagon kaydında devam eder. Yeni istasyonun başlangıcı eski zamanlayıcılardan bağımsızdır.
+Bir istasyonun bitmesi bütün treni yeniden yüklemez. `StationSpawner` çizelgeyi kapatır; `RunDriver` vagonların kalkış temizliğini yürütür. `OnBoard` zombiler vagon kaydında devam eder. Yeni istasyonun başlangıcı eski zamanlayıcılardan bağımsızdır.
 
 ## Koşu durumu, atama ve görünmez geçiş
 
-M4a uygulaması: `WaitYourTurn.Run` ayrı assembly; `RunFlow` saf evre/süre kuralları, `RunDriver` sahne adaptörü, `WagonRuntime` vagon bağlamı, `StationSpawner` sınırlı ilk spawn adaptörü, `RunPresentation` görsel hareket. Combat/Navigation/Train/Player/Enemies çekirdekleri Run'a veya Sandbox'a referans vermez. HUD yalnızca gözlemler/test sürer. Gerçek uygulama ayrıntıları ve geçici hedefleme/doğuş sınırları `RUN_LAB.md` içinde.
+M4a uygulaması: `WaitYourTurn.Run` ayrı assembly; `RunFlow` saf evre/süre kuralları, `RunDriver` sahne adaptörü, `WagonRuntime` vagon bağlamı, `StationSpawner` M6 veri programı adaptörü, `RunPresentation` görsel hareket. Combat/Navigation/Train/Player/Enemies çekirdekleri Run'a veya Sandbox'a referans vermez. HUD yalnızca gözlemler/test sürer. Gerçek uygulama ayrıntıları ve geçici hedefleme/doğuş sınırları `RUN_LAB.md` içinde.
 
 Mod hedefleri ortak çekirdeğin üstünde ayrı politikalar olacaktır: Battle bot aktörleri/eleme/sıralama ve botsuz ilerleme. Şimdiki tek insan ölümü koşuyu bitirir; gelecekte bot ölümü bütün koşuyu bitirmemeli, mod politikası bunu seçmelidir. Zombi brain'i kendi vagon hedef bağlamını kullanır; başka vagondaki oyuncuya global takip yapmaz. Botlar aynı hareket/hasar/atış/onarım kurallarını girdi/karar adaptörüyle kullanacak; Google kayıt SDK'sı bu kurallara bağımlılık olarak girmez.
 
@@ -180,3 +180,5 @@ D24 yan pencereler: sürekli `ShotTransparent` statik sınır yalnız beden/nav 
 - [Unity NavMeshSurface](https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/NavMeshSurface.html): yüzeylerin geometri ve agent türüyle oluşturulması.
 - [Unity Mixing Components](https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/MixingComponents.html): agent/physics/root motion hareket sahipliği.
 - Yerel doğrulama: `Library/PackageCache/com.unity.ai.navigation@134dd6a3b97b/Runtime/{NavMeshSurface,NavMeshLink}.cs`; paket 2.0.14. Library yolları Git kaynağı değildir ve başka makinede hash değişebilir. Webdeki 2.0 serisi belgeleri şu anda 2.0.15'e yönlenir; kullanılan API'ler kurulu pakette ayrıca kontrol edildi.
+
+M6 kuyruk kuralı: dolu kapasite kuyrukta yer tutarak başka vagonu kilitlemez; istek kendi sabit akış durumunda kısa ertelenir. Geçersiz nav/çakışma başka yazılmış çapada sonlu denenir; kapasite doluluğu bu denemeleri tüketmez. Defense biter bitmez çizelge kapanır, sonraki istasyon yeni çizelgeyle başlar. Havuzdan çıkış Instantiate yapmaz; ısınmanın ayrıca kare bütçesi vardır.
