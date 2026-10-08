@@ -108,6 +108,8 @@ Minimum sözleşmeler: `IDamageable.TryApplyDamage(context)`, `Health.TryHeal(am
 
 `WeaponController`: ateş aralığı, mermi, ateş yetkisi ve silah verisi. `HitResolver`: raycast/pellet veya gelecekte sweep yapan projectile. `TargetSelector`: oyuncuda nişan, turrette menzil/görüş, dronda oyuncuya yakın hedef. `WeaponPresentation`: namlu/mermi/çarpma/ses.
 
+M5 uygulamasında bunların karşılığı `HitscanWeapon` + saf `WeaponState/WeaponSpec`, `HitscanResolver`, mevcut `AutoAim` ve kozmetik `ShotTracer/MuzzleFlash` bileşenleridir. Silah runtime'ı Player/Run/Shop modüllerini bilmez. Tanımlar tasarım verisi; her ekipmanın şarjör/yedek/dolum durumu nesneye aittir. D19 sınırlı yedek ve tam/kısmi otomatik dolum uygular. Doğrulama ve savunma/cihaz entegrasyonunun açık sınırları WEAPONS_LAB.md içinde.
+
 Efekt prefabının colliderı tekrar hasar vermez; hitscan sonucu tek otoritedir. Görsel mermi gerçek isabet noktasına doğru oynatılır. Assetteki `HS_ProjectileMover` doğrudan can sisteminin sahibi yapılmaz; adaptör veya ayrı görsel prefab ile kullanılır.
 
 Fiziksel projectile gerekiyorsa hareket boyunca ray/sphere sweep, kendi yaşam süresi ve pool iadesi vardır. Hızlı merminin hedefi atlaması ve eski havuz kimliğine hasar vermesi test edilir.

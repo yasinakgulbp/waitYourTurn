@@ -6,11 +6,11 @@ namespace WaitYourTurn.Player
     public sealed class AutoAim : MonoBehaviour
     {
         [SerializeField] private TargetRegistry registry;
-        [SerializeField] private HitscanPistol pistol;
+        [SerializeField] private HitscanWeapon pistol;
         private HealthComponent target;
         private uint targetLife;
         private float nextSelection;
-        public void Configure(TargetRegistry targets, HitscanPistol gun) { registry = targets; pistol = gun; }
+        public void Configure(TargetRegistry targets, HitscanWeapon gun) { registry = targets; pistol = gun; }
         public void ClearTarget() { target = null; nextSelection = 0; }
         private void Update()
         {

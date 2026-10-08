@@ -17,7 +17,7 @@ namespace WaitYourTurn.Sandbox
         [SerializeField] private PlayerMotor motor;
         [SerializeField] private MoveInput input;
         [SerializeField] private AutoAim aim;
-        [SerializeField] private HitscanPistol pistol;
+        [SerializeField] private HitscanWeapon pistol;
         [SerializeField] private ProximityRepair repair;
         [SerializeField] private EnemyPool enemies;
         [SerializeField] private Renderer doorVisual;
@@ -27,7 +27,7 @@ namespace WaitYourTurn.Sandbox
         private string result = "Move with WASD/arrows or the left touch joystick. Aim/fire/reload are automatic.";
         private MaterialPropertyBlock tint;
         public void Configure(DoorController gate, HealthComponent hero, PlayerMotor movement, MoveInput controls,
-            AutoAim targeting, HitscanPistol gun, ProximityRepair interaction, EnemyPool pool, Renderer visual, LineRenderer line)
+            AutoAim targeting, HitscanWeapon gun, ProximityRepair interaction, EnemyPool pool, Renderer visual, LineRenderer line)
         { door = gate; player = hero; motor = movement; input = controls; aim = targeting; pistol = gun;
             repair = interaction; enemies = pool; doorVisual = visual; trace = line; }
         private void OnEnable() => pistol.Fired += OnShot;

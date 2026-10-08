@@ -56,7 +56,7 @@ namespace WaitYourTurn.Editor
             MoveInput input = hero.AddComponent<MoveInput>();
             PlayerMotor movement = hero.AddComponent<PlayerMotor>(); movement.Configure(input, player, camera);
             TargetRegistry registry = new GameObject("Live target registry").AddComponent<TargetRegistry>();
-            HitscanPistol pistol = hero.AddComponent<HitscanPistol>(); pistol.Configure(player);
+            HitscanWeapon pistol = hero.AddComponent<HitscanWeapon>(); pistol.Configure(player);
             AutoAim aim = hero.AddComponent<AutoAim>(); aim.Configure(registry, pistol);
             ProximityRepair repair = hero.AddComponent<ProximityRepair>(); repair.Configure(door, player);
 
@@ -89,7 +89,7 @@ namespace WaitYourTurn.Editor
                 EditorSceneManager.GetActiveScene().path != ScenePath) return;
             EntryPortal portal = Object.FindFirstObjectByType<EntryPortal>();
             PlayerMotor movement = Object.FindFirstObjectByType<PlayerMotor>();
-            HitscanPistol pistol = Object.FindFirstObjectByType<HitscanPistol>();
+            HitscanWeapon pistol = Object.FindFirstObjectByType<HitscanWeapon>();
             GameplaySandboxController hud = Object.FindFirstObjectByType<GameplaySandboxController>();
             if (portal == null || movement == null || pistol == null || hud == null) return;
             int transparentLayer = EnsureShotLayer();

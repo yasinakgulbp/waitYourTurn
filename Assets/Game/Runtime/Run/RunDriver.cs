@@ -16,7 +16,7 @@ namespace WaitYourTurn.Run
         [SerializeField] private PlayerMotor motor;
         [SerializeField] private MoveInput input;
         [SerializeField] private AutoAim aim;
-        [SerializeField] private HitscanPistol pistol;
+        [SerializeField] private HitscanWeapon pistol;
         [SerializeField] private ProximityRepair repair;
         [SerializeField] private RunTimings timings = new RunTimings();
         [SerializeField] private int seed = 12345;
@@ -28,7 +28,7 @@ namespace WaitYourTurn.Run
         public WagonRuntime CurrentWagon { get; private set; }
         public WagonRuntime[] Wagons => wagons;
         public HealthComponent Player => player;
-        public HitscanPistol Pistol => pistol;
+        public HitscanWeapon Weapon => pistol;
         public ProximityRepair Repair => repair;
         public int Assignments { get; private set; }
         public bool ControlsAllowed { get; set; } = true;
@@ -36,7 +36,7 @@ namespace WaitYourTurn.Run
         public string Failure { get; private set; }
         public event Action<WagonRuntime> Assigned;
         public void Configure(WagonRuntime[] coaches, HealthComponent hero, PlayerMotor movement, MoveInput controls,
-            AutoAim targeting, HitscanPistol gun, ProximityRepair interaction)
+            AutoAim targeting, HitscanWeapon gun, ProximityRepair interaction)
         { wagons = coaches; player = hero; motor = movement; input = controls; aim = targeting; pistol = gun; repair = interaction; }
         private void OnEnable() => player.Died += OnDeath;
         private void OnDisable()
@@ -90,6 +90,7 @@ namespace WaitYourTurn.Run
         }
         private void SetGate(bool closed)
         {
+            if (pistol != null) pistol.Paused = closed;
             if (gateClosed == closed) return;
             gateClosed = closed;
             if (closed)

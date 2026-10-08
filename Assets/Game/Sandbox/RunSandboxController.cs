@@ -23,11 +23,12 @@ namespace WaitYourTurn.Sandbox
         private void OnGUI()
         {
             if (run.Flow == null || run.CurrentWagon == null) return;
-            Rect panel = new Rect(12, 12, 455, 235 + run.Wagons.Length * 25);
+            Rect panel = new Rect(12, 12, 455, 290 + run.Wagons.Length * 25);
             run.Player.GetComponent<MoveInput>().BlockedScreenArea = panel;
             GUILayout.BeginArea(panel, GUI.skin.box);
             GUILayout.Label($"{run.Wagons.Length} WAGONS | STATION {run.Flow.Station} | {run.CurrentWagon.Id} | {run.Flow.Phase} {run.Flow.Remaining:F1}s");
-            GUILayout.Label($"HP {run.Player.Current}/{run.Player.Maximum} | Ammo {run.Pistol.Rounds}/8 {(run.Pistol.Reloading ? "RELOADING" : "")}");
+            HitscanWeapon weapon = run.Weapon;
+            GUILayout.Label($"HP {run.Player.Current}/{run.Player.Maximum} | {weapon.DisplayName} {weapon.Rounds}/{weapon.State.Spec.MagazineSize} + {(weapon.State.Spec.InfiniteReserve ? "INF" : weapon.Reserve.ToString())} {(weapon.Reloading ? "RELOADING" : weapon.State.Empty ? "EMPTY" : "")}");
             foreach (WagonRuntime wagon in run.Wagons)
                 GUILayout.Label($"{wagon.Id}: door {wagon.Doors[0].Durability.Current}/{wagon.Doors[0].Durability.Maximum}, enemies {wagon.Enemies.Active.Count}/{wagon.Enemies.CreatedCount}");
             GUILayout.Label($"Repair {run.Repair.Progress * 100:F0}% | Train speed {presentation.Speed:F1} | Assignments {run.Assignments}");
@@ -36,6 +37,11 @@ namespace WaitYourTurn.Sandbox
             if (GUILayout.Button("Restart run")) { spawner.ResetSchedule(); run.Restart(); }
             if (GUILayout.Button("+3 current wagon")) for (int i = 0; i < 3; i++) if (run.Flow.Phase == RunPhase.Defense) run.CurrentWagon.SpawnOutside(i);
             GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            for (int i = 0; i < weapon.WeaponCount; i++)
+                if (GUILayout.Button(weapon.WeaponName(i))) { weapon.Equip(i); run.Player.GetComponent<AutoAim>().ClearTarget(); }
+            GUILayout.EndHorizontal();
+            if (weapon.WeaponCount > 1 && GUILayout.Button("Check all weapons / glass / walls")) StartCoroutine(CheckWeapons());
             if (GUILayout.Button("Check 10 fast station transitions")) StartCoroutine(CheckTransitions());
             if (GUILayout.Button("Check bounded crowd (6 seconds)")) StartCoroutine(CheckCrowd());
             if (GUILayout.Button("Kill player (visible gameplay)"))
@@ -54,6 +60,51 @@ namespace WaitYourTurn.Sandbox
             if (run.Flow.Phase == RunPhase.GameOver)
                 GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2, 250, 60), "KOŞU BİTTİ — Restart run");
         }
+        private IEnumerator CheckWeapons()
+        {
+            checking = true; spawner.enabled = false; run.ControlsAllowed = run.AimAllowed = false;
+            run.Restart(new RunTimings { initialApproach = 300 }); run.Player.Invulnerable = true;
+            yield return null;
+            WagonRuntime wagon = run.CurrentWagon; HitscanWeapon weapon = run.Weapon;
+            var motor = run.Player.GetComponent<PlayerMotor>(); var door = wagon.Doors[0];
+            Vector3 Point(float x, float z) => wagon.transform.TransformPoint(new Vector3(x, .05f, z));
+            if (!wagon.Enemies.TrySpawn(Point(0, -4))) { Finish(false, "Weapon fixture spawn failed.", "Weapons"); yield break; }
+            EnemyBrain enemy = wagon.Enemies.Active[0]; enemy.SetPaused(true);
+            enemy.Health.ResetForSpawn(1000, Team.Enemy);
+            float doorHealth = door.Durability.Current;
+            for (int index = 0; index < weapon.WeaponCount; index++)
+            {
+                motor.Place(Point(0, 2.2f));
+                if (!enemy.GetComponent<WaitYourTurn.Navigation.AgentMotor>().TryPlace(Point(0, -4)))
+                { Finish(false, "Window target placement failed.", "Weapons"); yield break; }
+                Physics.SyncTransforms(); weapon.ResetWeapon(); weapon.Equip(index);
+                string name = weapon.DisplayName; float before = enemy.Health.Current;
+                int traces = 0; Vector3 centerImpact = default;
+                void Observe(ShotNotice shot) { traces++; if (shot.Pellet == 0) centerImpact = shot.End; }
+                weapon.Fired += Observe;
+                bool fired = weapon.HasSight(enemy.Health) && weapon.TryFire(enemy.transform.position + Vector3.up * .85f - weapon.Muzzle);
+                weapon.Fired -= Observe;
+                if (!fired || enemy.Health.Current >= before || traces != weapon.State.Spec.Pellets ||
+                    weapon.Rounds != weapon.State.Spec.MagazineSize - 1 || door.Durability.Current != doorHealth || door.Portal.IsOpen)
+                { Finish(false, name + ": intact window shot/pellet/ammo rule failed.", "Weapons"); yield break; }
+
+                motor.Place(Point(3, 2.2f));
+                if (!enemy.GetComponent<WaitYourTurn.Navigation.AgentMotor>().TryPlace(Point(3, -4)))
+                { Finish(false, "Wall target placement failed.", "Weapons"); yield break; }
+                Physics.SyncTransforms(); weapon.ResetWeapon(); weapon.Equip(index); before = enemy.Health.Current;
+                if (weapon.HasSight(enemy.Health) || !weapon.TryFire(enemy.transform.position + Vector3.up * .85f - weapon.Muzzle) || enemy.Health.Current != before)
+                { Finish(false, name + ": wall leaked damage.", "Weapons"); yield break; }
+
+                motor.Place(Point(0, 2.2f)); Physics.SyncTransforms(); weapon.ResetWeapon(); weapon.Equip(index);
+                weapon.Fired += Observe; weapon.TryFire(door.Portal.transform.position + Vector3.up * .35f - weapon.Muzzle); weapon.Fired -= Observe;
+                if (Mathf.Abs(centerImpact.z - door.Portal.transform.position.z) > .2f || centerImpact.y > .7f || door.Durability.Current != doorHealth)
+                { Finish(false, name + ": lower panel failed.", "Weapons"); yield break; }
+                yield return null;
+            }
+            // Restore the pooled template's normal health before returning it.
+            enemy.Health.ResetForSpawn(10, Team.Enemy);
+            Finish(true, $"All {weapon.WeaponCount} weapon profiles: intact glass hits, wall/lower-panel obstruction, pellet notices and one-round-per-trigger. Cosmetic flash/traces active; doors unchanged.", "Weapons");
+        }
         private IEnumerator CheckTransitions()
         {
             checking = true; spawner.enabled = false; run.ControlsAllowed = run.AimAllowed = false;
@@ -61,7 +112,9 @@ namespace WaitYourTurn.Sandbox
                 departureWarning = .2f, departure = .2f, fadeOut = .2f, hidden = .4f, fadeIn = .2f });
             run.Player.TryApplyDamage(new DamageContext(15, default, Team.Enemy, 2, run.Player.LifeVersion));
             run.Player.Invulnerable = true; // Fixture isolation: real combat continues in the normal scene.
-            run.Pistol.TryFire(Vector3.forward);
+            if (run.Weapon.WeaponCount > 1) run.Weapon.Equip(1);
+            run.Weapon.TryFire(Vector3.up);
+            int equipped = run.Weapon.EquippedIndex, reserve = run.Weapon.Reserve;
             int count = run.Wagons.Length;
             var survivors = new EnemyBrain[count]; var health = new float[count]; var lives = new uint[count];
             var frozenEnemies = new Vector3[count]; var visited = new HashSet<string>();
@@ -92,13 +145,14 @@ namespace WaitYourTurn.Sandbox
             Vector3 cameraOffset = presentation.FollowOffset;
             int lastAssignment = -1;
             uint playerLife = run.Player.LifeVersion;
-            int ammo = run.Pistol.Rounds; ulong hitId = 10;
+            int ammo = run.Weapon.Rounds; ulong hitId = 10;
             bool wasPaused = false; float frozenTime = 0, repairProgress = 0;
             float deadline = Time.realtimeSinceStartup + 35;
             while (run.Flow.Station < 11 && Time.realtimeSinceStartup < deadline)
             {
                 if (run.Flow.Phase == RunPhase.Faulted) { Finish(false, run.Failure); yield break; }
-                if (run.Player.Current != 85 || run.Player.LifeVersion != playerLife || run.Pistol.Rounds != ammo)
+                if (run.Player.Current != 85 || run.Player.LifeVersion != playerLife || run.Weapon.Rounds != ammo ||
+                    run.Weapon.EquippedIndex != equipped || run.Weapon.Reserve != reserve)
                 { Finish(false, "Player/ammo/door state reset between phases."); yield break; }
                 visited.Add(run.CurrentWagon.Id);
                 Vector3 center = run.Player.transform.position + Vector3.up * .85f;
@@ -141,7 +195,7 @@ namespace WaitYourTurn.Sandbox
             yield return new WaitForSecondsRealtime(.2f);
             if (run.Flow.Phase != RunPhase.GameOver || run.Player.IsAlive || run.Assignments != 10 || run.Flow.Station != 11)
             { Finish(false, "Death resumed the run or reset a life."); yield break; }
-            Finish(true, $"10 transitions, all {count} wagons visited: HP/ammo/independent doors persist; camera/player binding correct; dark clock/motion/repair/damage pause; inside/threshold survivors retained, outside cleanup has no kill; {created} pooled bodies; terminal death.");
+            Finish(true, $"10 transitions, all {count} wagons visited: HP/equipped weapon/magazine/reserve/independent doors persist; camera/player binding correct; dark clock/motion/repair/damage pause; inside/threshold survivors retained, outside cleanup has no kill; {created} pooled bodies; terminal death.");
         }
 
         private IEnumerator CheckCrowd()
@@ -192,6 +246,8 @@ namespace WaitYourTurn.Sandbox
 #endif
             if (passed) Debug.Log("[RunSandbox] " + result); else Debug.LogError("[RunSandbox] " + result);
             checking = false; run.Player.Invulnerable = false; run.ControlsAllowed = run.AimAllowed = true;
+            if (suffix == "Weapons") foreach (WagonRuntime wagon in run.Wagons)
+                foreach (EnemyBrain enemy in wagon.Enemies.Active) enemy.Health.ResetForSpawn(10, Team.Enemy);
             spawner.ResetSchedule(); spawner.enabled = true; run.Restart();
         }
         [Serializable] private sealed class Report { public bool passed; public int station, assignments; public string message, platform, utc; }

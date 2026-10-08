@@ -99,7 +99,7 @@ namespace WaitYourTurn.Editor
                 wagons[i] = wagon;
             }
             run.Configure(wagons, player, player.GetComponent<PlayerMotor>(), player.GetComponent<MoveInput>(),
-                player.GetComponent<AutoAim>(), player.GetComponent<HitscanPistol>(), player.GetComponent<ProximityRepair>());
+                player.GetComponent<AutoAim>(), player.GetComponent<HitscanWeapon>(), player.GetComponent<ProximityRepair>());
             EnsureWagonNavigation();
             EditorSceneManager.SaveScene(scene, TrainScenePath); AssetDatabase.SaveAssets();
             Debug.Log("[TrainSandbox] Created five wagons from layout data; existing run flow reused.");
@@ -142,12 +142,12 @@ namespace WaitYourTurn.Editor
 
             RunDriver run = new GameObject("Run flow - single phase authority").AddComponent<RunDriver>();
             run.Configure(new[] { first, second }, player, player.GetComponent<PlayerMotor>(), player.GetComponent<MoveInput>(),
-                player.GetComponent<AutoAim>(), player.GetComponent<HitscanPistol>(), player.GetComponent<ProximityRepair>());
+                player.GetComponent<AutoAim>(), player.GetComponent<HitscanWeapon>(), player.GetComponent<ProximityRepair>());
             StationSpawner spawner = new GameObject("Bounded station spawn adapter").AddComponent<StationSpawner>(); spawner.Configure(run);
             RunPresentation presentation = new GameObject("Train journey presentation").AddComponent<RunPresentation>();
             Transform visualEnvironment = GameObject.Find("Moving Visual Environment (no physics)").transform;
             presentation.Configure(run, visualEnvironment, Object.FindAnyObjectByType<Camera>());
-            player.gameObject.AddComponent<ShotTracer>().Configure(player.GetComponent<HitscanPistol>(), Object.FindAnyObjectByType<LineRenderer>());
+            player.gameObject.AddComponent<ShotTracer>().Configure(player.GetComponent<HitscanWeapon>(), Object.FindAnyObjectByType<LineRenderer>());
             new GameObject("Run lab HUD and acceptance fixture").AddComponent<RunSandboxController>().Configure(run, spawner, presentation);
             EnsureWagonNavigation();
             EditorSceneManager.SaveScene(scene, ScenePath); AssetDatabase.SaveAssets();

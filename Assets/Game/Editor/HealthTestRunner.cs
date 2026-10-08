@@ -13,6 +13,9 @@ namespace WaitYourTurn.Editor
         [MenuItem("Wait Your Turn/Run/Run Flow Tests")]
         public static void RunFlowTests() => Execute("WaitYourTurn.Run.Tests", "RunFlowTests");
 
+        [MenuItem("Wait Your Turn/Weapons/Run Weapon Tests")]
+        public static void RunWeaponTests() => Execute("WaitYourTurn.Weapon.Tests", "WeaponTests");
+
         private static void Execute(string assembly, string reportName)
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;

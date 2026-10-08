@@ -24,6 +24,7 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | D16 | Oyuncu ilk kapsamda atandığı vagondan dışarı yürüyemez; kapı kırılması bu izni değiştirmez | Kullanıcı M3 değerlendirmesinde seçti. Hareket alanı ayrı ve isteğe bağlıdır; ileride istasyona inme görevi bu sınırı kaldırabilir/değiştirebilir. Zombi girişini veya atışı engelleyen ek fizik duvarı kurulmaz. |
 | D17 | Kayıt hedefi mevcut koşuya devam, ölümde yeni koşu; kalıcı geliştirmeler ayrıca tasarlanır | Kullanıcının ilk seçimi; ardından sağlayıcı/ayrıntılarda emin olmadığını belirtti. Google Play Games Saved Games adaydır, kesin sağlayıcı seçilmedi ve M4'te disk/bulut entegrasyonu yapılmaz. |
 | D18 | Ortak temel üzerinde botlu hayatta kalma yarışı (Battle) ve botsuz tek oyunculu ilerleme/hikâye modu hedeflenir | Kullanıcının yeni vizyonu: tren giriş sunumu, nickli komşu vagon rakipleri, son hayatta kalan/sıralama; en az 3 bot beceri profili. Gerçek ağ oyuncuları bu talepten çıkarılmaz. M4a önce ortak döngüyü kanıtlar; mod/bot aşaması ayrı kurulur. |
+| D19 | Tabanca sınırsız yedek; hafif makineli, tüfek ve pompalı toplam sınırlı mermi kullanır | Kullanıcı M5'te seçti (2026-10-08). Şarjör bitince yedek varsa otomatik doldurma; son dolum kısmi olabilir. Yeni silah alma/mermi ürünü M7'de tasarlanır; silah veya vagon değiştirmek mermi vermez. |
 
 ## Teknik öneriler
 
@@ -57,7 +58,7 @@ Bu liste ilk navigasyon/hasar denemesini engellemez. İlgili özellik başlamada
 | Savunmaların canı ve patlaması | Zombiler turret/drona zarar verebilir mi? Turretin mermi bitiş patlaması sadece efekt mi? Dron patlaması duvar/kapıya nasıl etki eder? | M7 |
 | Turret sınırının kapsamı | Her türden 2 adet örneği: oyuncu başına mı vagon başına mı? Öneri vagon/slot başına, koşu toplamı ayrıca sınırlı. | M7 |
 | Mobil kontrol hissi | Şema D13 ile seçildi; sol joystick ve otomatik ateşin ergonomisi kullanıcı/cihaz denemesinde değerlendirilir. | M3 değerlendirmesi |
-| Silah çeşitlerinin mermisi | İlk tabanca D14 ile seçildi; diğer türlerin mermi/doldurma ve satın alma ayrıntıları sonra gelir. | M5/M7 |
+| Silah çeşitlerinin mermisi | D19 ile sınırlı yedek seçildi; satın alma, tekrar silah alma ve mermi ürünü ayrıntıları açık. | M7 |
 | Mağaza erişimi | Savaşta açık mı, yalnızca yolculukta mı? Öneri gerçek zamanı durdurmayan kolay mobil UI. | M7 |
 | Para toplama | Kullanıcı para toplama istedi; ilk öneri ödülü otomatik cüzdana yazmak. Görsel pickup/yerden toplama tercihi açık. | M7 |
 | Koşu devamı / metagelişim | Hangi kazanımların kaldığı ve devam beklentisi erken kâğıt üzerinde seçilir; disk kaydı ihtiyaç kadar uygulanır. | M4a öncesi tasarım, M8 uygulama |
