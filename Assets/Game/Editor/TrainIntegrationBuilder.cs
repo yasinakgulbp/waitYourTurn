@@ -216,6 +216,10 @@ namespace WaitYourTurn.Editor
             hero.GetComponent<PlayerMotor>().SetMovementArea(wagons[initial].Area);
             var spawner = new GameObject("Bounded station spawner").AddComponent<StationSpawner>(); spawner.Configure(run);
             spawner.ConfigurePrograms(StationContentBuilder.EnsurePrograms());
+            hero.GetComponent<HitscanWeapon>().ConfigureInventory(true);
+            var economy = new GameObject("Run economy - owner wallet and current wagon shop").AddComponent<RunEconomy>();
+            economy.Configure(run, ShopContentBuilder.EnsureCatalog());
+            new GameObject("Replaceable shop HUD").AddComponent<ShopHud>().Configure(economy, hero.GetComponent<MoveInput>());
             var presentation = new GameObject("Journey presentation - single camera owner").AddComponent<RunPresentation>(); presentation.Configure(run, track, camera); presentation.ConfigureJourney(station, scenery); presentation.ConfigurePlayerFollow(true);
             presentation.ConfigureFraming(new Bounds(new Vector3(0, .4f, 0), new Vector3(layouts.Max(x => x.length) + 3, 2.4f, maxWidth + 4)));
             Bounds previewVolume = presentation.FramingVolume; previewVolume.Expand(new Vector3(1.3f, 0, 0));
@@ -234,6 +238,7 @@ namespace WaitYourTurn.Editor
             }
             new GameObject("Integration HUD and checks").AddComponent<TrainIntegrationController>().Configure(run, spawner, presentation);
             new GameObject("Spawn acceptance - F11").AddComponent<SpawnAcceptance>().Configure(run, spawner, registry);
+            new GameObject("Economy acceptance - F9").AddComponent<EconomyAcceptance>().Configure(run, economy, spawner);
             EditorSceneManager.SaveScene(scene, ScenePath); AssetDatabase.SaveAssets(); Selection.activeGameObject = hero;
             ExportModelGuide(wagons);
             Debug.Log($"[TrainIntegration] Built {count} scale-reference wagons; doors {string.Join(",", wagons.Select(w => w.Doors.Length))}; bilateral geometry freshly baked.");

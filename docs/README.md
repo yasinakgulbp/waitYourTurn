@@ -4,7 +4,7 @@ Güncelleme: 2026-10-08. Doküman dili Türkçe; kod, tip adları ve commit mesa
 
 Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştirmek; yeni mekanikler eklenirken önceki mekaniklerin korunmasını sağlamak.
 
-**TrainSandbox nihai oyun değildir.** İlk prototip yerleşim/oynanış referansıdır; güncel fiziksel oran ve kamera hedefi D23 kullanıcı görselleridir. Yeni geliştirmeden önce [görsel hedef ve entegrasyon denetimi](VISION_AND_INTEGRATION.md) ile [güncel ölçek](VISUAL_SCALE.md) okunur. `TrainIntegration` beş vagonlu PC teknik kabulünü geçti. Bağlama kuralları, test kanıtı ve açık değerlendirmeler [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md) içindedir. M6 spawn/tür/bütçe sistemi PC kabulüne ulaştı; güncel ayarlar ve doğrulama sınırları [SPAWNING.md](SPAWNING.md) içindedir. Sıradaki uygulama M7a cüzdan/ödül/mağaza; Android kalabalık profili açık kalır.
+**TrainSandbox nihai oyun değildir.** İlk prototip yerleşim/oynanış referansıdır; güncel fiziksel oran ve kamera hedefi D23 kullanıcı görselleridir. Yeni geliştirmeden önce [görsel hedef ve entegrasyon denetimi](VISION_AND_INTEGRATION.md) ile [güncel ölçek](VISUAL_SCALE.md) okunur. `TrainIntegration` beş vagonlu PC teknik kabulünü geçti. Bağlama kuralları, test kanıtı ve açık değerlendirmeler [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md) içindedir. M6 spawn/tür/bütçe ve M7a cüzdan/ödül/mağaza PC teknik kabulüne ulaştı; güncel ayarlar ve sınırlar [SPAWNING.md](SPAWNING.md) ve [ECONOMY.md](ECONOMY.md) içindedir. Sıradaki uygulama M7b sabit turret; Android kalabalık profili/mağaza ergonomisi açık kalır.
 
 **D23 güncel görsel/ölçek hedefi:** kullanıcının üç yeni referansı eski prototipteki oranları düzeltir. Şimdiki TrainIntegration sade 12 × 4,2 vagon, yönü okunabilen kapsüller, 4–6 kapı varyantları ve ekran oranına uyarlanan perspektif kullanır. Güncel ölçü/model bağlama ve referanslar [VISUAL_SCALE.md](VISUAL_SCALE.md) içindedir; ilk prefabın oranları ve altı-kapı zorunluluğu artık hedef değildir.
 
@@ -24,6 +24,8 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 12. [Gerçek vagon entegrasyonu](TRAIN_INTEGRATION.md): sahne/kurulum, geometri sahipliği, iki taraflı saldırı ve PC kabulü; ilk M6a geçmişi ayrıca korunur.
 13. [Güncel görsel ölçek](VISUAL_SCALE.md): üç kullanıcı referansı, fiziksel boyutlar, 4–6 kapı, model bağlama ve ekran uyumu.
 14. [Model üretimi ve bağlama sözleşmesi](MODEL_CONTRACT.md): pivot/eksen/birimler, net kapı-pencere açıklıkları, metal hacimleri, kesit görünümü ve sahneden üretilen ölçü CSV'si. D24 ile yan pencerelerden ateş edilir, metal çerçevelerden edilmez.
+
+15. [Ekonomi ve mağaza](ECONOMY.md): gerçek ölüm ödülü, sahiplik/yaşam kuşağı, satın alma/refill/yerel onarım, Inspector ayarları ve PC kanıtı.
 
 ## Mevcut durum
 
@@ -92,3 +94,6 @@ M6 son PC kanıtı: 15:33:53 UTC 26/26 kural/yolculuk testi; 15:35:13 UTC 30 ist
 
 
 2026-10-08 pencere/hız düzeltmesi: bütün uç köşeler metal; ara camlar %5–9 daraltıldı (çerçeve/dikme 0,32/0,18 m). Normal/hızlı/dayanıklı hızları 2,1/3,0/1,45 m/sn. Model sözleşmesi ve ölçü CSV'si yenilendi. 16:00:18 UTC F10 PASS: 26 yan camda dört silah, metal çerçeveler ve her vagonun dört uç bölümünde düz/eğik raylar; beden/nav sınırı, kapılar ve 10 geçiş korunur. Kısa kanıt: docs/generated/window-refinement-pc-acceptance.txt. Android bu düzeltmede tekrar ölçülmedi. Sıradaki aşama M7a.
+
+
+2026-10-08 M7a: saf Wallet/ShopService/KillRewards, RunEconomy bağlayıcısı ve değiştirilebilir ShopHud TrainIntegration'a bağlandı. D25 savaşta gerçek zamanlı mağaza, D26 ilk silah açma/tekrar mermi tamamlama uygulanır. 16:18:42 UTC 11 ekonomi, 16:19:17 UTC 15 silah testi PASS. 16:25:44 UTC F9 gerçek öldürme/tek ödül, iyileşme/yerel onarım/silah-refill, 10 atamada kalıcılık, eski bağlam/karanlık/ölüm reddi ve Restart sıfırlaması PASS. 16:26:30 UTC F10 önceki 26 cam/dört silah/kapı/onarım/10 geçiş/60 beden kabulü PASS; Play Console 0 hata/0 uyarı. Ayarlar ve bağımlılıklar [ECONOMY.md](ECONOMY.md), kanıt [generated/m7a-pc-acceptance.txt](generated/m7a-pc-acceptance.txt). Fiyatlar geçici; Android ergonomisi/uzun oturum, reklam-IAP kararları ve kayıt açık. Sıradaki M7b sabit turret; ardından M7c dron ve Mod/Bot.

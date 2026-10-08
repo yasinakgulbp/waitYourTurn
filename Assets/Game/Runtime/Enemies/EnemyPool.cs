@@ -29,6 +29,7 @@ namespace WaitYourTurn.Enemies
         public int Capacity => capacity;
         public bool CanRent => available.Count > 0;
         public int DeathCount { get; private set; }
+        public event System.Action<DeathNotice, int> Killed;
         public int AgentTypeId => template.AgentTypeId;
         public int AreaMask => template.AreaMask;
         public void SetScope(string id, bool hasPlayer)
@@ -53,6 +54,7 @@ namespace WaitYourTurn.Enemies
             enemy.name = "Pooled Zombie " + (all.Count + 1);
             enemy.gameObject.SetActive(false);
             enemy.PrepareWarmup();
+            enemy.Health.Died += OnEnemyDeath;
             all.Add(enemy); available.Push(enemy); return true;
         }
         public bool TrySpawn(Vector3 point, EnemyProfile profile = null, int station = 0)
@@ -88,6 +90,13 @@ namespace WaitYourTurn.Enemies
                 ReturnAt(i);
             }
         }
+        private void OnEnemyDeath(DeathNotice death)
+        {
+            // The health notification still owns this life; profile/credit are captured before pool return.
+            foreach (var enemy in active)
+                if (enemy.Health.Identity.RuntimeId == death.Target.RuntimeId)
+                { Killed?.Invoke(death, enemy.Profile != null ? enemy.Profile.reward : 0); return; }
+        }
         private void ReturnAt(int index)
         {
             EnemyBrain enemy = active[index];
@@ -111,6 +120,7 @@ namespace WaitYourTurn.Enemies
         }
         private void OnDestroy()
         {
+            foreach (var enemy in all) if (enemy != null) enemy.Health.Died -= OnEnemyDeath;
             if (registry == null) return;
             foreach (EnemyBrain enemy in active) if (enemy != null) registry.Unregister(enemy.Health);
         }

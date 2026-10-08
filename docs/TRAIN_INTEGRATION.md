@@ -45,4 +45,10 @@ Henüz doğrulanmayanlar: bu yeni birleşimin Android performansı/uzun oturumu,
 
 `StationSpawner` artık `StationDefinition` programlarını uygular; `EnemyPool` aynı bounded factory olarak kullanılır. Inspector program listesi, üç ortak zombi profili, global/vagon/kare sınırı, kontrollü ısınma ve sonlu konum denemesi bu sahneye bağlıdır. Eski lab fallback’i korunur. Pencere sayısı doğuş/kapı sayısı değildir; aynı `WagonGeometry` çapaları kullanılır. Ayrıntı ve PC kanıtı [SPAWNING.md](SPAWNING.md) içindedir.
 
-Android kalabalık profili ve gerçek uzun oturum hâlâ açık. Açık kapıya taktik yeniden yönelme ayrı bir davranış işidir; mevcut en yakın erişilebilir kendi-vagon girişi seçimiyle karıştırılmaz. Sonraki uygulama M7a ekonomi/mağaza, ardından turret/dron ve botlardır.
+Android kalabalık profili ve gerçek uzun oturum hâlâ açık. Açık kapıya taktik yeniden yönelme ayrı bir davranış işidir; mevcut en yakın erişilebilir kendi-vagon girişi seçimiyle karıştırılmaz. M7a ekonomi/mağaza aşağıda bağlıdır; sıradaki uygulama turret, ardından dron ve botlardır.
+
+## M7a — Ekonomi bağlama
+
+Builder `RunEconomy` + `RunShop.asset` ve değiştirilebilir `ShopHud` ekler. Oyuncunun `HitscanWeapon.startingWeaponOnly` ayarı açıktır: ilk koşuda yalnız tabanca, diğer üç silah satın alınarak açılır. Eski izole silah labları dört silahı denemek için önceki varsayılanı korur. F10 testi geçici dört-silah erişimini sonunda geri kapatır ve yeni normal koşuya döner.
+
+Sağ üst **Shop** paneli gerçek zamanda çalışır. Zombi ödülleri cüzdana otomatik yazılır; ürünler can, mevcut vagon kapıları, SMG/tüfek/pompalı açma veya mermi tamamlamadır. Karanlık/ölümde panel kapanır; geometri, kamera ve nav sahipliği değişmez. **F9** ekonomi sahne kabulü; **F10** önceki birleşik çekirdek; **F11** spawn kabulüdür. Ayrıntı/ayarlar [ECONOMY.md](ECONOMY.md), güncel kanıt [generated/m7a-pc-acceptance.txt](generated/m7a-pc-acceptance.txt). Bu arayüz test sunumudur; nihai mobil mağaza veya cihaz ergonomisi kabulü değildir.

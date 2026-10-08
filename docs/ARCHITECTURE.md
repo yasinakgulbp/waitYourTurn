@@ -142,7 +142,7 @@ D23 ile fiziksel authoring `WagonLayoutDefinition` varlıklarından gelir: gövd
 
 M6a uygulamasında `WagonGeometry` (Train assembly) gerçek yerel iç hacmi, kapı listesini, istasyon doğuş çapalarını ve güvenli iç adayları taşır; Player/Enemies/Run bağımlılığı yoktur. `EnemyPool` doğuşta aynı taraftaki erişilebilir kendi-vagon girişini yeniden kullanılan NavMeshPath ile seçer. `EnemyBrain` üyelikte bütün hacmi, eşik güvenliğinde tüm kapıları kontrol eder; portal yarı düzlemi yalnız eski tek-kapılı lab fallback'idir. `WagonRuntime` geometri çapalarını kullanır. `MovementArea` oyuncunun kaldırılabilir sınır kuralı olarak ayrı kalır. Platformlar kesintisiz ortak NavMesh'tir; sahiplik WagonId/geometri verisidir. Sabit collider/nav ile hareketli sunum ayrıdır. Kamera X takibini yalnız RunPresentation sürer. Sahne bağlama/kurulum ve kanıt: [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md).
 
-`SpawnDirector`/`EnemyFactory` sorumluluklarının M6 karşılığı `StationSpawner` + saf `SpawnSchedule` ve mevcut `EnemyPool`’dur; ikinci bir framework eklenmedi. `StationDefinition` zaman/tür/vagon/adet/limit verisini, `EnemyProfile` ortak brain’in can/hız/saldırı ayarını taşır. Yaşam kuşağı `Health.LifeVersion`, sahiplik `WagonId`, profil ve doğuş istasyonu havuz çıkışında atanır. Etap çarpanları ve ödül sahipliği gereken M7/M8 işi olarak ayrıca bağlanır; mevcut olmayan bir `SpawnContext` sınıfı varmış sayılmaz. Ayrıntı [SPAWNING.md](SPAWNING.md).
+`SpawnDirector`/`EnemyFactory` sorumluluklarının M6 karşılığı `StationSpawner` + saf `SpawnSchedule` ve mevcut `EnemyPool`’dur; ikinci bir framework eklenmedi. `StationDefinition` zaman/tür/vagon/adet/limit verisini, `EnemyProfile` ortak brain’in can/hız/saldırı ayarını taşır. Yaşam kuşağı `Health.LifeVersion`, sahiplik `WagonId`, profil ve doğuş istasyonu havuz çıkışında atanır. Ödül sahipliği M7a RunEconomy/KillRewards üzerinden bağlanır; etap çarpanları M8 denge işidir; mevcut olmayan bir `SpawnContext` sınıfı varmış sayılmaz. Ayrıntı [SPAWNING.md](SPAWNING.md).
 
 Kurulum sırası: veriyi doğrula → uygun spawn/rota adayını bul → canlı sınırı kontrol et → havuzdan al → tüm durumu sıfırla → nav zemine yerleştir → kayıt/aktivasyon. NavMesh'e uygun olmayan nokta sınırlı sayıda yeniden denenir; sonsuz deneme veya duvarın ötesindeki en yakın polygona rastgele atama yapılmaz.
 
@@ -168,7 +168,11 @@ Kararlaştırıldı: karanlık geçişte oynanış durur, görünür yolculukta 
 
 ## Ekonomi işlemi
 
-`ShopService` satın alma önkoşullarını ve fiyatı doğrular; ürünü uygular ve parayı tek işlemde düşer. Çift dokunma/tekrar callback için işlem kimliği kullanılır. Slot rezervasyonu veya uygulama başarısızsa işlem geri alınır. Para tam sayıdır, negatif olamaz.
+M7a'da saf `WaitYourTurn.Economy` assembly kuruldu: `Wallet`, `ShopService`, `KillRewards`; yalnız Combat kimlik/ölüm verisine bağımlıdır. `RunEconomy` koşu katmanında havuz ölüm sinyallerini cüzdana, mağaza ürünlerini mevcut Player/Door/HitscanWeapon API'lerine bağlar. Enemy/Combat ekonomi veya UI bilmez. `ShopHud` değiştirilebilir Sandbox sunumudur; kapalıyken çekirdek çalışır.
+
+`ShopService` fiyat/ürün, güncel atama bağlamı ve monoton istek kimliğini doğrular. Para rezerve edilir; senkron ürün uygulaması başarılıysa düşer, başarısızlık/istisnada rezervasyon bırakılır. Adaptörün false döndürmesi hiçbir etki uygulamadığı anlamına gelir; keyfi kısmi değişikliklerin otomatik geri alınması vaat edilmez. Başarılı satın alımlar arasında ayarlanabilir kısa bekleme çift dokunmayı sınırlar. Para tam sayıdır, negatif olamaz. Ödül geçmişi her havuz bedeninin son yaşam kuşağıyla sınırlıdır; tüm öldürmeler biriktirilmez.
+
+Savaşta mağaza oyunu durdurmaz; karanlık/ölümde kapanır. Yeni vagon ataması eski paneli geçersiz kılar. İlk silah alımı açıp doldurur, tekrar alım eksik mermiyi tamamlar; atış beklemesi korunur. Inspector ayarları ve kabul kanıtı [ECONOMY.md](ECONOMY.md) içinde.
 
 Toplu kapı onarımı yalnızca işlem anındaki oyuncu vagonunda çalışır. Tam can, dolu slot, sınır dolması ve yetersiz para durumunda ürün verilmez/para çekilmez. Gerçek para IAP, bu cüzdana doğrudan callback ile yazılmaz; sonraki aşamada doğrulanmış ürün teslim katmanı kullanılır.
 

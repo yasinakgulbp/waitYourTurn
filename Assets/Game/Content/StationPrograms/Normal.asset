@@ -19,4 +19,5 @@ MonoBehaviour:
   attackInterval: 1
   windup: 0.25
   range: 1.6
+  reward: 8
   blockoutTint: {r: 0.68, g: 0.39, b: 0.27, a: 1}

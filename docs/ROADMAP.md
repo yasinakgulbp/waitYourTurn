@@ -23,7 +23,7 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 | M5 | Mobil kontrolü iyileştirme ve silah çeşitliliği | M2, M4b | PC teknik parça PASS: 13 silah testi, dört profil cam/duvar/alt panel kontrolü ve sınırlı mermili 10/10 vagon geçişi. D19 uygulanır; mevcut sol kontrol korunur. Kullanıcı/cihaz değerlendirmesi açık. WEAPONS_LAB.md |
 | M6a | Hedef vagon/kamera ve iki taraflı çok kapı entegrasyonu | M3–M5 temel kuralları | İlk altı-kapılı entegrasyon PASS. D23 yeni oran/kapsül/4–6 kapı revizyonu da beş-vagonda PASS: 10 geçiş, durum kalıcılığı ve 60 düşman sınırı. 38 can/onarım/geometri/yerleşim + 15 yolculuk/kamera testi PASS; 16:9/4:3 Editor kadrajı görüldü. Kullanıcı his ve Android değerlendirmesi açık. VISUAL_SCALE.md, TRAIN_INTEGRATION.md |
 | M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M6a kabulü | PC teknik kabulü: üç ortak profil, veri programı ve sınırlı director kuruldu; 26 kural/yolculuk testi, 30 istasyon/5 yolcu/60 sabit havuz ve eski birleşik kabul PASS. Android kalabalık profili henüz yapılmadı; SPAWNING.md |
-| M7 | Para, mağaza, turret ve dron | M2, M4–M6 | Bekliyor |
+| M7 | Para, mağaza, turret ve dron | M2, M4–M6 | M7a PC teknik kabulü PASS: para/tek ölüm ödülü/iyileşme/yerel onarım/silah-refill; ECONOMY.md. M7b turret ve M7c dron bekliyor; mobil ergonomi ve denge açık |
 | Mod/Bot | Battle için komşu vagon botları, en az 3 beceri profili ve eleme/sıralama; botsuz ilerleme modu politikası | M4b ortak döngü, M5/M6 savaş, M7 ekonomi | Tasarım hedefi kaydedildi; ortak mekanikler sağlamlaştıktan sonra ayrı aşama. Gerçek multiplayer veya matchmaking henüz kapsamda değil |
 | M8 | Etap dengesi, kayıt ve koşu deneyimi | M4–M7 | Bekliyor |
 | M9 | Mobil performans ve yayın hazırlığı | Önceki aşamalar | Bekliyor |
@@ -158,7 +158,7 @@ Kabul: yanlış veriler anlaşılır tanıyla reddedilir; geçersiz nav spawn so
 
 Bu aşama üç küçük parçaya bölünür:
 
-1. Cüzdan/ölüm ödülü/mağaza işlemi; heal, mevcut vagon kapı onarımı ve silah satın alma.
+1. **M7a PC teknik kabulü geçti:** cüzdan/ölüm ödülü/mağaza işlemi; heal, mevcut vagon kapı onarımı ve silah satın alma/refill. Savaşta gerçek zamanlı mağaza, karanlık/ölümde kapalı; ilk silah alımı açar, tekrar alım eksik mermiyi aynı fiyatla tamamlar. 11 ekonomi + 15 silah testi ve F9/F10 sahne kabulleri PASS; ayrıntı ECONOMY.md.
 2. Sabit slotlu normal/gelişmiş turret; ortak silah, görüşü açık en yakın hedef, mermi ve kurulum sınırı.
 3. Tek dron; yumuşak takip/uçuş sunumu, oyuncuyu koruma, mermi bitişi ve kamikaze.
 
@@ -199,4 +199,4 @@ D24 revizyonu tamamlandı: iki taraftaki yan camlar atışı geçirir, metal dik
 
 **Güncel M6 durumu:** veri programları, üç ortak zombi profili, global/vagon/kare sınırları, sonlu doğuş denemesi ve kontrollü havuz ısınması PC’de doğrulandı. İçeridekiler canlı limitine dahil. Kod/Inspector bağlama, ilk test değerleri ve yeniden çalıştırma bilgileri [SPAWNING.md](SPAWNING.md) içinde. Android performansı ve gerçek uzun oturum açık; kısa PC kabulü bunların kanıtı değildir.
 
-**Bir sonraki uygulama M7a:** cüzdan, gerçek ölümden tek ödül ve mağaza işlemleri (iyileşme, güncel vagon kapı onarımı, silah). Satın alma/erişim/ödül kuralları başlamadan kullanıcıyla netleşir. M7b sabit turret → M7c dron → Mod/Bot sırası korunur. Henüz bu özelliklerin kodu yazılmadı.
+**Bir sonraki uygulama M7b:** sabit normal/gelişmiş turret; slot/kurulum sınırı, ortak atış geometrisi, mermi bitişi ve oyuncu ödül sahipliği. M7a PC kabulü tamamlandı; kurallar/ayarlar/kanıt [ECONOMY.md](ECONOMY.md) içinde. M7b → M7c dron → Mod/Bot sırası korunur. Reklam/IAP fikirlerini kullanıcı ayrıca yazacak; ürün/ödül avantajı kesinleştirilmedi ve servis eklenmedi. Android ergonomisi ve ekonomik denge sonraki değerlendirmede açık kalır.

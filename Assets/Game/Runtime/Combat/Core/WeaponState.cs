@@ -31,6 +31,7 @@ namespace WaitYourTurn.Combat
         public int Reserve { get; private set; }
         public bool Reloading => reloadUntil >= 0;
         public bool Empty => Rounds == 0 && !Spec.InfiniteReserve && Reserve == 0;
+        public bool NeedsRefill => Rounds < Spec.MagazineSize || !Spec.InfiniteReserve && Reserve < Spec.InitialReserve;
         private float nextShot, reloadUntil = -1;
         public WeaponState(WeaponSpec spec)
         {
@@ -52,6 +53,13 @@ namespace WaitYourTurn.Combat
             if (Reloading || Rounds <= 0 || now < nextShot) return false;
             Rounds--; nextShot = now + Spec.Interval; // No overdue burst after a slow frame.
             if (Rounds == 0 && (Spec.InfiniteReserve || Reserve > 0)) reloadUntil = now + Spec.ReloadSeconds;
+            return true;
+        }
+        public bool TryRefill()
+        {
+            if (!NeedsRefill) return false;
+            Rounds = Spec.MagazineSize; Reserve = Spec.InitialReserve; reloadUntil = -1;
+            // Preserve nextShot: buying ammunition cannot bypass the weapon's fire interval.
             return true;
         }
     }

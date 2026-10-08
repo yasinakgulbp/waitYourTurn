@@ -29,6 +29,8 @@ Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen 
 | D21 | Zombiler trenin iki tarafından da gelebilir | Kullanıcı 2026-10-08'de hatırlattı. Tek taraflı/tek kapılı lab üretim hedefi değildir. Gerçek vagon entegrasyonunda her iki tarafın yürünebilir alanı, kapıları ve spawn verileri doğrulanır; sunum hareketi saldırı tarafına bağlı olmaz. |
 | D22 | Nihai görünüm/yerleşim referansı ilk prototiptir; lab sahnesi onun yerine geçmez | Kullanıcı 2026-10-08'de açıkça yeniden belirtti: uzun dikdörtgen vagon, oyuncuyu izleyen prototip kamera yaklaşımı, iki tarafta istasyon alanı ve çok kapı. M6a gerçek geometri/kamera entegrasyonu yeni özelliklerden önce doğrulanır. Somut lab varsayımları VISION_AND_INTEGRATION.md içinde. D23 yeni kamera/ölçek görselleriyle oranları günceller; eski prefab ölçüleri zorunluluk değildir. |
 | D23 | Yeni üç görsel kamera/ölçek/atmosfer referansı; vagon başına 4–6 kapı ve aynı gövde ölçüsü | Kullanıcı 2026-10-08: eski prototipteki oransız boyutlar korunmasın, yönü belli kapsüller kullanılabilir; görsellerde yalnız tarif edilen özellikler referanstır. Kapı sayısı ve dayanıklılık ayrı şans/zorluk araçlarıdır; ortadaki bir/iki kapı duvarla değişebilir. Telefon/tablet kadrajı uyarlanır. Deneme ölçüleri, model bağlama ve kanıt VISUAL_SCALE.md içindedir. |
+| D25 | Mağaza savaşta ve görünür yolculukta kullanılabilir; açıkken oyun sürer | Kullanıcı M7a'da seçti. Karanlık geçişte ve ölümde satın alma kapanır; vagon değişimi eski panel bağlamını geçersiz kılar. |
+| D26 | Silah ilk alımda açılır ve dolar; tekrar satın alma eksik mermiyi aynı fiyatla tamamlar | Kullanıcı M7a'da seçti. Doluyken para harcanmaz; satın alma atış beklemesini sıfırlamaz. Tabanca ücretsiz başlangıç silahıdır. |
 
 ## Teknik öneriler
 
@@ -64,11 +66,11 @@ Bu liste ilk navigasyon/hasar denemesini engellemez. İlgili özellik başlamada
 | Savunmaların canı ve patlaması | Zombiler turret/drona zarar verebilir mi? Turretin mermi bitiş patlaması sadece efekt mi? Dron patlaması duvar/kapıya nasıl etki eder? | M7 |
 | Turret sınırının kapsamı | Her türden 2 adet örneği: oyuncu başına mı vagon başına mı? Öneri vagon/slot başına, koşu toplamı ayrıca sınırlı. | M7 |
 | Mobil kontrol hissi | Şema D13 ile seçildi; sol joystick ve otomatik ateşin ergonomisi kullanıcı/cihaz denemesinde değerlendirilir. | M3 değerlendirmesi |
-| Silah çeşitlerinin mermisi | D19 ile sınırlı yedek seçildi; satın alma, tekrar silah alma ve mermi ürünü ayrıntıları açık. | M7 |
-| Mağaza erişimi | Savaşta açık mı, yalnızca yolculukta mı? Öneri gerçek zamanı durdurmayan kolay mobil UI. | M7 |
+| Silah çeşitlerinin mermisi | D19 sınırlı yedek; D26 ilk alım açar, tekrar alım eksik mermiyi aynı fiyatla tamamlar. Sayısal denge açık. | M7/M8 |
+| Mağaza erişimi | D25 ile savaşta açık, oyun sürer; karanlık/ölümde kapalı. Mobil ergonomi ayrıca değerlendirilecek. | M7 değerlendirmesi |
 | Para toplama | Kullanıcı para toplama istedi; ilk öneri ödülü otomatik cüzdana yazmak. Görsel pickup/yerden toplama tercihi açık. | M7 |
 | Koşu devamı / metagelişim | Hangi kazanımların kaldığı ve devam beklentisi erken kâğıt üzerinde seçilir; disk kaydı ihtiyaç kadar uygulanır. | M4a öncesi tasarım, M8 uygulama |
-| Ödüllü reklam / IAP'nin ekonomi rolü | Verilen ürünler, tekrar sınırları ve denge etkisi erkenden seçilir; entegrasyon daha sonra yapılır. | M7 öncesi tasarım, M9 entegrasyon |
+| Ödüllü reklam / IAP'nin ekonomi rolü | Kullanıcı M7a sorusunda fikirlerini ayrıca yazacağını belirtti. Ürün/tekrar sınırı/denge etkisi açık; bu sırada ayarlanabilir reklamsız çekirdek kurulur, avantaj veya servis varsayılmaz. | M7 tasarım, M9 entegrasyon |
 
 ## 2026-10-08 — D24: yan pencerelerden atış
 

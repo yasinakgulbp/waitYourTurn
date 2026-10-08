@@ -94,9 +94,9 @@ Kararlaştırılan iyileştirme: `min(eksikCan, max(30, mevcutCan * 0.5))`. Örn
 
 Satın alma yalnızca uygulanabilir ürün için para düşer. Yetersiz para, dolu slot, dron sınırı, tam can veya kurulum hatasında ücret/ürün kaybı olmaz. Oyuncu vagon değiştirirken açık mağazanın işlemleri yeni bağlamı kontrol eder.
 
-Mağazanın savaşta da açık olup olmayacağı kesinleşmedi. İlk öneri mobil erişimi kolay, gerçek zamanı durdurmayan mağaza; arayüz/denge aşamasında değerlendirilir.
+Kararlaştırıldı (D25): mağaza savaşta ve görünür yolculukta kullanılabilir, oyun devam eder. Karanlık geçişte/ölümde alım kapanır. D26: ilk silah alımı açıp doldurur; tekrar alım eksik mermiyi aynı fiyatla tamamlar, doluyken para harcanmaz. M7a ilk uygulamada ödülü otomatik cüzdana ekler; fiziksel pickup uygulanmadı. Ayarlanabilir fiyat/ödüller, bağlama ve PC kanıtı [ECONOMY.md](ECONOMY.md) içinde.
 
-Ödüllü reklam/IAP'nin vereceği ürünler ve ekonomi etkisi mağaza kurulmadan önce kâğıt üzerinde netleştirilecek; servis entegrasyonu sonraki yayın aşamasında yapılacak. Bu belgede belirli reklam ödülü veya ücretli avantaj seçilmiş değildir.
+Ödüllü reklam/IAP fikirlerini kullanıcı ayrıca yazacak. Ekonomi etkisi ve teslim kuralları tasarımda açık kalır; M7a ayarlanabilir temel cüzdan/mağazayı kurar, belirli reklam ödülü veya ücretli avantaj varsaymaz. Servis entegrasyonu sonraki yayın aşamasındadır.
 
 ## Etap verisi ve kalıcılık
 

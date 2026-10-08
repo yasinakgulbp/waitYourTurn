@@ -1,0 +1,7 @@
+{
+    "name": "WaitYourTurn.Economy",
+    "rootNamespace": "WaitYourTurn.Economy",
+    "references": ["WaitYourTurn.Combat"],
+    "autoReferenced": false,
+    "noEngineReferences": true
+}

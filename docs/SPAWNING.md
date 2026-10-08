@@ -36,7 +36,9 @@ Play: **F11**, `Logs/SpawnAcceptance.txt`. Üç profilin aynı nesnede dokuz kez
 
 Play **F10** mevcut kapı/yan cam/dört silah/oyuncu sınırı/onarım ve 10 geçiş kabulüdür; 60 eşzamanlı bedenlik havuz da doldurulur. Bu kontrol yeni director kapalıyken önceki çekirdeğin korunmasını ölçer; F11 director entegrasyonunu ayrıca ölçer.
 
-PC kontrolleri Android FPS/ısı/bellek profilinin yerine geçmez. Güncel program ve çok kapılı geometri A54'te henüz ölçülmedi; kullanıcının rutin PC test tercihi korunur. Açık kapıya yeniden yönelme, görsel modeller, özel saldırı stratejileri, gerçek botlar ve ekonomik denge bu aşamanın kanıtına dahil değildir. Sıradaki uygulama M7a cüzdan/ödül/mağaza; turret ve dron onu izler.
+PC kontrolleri Android FPS/ısı/bellek profilinin yerine geçmez. Güncel program ve çok kapılı geometri A54'te henüz ölçülmedi; kullanıcının rutin PC test tercihi korunur. Açık kapıya yeniden yönelme, görsel modeller, özel saldırı stratejileri, gerçek botlar ve ekonomik denge bu aşamanın kanıtına dahil değildir. M7a cüzdan/ödül/mağaza bağlandı; turret ve dron onu izler.
+
+M7a: profillerde `reward` alanı normal/hızlı/dayanıklı için 8/10/20 başlangıç değeridir. `EnemyPool.Killed` gerçek ölümün `DeathNotice` verisini ve profil ödülünü iletir; `RunEconomy` sahipliği/yaşam kuşağını denetler. Temizlik, başarısız doğuş veya havuza iade ödül oluşturmaz. Havuz nesnesine ölüm aboneliği yalnız ısınmada eklenir, iadede çoğaltılmaz. Spawn programı/canlı bütçesi/geometri değişmedi; bağlama ve test kanıtı [ECONOMY.md](ECONOMY.md).
 
 Son M6 Play kanıtı: 2026-10-08 15:35:13 UTC PASS; üç profil/dokuz nesne yeniden kullanımı, 30 istasyon, beş kalıcı yolcu, global 9/vagon 3/kuyruk 4/kare 2 ve sabit 60 nesne. Console Play sonunda 0 hata/0 uyarı.
 

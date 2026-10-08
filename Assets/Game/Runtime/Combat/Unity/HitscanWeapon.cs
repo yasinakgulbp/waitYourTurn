@@ -19,8 +19,10 @@ namespace WaitYourTurn.Combat
         [SerializeField] private HealthComponent rewardOwner;
         [SerializeField] private WeaponDefinition[] definitions;
         [SerializeField] private LayerMask hitMask = Physics.AllLayers;
+        [SerializeField] private bool startingWeaponOnly;
         private readonly HitscanResolver resolver = new HitscanResolver();
         private WeaponState[] states;
+        private bool[] owned;
         private int equipped;
         private float nextTrigger;
         private ulong attackId, triggerId;
@@ -35,6 +37,19 @@ namespace WaitYourTurn.Combat
         public int Rounds => State.Rounds;
         public int Reserve => State.Reserve;
         public bool Reloading => State.Reloading;
+        public bool StartingWeaponOnly => startingWeaponOnly;
+        public bool IsOwned(int index) { EnsureInitialized(); return index >= 0 && index < owned.Length && owned[index]; }
+        public WeaponState StateAt(int index) { EnsureInitialized(); return index >= 0 && index < states.Length ? states[index] : null; }
+        public void ConfigureInventory(bool onlyPistol) { startingWeaponOnly = onlyPistol; ResetWeapon(); }
+        public bool CanGrantOrRefill(int index) => index > 0 && index < WeaponCount && !firing &&
+            (!IsOwned(index) || StateAt(index).NeedsRefill);
+        public bool TryGrantOrRefill(int index)
+        {
+            if (!CanGrantOrRefill(index) || Paused || Time.timeScale <= 0 || owner == null || !owner.IsAlive) return false;
+            if (owned[index]) states[index].TryRefill();
+            else owned[index] = true;
+            equipped = index; return true;
+        }
         public float Range => State.Spec.Range;
         public Vector3 Muzzle => transform.position + Vector3.up * .9f;
         public event Action<ShotNotice> Fired;
@@ -48,15 +63,20 @@ namespace WaitYourTurn.Combat
         {
             if (firing) return;
             states = new WeaponState[WeaponCount];
+            owned = new bool[WeaponCount];
             for (int i = 0; i < states.Length; i++)
+            {
                 states[i] = new WeaponState(definitions == null || definitions.Length == 0 ? WeaponSpec.Pistol :
                     definitions[i] != null ? definitions[i].CreateSpec() : throw new InvalidOperationException("Missing weapon definition."));
+                owned[i] = !startingWeaponOnly || i == 0;
+            }
             equipped = 0; nextTrigger = 0; // Only an explicit new run replenishes ammo. Attack IDs stay monotonic.
         }
         public bool Equip(int index)
         {
             if (firing || index < 0 || index >= WeaponCount || Paused || Time.timeScale <= 0 || owner == null || !owner.IsAlive) return false;
-            EnsureInitialized(); equipped = index; State.Tick(Time.time); return true;
+            EnsureInitialized(); if (!owned[index]) return false;
+            equipped = index; State.Tick(Time.time); return true;
         }
         private void Update()
         {

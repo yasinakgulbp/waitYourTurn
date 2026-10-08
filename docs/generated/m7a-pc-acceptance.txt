@@ -1,0 +1,15 @@
+M7a PC acceptance — Unity 6000.6.4f1 — TrainIntegration, 5 wagons, 26 side windows
+Date: 2026-10-08. Times below are UTC.
+EconomyTests : Passed, 11 passed, 0 failed, ended 2026-10-08 16:18:42Z
+WeaponTests : Passed, 15 passed, 0 failed, ended 2026-10-08 16:19:17Z
+
+EconomyAcceptance
+2026-10-08T16:25:44.5062182Z
+PASS: Actual pistol kill + owned-defense credit; pooled life/replay/foreign-owner/cleanup; heal 10->40,50->80,80->100; full/unfunded/duplicate reject; current-wagon repair; weapon unlock/refill/cooldown; 10 assignments preserve currency/inventory/ammo; dark/death/old context reject; new run resets. PC only.
+
+TrainIntegration-5
+2026-10-08T16:26:30.2959829Z
+PASS: Door variants 4,5,6,5,4: repair/glass; every bilateral window passes all four guns, metal edges/panels block straight/oblique rays, movement/nav remain closed; bilateral door entry/thresholds and player boundary; responsive camera; 10 cycles visiting 5 wagons; HP/SMG/ammo/survivors/door damage preserved; full 60-enemy pool bound.
+
+Manual: 16:9 Game preview, shop opens in real time; readable locked weapon labels; shop hidden after death; final Play Console 0 warnings / 0 errors.
+Limits: PC technical checks only. No Android ergonomics/performance, long session, final economic balance, real turret/drone, persistence or ad/IAP service tested.

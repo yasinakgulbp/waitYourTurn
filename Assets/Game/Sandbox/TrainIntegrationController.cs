@@ -16,6 +16,7 @@ namespace WaitYourTurn.Sandbox
         [SerializeField] private StationSpawner spawner;
         [SerializeField] private RunPresentation presentation;
         private bool checking;
+        private bool restoreStartingWeaponOnly;
         private string result="WASD / left joystick; automatic fire. F10: integration checks.";
         public void Configure(RunDriver owner,StationSpawner spawn,RunPresentation visual)
         { run=owner;spawner=spawn;presentation=visual; }
@@ -41,7 +42,10 @@ namespace WaitYourTurn.Sandbox
             if(GUI.Button(new Rect(width-98,8,86,25),"Check (F10)"))StartCoroutine(Check());
             float buttonWidth=80,total=run.Weapon.WeaponCount*(buttonWidth+6);
             for(int i=0;i<run.Weapon.WeaponCount;i++)
-                if(GUI.Button(new Rect((width-total)*.5f+i*(buttonWidth+6),height-55,buttonWidth,43),run.Weapon.WeaponName(i),new GUIStyle(GUI.skin.button){fontSize=15}))run.Weapon.Equip(i);
+            {
+                bool owned=run.Weapon.IsOwned(i);GUI.enabled=!checking&&owned;
+                if(GUI.Button(new Rect((width-total)*.5f+i*(buttonWidth+6),height-55,buttonWidth,43),run.Weapon.WeaponName(i)+(owned?"":"\nLocked"),new GUIStyle(GUI.skin.button){fontSize=14,wordWrap=true}))run.Weapon.Equip(i);
+            }
             GUI.enabled=true;
             if(checking||result.StartsWith("FAIL")||run.Failure!=null)
                 GUI.Label(new Rect(12,82,width-24,45),run.Failure??(checking?"Checking integration…":result),label);
@@ -55,6 +59,7 @@ namespace WaitYourTurn.Sandbox
         }
         private IEnumerator Check()
         {
+            restoreStartingWeaponOnly=run.Weapon.StartingWeaponOnly;run.Weapon.ConfigureInventory(false);
             checking=true;spawner.enabled=false;run.ControlsAllowed=run.AimAllowed=false;run.Repair.enabled=false;
             run.Restart(new RunTimings{initialApproach=.2f,defense=300});run.Player.Invulnerable=true;
             yield return new WaitForSeconds(.6f);
@@ -265,7 +270,7 @@ namespace WaitYourTurn.Sandbox
             result=(pass?"PASS: ":"FAIL: ")+detail;Directory.CreateDirectory("Logs");
             File.WriteAllText($"Logs/TrainIntegration-{run.Wagons.Length}.txt",System.DateTime.UtcNow.ToString("O")+"\n"+result);
             if(pass)Debug.Log("[TrainIntegration] "+result);else Debug.LogError("[TrainIntegration] "+result);
-            checking=false;run.Repair.enabled=true;spawner.enabled=true;run.ControlsAllowed=run.AimAllowed=true;run.Restart();
+            checking=false;run.Weapon.ConfigureInventory(restoreStartingWeaponOnly);run.Repair.enabled=true;spawner.enabled=true;run.ControlsAllowed=run.AimAllowed=true;run.Restart();
         }
     }
 }

@@ -24,6 +24,24 @@ namespace WaitYourTurn.Tests
             Assert.That(state.TryFire(2)); state.Tick(100);
             Assert.That(state.Empty); Assert.That(state.Reloading, Is.False); Assert.That(state.TryFire(100), Is.False);
         }
+        [Test] public void InventoryLocksUntilPurchaseAndRefillKeepsFireCooldown()
+        {
+            HitscanWeapon gun = Gun(); gun.ConfigureDefinitions(new[] { Profile(1), Profile(1) }); gun.ConfigureInventory(true);
+            Assert.That(gun.Equip(1), Is.False); Assert.That(gun.IsOwned(1), Is.False);
+            Assert.That(gun.TryGrantOrRefill(1)); Assert.That(gun.EquippedIndex, Is.EqualTo(1));
+            Assert.That(gun.CanGrantOrRefill(1), Is.False); Assert.That(gun.TryFire(Vector3.forward));
+            Assert.That(gun.TryGrantOrRefill(1)); Assert.That(gun.Rounds, Is.EqualTo(8)); Assert.That(gun.Reserve, Is.EqualTo(3));
+            Assert.That(gun.TryFire(Vector3.forward), Is.False); Assert.That(gun.TryGrantOrRefill(1), Is.False);
+            gun.ResetWeapon(); Assert.That(gun.IsOwned(1), Is.False); Assert.That(gun.IsOwned(0));
+        }
+        [Test] public void RefillCancelsReloadButNeverCreatesExtraReserveOrBypassesDeadline()
+        {
+            var state = new WeaponState(new WeaponSpec(2, .5f, 10, 1, 1, false, 2));
+            Assert.That(state.TryFire(0)); Assert.That(state.Reloading); Assert.That(state.TryRefill());
+            Assert.That(state.Reloading, Is.False); Assert.That(state.Rounds, Is.EqualTo(1)); Assert.That(state.Reserve, Is.EqualTo(2));
+            Assert.That(state.TryFire(.1f), Is.False); Assert.That(state.TryRefill(), Is.False);
+            state.Tick(5); Assert.That(state.Reserve, Is.EqualTo(2)); Assert.That(state.TryFire(5));
+        }
         [Test] public void PistolAutoReloadHasUnlimitedReserve()
         {
             var state = new WeaponState(new WeaponSpec(2, .1f, 10, 1, 1));
