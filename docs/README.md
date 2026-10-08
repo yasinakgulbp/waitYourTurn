@@ -4,7 +4,9 @@ Güncelleme: 2026-10-08. Doküman dili Türkçe; kod, tip adları ve commit mesa
 
 Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştirmek; yeni mekanikler eklenirken önceki mekaniklerin korunmasını sağlamak.
 
-**Görsel hedef ilk prototiptir; TrainSandbox nihai oyun değildir.** Yeni geliştirmeden önce [görsel hedef ve entegrasyon denetimi](VISION_AND_INTEGRATION.md) okunur. M6a artık gerçek model/oranlarla `TrainIntegration` sahnesinde uygulanmıştır; iki/beş vagon PC teknik kabulü geçti. Bağlama kuralları, test kanıtı ve açık değerlendirmeler [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md) içindedir. Sıradaki uygulama M6 spawn/tür/bütçe sistemidir.
+**TrainSandbox nihai oyun değildir.** İlk prototip yerleşim/oynanış referansıdır; güncel fiziksel oran ve kamera hedefi D23 kullanıcı görselleridir. Yeni geliştirmeden önce [görsel hedef ve entegrasyon denetimi](VISION_AND_INTEGRATION.md) ile [güncel ölçek](VISUAL_SCALE.md) okunur. `TrainIntegration` beş vagonlu PC teknik kabulünü geçti. Bağlama kuralları, test kanıtı ve açık değerlendirmeler [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md) içindedir. Sıradaki uygulama M6 spawn/tür/bütçe sistemidir.
+
+**D23 güncel görsel/ölçek hedefi:** kullanıcının üç yeni referansı eski prototipteki oranları düzeltir. Şimdiki TrainIntegration sade 12 × 4,2 vagon, yönü okunabilen kapsüller, 4–6 kapı varyantları ve ekran oranına uyarlanan perspektif kullanır. Güncel ölçü/model bağlama ve referanslar [VISUAL_SCALE.md](VISUAL_SCALE.md) içindedir; ilk prefabın oranları ve altı-kapı zorunluluğu artık hedef değildir.
 
 ## Okuma sırası
 
@@ -19,7 +21,8 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 9. [Vagon/koşu laboratuvarı](RUN_LAB.md): M4a iki vagon, M4b beş vagon; evre, kalıcılık, atama ve doğrulama sınırları.
 10. [Silah laboratuvarı](WEAPONS_LAB.md): M5 ortak hitscan/pellet, dört silah tanımı, sınırlı yedek ve doğrulama.
 11. [Görsel hedef ve entegrasyon](VISION_AND_INTEGRATION.md): referans prototip, somut lab varsayımları, M6a kabulü ve bot sırası.
-12. [Gerçek vagon entegrasyonu](TRAIN_INTEGRATION.md): güncel sahne/kurulum, geometri sahipliği, iki taraflı altı kapı ve PC kabulü.
+12. [Gerçek vagon entegrasyonu](TRAIN_INTEGRATION.md): sahne/kurulum, geometri sahipliği, iki taraflı saldırı ve PC kabulü; ilk M6a geçmişi ayrıca korunur.
+13. [Güncel görsel ölçek](VISUAL_SCALE.md): üç kullanıcı referansı, fiziksel boyutlar, 4–6 kapı, model bağlama ve ekran uyumu.
 
 ## Mevcut durum
 
@@ -75,3 +78,5 @@ Reklam/IAP'nin ekonomi rolü M7 öncesinde tasarlanır; servis entegrasyonu ve y
 2026-10-08 D22 hedef denetimi: ilk prototipin kamera/yerleşimi ile yeni kod karşılaştırıldı. Tek kapı enemy bağı, portal yarı düzleminden üyelik, sabit doğuş/iç noktalar ve vagon merkezine bağlı kamera gerçek geometri için açık uyarlamalardır. M6a ayrı ve sıradaki kabul olarak öne alındı; bu entegrasyon geçmeden yeni mağaza/turret/bot özelliğine geçilmeyecek. GAME_DESIGN'daki eski kırık-kapıya-özel onarım açıklaması D20 ile düzeltildi. Bu incelemede runtime/sahne değişikliği ve yeni Play testi yoktur. Ayrıntı [VISION_AND_INTEGRATION.md](VISION_AND_INTEGRATION.md).
 
 2026-10-08 M6a uygulaması: kaynak prototip/prefab ve eski lablar korunarak TrainIntegration kuruldu. Referans model/oran, oyuncu X kamerası, vagon başına altı kapı, iki kesintisiz platform ve ayrı görsel hareket kullanılır. WagonGeometry gerçek iç hacim/doğuş/güvenli adayları sahiplenir; havuz erişilebilir kendi-vagon girişini seçer. Dar gerçek kapılar için ayrı Train Zombie agent türü ve yeni ortak NavMesh bake kullanılır; eski Humanoid ayarı korunur. İki-vagon 06:05:32 UTC, beş-vagon 06:08:40 UTC PC kabulü PASS: 10 geçiş, durumlar, iki taraflı eşik temizliği ve 24/60 düşmanlık havuz sınırı. 34 can/onarım/geometri ve 11 yolculuk testi PASS. Eşikte yakın oyuncuya saldırarak duran zombi sorunu, önce geçişi tamamlama önceliğiyle giderildi. Kullanıcı kadraj/his, Android/uzun oturum ve botlar açık; sıradaki uygulama M6. Ayrıntı [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md).
+
+2026-10-08 D23 görsel ölçek revizyonu: üç kullanıcı referansı repoya alındı; TrainIntegration 12 × 4,2 vagon, 1,7 boyunda yön işaretli kapsüller, 4/5/6/5/4 kapı ve uyarlanan perspektifle yeniden kuruldu. Kaldırılan kapılar gerçek duvardır; görsel çocuklar fizik/nav kökünden ayrıdır. 38 can/onarım/geometri/yerleşim ve 15 yolculuk/kamera testi PASS. Beş-vagon F10 kabulü 07:13:38 UTC PASS: bütün kapı varyantları, 10 istasyon geçişinde durum kalıcılığı ve 60 düşman havuz sınırı. 16:9 ve 4:3 Unity önizlemeleri kontrol edildi; Android ve nihai sanat/ergonomi bu turda doğrulanmadı. Ayrıntı [VISUAL_SCALE.md](VISUAL_SCALE.md). Sıradaki iş M6.

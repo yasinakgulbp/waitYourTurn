@@ -20,6 +20,8 @@ namespace WaitYourTurn.Run
         [SerializeField] private ProximityRepair repair;
         [SerializeField] private RunTimings timings = new RunTimings();
         [SerializeField] private int seed = 12345;
+        [SerializeField] private int initialWagonIndex;
+        public void ConfigureInitialWagon(int index) => initialWagonIndex = index;
         private System.Random random;
         private bool gateClosed;
         private float previousTimeScale;
@@ -54,7 +56,7 @@ namespace WaitYourTurn.Run
             }
             player.ResetForSpawn(player.Maximum, Team.Player); pistol.ResetWeapon(); repair.Cancel(); aim.ClearTarget();
             Flow = new RunFlow(overrideTimings ?? timings); Flow.Changed += OnPhase;
-            if (!Assign(wagons[0], false)) { Flow.Fail(); return; }
+            if (!Assign(wagons[Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1)], false)) { Flow.Fail(); return; }
             OnPhase(RunPhase.Approach);
         }
         private void Update()

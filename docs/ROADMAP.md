@@ -21,7 +21,7 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 | M4a | İki vagonla istasyon/yolculuk/atama döngüsü | M3 değerlendirmesi | PC teknik kontrolü geçti: 10/10 geçiş ve 6 saf evre testi; kullanıcı değerlendirmesi kabul edildi. RUN_LAB.md |
 | M4b | Kanıtlanan döngüyü beş vagona genişletme | M4a değerlendirmesi | Beş tek-kapılı lab vagonunda 10/10 geçiş + 60-zombi PC yük kontrolü PASS; kullanıcı teknik aşamayı kabul ederek M5'i istedi. Gerçek altı kapılı geometri/çok kapı hedef seçimi entegrasyonu ayrıca açık |
 | M5 | Mobil kontrolü iyileştirme ve silah çeşitliliği | M2, M4b | PC teknik parça PASS: 13 silah testi, dört profil cam/duvar/alt panel kontrolü ve sınırlı mermili 10/10 vagon geçişi. D19 uygulanır; mevcut sol kontrol korunur. Kullanıcı/cihaz değerlendirmesi açık. WEAPONS_LAB.md |
-| M6a | İlk prototipe uygun gerçek vagon/kamera; iki taraf ve altı kapı entegrasyonu | M3–M5 temel kuralları | TrainIntegration kuruldu; iki/beş vagon PC kabulü PASS: altı kapı, iki taraf, 10 geçiş, durum kalıcılığı, 24/60 düşman havuz sınırı. 34 can/onarım/geometri ve 11 yolculuk testi PASS. Kullanıcı kadraj/his ve Android değerlendirmesi açık. TRAIN_INTEGRATION.md |
+| M6a | Hedef vagon/kamera ve iki taraflı çok kapı entegrasyonu | M3–M5 temel kuralları | İlk altı-kapılı entegrasyon PASS. D23 yeni oran/kapsül/4–6 kapı revizyonu da beş-vagonda PASS: 10 geçiş, durum kalıcılığı ve 60 düşman sınırı. 38 can/onarım/geometri/yerleşim + 15 yolculuk/kamera testi PASS; 16:9/4:3 Editor kadrajı görüldü. Kullanıcı his ve Android değerlendirmesi açık. VISUAL_SCALE.md, TRAIN_INTEGRATION.md |
 | M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M6a kabulü | Bekliyor |
 | M7 | Para, mağaza, turret ve dron | M2, M4–M6 | Bekliyor |
 | Mod/Bot | Battle için komşu vagon botları, en az 3 beceri profili ve eleme/sıralama; botsuz ilerleme modu politikası | M4b ortak döngü, M5/M6 savaş, M7 ekonomi | Tasarım hedefi kaydedildi; ortak mekanikler sağlamlaştıktan sonra ayrı aşama. Gerçek multiplayer veya matchmaking henüz kapsamda değil |
@@ -192,5 +192,7 @@ Kabul: seçilen cihaz/kalite profili/FPS ve canlı sınırı raporlanır; ölç�
 - Doğrulama sonucu ve bilinen sınırlar kayda yazılır; tüm testler her küçük değişiklikte gereksiz yere yeniden koşturulmaz.
 
 ## Bir sonraki somut iş
+
+D23 ölçek/kadraj revizyonu M6 öncesine eklendi: yeni üç kullanıcı referansına yakın blok vagon, 1,7 boyunda kapsüller, 4–6 kapı ve responsive perspektif. Altı kapı sabiti sonraki verilerde varsayılmaz; M6 doğuş/kapı listelerini mevcut geometriden okur. Güncel ölçüler ve revizyon kanıtı VISUAL_SCALE.md içindedir.
 
 **M6 spawn/tür/bütçe:** TrainIntegration'ın gerçek iki taraflı/altı kapılı geometrisini kullanarak StationDefinition, ortak enemy profilleri ve global/vagon/kare üretim bütçesi. İçeride kalanlar canlı sınırına dahil; geçersiz doğuş sınırlı denenir. M6a'nın PC teknik kabulü geçti; yeni kadraj/oynama hissi kullanıcı değerlendirmesine açık. M7 ekonomi/savunma → Mod/Bot sırası korunur. Android birleşik kontrolü uygun zamanda ayrıca yapılır. Güncel bağlama ve test kanıtı TRAIN_INTEGRATION.md içindedir.

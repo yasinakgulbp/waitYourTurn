@@ -2,7 +2,9 @@
 
 Sahne: `Assets/Game/Scenes/TrainIntegration.unity`. Orijinal `SampleScene 2` ve önceki küçük laboratuvarlar korunur. Bu sahne mevcut savaş/onarım/koşu çekirdeğini hedef geometriyle birleştirir; nihai sanat, UI, denge veya bot uygulaması değildir.
 
-## Referans ve kurulum
+**Güncel D23 revizyonu:** kullanıcı yeni görsellerle eski prefab ölçülerinin düzeltilmesini istedi. Sahne artık veriyle kurulan 12 × 4,2 blok vagon, 1,7 boyunda kapsüller, 4/5/6/5/4 kapı dizilimi ve responsive perspektif kullanır. Güncel kurulum/ölçü/model bağlama [VISUAL_SCALE.md](VISUAL_SCALE.md) içindedir. Aşağıdaki ilk referans ölçüleri ve test zamanları M6a'nın önceki sürümünün tarihsel kaydıdır.
+
+## İlk M6a referansı ve kurulum geçmişi
 
 `TrainIntegrationBuilder`, referans sahnedeki ilk `Vagons` çocuğunu (`Assets/Scripts/Door/yenivagonlar/PF_Wagon_01a_301.prefab`) görsel olarak kopyalar. Eski gameplay scriptleri/colliderları entegrasyon kopyasından çıkarılır; kaynak prefab değişmez. Sahne ölçeğinde gövde yaklaşık 6,39 × 2,71; kapı genişliği yaklaşık 0,92; üç giriş iki yanda karşılıklıdır. 7,41 birim vagon aralığı referans yerleşime dayanır. Kapı X konumları/genişlikleri gerçek `DOORS` renderer bounds verisinden alınır.
 
@@ -15,7 +17,7 @@ Unity menüsü: **Wait Your Turn → Integration → Build One/Two/Five Wagons**
 - `WagonGeometry` (Train): yerel gerçek iç hacim, kapı adayları, istasyon doğuş çapaları ve güvenli iç konumlar. Player/Enemies/Run bağımlılığı yoktur.
 - `EnemyPool`: yalnız kendi vagonunun geometrisinden erişilebilir giriş seçer. Yol sorgusu spawn sırasında yeniden kullanılan `NavMeshPath` ile yapılır; her kare bütün kapılarda path araması yoktur. Aynı tarafta tam rotası olan en yakın yaklaşma noktası seçilir. Sonraki taktik profillerinin açık kapıyı tercih etmesi M6 işidir.
 - `EnemyBrain`: gerçek iç hacim üyeliği ile portal eşiğini ayırır. Karşı platform/komşu vagon içerisi sayılmaz. Bekleme ofseti portalın yerel eksenindedir. İç takip hedefi vagon sınırlarına alınır. İçeri geçen düşman oyuncuya saldırmadan önce eşiği temizler.
-- `WagonRuntime`: doğuş/güvenli konumlar sahnedeki çapaları kullanır; en yakın onarım kapısı kendi altı kapısından seçilir. Kalkışta içerideki/eşikte içeri girmiş bedenler tutulur; dışarıdakiler ödülsüz havuza döner. İşgal edilen eşik kapanmadan önce güvenli iç aday kontrolü yapılır.
+- `WagonRuntime`: doğuş/güvenli konumlar sahnedeki çapaları kullanır; en yakın onarım kapısı kendi kapı listesinden seçilir (D23: 4–6). Kalkışta içerideki/eşikte içeri girmiş bedenler tutulur; dışarıdakiler ödülsüz havuza döner. İşgal edilen eşik kapanmadan önce güvenli iç aday kontrolü yapılır.
 - `MovementArea`: oyuncu sınırı ayrı, kaldırılabilir bir hareket kuralıdır. Kırık kapı bunu kaldırmaz. Yeni geometri düzenlenirken MovementArea ve iç hacim birlikte kontrol edilir.
 - Eski tek kapılı laboratuvarlar geriye uyum için eski tek-portal bağlamını kullanır. Yeni sahnede tüm vagonlarda `WagonGeometry` zorunlu olarak bağlanır; eski sabit koordinatlar yeni sahnenin doğuş kaynağı değildir.
 
@@ -24,6 +26,8 @@ Unity menüsü: **Wait Your Turn → Integration → Build One/Two/Five Wagons**
 Görsel ray/travers, istasyon platformları ve yol çevresi collider içermez; `RunPresentation` tarafından hareket ettirilir. Colliderlar, spawn çapaları, iç hacim ve baked NavMesh hareket etmez. Savunmada platform görünümü sabit fizik zeminiyle hizalanır; istasyon değişimi karanlıkta yapılır. Dekor colliderı gerekiyorsa sabit gameplay karşılığı ayrıca tasarlanır.
 
 ## Doğrulama
+
+D23 güncel ölçüde: 38 can/onarım/geometri/yerleşim + 15 yolculuk/kamera testi PASS. Beş-vagon F10 kabulü 2026-10-08 07:13:38 UTC PASS: 4/5/6 kapı varyantları, kapatılan orta duvarlar, 10 geçiş ve 60 düşman havuz sınırı. 16:9 ve 4:3 Unity kadrajları kontrol edildi. Ayrıntılar ve cihaz doğrulama sınırı [VISUAL_SCALE.md](VISUAL_SCALE.md). Aşağıdaki altı-kapılı sonuçlar önceki sürümün kaydıdır.
 
 Play'de **F10** veya **Check integration** düğmesi temsilî kabulü çalıştırır; sonuç `Logs/TrainIntegration-N.txt` dosyasına yazılır. Test geçici koşuyu sıfırlar; normal oynanışa temiz başlangıçla döner.
 

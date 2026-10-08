@@ -40,6 +40,8 @@ Kararlaştırıldı: karanlık geçişte oynanış durur; görünür yolculukta 
 
 ## Kapılar ve onarım
 
+D23: aynı gövde ölçüsünde vagon başına 4–6 kapı bulunabilir; her iki yanda dış çiftler korunur, bir veya iki orta kapı sağlam duvarla değişebilir. Kapı sayısı, kapı canından ayrı şans/zorluk ayarıdır. Az kapı daha az giriş cephesi sağlar; kendiliğinden güvenlik garantisi değildir. Kamera/ölçek ve yalnız referans olarak alınan görseller VISUAL_SCALE.md içindedir.
+
 - Sağlam kapı zombi yürüyüşünü engeller, **üst camından dışarıya ateş edilebilir**. Kapının alt dolu paneli ve vagon duvarları mermiyi engeller. Oyuncu ve kapı önüne kurulan turretler zombileri kapıyı kırmadan vurabilir; kapı dayanıklılığı bu savunma için zaman kazandırır (D15).
 - Oyuncu ilk kapsamda kapı sağlam/kırık/onarılmış olsa da atandığı vagondan dışarı yürüyemez. Bu, düşman geçişi ve atıştan ayrı bir hareket iznidir. İleride istasyona inilen görevlerde izin açıkça değiştirilebilir (D16).
 - Örnek: 10 canlık kapıyı 8 hasarlık güçlü zombi iki vuruşta, 2 hasarlık zayıf zombi beş vuruşta kırar.

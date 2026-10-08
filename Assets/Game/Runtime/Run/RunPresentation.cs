@@ -13,6 +13,12 @@ namespace WaitYourTurn.Run
         [SerializeField, Min(2)] private float sceneryRepeat = 20;
         [SerializeField] private Camera view;
         [SerializeField] private bool followPlayerAlongTrain;
+        [SerializeField] private bool responsiveFraming;
+        [SerializeField] private Bounds framingVolume = new Bounds(new Vector3(0, .3f, 0), new Vector3(16, 2.2f, 10));
+        [SerializeField] private float playerFollowLimit = .65f;
+        public bool ResponsiveFraming => responsiveFraming;
+        public Bounds FramingVolume => framingVolume;
+        public void ConfigureFraming(Bounds volume) { responsiveFraming = true; framingVolume = volume; }
         public void ConfigurePlayerFollow(bool follow) => followPlayerAlongTrain = follow;
         private Vector3 environmentOrigin, stationOrigin, sceneryOrigin, cameraOffset;
         private Quaternion cameraRotation;
@@ -62,7 +68,20 @@ namespace WaitYourTurn.Run
                 }
             }
             Vector3 cameraPosition = run.CurrentWagon.transform.position + cameraOffset;
-            if (followPlayerAlongTrain) cameraPosition.x = run.Player.transform.position.x + cameraOffset.x;
+            if (responsiveFraming)
+            {
+                Rect safe = Screen.safeArea;
+                view.rect = new Rect(safe.x / Screen.width, safe.y / Screen.height, safe.width / Screen.width, safe.height / Screen.height);
+                float follow = followPlayerAlongTrain ? Mathf.Clamp(run.Player.transform.position.x - run.CurrentWagon.transform.position.x,
+                    -playerFollowLimit, playerFollowLimit) : 0;
+                // Fit the whole wagon and both approaches even at either extreme of the bounded follow.
+                Bounds protectedVolume = framingVolume;
+                protectedVolume.Expand(new Vector3(playerFollowLimit * 2, 0, 0));
+                float d = WagonCameraFraming.Distance(protectedVolume, cameraRotation, view.fieldOfView,
+                    safe.width / Mathf.Max(1, safe.height), WagonCameraFraming.ProtectedViewport);
+                cameraPosition = run.CurrentWagon.transform.position + Vector3.right * follow - cameraRotation * Vector3.forward * d;
+            }
+            else if (followPlayerAlongTrain) cameraPosition.x = run.Player.transform.position.x + cameraOffset.x;
             view.transform.SetPositionAndRotation(cameraPosition, cameraRotation);
         }
     }

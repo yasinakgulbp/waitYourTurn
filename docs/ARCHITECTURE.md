@@ -138,6 +138,8 @@ AI kararları başlangıç denemesi olarak dağıtılmış 0.1–0.25 saniye ara
 
 ## Spawn, pooling ve istasyon yaşam döngüsü
 
+D23 ile fiziksel authoring `WagonLayoutDefinition` varlıklarından gelir: gövde ölçüleri, 4–6 kapı maskesi ve dayanıklılık. Builder bunlardan gameplay colliderı, portal, doğuş ve bake üretir; eksik kapı duvar olur. Runtime görsel modelin mesh boyutlarına bağımlı değildir. Görsel çocuklar değiştirilebilir; fizik/nav kökü scale=1 kalır. Responsive perspektifin tek sahibi RunPresentation, saf kadraj hesabı WagonCameraFraming'dir; ekran safe area ve sınırlı takip korunan hacmi bozmaz. Ayrıntılar VISUAL_SCALE.md.
+
 M6a uygulamasında `WagonGeometry` (Train assembly) gerçek yerel iç hacmi, kapı listesini, istasyon doğuş çapalarını ve güvenli iç adayları taşır; Player/Enemies/Run bağımlılığı yoktur. `EnemyPool` doğuşta aynı taraftaki erişilebilir kendi-vagon girişini yeniden kullanılan NavMeshPath ile seçer. `EnemyBrain` üyelikte bütün hacmi, eşik güvenliğinde tüm kapıları kontrol eder; portal yarı düzlemi yalnız eski tek-kapılı lab fallback'idir. `WagonRuntime` geometri çapalarını kullanır. `MovementArea` oyuncunun kaldırılabilir sınır kuralı olarak ayrı kalır. Platformlar kesintisiz ortak NavMesh'tir; sahiplik WagonId/geometri verisidir. Sabit collider/nav ile hareketli sunum ayrıdır. Kamera X takibini yalnız RunPresentation sürer. Sahne bağlama/kurulum ve kanıt: [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md).
 
 `SpawnDirector` programı uygular; `EnemyFactory` havuzdan alıp tam `SpawnContext` ile başlatır: runtime kuşağı, `WagonId`, tür, hedef profili, etap çarpanları, istasyon kimliği ve ödül sahibi.
