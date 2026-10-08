@@ -54,3 +54,11 @@ Kalıcı nav kopyalarıyla temiz domain/sahne başlangıcından son beş-vagon *
 **Kalan entegrasyon:** bu genişletme mevcut tek kapılı lab geometrisini çoğaltır. Gerçek tren modeli, vagon başına altı kapı, geometriye ait açık spawn/güvenli iç nokta verileri ve çok kapı hedef seçimi henüz yoktur; bunlar tamamlanmış sayılmaz. Çok kapılı üretim entegrasyonu M6 spawn/rota bütçesinin kabulünden önce ayrıca doğrulanacak. Botlar, gerçek istasyon görseli ve ses bu aşamada eklenmedi. M4b teknik değerlendirmesi kullanıcı tarafından kabul edildi; sonraki uygun Android birleşik kontrolü açıktır.
 
 M5 devam kaydı: dört silah aynı TrainSandbox'a bağlandı. Sınırlı mermili SMG seçimi/23 şarjör/72 yedekle 10/10 geçiş tekrar geçti (UTC `2026-10-08T03:53:08.4632224Z`); önceki HP/kapı/zombi/karanlık kontrolleri de korunur. Farklı silahlar artık uygulanmıştır; M4a sırasında henüz bulunmayan özellikler listesinin bu kısmı güncellendi. Mağaza/para/turret/dron/kayıt hâlâ açık. Ayrıntı WEAPONS_LAB.md.
+
+## Test raylarının hizalanması — 2026-10-08
+
+Kullanıcının görsel geri bildirimiyle iki/beş vagonlu sahnelerin eski yan çubukları kaldırıldı. Traversler vagon zeminlerinin altında, iki ray vagon dizilimine paralel X ekseninde yer alır. `RunPresentation` çevreyi bu doğrultunun tersine kaydırır; iki birimlik tekrar travers aralığıyla eşleşir. Yaklaşmada yavaşlama ve istasyonda duruş Play'de gözlendi. Kamera başka vagona geçtiğinde de aynı kesintisiz ray dizisi görülür. Bu hâlâ basit lab geometrisidir; gerçek tren/istasyon modellerinin yerini almaz.
+
+Builder mevcut iki/beş vagon sahnelerini `Wait Your Turn → Run → Align Lab Track Visuals` ile günceller; yeniden oluşturma ve yerleşim uygulama da aynı görsel kurulumunu kullanır. Ray/travers kökünde yalnızca Transform, MeshFilter ve MeshRenderer vardır; collider veya NavMesh kaynağı eklenmedi. Kayıtlı sahne blokları karşılaştırıldığında görsel kök dışındaki bütün bileşenler aynı kaldı. Silah değerleri değiştirilmedi.
+
+Beş vagonlu mevcut geçiş kontrolü **10/10 PASS**, UTC `2026-10-08T04:29:49.7764496Z`; tüm vagonlar ziyaret edildi ve önceki oynanış koruma kontrolleri geçti. Son Play çıkışında Console **0 hata / 0 uyarı**. Bu küçük görsel düzeltme için Android yük testi tekrarlanmadı.

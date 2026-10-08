@@ -19,6 +19,23 @@ namespace WaitYourTurn.Editor
         private const string TrainScenePath = "Assets/Game/Scenes/TrainSandbox.unity";
         private const string LayoutPath = "Assets/Game/Content/FiveWagonLayout.asset";
 
+        [MenuItem("Wait Your Turn/Run/Align Lab Track Visuals")]
+        public static void AlignTrackVisuals()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            string path = EditorSceneManager.GetActiveScene().path;
+            if (path != ScenePath && path != TrainScenePath) return;
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            foreach (string labPath in new[] { ScenePath, TrainScenePath })
+            {
+                if (!File.Exists(labPath)) continue;
+                EditorSceneManager.OpenScene(labPath);
+                EnsureWagonNavigation();
+            }
+            EditorSceneManager.OpenScene(path);
+            Debug.Log("[RunTrack] Rails and sleepers aligned beneath the wagons along X; visual hierarchy has no colliders and gameplay geometry is unchanged.");
+        }
+
         [MenuItem("Wait Your Turn/Run/Apply Five Wagon Layout")]
         public static void ApplyFiveLayout()
         {
@@ -162,7 +179,7 @@ namespace WaitYourTurn.Editor
             NavMeshData source = AssetDatabase.LoadAssetAtPath<NavMeshData>("Assets/Game/Content/NavigationLab/ConnectedNavMesh.asset");
             RunDriver run = Object.FindAnyObjectByType<RunDriver>();
             var scene = EditorSceneManager.GetActiveScene();
-            bool changed = false;
+            bool changed = EnsureTrackVisuals(run);
             for (int i = 0; i < run.Wagons.Length; i++)
             {
                 NavMeshSurface surface = run.Wagons[i].GetComponentInChildren<NavMeshSurface>();
@@ -180,6 +197,44 @@ namespace WaitYourTurn.Editor
             }
             if (changed) { EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); }
             AssetDatabase.SaveAssets();
+        }
+
+        private static bool EnsureTrackVisuals(RunDriver run)
+        {
+            Transform root = GameObject.Find("Moving Visual Environment (no physics)").transform;
+            // These dimensions describe only the rectangular lab wagons, not production train assets.
+            float first = float.PositiveInfinity, last = float.NegativeInfinity;
+            foreach (WagonRuntime wagon in run.Wagons)
+            { first = Mathf.Min(first, wagon.transform.position.x); last = Mathf.Max(last, wagon.transform.position.x); }
+            const float spacing = 2;
+            float min = Mathf.Floor((first - 16) / spacing) * spacing;
+            float max = Mathf.Ceil((last + 16) / spacing) * spacing;
+            Vector3 railCenter = new Vector3((min + max) * .5f, -.24f, 2);
+            Vector3 railScale = new Vector3(max - min + spacing, .08f, .12f);
+            int sleepers = Mathf.RoundToInt((max - min) / spacing) + 1;
+            Transform existingRail = root.Find("Longitudinal rail 0");
+            if (existingRail != null && root.childCount == sleepers + 2 &&
+                existingRail.localPosition == railCenter && existingRail.localScale == railScale) return false;
+            for (int i = root.childCount - 1; i >= 0; i--) Object.DestroyImmediate(root.GetChild(i).gameObject);
+            root.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            root.localScale = Vector3.one;
+            Material material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Game/Content/NavigationLab/Wall.mat");
+            for (int i = 0; i < sleepers; i++)
+                TrackPart("Rail sleeper " + i, new Vector3(min + i * spacing, -.34f, 5), new Vector3(.18f, .12f, 8.7f));
+            for (int i = 0; i < 2; i++)
+                TrackPart("Longitudinal rail " + i, railCenter + Vector3.forward * (6 * i), railScale);
+            return true;
+
+            void TrackPart(string name, Vector3 position, Vector3 scale)
+            {
+                GameObject part = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                part.name = name; part.transform.SetParent(root, false);
+                part.transform.localPosition = position; part.transform.localScale = scale;
+                Object.DestroyImmediate(part.GetComponent<Collider>());
+                Renderer renderer = part.GetComponent<Renderer>(); renderer.sharedMaterial = material;
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                renderer.receiveShadows = false;
+            }
         }
     }
 }

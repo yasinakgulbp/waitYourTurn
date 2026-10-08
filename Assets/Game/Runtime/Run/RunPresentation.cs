@@ -29,7 +29,9 @@ namespace WaitYourTurn.Run
                 RunPhase.FadeOut or RunPhase.Hidden or RunPhase.FadeIn => 5, _ => 0
             };
             distance = Mathf.Repeat(distance + Speed * Time.unscaledDeltaTime, 2);
-            environment.position = environmentOrigin - Vector3.forward * distance;
+            // The lab train runs along the visual root's X axis. The two-unit repeat
+            // matches sleeper spacing, so wrapping is seamless without moving gameplay.
+            environment.position = environmentOrigin - environment.right * distance;
             view.transform.SetPositionAndRotation(run.CurrentWagon.transform.position + cameraOffset, cameraRotation);
         }
     }
