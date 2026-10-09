@@ -29,6 +29,7 @@ Güncel birleşik APK A54'e kuruldu; açılış, otomatik kayıt ve canlı Battl
 | M9d — Kapalı test ve sınırlı yayın | Güncel Play gereklilikleri, mağaza görselleri, gerçek oynanış videosu; iki modda kapalı test ve ardından kullanıcı tarafından onaylanan sınırlı yayın/pazarlama denemesi. | Gerçek cohort verisi: geri dönüş, terk/ölüm noktaları, teknik kalite, reklam sonrası davranış ve gelir. Reklam maliyeti/gelir aynı ülke/kanal/süreyle kıyaslanır. Test bütçesi ve durdurma sınırı önceden seçilir. |
 | M9e — Genel yayın ve büyütme | Kritik sorunları kapat; mağaza, destek ve izleme hazır olsun. Pazarlama harcamasını veriyle artır. | Ölçülen oyuncu davranışı ve net birim ekonomi büyütmeyi destekler. Mağazada öne çıkarılma gelir planının zorunlu varsayımı değildir. |
 
+
 Bu aşamalar sabit gün/hafta tahmini değildir. Her adım başında küçük çıktı, kapsam sınırı ve deneme bütçesi belirlenir; ölçüm çıkmadan sonraki büyük üretim açılmaz. Ek hikâye içeriği, yeni vagon sayıları, geniş yetenek ağacı, kombo ve sezon sistemi bu kapıların şartı değildir; mevcut iki mod ilk yayın hedefi olarak korunur.
 
 ## Kamera: şimdi ne, sonra ne?
