@@ -117,7 +117,7 @@ namespace WaitYourTurn.Editor
                     var outside = Anchor("Outside approach", entry.transform, new Vector3(0, 0, -.8f));
                     var inside = Anchor("Inside destination", entry.transform, new Vector3(0, 0, 1));
                     var portal = entry.AddComponent<EntryPortal>(); portal.Configure(cut, block.GetComponent<BoxCollider>(), outside, inside);
-                    var health = entry.AddComponent<HealthComponent>(); SetHealth(health, layout.doorHealth, Team.Neutral);
+                    var health = entry.AddComponent<HealthComponent>(); SetHealth(health, survival ? 20 : layout.doorHealth, Team.Neutral);
                     var repair = Anchor("Repair anchor", entry.transform, new Vector3(0, 0, .72f));
                     var door = entry.AddComponent<DoorController>(); door.Configure(health, portal, repair); doors.Add(door);
                     // Door leaves disappear on opening; static jambs/header stay on the wagon.
@@ -219,6 +219,7 @@ namespace WaitYourTurn.Editor
             EditorSceneManager.CloseScene(lab, true);
             var run = new GameObject("Run flow - existing authority").AddComponent<RunDriver>();
             hero.GetComponent<ProximityRepair>().Configure(wagons[0].Doors[0], player); hero.GetComponent<PlayerMotor>().SetMovementArea(wagons[0].Area); hero.transform.position = new Vector3(0, .05f, 0);
+            hero.GetComponent<ProximityRepair>().SetDamageInterruption(false, false);
             run.Configure(wagons, player, hero.GetComponent<PlayerMotor>(), hero.GetComponent<MoveInput>(), hero.GetComponent<AutoAim>(), hero.GetComponent<HitscanWeapon>(), hero.GetComponent<ProximityRepair>());
             int initial = count / 2; run.ConfigureInitialWagon(initial);
             run.ConfigureRandomAssignments();
@@ -228,7 +229,30 @@ namespace WaitYourTurn.Editor
             spawner.ConfigurePrograms(survival ? SurvivalContentBuilder.EnsurePrograms() : StationContentBuilder.EnsurePrograms());
             hero.GetComponent<HitscanWeapon>().ConfigureInventory(true);
             var economy = new GameObject("Run economy - owner wallet and current wagon shop").AddComponent<RunEconomy>();
-            economy.Configure(run, ShopContentBuilder.EnsureCatalog());
+            economy.Configure(run, ShopContentBuilder.EnsureCatalog(survival));
+            if (survival)
+            {
+                var views = new List<DoorReinforcementVisual>();
+                foreach (var wagon in wagons) foreach (var door in wagon.Doors)
+                {
+                    var decoration = new GameObject("Reinforcement visual - no gameplay collider");
+                    decoration.SetActive(false); decoration.transform.SetParent(door.transform, false);
+                    var wood = new GameObject("Wood stage"); wood.transform.SetParent(decoration.transform, false);
+                    var wire = new GameObject("Wire stage"); wire.transform.SetParent(decoration.transform, false);
+                    for (int slat = 0; slat < 2; slat++)
+                        Cube("Wood slat", wood.transform, new Vector3(0, .65f + slat * .4f, -.13f), new Vector3(1.2f, .09f, .035f), yellow, false);
+                    for (int bar = 0; bar < 5; bar++)
+                        Cube("Wire strand", wire.transform, new Vector3(-.52f + bar * .26f, .92f, -.13f), new Vector3(.018f, .9f, .025f), trim, false);
+                    for (int bar = 0; bar < 4; bar++)
+                        Cube("Wire cross strand", wire.transform, new Vector3(0, .52f + bar * .26f, -.13f), new Vector3(1.1f, .018f, .025f), trim, false);
+                    CombineDecoration(wood, yellow, "SurvivalWood"); CombineDecoration(wire, trim, "SurvivalWire");
+                    var visual = decoration.AddComponent<DoorReinforcementVisual>(); visual.Configure(door, wood, wire);
+                    decoration.SetActive(true); views.Add(visual);
+                }
+                var root = new GameObject("Run-only exterior door reinforcement"); root.SetActive(false);
+                var strength = root.AddComponent<RunReinforcement>(); strength.Configure(run, views.ToArray());
+                economy.ConfigureReinforcement(strength); root.SetActive(true);
+            }
             TurretContentBuilder.Install(run, registry, economy, spawner, survival);
             DroneContentBuilder.Install(run, registry, economy, spawner);
             if (survival)
@@ -282,6 +306,7 @@ namespace WaitYourTurn.Editor
                 foreach (var fixture in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include))
                     if (fixture.GetType().Name.EndsWith("Acceptance")) Object.DestroyImmediate(fixture);
                 new GameObject("Survival focused acceptance").AddComponent<SurvivalAcceptance>().Configure(run, spawner, Object.FindAnyObjectByType<RunPersistence>());
+                new GameObject("Survival onboarding and shop acceptance").AddComponent<SurvivalOnboardingAcceptance>().Configure(run, spawner, Object.FindAnyObjectByType<RunPersistence>(), economy);
             }
             else
             {
@@ -400,6 +425,24 @@ namespace WaitYourTurn.Editor
             var cube = GameObject.CreatePrimitive(PrimitiveType.Cube); cube.name = name; cube.transform.SetParent(parent, false); cube.transform.localPosition = local; cube.transform.localScale = size;
             if (material != null) cube.GetComponent<Renderer>().sharedMaterial = material; else cube.GetComponent<Renderer>().enabled = false;
             if (!collider) Object.DestroyImmediate(cube.GetComponent<Collider>()); return cube;
+        }
+        private static void CombineDecoration(GameObject root, Material material, string name)
+        {
+            // One shared mesh / renderer per visible door stage, rather than a renderer for every strand.
+            string path = ArtFolder + "/" + name + ".asset";
+            var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            var children = root.GetComponentsInChildren<MeshFilter>(true);
+            if (mesh == null)
+            {
+                var parts = new CombineInstance[children.Length];
+                for (int i = 0; i < children.Length; i++) parts[i] = new CombineInstance
+                { mesh = children[i].sharedMesh, transform = root.transform.worldToLocalMatrix * children[i].transform.localToWorldMatrix };
+                mesh = new Mesh { name = name }; mesh.CombineMeshes(parts); AssetDatabase.CreateAsset(mesh, path);
+            }
+            foreach (var child in children) Object.DestroyImmediate(child.gameObject);
+            root.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var renderer = root.AddComponent<MeshRenderer>(); renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; renderer.receiveShadows = false;
         }
         private static void SetHealth(HealthComponent health, float max, Team team)
         { var s = new SerializedObject(health); s.FindProperty("startingMaxHealth").floatValue = max; s.FindProperty("team").intValue = (int)team; s.ApplyModifiedPropertiesWithoutUndo(); }

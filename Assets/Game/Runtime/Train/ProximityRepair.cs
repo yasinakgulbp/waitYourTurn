@@ -10,7 +10,7 @@ namespace WaitYourTurn.Train
         [SerializeField] private HealthComponent actor;
         [SerializeField, Min(0.1f)] private float duration = 3f;
         [SerializeField, Min(0.1f)] private float radius = 1f;
-        [SerializeField] private bool interruptOnDoorDamage = true;
+        [SerializeField] private bool interruptOnDoorDamage;
         [SerializeField] private bool interruptOnActorDamage;
         private float elapsed;
         private ulong doorDamageRevision, actorDamageRevision;

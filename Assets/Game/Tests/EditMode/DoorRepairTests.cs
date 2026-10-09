@@ -107,7 +107,7 @@ namespace WaitYourTurn.Tests
 
         [Test] public void DefaultRepairContinuesThroughPlayerDamageWithoutBlockingHits()
         {
-            Assert.That(repair.InterruptOnDoorDamage, Is.True); Assert.That(repair.InterruptOnActorDamage, Is.False);
+            Assert.That(repair.InterruptOnDoorDamage, Is.False); Assert.That(repair.InterruptOnActorDamage, Is.False);
             Hit(door.Durability, 5); repair.Cancel(); repair.Tick(1);
             Hit(player, 1); repair.Tick(1);
             Assert.That(repair.Progress, Is.EqualTo(2f / 3).Within(.001f));
@@ -142,7 +142,7 @@ namespace WaitYourTurn.Tests
         [Test] public void ApplyingSamePolicyDoesNotRestartRepair()
         {
             Hit(door.Durability, 5); repair.Cancel(); repair.Tick(2);
-            repair.SetDamageInterruption(true, false);
+            repair.SetDamageInterruption(false, false);
             Assert.That(repair.Progress, Is.EqualTo(2f / 3).Within(.001f));
         }
 

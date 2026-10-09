@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58f554feda633f0439651908a4be72fd, type: 3}
+  m_Name: SurvivalShop
+  m_EditorClassIdentifier: WaitYourTurn.Run::WaitYourTurn.Run.ShopCatalog
+  startingCoins: 1000
+  purchaseCooldown: 0.35
+  items:
+  - id: heal
+    label: Heal
+    price: 30
+    effect: 0
+    weaponIndex: -1
+    turretIndex: -1
+    reinforcementLevel: 0
+  - id: repair
+    label: Repair wagon doors
+    price: 40
+    effect: 1
+    weaponIndex: -1
+    turretIndex: -1
+    reinforcementLevel: 0
+  - id: smg
+    label: SMG / refill
+    price: 60
+    effect: 2
+    weaponIndex: 1
+    turretIndex: -1
+    reinforcementLevel: 0
+  - id: rifle
+    label: Rifle / refill
+    price: 100
+    effect: 2
+    weaponIndex: 2
+    turretIndex: -1
+    reinforcementLevel: 0
+  - id: shotgun
+    label: Shotgun / refill
+    price: 90
+    effect: 2
+    weaponIndex: 3
+    turretIndex: -1
+    reinforcementLevel: 0
+  - id: turret-normal
+    label: Normal turret
+    price: 90
+    effect: 3
+    weaponIndex: -1
+    turretIndex: 0
+    reinforcementLevel: 0
+  - id: turret-advanced
+    label: Advanced turret
+    price: 160
+    effect: 3
+    weaponIndex: -1
+    turretIndex: 1
+    reinforcementLevel: 0
+  - id: drone
+    label: Companion drone
+    price: 180
+    effect: 4
+    weaponIndex: -1
+    turretIndex: -1
+    reinforcementLevel: 0
+  - id: wood
+    label: Wood reinforcement
+    price: 80
+    effect: 5
+    weaponIndex: -1
+    turretIndex: -1
+    reinforcementLevel: 1
+  - id: wire
+    label: Wire reinforcement
+    price: 160
+    effect: 5
+    weaponIndex: -1
+    turretIndex: -1
+    reinforcementLevel: 2

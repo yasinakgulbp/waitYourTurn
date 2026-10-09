@@ -23,6 +23,7 @@ namespace WaitYourTurn.Sandbox
         { run=owner;spawner=spawn;presentation=visual; }
         private void Update()
         {
+            if (IsSurvival) RefreshSurvivalHud();
             if (!checking && Input.GetKeyDown(KeyCode.F3) && !IsSurvival) StartCoroutine(CheckMovement());
             if (!checking && Input.GetKeyDown(KeyCode.F10)) StartCheck();
         }
@@ -35,6 +36,7 @@ namespace WaitYourTurn.Sandbox
         private void OnGUI()
         {
             if(run.Flow==null||run.CurrentWagon==null)return;
+            if (IsSurvival) { DrawSurvivalHud(); return; }
             Rect safe=Screen.safeArea;
             float scale=Mathf.Max(.1f,Mathf.Min(safe.width/960f,safe.height/540f));
             Vector2 offset=new Vector2(safe.x,Screen.height-safe.yMax);

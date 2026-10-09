@@ -1,17 +1,18 @@
 namespace WaitYourTurn.Economy
 {
-    public enum ShopEffect { Heal, RepairWagon, Weapon, Turret, Drone }
+    public enum ShopEffect { Heal, RepairWagon, Weapon, Turret, Drone, ReinforceDoors }
     public enum PurchaseResult { Success, Closed, StaleContext, Duplicate, InvalidProduct, Unavailable, InsufficientFunds, Busy, ApplyFailed }
     public readonly struct ShopProduct
     {
         public readonly string Id;
-        public readonly int Price, WeaponIndex, TurretIndex;
+        public readonly int Price, WeaponIndex, TurretIndex, ReinforcementLevel;
         public readonly ShopEffect Effect;
-        public ShopProduct(string id, int price, ShopEffect effect, int weaponIndex = -1, int turretIndex = -1)
-        { Id = id; Price = price; Effect = effect; WeaponIndex = weaponIndex; TurretIndex = turretIndex; }
+        public ShopProduct(string id, int price, ShopEffect effect, int weaponIndex = -1, int turretIndex = -1, int reinforcementLevel = 0)
+        { Id = id; Price = price; Effect = effect; WeaponIndex = weaponIndex; TurretIndex = turretIndex; ReinforcementLevel = reinforcementLevel; }
         public bool Valid => !string.IsNullOrWhiteSpace(Id) && Price > 0 &&
             (Effect == ShopEffect.Heal || Effect == ShopEffect.RepairWagon || Effect == ShopEffect.Weapon && WeaponIndex > 0 ||
-                Effect == ShopEffect.Turret && TurretIndex >= 0 || Effect == ShopEffect.Drone);
+                Effect == ShopEffect.Turret && TurretIndex >= 0 || Effect == ShopEffect.Drone ||
+                Effect == ShopEffect.ReinforceDoors && ReinforcementLevel >= 1 && ReinforcementLevel <= 2);
     }
     public interface IShopEffects
     {

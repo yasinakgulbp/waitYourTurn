@@ -10,6 +10,8 @@ namespace WaitYourTurn.Run
         public EnemyProfile profile;
         [Tooltip("-1 targets every wagon; otherwise the zero-based wagon index.")] public int wagon = -1;
         [Min(1)] public int count = 8;
+        [Min(0)] public int perStationIncrease;
+        [Range(1, 1000)] public int maximumCount = 1000;
         [Min(0)] public float firstAt = 2;
         [Min(.01f)] public float interval = 3;
     }
@@ -37,13 +39,16 @@ namespace WaitYourTurn.Run
             {
                 var b = bands[i];
                 if (b == null || b.profile == null || !b.profile.Valid || b.wagon < -1 || b.wagon >= wagons ||
-                    b.count < 1 || b.count > 1000 || b.firstAt < 0 || float.IsNaN(b.firstAt) || float.IsInfinity(b.firstAt) ||
+                    b.count < 1 || b.count > 1000 || b.perStationIncrease < 0 || b.perStationIncrease > 1000 ||
+                    b.maximumCount < b.count || b.maximumCount > 1000 || b.firstAt < 0 || float.IsNaN(b.firstAt) || float.IsInfinity(b.firstAt) ||
                     !(b.interval > 0) || float.IsInfinity(b.interval))
                 { reason = $"Band {i}: invalid profile, wagon index, count (1–1000), start or interval."; break; }
             }
             return reason == null;
         }
-        public SpawnStream[] BuildStreams(int wagonCount)
+        private int CountAt(SpawnBand band, int station) => (int)Math.Min(band.maximumCount,
+            band.count + (long)Math.Max(0, station - firstStation) * band.perStationIncrease);
+        public SpawnStream[] BuildStreams(int wagonCount, int station = 0)
         {
             if (!Validate(wagonCount, out string reason)) throw new ArgumentException(reason);
             int length = 0; foreach (var band in bands) length += band.wagon < 0 ? wagonCount : 1;
@@ -51,17 +56,17 @@ namespace WaitYourTurn.Run
             // Wagon-first order prevents a single type/wagon from monopolizing the queue.
             for (int wagon = 0; wagon < wagonCount; wagon++) for (int i = 0; i < bands.Length; i++)
                 if (bands[i].wagon < 0 || bands[i].wagon == wagon)
-                    streams[next++] = new SpawnStream(wagon, i, bands[i].count, bands[i].firstAt, bands[i].interval);
+                    streams[next++] = new SpawnStream(wagon, i, CountAt(bands[i], station), bands[i].firstAt, bands[i].interval);
             return streams;
         }
-        public SpawnStream[] BuildSoloStreams(int wagonCount)
+        public SpawnStream[] BuildSoloStreams(int wagonCount, int station = 0)
         {
             if (!Validate(wagonCount, out string reason)) throw new ArgumentException(reason);
             // A mobile defender has one station budget. Explicit wagon-only bands belong to Battle.
             int count = 0; foreach (var band in bands) if (band.wagon == -1) count++;
             var streams = new SpawnStream[count]; int next = 0;
             for (int i = 0; i < bands.Length; i++) if (bands[i].wagon == -1)
-                streams[next++] = new SpawnStream(0, i, bands[i].count, bands[i].firstAt, bands[i].interval);
+                streams[next++] = new SpawnStream(0, i, CountAt(bands[i], station), bands[i].firstAt, bands[i].interval);
             return streams;
         }
     }

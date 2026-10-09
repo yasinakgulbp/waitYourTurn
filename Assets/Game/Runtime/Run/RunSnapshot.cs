@@ -63,6 +63,7 @@ namespace WaitYourTurn.Run
         public string content, runId;
         public RunMode mode;
         public int seed, station, assignments;
+        public int doorReinforcement;
         public RunPhase phase;
         public float elapsed;
         public uint humanRandom, botRandom;

@@ -61,11 +61,11 @@ namespace WaitYourTurn.Sandbox
                 "Cross-wagon onboard pursuit / stable pool ownership")) yield break;
             foreach (var wagon in run.Wagons) wagon.Enemies.ClearAlive();
             // Check the real schedule with the player at the head: every wagon and both platform sides still receive enemies.
-            run.Flow.Restore(RunPhase.Approach, 1, 0); spawner.ResetSchedule();
+            run.Flow.Restore(RunPhase.Approach, 2, 0); spawner.ResetSchedule();
             run.Flow.Tick(run.Flow.Remaining + .01f); spawner.SpawningAllowed = true; yield return null;
             for (int round = 0; round < 4; round++)
             {
-                run.Flow.Tick(round == 0 ? 4.1f : 6);
+                run.Flow.Tick(round == 0 ? 5.1f : 4);
                 yield return null; yield return null; yield return null;
             }
             spawner.SpawningAllowed = false;
@@ -87,7 +87,7 @@ namespace WaitYourTurn.Sandbox
             run.Flow.Tick(100); spawner.SpawningAllowed = true;
             for (int frame = 0; frame < 8; frame++) yield return null;
             if (!Require(spawner.WaveCompleted && spawner.Dropped == 0 && run.Flow.Phase == RunPhase.Defense,
-                "Untimed defense waits for exterior survivors after all 18 spawns")) yield break;
+                "Untimed defense waits for exterior survivors after all 7 spawns")) yield break;
             spawner.SpawningAllowed = false;
             foreach (var wagon in run.Wagons) wagon.Enemies.ClearAlive();
             motor.Place(new Vector3(0, .05f, 0)); yield return new WaitForEndOfFrame();
@@ -147,12 +147,12 @@ namespace WaitYourTurn.Sandbox
             if (!Require(save.Status == "Run resumed locally" && run.Flow.Phase == RunPhase.Cruising && !run.Flow.Paused,
                 "Visible cruise resumes from isolated save")) yield break;
             run.Flow.Tick(run.Flow.Remaining + .01f); yield return null;
-            if (!Require(run.Flow.Phase == RunPhase.Approach && run.Flow.Station == 2 && visual.Darkness == 0,
+            if (!Require(run.Flow.Phase == RunPhase.Approach && run.Flow.Station == 3 && visual.Darkness == 0,
                 "Next station without fade or reassignment")) yield break;
             var battle = new RunFlow(new RunTimings());
             for (int boundary = 0; boundary < 4; boundary++) battle.Tick(1000);
             if (!Require(battle.Phase == RunPhase.FadeOut && battle.Paused, "Battle retains timed defense and dark transition")) yield break;
-            Finish(true, "Open 3-wagon walking/navigation and pursuit; bilateral 18-enemy wave; untimed boarding departure including exterior kills; continuous player X/Z camera; offscreen spawn silhouettes at 4:3/16:9/20:9; minimap bounds; no floor loot; visible moving travel with enemy damage and repair; cruise save/resume; next station without fade/assignment; Battle timed/fade policy unchanged.");
+            Finish(true, "Open 3-wagon walking/navigation and pursuit; bilateral 7-enemy wave; untimed boarding departure including exterior kills; continuous player X/Z camera; offscreen spawn silhouettes at 4:3/16:9/20:9; minimap bounds; no floor loot; visible moving travel with enemy damage and repair; cruise save/resume; next station without fade/assignment; Battle timed/fade policy unchanged.");
         }
         private bool Require(bool value, string message) { if (!value) Finish(false, message); return value; }
         private void Finish(bool pass, string message)

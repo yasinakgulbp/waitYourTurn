@@ -111,6 +111,7 @@ namespace WaitYourTurn.Run
             bool battle = run.Match != null && run.Match.Active;
             var data = new RunSnapshot { content = ContentKey(), runId = runId, mode = battle ? RunMode.Battle : RunMode.Solo,
                 seed = run.ActualRunSeed, station = run.Flow.Station, phase = run.Flow.Phase, elapsed = run.Flow.Elapsed,
+                doorReinforcement = economy.Reinforcement != null ? economy.Reinforcement.Level : 0,
                 assignments = run.Assignments, humanRandom = run.RandomState, botRandom = battle ? run.Match.RandomState : 0,
                 ranks = battle ? run.Match.Roster.CapturePlaces() : null, timings = run.Timings,
                 participants = new ParticipantSave[battle ? run.Match.Bots.Length + 1 : 1], wagons = new WagonSave[run.Wagons.Length],
@@ -159,7 +160,8 @@ namespace WaitYourTurn.Run
             if (run.Loot != null) text.Append("/owned-ammo-loot-v3/").Append(JsonUtility.ToJson(run.Loot.LocalPosition)).Append(run.Loot.PickupRadius);
             if (run.Solo != null)
             {
-                if (run.Solo.OpenTrainSurvival) text.Append("/continuous-survival-v2/").Append(run.SurvivalCruiseSeconds);
+                if (run.Solo.OpenTrainSurvival) text.Append("/continuous-survival-v3-onboarding/").Append(run.SurvivalCruiseSeconds)
+                    .Append(economy.Reinforcement != null ? economy.Reinforcement.DefinitionKey : "none");
                 foreach (var connection in run.Solo.Connections)
                     text.Append("/interior-v2/").Append(JsonUtility.ToJson(connection.transform.position)).Append(JsonUtility.ToJson(connection.Passage)).Append(connection.UnlockPrice);
             }
@@ -178,7 +180,8 @@ namespace WaitYourTurn.Run
                 text.Append(program.name).Append(program.firstStation).Append(program.queueCapacity).Append(program.positionAttempts);
                 foreach (var band in program.bands) text.Append(band.profile.name).Append(JsonUtility.ToJson(band.profile))
                     .Append(band.wagon).Append(band.count).Append(band.firstAt.ToString("R", System.Globalization.CultureInfo.InvariantCulture))
-                    .Append(band.interval.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
+                    .Append(band.interval.ToString("R", System.Globalization.CultureInfo.InvariantCulture))
+                    .Append(band.perStationIncrease > 0 ? $"/growth/{band.perStationIncrease}/{band.maximumCount}" : "");
             }
             foreach (var definition in economy.Defenses.Definitions) text.Append(definition.name).Append(JsonUtility.ToJson(definition.weapon));
             text.Append(economy.Drone.Definition.name).Append(JsonUtility.ToJson(economy.Drone.Definition.weapon));
@@ -234,9 +237,16 @@ namespace WaitYourTurn.Run
                 reason = "Invalid wagon " + w; var saved = data.wagons[w]; var wagon = run.Wagons[w];
                 if (saved == null || saved.id != wagon.Id || saved.spawnSequence < 0 || saved.doors == null || saved.doors.Length != wagon.Doors.Length ||
                     saved.enemies == null || saved.enemies.Length > wagon.Enemies.Capacity || saved.turrets == null || saved.turrets.Length > economy.Defenses.Racks[w].Mounts.Length) return false;
-                foreach (var door in saved.doors) if (door == null || !(door.maximum > 0) || door.maximum > 1000000 ||
-                    !(door.current >= 0) || door.current > door.maximum || door.current == 0 && (!door.open || door.closing) ||
-                    door.current > 0 && door.open != door.closing) return false;
+                if (economy.Reinforcement != null ? !economy.Reinforcement.ValidLevel(data.doorReinforcement) : data.doorReinforcement != 0) return false;
+                for (int d = 0; d < saved.doors.Length; d++)
+                {
+                    var door = saved.doors[d];
+                    if (door == null || !(door.maximum > 0) || door.maximum > 1000000 ||
+                        !(door.current >= 0) || door.current > door.maximum || door.current == 0 && (!door.open || door.closing) ||
+                        door.current > 0 && door.open != door.closing) return false;
+                    if (economy.Reinforcement != null && !Mathf.Approximately(door.maximum,
+                        economy.Reinforcement.MaximumAt(wagon.Doors[d].Durability.StartingMaximum, data.doorReinforcement))) return false;
+                }
                 foreach (var enemy in saved.enemies)
                     if (enemy == null || !Life(enemy.body) || enemy.body.current <= 0 || enemy.profile == null ||
                         enemy.profile.Length > 128 || enemy.profile != "" && !profiles.ContainsKey(enemy.profile) || enemy.door < 0 ||
@@ -267,7 +277,7 @@ namespace WaitYourTurn.Run
                 StationDefinition definition = null;
                 foreach (var candidate in spawner.Programs) if (candidate.firstStation <= data.station && (definition == null || definition.firstStation < candidate.firstStation)) definition = candidate;
                 if (definition == null || data.spawner.station != data.station) return false;
-                var streams = spawner.BuildStreams(definition, solo);
+                var streams = spawner.BuildStreams(definition, solo, data.station);
                 if (streams.Length == 0 || !new SpawnSchedule(streams, definition.queueCapacity,
                     definition.positionAttempts, definition.retryDelay).Restore(data.spawner.schedule)) return false;
             }
@@ -296,6 +306,7 @@ namespace WaitYourTurn.Run
                 run.RestoreFlow(data.seed, data.humanRandom, data.phase, data.station, data.elapsed, data.assignments); run.SetLoadingGate(true);
                 run.Match.BeginRun(data.seed);
                 if (data.mode == RunMode.Battle) run.Match.RestoreRoster(data.ranks, data.botRandom);
+                if (economy.Reinforcement != null) economy.Reinforcement.RestoreLevel(data.doorReinforcement);
                 foreach (var wagon in run.Wagons) wagon.SetDefender(null);
                 for (int i = 0; i < data.participants.Length; i++)
                 {

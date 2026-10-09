@@ -1,0 +1,21 @@
+D44 Survival onboarding and shop acceptance — 2026-10-09
+Unity 6000.6.4f1, PC Editor. Not Android acceptance.
+HealthAndRepairTests : passed=41, failed=0, start=2026-10-09 16:23:17Z
+EconomyTests : passed=13, failed=0, start=2026-10-09 16:24:34Z
+SpawnAndJourneyTests : passed=42, failed=0, start=2026-10-09 16:37:57Z
+2026-10-09T16:36:29.1398411Z
+PASS: Middle start; actual waves4 central /7 distributed; growth10/13 capped36; equal20HP; door-hit repair continuity; wood30/wire40 all-door ordered paid upgrades; no resurrection/collider changes; stage/HP save validation and restore; restart resets level/HP. PC only.
+Visual check: grouped shop weapons / health-doors / normal+advanced turret+drone, HUD ammo-reserve-HP-coins, transparent unlabelled minimap, no Console errors during check.
+Baseline (older larger first wave):
+2026-10-09T16:10:09.0583112Z
+Editor PC sample; includes Editor overhead, not Android acceptance.
+Frames=864; FPS=107,9; P50ms=8,36; P95ms=15,66; Maxms=49,69; MaxEnemies=13
+GCcounterValid=True; AverageFrameAllocKB=23,44; MainCounterValid=True; AverageMainMs=9,25
+
+After (gentle first wave):
+2026-10-09T16:37:26.2376450Z
+Editor PC sample; includes Editor overhead, not Android acceptance.
+Frames=1036; FPS=129,6; P50ms=7,13; P95ms=13,03; Maxms=26,96; MaxEnemies=1
+GCcounterValid=True; AverageFrameAllocKB=13,96; MainCounterValid=True; AverageMainMs=7,70
+
+Different enemy counts (13 vs 1 maximum), so these samples are not a controlled before/after benchmark and do not establish causality or eliminate intermittent stutter. HUD caches remove identified repeat allocations; phone FPS, temperature and battery were not measured in this step.

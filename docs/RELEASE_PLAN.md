@@ -66,3 +66,9 @@ Reklam videosunun indirtmesi ile oyuncunun kalıp gelir oluşturması ayrı doğ
 - [Android vitals: yavaş oyun oturumları](https://developer.android.com/google/play/vitals/slow-session): 20/30 FPS oturum ölçüleri; teknik kabulümüz yalnız ortalama FPS değildir. Bunlar bizim A54 için 60 FPS hedefimizden ayrı Play ölçütleridir.
 - [Unity 6: mobil post-processing](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/integration-with-post-processing.html): efektler kare bütçesi tüketebilir; düşük cihaz için Gaussian alan derinliği önerisi vardır. Bu kaynak URP içindir; mevcut Built-in projede kurulu özellik gibi uygulanmaz.
 - [Unity: ROAS kampanyaları](https://docs.unity.com/en-us/grow/acquire/campaigns/roas/intro-to-roas-campaigns): edinme maliyeti/gelir ve ölçüm pencereleri; kampanya hedefi sonuç garantisi değildir. Sağlayıcı seçimi veya harcama onayı sayılmaz.
+
+## D44 takip işi: kalıcı hızlı onarım
+
+M8e/profil/ana menü işinde **RepairSpeed** geliştirmesi eklenir: ayrı kalıcı jetonla küçük seviyeler, iki modda insan oyuncusuna ortak; bot değerleri ayrı. Süre alt sınırı, fiyat/artışlar kullanıcıyla seçilir. Profil sürüm göçü, canlı koşu yüklemede süre/ilerleme uyumu ve yeni koşuda uygulama birlikte ele alınır. D44'te yalnız koşu içi tahta/tel ve kesintisiz onarım uygulanır; kalıcı hız henüz yapılmadı.
+
+D44 kısa PC kontrolü: orta başlangıç,4→7 gerçek üretim, tahta/tel sırası/ödeme/kırık kapı, hasar altında onarım, kayıt/yükleme ve yeni koşuda sıfırlama. Yeni telefonda ısı/pil ölçümü bu adıma dahil değildir. Kamera/arayüz karşılaştırması kısa Editor örneğidir; farklı düşman sayılarıyla FPS farkı tek başına optimizasyon kanıtı değildir.

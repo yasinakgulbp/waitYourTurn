@@ -12,6 +12,10 @@ namespace WaitYourTurn.Run
         [SerializeField] private RunDefenses defenses;
         [SerializeField] private RunDrone drone;
         [SerializeField] private RunProfile profile;
+        [SerializeField] private RunReinforcement reinforcement;
+        public RunDriver Run => run;
+        public RunReinforcement Reinforcement => reinforcement;
+        public void ConfigureReinforcement(RunReinforcement strength) => reinforcement = strength;
         public RunProfile Profile => profile;
         public void ConfigureProfile(RunProfile permanent) => profile = permanent;
         public RunDrone Drone => drone;
@@ -86,6 +90,7 @@ namespace WaitYourTurn.Run
                 case ShopEffect.Weapon: return (profile == null || profile.WeaponUnlocked(product.WeaponIndex)) && run.Weapon.CanGrantOrRefill(product.WeaponIndex);
                 case ShopEffect.Turret: return defenses != null && defenses.CanBuy(product.TurretIndex);
                 case ShopEffect.Drone: return drone != null && drone.CanBuy;
+                case ShopEffect.ReinforceDoors: return reinforcement != null && reinforcement.CanUpgrade(product.ReinforcementLevel);
                 default: return false;
             }
         }
@@ -103,6 +108,7 @@ namespace WaitYourTurn.Run
                 case ShopEffect.Weapon: return run.Weapon.TryGrantOrRefill(product.WeaponIndex);
                 case ShopEffect.Turret: return defenses != null && defenses.TryBuy(product.TurretIndex);
                 case ShopEffect.Drone: return drone != null && drone.TryBuy();
+                case ShopEffect.ReinforceDoors: return reinforcement != null && reinforcement.TryUpgrade(product.ReinforcementLevel);
                 default: return false;
             }
         }

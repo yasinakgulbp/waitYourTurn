@@ -19,7 +19,8 @@ namespace WaitYourTurn.Sandbox
             Rect safe = Screen.safeArea; float scale = Mathf.Max(.1f, Mathf.Min(safe.width / 960f, safe.height / 540f));
             Vector2 offset = new Vector2(safe.x, Screen.height - safe.yMax); float width = safe.width / scale;
             var old = GUI.matrix; GUI.matrix = Matrix4x4.TRS(offset, Quaternion.identity, new Vector3(scale, scale, 1));
-            GUI.Label(new Rect(width - 285, 110, 273, 25), $"Kalıcı jeton: {profile.Tokens} (deneme)");
+            if (!run.UsesOpenTrainSurvival || run.Flow.Terminal)
+                GUI.Label(new Rect(width - 285, 110, 273, 25), $"Kalıcı jeton: {profile.Tokens} (deneme)");
             if (run.Flow.Phase == RunPhase.GameOver)
             {
                 var panel = new Rect(width - 312, 144, 300, 356);

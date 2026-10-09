@@ -21,8 +21,24 @@ MonoBehaviour:
   positionAttempts: 3
   retryDelay: 0.25
   bands:
-  - profile: {fileID: 11400000, guid: 01c291fc06362b24f945d47742c3abf8, type: 2}
-    wagon: -1
-    count: 8
+  - profile: {fileID: 11400000, guid: ba99581a49354bd9831cc34aa233e0bb, type: 2}
+    wagon: 0
+    count: 3
+    perStationIncrease: 1
+    maximumCount: 12
     firstAt: 4
-    interval: 5
+    interval: 4
+  - profile: {fileID: 11400000, guid: ba99581a49354bd9831cc34aa233e0bb, type: 2}
+    wagon: 1
+    count: 4
+    perStationIncrease: 1
+    maximumCount: 12
+    firstAt: 3
+    interval: 4
+  - profile: {fileID: 11400000, guid: ba99581a49354bd9831cc34aa233e0bb, type: 2}
+    wagon: 2
+    count: 3
+    perStationIncrease: 1
+    maximumCount: 12
+    firstAt: 5
+    interval: 4

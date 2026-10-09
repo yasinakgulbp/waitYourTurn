@@ -81,13 +81,14 @@ namespace WaitYourTurn.Run
             {
                 wagon.SetDefender(null);
                 wagon.Enemies.ClearAlive(); wagon.SetStationAccess(false);
-                foreach (DoorController door in wagon.Doors) door.Durability.ResetForSpawn(door.Durability.Maximum, Team.Neutral);
+                foreach (DoorController door in wagon.Doors) door.Durability.ResetForSpawn(door.Durability.StartingMaximum, Team.Neutral);
             }
             player.ResetForSpawn(player.Maximum, Team.Player); pistol.ResetWeapon(); repair.Cancel(); aim.ClearTarget();
             Flow = CreateFlow(overrideTimings); Flow.Changed += OnPhase;
             match?.BeginRun(ActualRunSeed);
             solo?.ResetForRun();
-            int first = UsesSoloProgression ? 0 : randomInitialWagon ? random.Next(wagons.Length) : Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1);
+            int first = UsesSoloProgression ? (UsesOpenTrainSurvival ? Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1) : 0) :
+                randomInitialWagon ? random.Next(wagons.Length) : Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1);
             if (!Assign(wagons[first], false)) { Flow.Fail(); return; }
             OnPhase(RunPhase.Approach);
             Restarted?.Invoke();

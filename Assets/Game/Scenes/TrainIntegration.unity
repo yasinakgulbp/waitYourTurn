@@ -43196,7 +43196,7 @@ MonoBehaviour:
   actor: {fileID: 485480754}
   duration: 3
   radius: 1
-  interruptOnDoorDamage: 1
+  interruptOnDoorDamage: 0
   interruptOnActorDamage: 0
 --- !u!114 &485480751
 MonoBehaviour:
@@ -69384,7 +69384,7 @@ MonoBehaviour:
   actor: {fileID: 718578694}
   duration: 3
   radius: 1
-  interruptOnDoorDamage: 1
+  interruptOnDoorDamage: 0
   interruptOnActorDamage: 0
 --- !u!114 &718578691
 MonoBehaviour:
@@ -75267,7 +75267,7 @@ MonoBehaviour:
   actor: {fileID: 786198553}
   duration: 3
   radius: 1
-  interruptOnDoorDamage: 1
+  interruptOnDoorDamage: 0
   interruptOnActorDamage: 0
 --- !u!114 &786198555
 MonoBehaviour:
@@ -187574,7 +187574,7 @@ MonoBehaviour:
   actor: {fileID: 1945515724}
   duration: 3
   radius: 1
-  interruptOnDoorDamage: 1
+  interruptOnDoorDamage: 0
   interruptOnActorDamage: 0
 --- !u!114 &1945515721
 MonoBehaviour:
@@ -204754,7 +204754,7 @@ MonoBehaviour:
   actor: {fileID: 2129826059}
   duration: 3
   radius: 1
-  interruptOnDoorDamage: 1
+  interruptOnDoorDamage: 0
   interruptOnActorDamage: 0
 --- !u!114 &2129826056
 MonoBehaviour:

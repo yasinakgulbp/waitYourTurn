@@ -10,7 +10,6 @@ namespace WaitYourTurn.Sandbox
         [SerializeField] private RunDriver run;
         [SerializeField] private MoveInput input;
         private Bounds world;
-        private GUIStyle label;
         public void Configure(RunDriver owner, MoveInput controls) { run = owner; input = controls; }
         public static Rect Panel(float width, float height) => new Rect(width - 214, height - 122, 202, 110);
         private void Start()
@@ -28,10 +27,7 @@ namespace WaitYourTurn.Sandbox
             Rect panel = Panel(safe.width / scale, safe.height / scale);
             Matrix4x4 matrix = GUI.matrix; Color color = GUI.color; int depth = GUI.depth;
             GUI.matrix = Matrix4x4.TRS(offset, Quaternion.identity, Vector3.one * scale); GUI.depth = 20;
-            Fill(panel, new Color(.025f, .045f, .055f, .94f));
-            label ??= new GUIStyle(GUI.skin.label) { fontSize = 11 };
-            GUI.color = Color.white; GUI.Label(new Rect(panel.x + 8, panel.y + 2, 180, 19), "TRAIN  >     YOU / ENEMIES", label);
-            Rect area = new Rect(panel.x + 8, panel.y + 23, panel.width - 16, panel.height - 30);
+            Rect area = new Rect(panel.x + 8, panel.y + 8, panel.width - 16, panel.height - 16);
             Vector2 Point(Vector3 p) => new Vector2(Mathf.Lerp(area.xMin, area.xMax, Mathf.InverseLerp(world.min.x, world.max.x, p.x)),
                 Mathf.Lerp(area.yMax, area.yMin, Mathf.InverseLerp(world.min.z, world.max.z, p.z)));
             foreach (var wagon in run.Wagons)

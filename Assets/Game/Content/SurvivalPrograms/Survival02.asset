@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d50f57312fde574b9bdbc750c3e959f, type: 3}
-  m_Name: Survival01
+  m_Name: Survival02
   m_EditorClassIdentifier: WaitYourTurn.Run::WaitYourTurn.Run.StationDefinition
-  firstStation: 1
+  firstStation: 2
   globalLiveLimit: 24
   wagonLiveLimit: 8
   queueCapacity: 32
@@ -22,7 +22,23 @@ MonoBehaviour:
   retryDelay: 0.25
   bands:
   - profile: {fileID: 11400000, guid: ba99581a49354bd9831cc34aa233e0bb, type: 2}
+    wagon: 0
+    count: 2
+    perStationIncrease: 0
+    maximumCount: 12
+    firstAt: 4
+    interval: 4
+  - profile: {fileID: 11400000, guid: ba99581a49354bd9831cc34aa233e0bb, type: 2}
     wagon: 1
-    count: 4
+    count: 3
+    perStationIncrease: 0
+    maximumCount: 12
     firstAt: 3
-    interval: 3.5
+    interval: 4
+  - profile: {fileID: 11400000, guid: ba99581a49354bd9831cc34aa233e0bb, type: 2}
+    wagon: 2
+    count: 2
+    perStationIncrease: 0
+    maximumCount: 12
+    firstAt: 5
+    interval: 4

@@ -25,6 +25,11 @@ namespace WaitYourTurn.Run
         private Quaternion cameraRotation;
         private Camera marginClear;
         private float distance;
+        private bool framingCached;
+        private Rect cachedSafe;
+        private Vector2Int cachedScreen;
+        private Bounds cachedVolume;
+        private float cachedFov, framingDistance, cachedFollowLimit;
         private RunFlow observedFlow;
         public float Speed { get; private set; }
         public float StationOffset { get; private set; }
@@ -95,15 +100,21 @@ namespace WaitYourTurn.Run
             if (responsiveFraming)
             {
                 Rect safe = Screen.safeArea;
-                view.rect = new Rect(safe.x / Screen.width, safe.y / Screen.height, safe.width / Screen.width, safe.height / Screen.height);
-                if (marginClear != null) marginClear.enabled = safe.width < Screen.width || safe.height < Screen.height;
+                if (!framingCached || safe != cachedSafe || cachedScreen != new Vector2Int(Screen.width, Screen.height) ||
+                    cachedVolume != framingVolume || cachedFov != view.fieldOfView || cachedFollowLimit != playerFollowLimit)
+                {
+                    view.rect = new Rect(safe.x / Screen.width, safe.y / Screen.height, safe.width / Screen.width, safe.height / Screen.height);
+                    if (marginClear != null) marginClear.enabled = safe.width < Screen.width || safe.height < Screen.height;
+                    Bounds protectedVolume = framingVolume; protectedVolume.Expand(new Vector3(playerFollowLimit * 2, 0, 0));
+                    framingDistance = WagonCameraFraming.Distance(protectedVolume, cameraRotation, view.fieldOfView,
+                        safe.width / Mathf.Max(1, safe.height), WagonCameraFraming.ProtectedViewport);
+                    cachedSafe = safe; cachedScreen = new Vector2Int(Screen.width, Screen.height);
+                    cachedVolume = framingVolume; cachedFov = view.fieldOfView; cachedFollowLimit = playerFollowLimit; framingCached = true;
+                }
                 float follow = followPlayerAlongTrain ? Mathf.Clamp(run.Player.transform.position.x - run.CurrentWagon.transform.position.x,
                     -playerFollowLimit, playerFollowLimit) : 0;
                 // Fit the whole wagon and both approaches even at either extreme of the bounded follow.
-                Bounds protectedVolume = framingVolume;
-                protectedVolume.Expand(new Vector3(playerFollowLimit * 2, 0, 0));
-                float d = WagonCameraFraming.Distance(protectedVolume, cameraRotation, view.fieldOfView,
-                    safe.width / Mathf.Max(1, safe.height), WagonCameraFraming.ProtectedViewport);
+                float d = framingDistance;
                 cameraPosition = run.UsesOpenTrainSurvival ?
                     new Vector3(run.Player.transform.position.x, framingVolume.center.y, run.Player.transform.position.z) - cameraRotation * Vector3.forward * d :
                     run.CurrentWagon.transform.position + Vector3.right * follow - cameraRotation * Vector3.forward * d;
