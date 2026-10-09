@@ -76,7 +76,7 @@ namespace WaitYourTurn.Run
             int budget = Mathf.Min(maximumBudgetPerWagon, initialBudgetPerWagon + station - 1);
             for (int i = 0; i < run.Wagons.Length; i++)
             {
-                if (!run.Wagons[i].HasLivingDefender) continue;
+                if (!CanAttackWagon(i)) continue;
                 if (attempted[i] >= budget) continue;
                 run.Wagons[i].SpawnOutside(attempted[i]++); Attempts++;
             }
@@ -104,9 +104,9 @@ namespace WaitYourTurn.Run
         { Diagnostic = reason; Debug.LogError("[StationSpawner] " + reason, this); return false; }
         private SpawnResult TrySpawn(SpawnRequest request)
         {
-            int target = run.UsesSoloProgression ? Array.IndexOf(run.Wagons, run.CurrentWagon) : request.Wagon;
+            int target = run.UsesSoloProgression && !run.Solo.OpenTrainSurvival ? Array.IndexOf(run.Wagons, run.CurrentWagon) : request.Wagon;
             var wagon = run.Wagons[target];
-            if (!wagon.HasLivingDefender) return SpawnResult.Unoccupied;
+            if (!CanAttackWagon(target)) return SpawnResult.Unoccupied;
             if (totalActive >= definition.globalLiveLimit || activeCounts[target] >= definition.wagonLiveLimit || !wagon.Enemies.CanRent)
                 return SpawnResult.CapacityFull;
             // Each retry uses another authored anchor; neither moving scenery nor windows are spawn sources.
@@ -114,7 +114,10 @@ namespace WaitYourTurn.Run
             if (!wagon.SpawnOutside(anchor, definition.bands[request.Profile].profile, station)) return SpawnResult.InvalidPosition;
             activeCounts[target]++; totalActive++; SpawnedThisFrame++; return SpawnResult.Spawned;
         }
-        public SpawnStream[] BuildStreams(StationDefinition program, bool solo) => solo ? program.BuildSoloStreams(run.Wagons.Length) : program.BuildStreams(run.Wagons.Length);
+        private bool CanAttackWagon(int index) => run.UsesSoloProgression && run.Solo.OpenTrainSurvival ?
+            run.Player.IsAlive && index <= run.Solo.UnlockedThrough : run.Wagons[index].HasLivingDefender;
+        public SpawnStream[] BuildStreams(StationDefinition program, bool solo) => solo && (run.Solo == null || !run.Solo.OpenTrainSurvival) ?
+            program.BuildSoloStreams(run.Wagons.Length) : program.BuildStreams(run.Wagons.Length);
         private void WarmPools(int budget)
         {
             int inspected = 0, created = 0;

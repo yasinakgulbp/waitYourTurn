@@ -28,8 +28,8 @@ namespace WaitYourTurn.Run
         public bool Suppressed => suppressed;
         public bool AiAllowed { get; set; } = true;
         public int HumanPlace => Roster?.Place(0) ?? 0;
-        public void Configure(RunDriver owner, RunEconomy shop, BotController[] participants)
-        { run = owner; economy = shop; bots = participants; run.ConfigureMatch(this); }
+        public void Configure(RunDriver owner, RunEconomy shop, BotController[] participants, RunMode initialMode = RunMode.Battle)
+        { run = owner; economy = shop; bots = participants; mode = initialMode; run.ConfigureMatch(this); }
         // Only sandbox acceptance fixtures use suppression; normal mode changes start a new run explicitly.
         public void SetSuppressed(bool value) { suppressed = value; if (value) ClearBots(); }
         public void SetMode(RunMode value) { mode = value; run.Restart(); }

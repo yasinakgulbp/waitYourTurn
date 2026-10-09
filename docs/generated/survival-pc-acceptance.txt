@@ -1,0 +1,5 @@
+2026-10-09T14:05:03.3031981Z
+PASS: 3 accessible wagons; two permanent 3m passages; actual walking both ways; full NavMesh path; onboard pursuit across wagons; all-wagon bilateral bounded spawning; stable station budget; separate save/restore and invalid closed topology rejection.
+Scope: short PC check in Unity 6000.6.4f1; no new Android build or device performance acceptance. The initial fixture attempted to station-spawn an already onboard, migrated enemy and was corrected to restore that body through the existing onboard restore adapter. Final combined check passed.
+
+Battle smoke check (2026-10-09): existing TrainIntegration opened in Play; human plus four bots assigned to five distinct wagons, station Defense and spawning/automatic fire active. Console showed 0 errors / 0 warnings after the clean runtime check. No old full acceptance suites rerun. Git diff confirms existing Battle scene, Train-5 NavMesh, station program assets and original train/passage/turret CSVs are unchanged.

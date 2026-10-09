@@ -22,6 +22,7 @@ namespace WaitYourTurn.Run
         [SerializeField] private bool resumeInEditor;
         [SerializeField, Min(1)] private float autosaveSeconds = 5;
         [SerializeField] private string contentRevision = "train-integration-1";
+        [SerializeField] private string saveFileName = "active-run.json";
         private LocalRunStore store;
         private string runId;
         private float nextSave;
@@ -29,13 +30,17 @@ namespace WaitYourTurn.Run
         public bool Automatic => !Application.isEditor || resumeInEditor;
         public string Status { get; private set; } = "Local save ready";
         public bool Busy => restoring;
-        public void Configure(RunDriver owner, RunEconomy shop, StationSpawner waves)
-        { run = owner; economy = shop; spawner = waves; }
+        public void Configure(RunDriver owner, RunEconomy shop, StationSpawner waves, string fileName = "active-run.json")
+        {
+            if (string.IsNullOrWhiteSpace(fileName) || Path.GetFileName(fileName) != fileName || !fileName.EndsWith(".json", StringComparison.Ordinal))
+                throw new ArgumentException("Run save slot must be a JSON file name.");
+            run = owner; economy = shop; spawner = waves; saveFileName = fileName;
+        }
         public string SavePath => store.Path;
         public string RunId => runId;
-        public bool IsTestStore => store != null && store.Path != Path.Combine(Application.persistentDataPath, "active-run.json");
+        public bool IsTestStore => store != null && store.Path != Path.Combine(Application.persistentDataPath, saveFileName);
         public void UseTestStore(string path) { store = new LocalRunStore(path); }
-        private void Awake() { store = new LocalRunStore(Path.Combine(Application.persistentDataPath, "active-run.json")); }
+        private void Awake() { store = new LocalRunStore(Path.Combine(Application.persistentDataPath, saveFileName)); }
         private void OnEnable() { run.Restarted += OnRestart; }
         private void OnDisable() { run.Restarted -= OnRestart; }
         private IEnumerator Start()
@@ -153,8 +158,11 @@ namespace WaitYourTurn.Run
             var text = new StringBuilder(contentRevision);
             if (run.Loot != null) text.Append("/owned-ammo-loot-v3/").Append(JsonUtility.ToJson(run.Loot.LocalPosition)).Append(run.Loot.PickupRadius);
             if (run.Solo != null)
+            {
+                if (run.Solo.OpenTrainSurvival) text.Append("/open-train-survival-v1/");
                 foreach (var connection in run.Solo.Connections)
                     text.Append("/interior-v2/").Append(JsonUtility.ToJson(connection.transform.position)).Append(JsonUtility.ToJson(connection.Passage)).Append(connection.UnlockPrice);
+            }
             foreach (var wagon in run.Wagons)
             {
                 text.Append(wagon.Id).Append(JsonUtility.ToJson(wagon.Geometry.Interior)).Append(JsonUtility.ToJson(wagon.transform.position));
@@ -188,6 +196,7 @@ namespace WaitYourTurn.Run
         public bool Validate(RunSnapshot data, out string reason)
         {
             reason = "Invalid schema or content";
+            if (run.Solo != null && run.Solo.OpenTrainSurvival && data != null && data.mode != RunMode.Solo) return false;
             if (data == null || data.version != RunSnapshot.Version || data.content != ContentKey() || string.IsNullOrEmpty(data.runId) ||
                 data.runId.Length > 64 || data.timings == null || !data.timings.Valid || JsonUtility.ToJson(data.timings) != JsonUtility.ToJson(run.Timings) ||
                 data.mode != RunMode.Solo && data.mode != RunMode.Battle || data.humanRandom == 0 || data.assignments < 0 || data.assignments > 100000 ||
@@ -201,9 +210,7 @@ namespace WaitYourTurn.Run
             bool solo = data.mode == RunMode.Solo && run.Solo != null;
             if (solo)
             {
-                if (data.soloUnlockedThrough < 0 || data.soloUnlockedThrough >= used.Length || data.interiorGates == null ||
-                    data.interiorGates.Length != run.Solo.Connections.Length) return false;
-                for (int i = data.soloUnlockedThrough; i < data.interiorGates.Length; i++) if (data.interiorGates[i]) return false;
+                if (!run.Solo.ValidTopology(data.soloUnlockedThrough, data.interiorGates)) return false;
                 if (run.Loot != null && !run.Loot.Valid(data.claimedLoot, data.soloUnlockedThrough)) return false;
             }
             for (int i = 0; i < data.participants.Length; i++)

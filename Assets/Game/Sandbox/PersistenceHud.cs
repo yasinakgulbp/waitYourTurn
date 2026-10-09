@@ -17,7 +17,7 @@ namespace WaitYourTurn.Sandbox
         private void OnGUI()
         {
             if (!Application.isEditor) return;
-            GUI.Label(new Rect(12, Screen.height - 20, Mathf.Min(760, Screen.width - 24), 20), "F5 Save / F6 Resume / F4 Check | " + save.Status);
+            GUI.Label(new Rect(12, Screen.height - 20, Mathf.Min(760, Screen.width - 24), 20), "F5 Save / F6 Resume | " + save.Status);
         }
     }
 }

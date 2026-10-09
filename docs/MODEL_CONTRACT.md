@@ -105,3 +105,11 @@ D34/D35: insan/bot kök dönüşünü PlayerMotor yönetir; görünür hedefe h�
 ## Solo cephane sandığı — 2026-10-09
 
 Yeni açılan vagonlarda tek, değiştirilebilir kozmetik görsel: vagon yerel merkezi (-3.6, 0.3, 0), boyut 0.55 × 0.5 × 0.5 m. Gameplay pickup merkezi (-3.6, 0.05, 0), yatay mesafe 0.9 m; `SoloLoot` Inspector ayarı. Görselde collider/NavMesh/hasar bileşeni yoktur; hareketi ve ateşi kesmez. Görsel model değişimi toplanma bayrağını veya mekanik merkezi değiştirmez. İlk/kuyruk vagonunda sandık yoktur; Battle'da tümü gizlidir.
+
+## D42 — Üç vagon Hayatta Kalma ölçüsü
+
+Sahne `Assets/Game/Scenes/SurvivalIntegration.unity`; Battle modeli/sahnesi ve eski CSV'ler değişmez. Vagon merkezleri X=0/13/26, gövde 12 × 4,2 m, +X baş yönü. Dış kapılar sırasıyla 6/5/4; mevcut cam/metal atış ve oyuncu dış sınır kuralları geçerlidir. İki bağlantının merkezi X=6,5 ve 19,5; net genişlik **3 m**, net yükseklik **2,1 m**. Bağlantı zemini 1,4 × 0,24 × 3,2 m, merkezi Y=−0,12; yan korkuluklar Z=±1,6, kalınlık 0,2 m. İç uç jambları genişliği 0,6 m, merkezi Z=±1,8; üst metal alt kotu 2,1 m. Geçit hareket hacmi 3,4 × 2 × 3 m; gövdelerle örtüşme hareket yarıçapı sıkışmasını önler. Bu açıklıklar sürekli açıktır; kapatılan kapı modeli/colliderı eklenmez. Lokomotif merkezi X=37; oynanış dışı mevcut 8 m kapalı kontrol odası.
+
+Üretilen ölçü kaynakları `generated/survival-model-dimensions.csv` ve `generated/survival-passage-dimensions.csv`. Root/pivot/collider/nav/silah köklerini değiştirmeden yalnız sanat çocuklarını giydir. Oyuncu/zombi/dron ölçeği önceki sözleşmeyle aynıdır; daha geniş bağlantı için karakterleri ölçeklemek gerekmez. Sonradan eklenecek barricade/kapı yükseltmesi yalnız kozmetik çocuk değildir: dayanıklılık ve kayıt sözleşmesi ayrı geliştirilecektir.
+
+Hayatta Kalma turret ölçü çıktısı ayrıca `generated/survival-turret-mount-dimensions.csv` içindedir; Battle turret CSV'si yeniden yazılmaz. Açık uçların merkezinde önceki kapalı uçtan kalan lamba/kuplör görselleri kaldırılır; geçit zemini düz ve okunur kalır.

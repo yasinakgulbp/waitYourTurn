@@ -27,7 +27,7 @@ namespace WaitYourTurn.Editor
             EditorSceneManager.SaveScene(run.gameObject.scene); AssetDatabase.SaveAssets();
             Debug.Log("[Turrets] Installed authored mounts and shop products; existing geometry and NavMesh preserved.");
         }
-        public static void Install(RunDriver run, TargetRegistry registry, RunEconomy economy, StationSpawner spawner)
+        public static void Install(RunDriver run, TargetRegistry registry, RunEconomy economy, StationSpawner spawner, bool survival = false)
         {
             if (!AssetDatabase.IsValidFolder(Folder)) AssetDatabase.CreateFolder("Assets/Game/Content", "Defenses");
             var types = new[] { Type("Normal", 50, 1, 9, 12, 1.8f, Color.cyan),
@@ -73,7 +73,7 @@ namespace WaitYourTurn.Editor
             AddProduct(economy.Catalog, "turret-normal", "Normal turret", 90, 0);
             AddProduct(economy.Catalog, "turret-advanced", "Advanced turret", 160, 1);
             new GameObject("Turret acceptance - F12").AddComponent<TurretAcceptance>().Configure(run, economy, spawner, manager, registry);
-            Export(racks, run);
+            Export(racks, run, survival);
         }
         private static TurretDefinition Type(string name, int ammo, float interval, float range, float blast, float radius, Color color)
         {
@@ -98,7 +98,7 @@ namespace WaitYourTurn.Editor
             catalog.items = catalog.items.Concat(new[] { new ShopItem { id = id, label = label, price = price,
                 effect = ShopEffect.Turret, turretIndex = type } }).ToArray(); EditorUtility.SetDirty(catalog);
         }
-        private static void Export(TurretRack[] racks, RunDriver run)
+        private static void Export(TurretRack[] racks, RunDriver run, bool survival)
         {
             var csv = new System.Text.StringBuilder("wagon,poolSlot,placement,bodyWidth,bodyHeight,bodyDepth,muzzleFloorY,navWidth,navHeight,navDepth\n");
             for (int w = 0; w < racks.Length; w++) foreach (var mount in racks[w].Mounts)
@@ -107,7 +107,7 @@ namespace WaitYourTurn.Editor
                 foreach (float v in new[] { .22f, .6f, .22f, .95f, .24f, .7f, .24f }) csv.Append(',').Append(v.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture));
                 csv.Append('\n');
             }
-            System.IO.Directory.CreateDirectory("docs/generated"); System.IO.File.WriteAllText("docs/generated/turret-mount-dimensions.csv", csv.ToString());
+            System.IO.Directory.CreateDirectory("docs/generated"); System.IO.File.WriteAllText(survival ? "docs/generated/survival-turret-mount-dimensions.csv" : "docs/generated/turret-mount-dimensions.csv", csv.ToString());
         }
     }
 }

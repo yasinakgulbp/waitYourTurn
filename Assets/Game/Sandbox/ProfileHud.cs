@@ -25,7 +25,7 @@ namespace WaitYourTurn.Sandbox
                 var panel = new Rect(width - 312, 144, 300, 356);
                 input.ProfileBlockedScreenArea = new Rect(offset.x + panel.x * scale, offset.y + panel.y * scale, panel.width * scale, panel.height * scale);
                 GUI.Box(panel, "PROFİL / KALICI SİLAHLAR");
-                GUI.Label(new Rect(panel.x + 12, panel.y + 28, 275, 40), $"Ödül +{profile.LastReward} | Solo rekor: {profile.BestSoloStation}\nKoşu altını yeni oyunda sıfırlanır.");
+                GUI.Label(new Rect(panel.x + 12, panel.y + 28, 275, 40), $"Ödül +{profile.LastReward} | Hayatta kalma rekoru: {profile.BestSoloStation}\nKoşu altını yeni oyunda sıfırlanır.");
                 for (int i = 1; i < run.Weapon.WeaponCount; i++)
                 {
                     bool unlocked = profile.WeaponUnlocked(i);

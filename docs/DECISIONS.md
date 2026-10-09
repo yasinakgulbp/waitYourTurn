@@ -183,3 +183,9 @@ Kullanıcı testleri verimli tutmayı istedi: küçük parçalarda kritik birka�
 ## 2026-10-09 — D41: ilk sınırlı güç geliştirmesi
 
 Kullanıcı sıradaki aşamayı geliştirmeye yetki verdi; D37'deki iki mod kararı korunur. İlk küçük parça kalıcı can ve tüm oyuncu silahlarında menzildir. Mühendislik deneme değerleri: her biri 5 seviye, +%2/seviye (en fazla %10), fiyat 10/20/30/40/50 jeton. Sayısal değerler kullanıcı tarafından yayın dengesi olarak onaylanmış değildir; `RunProfile.upgrades` alanından küçük adımlar/fiyatlar ayarlanır. Satın alma sonuçta, uygulama yeni koşudadır; canlı kayıttan devam canı doldurmaz. Eski v1 profil para/silah/makbuz kaybetmeden göç eder. Hız, ana menü/öğretici, kamera/ses ve reklam/IAP bu parçaya dahil değildir. Sözleşme PROGRESSION_DESIGN.md içinde.
+
+## 2026-10-09 — D42: üç vagonlu Hayatta Kalma pivotu
+
+Kullanıcı D37/D39'daki manuel ara kapı ve yalnız güncel vagona yeni saldırı kararını değiştirdi. İlk somut iş ayrı sahnede üç vagon, başlangıçtan serbest geçiş, geniş sürekli açık iç bağlantılar ve üçünün iki tarafına saldırıdır. İçerideki zombiler oyuncuyu tren boyunca takip eder; boş eski vagonlara da yeni saldırılar sürer. Battle'ın ayrı vagon/yer değiştirme/boş vagon üretim politikası değişmez. Ürün adı Hayatta Kalma, teknik enum Solo kalır.
+
+Gelecek koşu mağazası hedefleri: üç aşamalı kapı güçlendirme, tüm savunulan vagonların kapılarını onarma ve olası pencere yükseltmeleri; ölümde bu koşu yükseltmeleri sıfırlanır. Kalıcı profil mağazası ayrı kalır. Önce üç açık vagonlu oynanış değerlendirilir; ileride satın alarak vagon açma ve ganimet ayrıntılarını kullanıcı netleştirecek. Geçici 6/5/4 kapı, 3m geçit ve sınırlı spawn değerleri tasarım denemesi, nihai denge değildir. Ayrı nav/program/kayıt/ölçü dosyaları kullanılır; PC ve cihaz kabulü ayrı izlenir. Eski kabul raporları yeni pivot için kanıt sayılmaz.

@@ -4,7 +4,7 @@ using WaitYourTurn.Combat;
 
 namespace WaitYourTurn.Train
 {
-    /// <summary>Manual internal gate. No durability, external entry, station clock or wallet dependency.</summary>
+    /// <summary>Internal connection, optionally a manual gate. No durability, station clock or wallet dependency.</summary>
     public sealed class InteriorConnection : MonoBehaviour
     {
         [SerializeField] private BoxCollider blocker;
@@ -12,19 +12,25 @@ namespace WaitYourTurn.Train
         [SerializeField] private GameObject panel;
         [SerializeField] private Bounds passage;
         [SerializeField, Min(1)] private int unlockPrice = 200;
+        [SerializeField] private bool permanentlyOpen;
         private readonly Collider[] occupants = new Collider[64];
         public int UnlockPrice => unlockPrice;
         public bool IsOpen { get; private set; }
+        public bool PermanentlyOpen => permanentlyOpen;
         public Bounds Passage => passage;
-        public void Configure(BoxCollider wall, NavMeshObstacle cut, GameObject visual, Bounds region, int price)
-        { blocker = wall; obstacle = cut; panel = visual; passage = region; unlockPrice = price; }
+        public void Configure(BoxCollider wall, NavMeshObstacle cut, GameObject visual, Bounds region, int price, bool alwaysOpen = false)
+        { blocker = wall; obstacle = cut; panel = visual; passage = region; unlockPrice = price; permanentlyOpen = alwaysOpen; }
         public void Restore(bool open)
         {
-            IsOpen = open; blocker.enabled = !open; obstacle.enabled = !open;
+            open |= permanentlyOpen;
+            IsOpen = open;
+            if (blocker != null) blocker.enabled = !open;
+            if (obstacle != null) obstacle.enabled = !open;
             if (panel != null) panel.SetActive(!open);
         }
         public bool TrySetOpen(bool open)
         {
+            if (permanentlyOpen && !open) return false;
             if (open == IsOpen) return true;
             if (!open)
             {

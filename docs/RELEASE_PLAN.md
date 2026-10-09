@@ -14,6 +14,8 @@ Güncel birleşik APK A54'e kuruldu; açılış, otomatik kayıt ve canlı Battl
 
 ## Sıra ve kabul kapıları
 
+**D42 güncellemesi:** üretim menüsü/kamera adımından önce ayrı üç-vagon Hayatta Kalma sahnesi kurulur. İki geniş sürekli açık bağlantı, üç vagona iki taraflı saldırı, tren boyunca takip ve ayrı koşu kaydı küçük birleşik PC kontrolüyle doğrulanır. A54 kabulü kullanıcı isteğiyle sonra yapılır. Ardından kullanıcı bu yeni oynanışı değerlendirir; kapı güçlendirmesi ve bütün tren onarımı ayrı küçük parçalar olur. Eski M8s manuel kapı/yalnız güncel vagon saldırısı güncel ürün hedefi değildir; geçmiş prototip kabulüdür. Detaylar PROGRESSION_DESIGN.md D42 içinde. Battle aynı sahnede korunur.
+
 | Adım | Somut iş | Sonraki adıma geçme koşulu |
 | --- | --- | --- |
 | M8b — Cihaz temeli | Güncel TrainIntegration için ayrı test APK'sı; Battle ve Solo dokunma, mağaza, kapı onarımı, kayıt/arka plan/süreç kapatma/geri açma. Savaş ve savunmalar açıkken kare süreleri/bellek gözlemi. | İki modda ilerleme korunur, ölüm/sonuç eski koşuyu diriltmez; UI erişilebilir; hata ve başlangıç ölçümü kayıtlıdır. Eski lab APK'sı bu kabul yerine geçmez. |

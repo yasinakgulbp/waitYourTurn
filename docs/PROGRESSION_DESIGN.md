@@ -2,7 +2,19 @@
 
 2026-10-09. Kullanıcı kararları ile mühendislik önerileri ayrı tutulur. M8s fiziksel Solo geçişi ve cephane sandığı; M8e sonuç ödülü, ayrı kalıcı cüzdan, silah açılışı ve küçük can/menzil geliştirmeleri uygulanmıştır. Hız geliştirmesi ve üretim menüsü henüz yoktur. PC kabulü ve ertelenen cihaz kontrolü ayrı izlenir.
 
-## Kararlaştırılan deneyim
+## D42 — Güncel Hayatta Kalma pivotu
+
+Kullanıcı önceki Solo kurallarını değiştirdi. Ürün adı **Hayatta Kalma**; teknik `RunMode.Solo` değeri kayıt/profil uyumluluğu için korunur. İlk parça ayrı `SurvivalIntegration.unity`: kuyruktan güçlü baş vagona üç vagon (6/5/4 dış kapı), iki adet **3 m genişliğinde sürekli açık** ara geçit, başlangıçtan serbest yürüyüş. Aç/kapat veya vagon satın alma bu ilk parçada yoktur. Üç vagonun iki tarafına da istasyonda yeni zombiler gelir; içeri girenler ortak bağlı tren içinde oyuncuyu takip eder. Eski vagon yeni saldırılardan korunmaz. Koşu başlangıcı kuyruk/istasyon 1; ölüm yeni challenge, canlı ara verme kaydı aynı koşuya devamdır.
+
+Battle'ın beş vagonlu sahnesi, botları, atama/eleme ve boş vagon spawn kuralı korunur. Yeni sahne yalnız bir insan katılımcıyla başlar. Hayatta Kalma'nın NavMesh asseti, spawn programları, koşu kayıt dosyası ve model CSV'leri ayrıdır; silah/hasar/cam-metal/onarım/turret/dron ve kalıcı profil ortaktır. Sabit oyun zemini + hareket eden görsel çevre kararı değişmez.
+
+Geçici spawn değerleri: istasyon 1–2'de **vagon başına 6** Intro; 3–5'te 8 Normal; 6+'da 10 Normal. İlk üretim 4 saniye, aralıklar 6/5/4 saniye; toplam canlı sınır 24, havuz sahibi vagon başına 8, havuz kapasitesi 12. Her vagonun bütçesi istasyon başında bir kez kurulur; yürüyüş yeniden bütçe üretmez. Bunlar kullanıcı tarafından kesinleştirilmiş zorluk değerleri değildir; `Content/SurvivalPrograms` üzerinden ayarlanır. Çok ileri istasyonların nihai eğrisi henüz tasarlanmamıştır.
+
+Sonraki tasarım parçaları: koşu içi üç aşamalı dış kapı güçlendirmesi (can/onarım/veri/görsel sözleşmesi), bütün savunulan vagonların kapılarını tek satın almayla onarma, yeni vagon açma/ödül sistemi ve olası pencere güçlendirmeleri. Pencereler şu an geçiş sağlamayan, mermi geçiren sabit açıklıklardır; hasar/onarım eklenmesi bu sözleşmeyi değiştireceği için ayrı karar/test gerektirir. Kalıcı ana menü geliştirmeleri ile koşu yükseltmeleri birbirine karışmaz; koşu yükseltmeleri ölümde sıfırlanır. İlk üç-vagon parçası bu gelecek özelliklerin uygulanması değildir.
+
+Aşağıdaki D37/D39 tablosu önceki Solo prototipinin tarihsel tasarımıdır; güncel Hayatta Kalma kuralında yukarıdaki D42 esas alınır.
+
+## Önceki Solo deneyimi (D42 ile değişen kurallar)
 
 | Konu | Kullanıcı kararı |
 | --- | --- |
@@ -90,3 +102,5 @@ Bu parçada yeni hero koleksiyonu, günlük görev/enerji, sezon bileti, rastgel
 | [AppMagic Mobile Market Landscape 2026](https://appmagic.rocks/files/view/upload/Reports/EN_MobileMarkeLandscape2026.pdf), s.53–57: 2023–2025 tahmini mağaza indirme/IAP verisi; hypercasual'da hibrit ilerleme yönü. Bazı üst puzzle oyunlarında ilk üç teklif yaklaşık %40 gelir; bu teklif analizi ABD App Store örneğidir, reklam geliri/diğer mağazalar dahil değildir. | Az sayıda işe yarayan, açık ürünle başla. Puzzle fail-offer fiyatlarını tren oyununa “kanıtlanmış optimum fiyat” diye taşımayız. Görsel kanca yanında geri dönme amacı gerekir. |
 
 Karşılaştırılacak kendi verimiz: ilk istasyon/öğretici tamamlama, ilk vagon/ürün alma, ölüm/çıkış nedeni, tekrar koşu ve D1/D7 (mod ayrı); gelir bağlanınca aynı cohort/ülke/kanalda edinme maliyeti ve net gelir. Önce kısa gerçek oynanış videosuyla oyunun kancası anlaşılır mı ve küçük oyuncu grubunda tekrar deneme isteği var mı incelenir. Bu ucuz inceleme büyük ücretli kampanyanın veya istatistiksel retention ölçümünün yerine geçmez; boşa büyük üretimi erken yakalar.
+
+D42 ilk parça PC'de tamamlandı: `SurvivalIntegration` üç açık vagon, gerçek ileri/geri yürüyüş, tren boyunca NavMesh/takip, üç vagona çift taraflı sınırlı spawn ve ayrı kayıt yükleme birleşik kontrolden geçti. Mevcut Battle beş katılımcıyla kısa açılış/savunma kontrolünden geçti; uzun eski paketler tekrarlanmadı. Kanıt `generated/survival-pc-acceptance.txt`. Yeni sahnenin telefon kontrolü, ileri istasyon dengesi, kapı yükseltmeleri, tüm tren onarımı ve üretim akışı henüz açık işlerdir.

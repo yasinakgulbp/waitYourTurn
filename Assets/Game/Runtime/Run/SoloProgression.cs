@@ -16,6 +16,8 @@ namespace WaitYourTurn.Run
         [SerializeField] private InteriorConnection[] connections;
         [SerializeField] private MovementArea movement;
         [SerializeField, Min(.1f)] private float interactionDistance = 2.8f;
+        [SerializeField] private bool openTrainSurvival;
+        public bool OpenTrainSurvival => openTrainSurvival;
         public int UnlockedThrough { get; private set; }
         public MovementArea Movement => movement;
         public InteriorConnection[] Connections => connections;
@@ -24,13 +26,13 @@ namespace WaitYourTurn.Run
         public Transform Frame => movement.transform;
         public Bounds FlightBounds { get; private set; }
         public uint Revision { get; private set; }
-        public void Configure(RunDriver owner, RunEconomy shop, InteriorConnection[] gates, MovementArea region)
-        { run = owner; economy = shop; connections = gates; movement = region; run.ConfigureSolo(this); }
+        public void Configure(RunDriver owner, RunEconomy shop, InteriorConnection[] gates, MovementArea region, bool survival = false)
+        { run = owner; economy = shop; connections = gates; movement = region; openTrainSurvival = survival; run.ConfigureSolo(this); }
         public void ConfigureInteractionDistance(float distance) => interactionDistance = Mathf.Max(.1f, distance);
         public void ResetForRun()
         {
-            UnlockedThrough = 0; Status = null;
-            foreach (var connection in connections) connection.Restore(false);
+            UnlockedThrough = openTrainSurvival ? run.Wagons.Length - 1 : 0; Status = null;
+            foreach (var connection in connections) connection.Restore(openTrainSurvival);
             RefreshRegions();
             foreach (var wagon in run.Wagons) wagon.Enemies.SetInteriorPursuit(Active ? this : null);
         }
@@ -48,14 +50,14 @@ namespace WaitYourTurn.Run
         private bool CanInteract(int index) => Active && economy.CanShop && !run.Loading && Nearby(index);
         public bool TryUnlock(int index)
         {
-            if (!CanInteract(index) || index != UnlockedThrough) return false;
+            if (openTrainSurvival || !CanInteract(index) || index != UnlockedThrough) return false;
             if (!economy.Wallet.TrySpend(connections[index].UnlockPrice)) { Status = "Yeterli para yok"; return false; }
             // Single scene-thread transaction; no asynchronous effect after charging.
             UnlockedThrough++; RefreshRegions(); Status = "Vagon açıldı; ara kapıyı açabilirsin"; return true;
         }
         public bool TryToggle(int index)
         {
-            if (!CanInteract(index) || index >= UnlockedThrough) return false;
+            if (openTrainSurvival || !CanInteract(index) || index >= UnlockedThrough) return false;
             var gate = connections[index];
             var drone = economy.Drone.Actor;
             if (gate.IsOpen && drone.Occupied)
@@ -98,7 +100,7 @@ namespace WaitYourTurn.Run
         public void RefreshMovementContext() => RefreshRegions();
         public bool ContainsSaved(Vector3 point, int unlocked, bool[] open)
         {
-            if (unlocked < 0 || unlocked >= run.Wagons.Length || open == null || open.Length != connections.Length) return false;
+            if (!ValidTopology(unlocked, open)) return false;
             Vector3 local = Frame.InverseTransformPoint(point);
             if (local.y < -.25f || local.y > 3) return false;
             for (int i = 0; i <= unlocked; i++) if (InXZ(Room(i), local)) return true;
@@ -118,12 +120,20 @@ namespace WaitYourTurn.Run
         { var states = new bool[connections.Length]; for (int i = 0; i < states.Length; i++) states[i] = connections[i].IsOpen; return states; }
         public void Restore(int unlocked, bool[] open)
         {
-            if (unlocked < 0 || unlocked >= run.Wagons.Length || open == null || open.Length != connections.Length)
+            if (!ValidTopology(unlocked, open))
                 throw new ArgumentException("Invalid Solo topology");
             UnlockedThrough = unlocked;
             for (int i = 0; i < open.Length; i++) connections[i].Restore(i < unlocked && open[i]);
             RefreshRegions();
             foreach (var wagon in run.Wagons) wagon.Enemies.SetInteriorPursuit(this);
+        }
+        public bool ValidTopology(int unlocked, bool[] open)
+        {
+            if (unlocked < 0 || unlocked >= run.Wagons.Length || open == null || open.Length != connections.Length) return false;
+            if (openTrainSurvival && unlocked != run.Wagons.Length - 1) return false;
+            for (int i = 0; i < open.Length; i++)
+                if (openTrainSurvival ? !open[i] : i >= unlocked && open[i]) return false;
+            return true;
         }
         public void BindPursuit()
         {

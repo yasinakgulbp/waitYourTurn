@@ -19,6 +19,7 @@ namespace WaitYourTurn.Editor
     public static class TrainIntegrationBuilder
     {
         public const string ScenePath = "Assets/Game/Scenes/TrainIntegration.unity";
+        public const string SurvivalScenePath = "Assets/Game/Scenes/SurvivalIntegration.unity";
         private const string NavFolder = "Assets/Game/Content/IntegrationNavigation";
         private const string ArtFolder = "Assets/Game/Content/IntegrationBlockout";
         private const string LayoutFolder = "Assets/Game/Content/WagonLayouts";
@@ -30,8 +31,10 @@ namespace WaitYourTurn.Editor
         public static void BuildTwo() => Build(2);
         [MenuItem("Wait Your Turn/Integration/Build Five Wagons %#F3")]
         public static void BuildFive() => Build(5);
+        [MenuItem("Wait Your Turn/Survival/Build Three Open Wagons %&h")]
+        public static void BuildSurvival() => Build(3, true);
 
-        private static void Build(int count)
+        private static void Build(int count, bool survival = false)
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
@@ -189,7 +192,7 @@ namespace WaitYourTurn.Editor
                 }
             }
             // Increasing X is travel/head direction: tail 6/10, 5/20, 5/26, 4/32, head 4/40.
-            int LayoutIndex(int i) => count == 5 ? i : i % layouts.Length;
+            int LayoutIndex(int i) => survival ? i * 2 : count == 5 ? i : i % layouts.Length;
             float start = -layouts[LayoutIndex(0)].length * .5f, end = cursor + layouts[LayoutIndex(count - 1)].length * .5f;
             float maxWidth = layouts.Max(x => x.width);
             BuildLocomotive(fixedTrain.transform, end + 5, maxWidth);
@@ -208,7 +211,7 @@ namespace WaitYourTurn.Editor
             var surface = fixedTrain.AddComponent<NavMeshSurface>(); surface.collectObjects = CollectObjects.Children; surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
             surface.agentTypeID = agentType; surface.overrideVoxelSize = true; surface.voxelSize = .05f;
             EnsureFolder(NavFolder); surface.BuildNavMesh(); surface.navMeshData.name = $"Train-{count}";
-            string navPath = $"{NavFolder}/Train-{count}.asset"; var existing = AssetDatabase.LoadAssetAtPath<NavMeshData>(navPath);
+            string navPath = $"{NavFolder}/" + (survival ? "Survival-3.asset" : $"Train-{count}.asset"); var existing = AssetDatabase.LoadAssetAtPath<NavMeshData>(navPath);
             if (existing == null) AssetDatabase.CreateAsset(surface.navMeshData, navPath);
             else { EditorUtility.CopySerialized(surface.navMeshData, existing); surface.navMeshData = existing; EditorUtility.SetDirty(existing); }
             EditorSceneManager.CloseScene(lab, true);
@@ -220,15 +223,21 @@ namespace WaitYourTurn.Editor
             hero.transform.position = wagons[initial].transform.position + Vector3.up * .05f;
             hero.GetComponent<PlayerMotor>().SetMovementArea(wagons[initial].Area);
             var spawner = new GameObject("Bounded station spawner").AddComponent<StationSpawner>(); spawner.Configure(run);
-            spawner.ConfigurePrograms(StationContentBuilder.EnsurePrograms());
+            spawner.ConfigurePrograms(survival ? SurvivalContentBuilder.EnsurePrograms() : StationContentBuilder.EnsurePrograms());
             hero.GetComponent<HitscanWeapon>().ConfigureInventory(true);
             var economy = new GameObject("Run economy - owner wallet and current wagon shop").AddComponent<RunEconomy>();
             economy.Configure(run, ShopContentBuilder.EnsureCatalog());
-            TurretContentBuilder.Install(run, registry, economy, spawner);
+            TurretContentBuilder.Install(run, registry, economy, spawner, survival);
             DroneContentBuilder.Install(run, registry, economy, spawner);
-            BotContentBuilder.Install(run, registry, economy, spawner);
-            PersistenceContentBuilder.Install(run);
-            SoloContentBuilder.Install(run);
+            if (survival)
+            {
+                var matchRoot = new GameObject("Survival - single human participant"); matchRoot.SetActive(false);
+                matchRoot.AddComponent<RunMatch>().Configure(run, economy, System.Array.Empty<BotController>(), RunMode.Solo);
+                matchRoot.SetActive(true);
+            }
+            else BotContentBuilder.Install(run, registry, economy, spawner);
+            PersistenceContentBuilder.Install(run, survival ? "survival-run.json" : "active-run.json", !survival);
+            SoloContentBuilder.Install(run, survival);
             ProgressionContentBuilder.Install(run);
             new GameObject("Replaceable shop HUD").AddComponent<ShopHud>().Configure(economy, hero.GetComponent<MoveInput>());
             var presentation = new GameObject("Journey presentation - single camera owner").AddComponent<RunPresentation>(); presentation.Configure(run, track, camera); presentation.ConfigureJourney(station, scenery); presentation.ConfigurePlayerFollow(true);
@@ -248,14 +257,24 @@ namespace WaitYourTurn.Editor
                 }
             }
             new GameObject("Integration HUD and checks").AddComponent<TrainIntegrationController>().Configure(run, spawner, presentation);
-            new GameObject("Spawn acceptance - F11").AddComponent<SpawnAcceptance>().Configure(run, spawner, registry);
-            new GameObject("Economy acceptance - F9").AddComponent<EconomyAcceptance>().Configure(run, economy, spawner);
-            EditorSceneManager.SaveScene(scene, ScenePath); AssetDatabase.SaveAssets(); Selection.activeGameObject = hero;
-            ExportModelGuide(wagons);
+            if (survival)
+            {
+                // The old acceptance fixtures assert the previous Solo/Battle composition.
+                foreach (var fixture in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include))
+                    if (fixture.GetType().Name.EndsWith("Acceptance")) Object.DestroyImmediate(fixture);
+                new GameObject("Survival focused acceptance").AddComponent<SurvivalAcceptance>().Configure(run, spawner, Object.FindAnyObjectByType<RunPersistence>());
+            }
+            else
+            {
+                new GameObject("Spawn acceptance - F11").AddComponent<SpawnAcceptance>().Configure(run, spawner, registry);
+                new GameObject("Economy acceptance - F9").AddComponent<EconomyAcceptance>().Configure(run, economy, spawner);
+            }
+            EditorSceneManager.SaveScene(scene, survival ? SurvivalScenePath : ScenePath); AssetDatabase.SaveAssets(); Selection.activeGameObject = hero;
+            ExportModelGuide(wagons, survival);
             Debug.Log($"[TrainIntegration] Built {count} scale-reference wagons; doors {string.Join(",", wagons.Select(w => w.Doors.Length))}; bilateral geometry freshly baked.");
         }
 
-        internal static void ExportModelGuide(WagonRuntime[] wagons)
+        internal static void ExportModelGuide(WagonRuntime[] wagons, bool survival = false)
         {
             var csv = new System.Text.StringBuilder("wagon,doorCount,kind,name,centerX,centerY,centerZ,sizeX,sizeY,sizeZ,blocksShots,blocksMovement\n");
             foreach (var wagon in wagons)
@@ -273,7 +292,7 @@ namespace WaitYourTurn.Editor
                 }
             }
             System.IO.Directory.CreateDirectory("docs/generated");
-            System.IO.File.WriteAllText("docs/generated/train-model-dimensions.csv", csv.ToString());
+            System.IO.File.WriteAllText(survival ? "docs/generated/survival-model-dimensions.csv" : "docs/generated/train-model-dimensions.csv", csv.ToString());
         }
 
         private static void BuildLocomotive(Transform parent, float centerX, float width)

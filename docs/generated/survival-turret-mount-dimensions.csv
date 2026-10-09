@@ -1,0 +1,13 @@
+wagon,poolSlot,placement,bodyWidth,bodyHeight,bodyDepth,muzzleFloorY,navWidth,navHeight,navDepth
+wagon-a,wagon-a-pool-1,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-a,wagon-a-pool-2,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-a,wagon-a-pool-3,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-a,wagon-a-pool-4,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-b,wagon-b-pool-1,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-b,wagon-b-pool-2,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-b,wagon-b-pool-3,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-b,wagon-b-pool-4,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-c,wagon-c-pool-1,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-c,wagon-c-pool-2,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-c,wagon-c-pool-3,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
+wagon-c,wagon-c-pool-4,buyerXZ_at_purchase,0.22,0.6,0.22,0.95,0.24,0.7,0.24
