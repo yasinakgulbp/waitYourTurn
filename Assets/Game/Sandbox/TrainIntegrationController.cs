@@ -10,7 +10,7 @@ using WaitYourTurn.Run;
 namespace WaitYourTurn.Sandbox
 {
     /// <summary>Representative acceptance fixture. Production modules do not depend on this HUD.</summary>
-    public sealed class TrainIntegrationController : MonoBehaviour
+    public sealed partial class TrainIntegrationController : MonoBehaviour
     {
         [SerializeField] private RunDriver run;
         [SerializeField] private StationSpawner spawner;
@@ -21,7 +21,11 @@ namespace WaitYourTurn.Sandbox
         private string result="WASD / left joystick; automatic fire. F10: integration checks.";
         public void Configure(RunDriver owner,StationSpawner spawn,RunPresentation visual)
         { run=owner;spawner=spawn;presentation=visual; }
-        private void Update() { if(!checking&&Input.GetKeyDown(KeyCode.F10))StartCoroutine(Check()); }
+        private void Update()
+        {
+            if (!checking && Input.GetKeyDown(KeyCode.F3)) StartCoroutine(CheckMovement());
+            if (!checking && Input.GetKeyDown(KeyCode.F10)) StartCoroutine(Check());
+        }
         private void OnGUI()
         {
             if(run.Flow==null||run.CurrentWagon==null)return;

@@ -141,3 +141,7 @@ Kullanıcı soruda onayladı: insan ölünce sırası gösterilip koşu biter; b
 Kullanıcı talebi: insan ve bot yürürken hareket yönüne baksın; geçerli ateş hedefi varsa yüzünü ona dönsün. Ortak motor bunu uygular; görsel model değişimi kuralı değiştirmez.
 
 Önceden seçilen uygulama kapanınca mevcut koşuya devam / ölümde yeni koşu hedefi M8a yerel kayıtla uygulanır. Battle elemesi, vagonların ayrı durumu ve RNG ilerlemesi birlikte korunur. Mühendislik başlangıç ayarı beş saniyelik periyodik kayıt ve mobil yaşam döngüsü callback'leridir; Inspector'dan değişir. Editor test izolasyonu için otomatik devam varsayılan kapalı, F5/F6 açıktır. Bulut, kalıcı ödül/IAP ve kullanıcı menüsü bu adımda eklenmedi; Android süreç kapatma kabulü ayrı kalır. Sözleşme ve sınırlar PERSISTENCE.md içindedir.
+
+## 2026-10-09 — D35: kalabalıkta vagon sınırı ve yumuşak yürüyüş dönüşü
+
+Kullanıcı açık kapıda zombi baskısının oyuncuyu dışarı ittiğini ve WASD yürüyüş dönüşlerinin keskin olduğunu bildirdi. Ortak motor çarpışma sonrası gerçek kapsülü de MovementArea içinde tutar. İnsan ve bot, hedef yokken yürüyüş girdisi yönüne ayarlanabilir 720°/sn ile döner; nişan önceliği/hızlı dönüş korunur. Fiziksel itme boşta yön seçmez. Kapı/zombi navigasyonu ve model ölçüleri değişmez. Aynı kapı-kalabalık testi eski kodda başarısız, yeni kodda başarılıdır; uygulama ve kabul kaydı PLAYER_MOVEMENT.md içindedir. Bu bir M8a sonrası hata düzeltmesidir; sıradaki aşama M8b kalır.

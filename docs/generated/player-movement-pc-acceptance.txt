@@ -1,0 +1,21 @@
+2026-10-09 - Player boundary and walking-turn revision (PC / TrainIntegration)
+Before fix: 2026-10-09T02:59:55.5603903Z - FAIL: Collision pushed player outside open door: Door 1 south
+Same crowd scenario after fix:
+
+Logs/PlayerMovementAcceptance.txt
+2026-10-09T03:02:08.0315916Z
+PASS: Both open doors retain the whole player capsule under eight-body crowd pressure for 90 frames each; zombies still enter; gradual 90/180 degree walking and idle heading.
+
+Logs/PersistenceAcceptance.txt
+2026-10-09T03:02:29.9697898Z
+PASS: Human walking faces 4 directions; visible target overrides movement. Real disk JSON: Battle participant HP/max/coins/guns/ammo/roster/RNG; door damage/repair progress, retained passenger, turret and drone, spawn progress restored; eliminated bot stays out; all 7 phases preserve assignment count; next draw continues; invalid ammo rejected before mutation; Solo and death tombstone passed. PC only; Android pause/kill and device IO pending.
+
+Logs/BotAcceptance.txt
+2026-10-09T03:03:15.0968665Z
+PASS: 5 unique participants / 3 profiles; real glass kill credits bot only, metal blocks; zombie attacks assigned bot; actor damage preserves repair, door damage cancels; actual AI moves, repairs and purchases shared guns; death ranks/releases defender; no new empty-wagon spawn and survivors retained; 10 dark assignments preserve identity/ammo/money and never respawn eliminated; human win/loss, solo isolation and same-object restart passed. PC only; distant simulation, long-session balance and Android pending.
+
+Logs/TurretAcceptance.txt
+2026-10-09T03:04:21.4973499Z
+PASS: Normal/advanced purchases at exact buyer XZ use 50/80 finite rounds; owner walks through small collider; occupied/outside/per-type caps reject without charge; actual glass shot credits owner; 3 zombies enter around installed geometry; dark gate and 10 assignments preserve positions/ammo; old wagon owner reward; 3-shot fixture exhausts once, blasts two enemies once and credits kill; same actor redeploy resets life/ammo; death closes; Restart clears all 20 pooled actors. PC only; final balance and Android pending.
+
+Unity Play Console after all four checks: 0 errors / 0 warnings. No Android rerun for this revision.

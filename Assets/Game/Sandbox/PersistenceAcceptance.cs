@@ -37,7 +37,7 @@ namespace WaitYourTurn.Sandbox
             motor.ConfigureWorldControl(run.Player, 3.5f);
             foreach (var direction in new[] { Vector3.right, Vector3.left, Vector3.forward, Vector3.back })
             {
-                motor.SetWorldMove(direction); yield return new WaitForSeconds(.12f);
+                motor.SetWorldMove(direction); yield return new WaitForSeconds(.35f);
                 if (!Require(Vector3.Dot(run.Player.transform.forward, direction) > .99f, "Idle-target walking facing")) yield break;
             }
             motor.SetWorldMove(Vector3.zero); motor.Configure(input, run.Player, Camera.main);
