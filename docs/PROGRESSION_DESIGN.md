@@ -1,6 +1,6 @@
 # İki mod, kalıcı ilerleme ve ilk ürün kapsamı
 
-2026-10-09. Kullanıcı kararları ile mühendislik önerileri ayrı tutulur. M8s fiziksel Solo geçişi ve cephane sandığı; M8e sonuç ödülü, ayrı kalıcı cüzdan ve silah açılışı uygulanmıştır. Küçük güç geliştirmeleri ve üretim menüsü henüz yoktur. PC kabulü ve ertelenen cihaz kontrolü ayrı izlenir.
+2026-10-09. Kullanıcı kararları ile mühendislik önerileri ayrı tutulur. M8s fiziksel Solo geçişi ve cephane sandığı; M8e sonuç ödülü, ayrı kalıcı cüzdan, silah açılışı ve küçük can/menzil geliştirmeleri uygulanmıştır. Hız geliştirmesi ve üretim menüsü henüz yoktur. PC kabulü ve ertelenen cihaz kontrolü ayrı izlenir.
 
 ## Kararlaştırılan deneyim
 
@@ -57,7 +57,19 @@ Kullanıcı A54 geçiş testini sonraya bıraktı. Geçiş PC kanıtı `generate
 
 `RunProfile` sonuç kesinleştikten sonra çalışır; `PlayerProfile` para/silah kuralları, `LocalProfileStore` atomik dosya teslimidir. Ödül ve koşu kimliği aynı yazmada kaydedilir; başarılı yazmadan canlı bakiye değişmez. Son 128 sonuç kimliği tutulur; normal akışta eski koşu kaydı ayrıca emekliye ayrılır. Bu yerel temel hile koruması veya gelecekteki reklam/IAP işlem makbuzu deposu değildir. Profil okunamıyorsa mevcut dosya korunur; sessizce boş profil yazılmaz. Eski acceptance fixture'ları gerçek profile para/harcama uygulamaz.
 
-**Geçici denge:** Solo 2 + tamamlanan istasyon başına 3 jeton; Battle sıra ödülleri 20/12/8/3/2. SMG/tüfek/pompalı kalıcı açılışı 20/40/60 jeton. Değerler `RunProfile` Inspector alanlarıdır, yayın dengesi değildir. Tabanca ücretsiz açık; kalıcı açılış koşuya silah hediye etmez, koşu mağazasında ayrıca altınla alınır. Sonuç ekranında deneme profil paneli vardır; üretim ana menüsü sonraki adımdır. Ölüm sonrası otomatik diriltme yoktur; eski D30 reklamla canlandırma fikri ayrı karar/servis olmadan uygulanmaz. Güç yükseltmeleri ve SDK'lar henüz eklenmedi.
+**Geçici denge:** Solo 2 + tamamlanan istasyon başına 3 jeton; Battle sıra ödülleri 20/12/8/3/2. SMG/tüfek/pompalı kalıcı açılışı 20/40/60 jeton. Değerler `RunProfile` Inspector alanlarıdır, yayın dengesi değildir. Tabanca ücretsiz açık; kalıcı açılış koşuya silah hediye etmez, koşu mağazasında ayrıca altınla alınır. Sonuç ekranında deneme profil paneli vardır; üretim ana menüsü sonraki adımdır. Ölüm sonrası otomatik diriltme yoktur; eski D30 reklamla canlandırma fikri ayrı karar/servis olmadan uygulanmaz. Reklam/IAP SDK henüz eklenmedi.
+
+## D41 — Sınırlı kalıcı can ve menzil
+
+İlk deneme her özellik için 5 seviyedir: seviye başına +%2, toplam en fazla +%10. `RunProfile.upgrades` içindeki `PermanentUpgradeRules` adımları 0–%2 arasında ve fiyatları ayarlanabilir tutar; sınır kodda 5 seviyedir. Deneme fiyatları 10/20/30/40/50 jeton. Satın alma yalnız kesinleşmiş koşu sonunda yapılır; seviye ve bakiye tek atomik profil yazmasında teslim edilir. Canlı koşuda satın alma, yetersiz para ve üst sınır reddedilir. Bu değerler ticari denge kabulü değildir.
+
+Yeni Solo/Battle koşusunda yalnız insan oyuncuya uygulanır. Can `StartingMaximum × çarpan`, menzil her silahın sabit temel menzili × çarpan olur; tekrar başlatma veya yükleme üst üste bonus eklemez. Yeni koşu dolu canla başlar. Canlı kayıt yükleme mevcut canı doldurmaz; `PreserveCurrent` uygulanır. `ChangeMaxHealth` yaşam kimliğini değiştirmediğinden mevcut öldürme ödülü bağı korunur. Satın alma ölüyü diriltmez ve ölümde Solo'nun ilk istasyon/kuyruk kuralı değişmez. Bot, turret ve dron değerleri insan bonusunu almaz; ileride bot güç profilleri ayrıca tasarlanabilir.
+
+`HitscanWeapon.Range` hem hedef seçimi/görüş hem gerçek ışın/pellet uzaklığında tek etkili menzildir. Mermi, damage, ateş/reload süreleri ve ortak `WeaponDefinition`/`WeaponSpec` değişmez. Cam/metal raycast kuralı aynı kalır; bonus metali geçirmez. Sabit fizik/model ölçüleri veya NavMesh yeniden üretilmez. Modifier yalnız oyuncu örneğine aittir; Combat bileşenleri meta profile bağımlı değildir.
+
+`PlayerProfile` v2'dir. v1 para, silahlar ve sonuç makbuzları korunarak sıfır can/menzil seviyesiyle bellekte göç eder; sonraki başarılı profil yazması v2 kaydeder. `RunSnapshot` v3 kalır; insan bonusu kalıcı profilden yeniden uygulanır, ammo snapshot geri yüklenir. Hız, zırh ve geniş yetenek ağacı sonraki kapsamdır.
+
+2026-10-09 14:50 Türkiye saati: genişletilmiş **tek kısa birleşik PC kontrolü PASS**. Önceki sandık/cüzdan/sonuç akışına v1 profil göçü, canlı satın alma reddi, fiyat/5-seviye sınırı, ölü oyuncuyu diriltmeme, yeni koşuda dolu artırılmış can/tek yaşam kimliği, dört silahın gerçek uzayan ışını ve metal engeli, hasarlı can/mermi kaydından iyileştirmesiz/katlanmasız devam ve iki modda uygulama eklendi. Kanıt `generated/permanent-upgrades-pc-acceptance.txt`. Eski uzun test paketleri yeniden çalıştırılmadı. A54 yeni güç/ganimet/profil kontrolü bekliyor; üretim menüsü, kullanıcı dengesi ve cihaz kabulü bu PC testinin yerine geçmez.
 
 PC kısa birleşik kabul PASS (2026-10-09 11:33:21 UTC): tek sandık, dolu cephane, gerçek dosyadan ganimet/mermi devamı, Solo ölümde sıfır vagon/sandık/altın/koşu silahı, kalıcı bakiye korunması, iki modun tek sonuç ödülü, dosya tekrarında makbuz, yetersiz/tekrarlı kalıcı satın alma, iki modda silah açılışı ve ayrı koşu satın alması, disk hatası bildirimi. Kanıt `generated/loot-profile-pc-acceptance.txt`; test profili gerçek profilden ayrıdır. Menü: `Wait Your Turn/Progression/Install Loot and Profile` (Ctrl+Alt+F9), Play'de `Check Loot and Profile` (Ctrl+Alt+L). Önceki uzun kontroller bu turda tekrar çalıştırılmadı; A54 yeni sandık/profil kabulü bekliyor.
 

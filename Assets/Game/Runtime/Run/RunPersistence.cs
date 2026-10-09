@@ -332,6 +332,7 @@ namespace WaitYourTurn.Run
                 if (data.hasDrone && !economy.Drone.Restore(data.drone.weapon, data.drone.state, data.drone.position, data.drone.rotation, data.drone.searchRemaining))
                     throw new InvalidOperationException("Drone restore");
                 if (!spawner.Restore(data.spawner)) throw new InvalidOperationException("Spawn schedule restore");
+                if (economy.Profile != null && !economy.Profile.ApplyStats(false)) throw new InvalidOperationException("Human profile stats");
                 Physics.SyncTransforms(); runId = data.runId; invalidated = false; ownsSave = true; Status = "Run resumed locally"; ok = true;
             }
             catch (Exception e) { Status = "Load failed safely; new run: " + e.Message; }

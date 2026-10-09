@@ -22,7 +22,7 @@ namespace WaitYourTurn.Sandbox
             GUI.Label(new Rect(width - 285, 110, 273, 25), $"Kalıcı jeton: {profile.Tokens} (deneme)");
             if (run.Flow.Phase == RunPhase.GameOver)
             {
-                var panel = new Rect(width - 312, 144, 300, 282);
+                var panel = new Rect(width - 312, 144, 300, 356);
                 input.ProfileBlockedScreenArea = new Rect(offset.x + panel.x * scale, offset.y + panel.y * scale, panel.width * scale, panel.height * scale);
                 GUI.Box(panel, "PROFİL / KALICI SİLAHLAR");
                 GUI.Label(new Rect(panel.x + 12, panel.y + 28, 275, 40), $"Ödül +{profile.LastReward} | Solo rekor: {profile.BestSoloStation}\nKoşu altını yeni oyunda sıfırlanır.");
@@ -33,9 +33,19 @@ namespace WaitYourTurn.Sandbox
                     if (GUI.Button(new Rect(panel.x + 12, panel.y + 78 + (i - 1) * 35, 276, 31),
                         run.Weapon.WeaponName(i) + (unlocked ? " — Kalıcı açık" : $" — Aç: {profile.WeaponPrice(i)} jeton"))) profile.TryUnlock(i);
                 }
+                UpgradeButton(PermanentUpgrade.Health, "Can", 185);
+                UpgradeButton(PermanentUpgrade.Range, "Menzil", 220);
                 GUI.enabled = true;
-                GUI.Label(new Rect(panel.x + 12, panel.y + 185, 276, 47), profile.Status ?? "Silah açılışı iki modda geçerlidir.", new GUIStyle(GUI.skin.label) { wordWrap = true });
-                if (GUI.Button(new Rect(panel.x + 12, panel.y + 237, 276, 32), "Yeni koşu — en baştan")) run.Restart();
+                GUI.Label(new Rect(panel.x + 12, panel.y + 255, 276, 47), profile.Status ?? "Kalıcı gelişim iki modda geçerlidir.", new GUIStyle(GUI.skin.label) { wordWrap = true });
+                if (GUI.Button(new Rect(panel.x + 12, panel.y + 307, 276, 32), "Yeni koşu — en baştan")) run.Restart();
+                void UpgradeButton(PermanentUpgrade kind, string label, float y)
+                {
+                    int level = profile.UpgradeLevel(kind), price = profile.UpgradePrice(kind);
+                    float bonus = (profile.UpgradeMultiplier(kind) - 1) * 100;
+                    GUI.enabled = profile.CanUpgrade(kind);
+                    if (GUI.Button(new Rect(panel.x + 12, panel.y + y, 276, 31),
+                        $"{label} +%{bonus:F0} [{level}/5] — " + (price > 0 ? $"{price} jeton" : "Tamamlandı"))) profile.TryUpgrade(kind);
+                }
             }
             GUI.matrix = old;
         }

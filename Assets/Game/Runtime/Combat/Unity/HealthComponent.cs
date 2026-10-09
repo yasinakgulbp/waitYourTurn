@@ -15,6 +15,7 @@ namespace WaitYourTurn.Combat
 
         public float Current => Model.Current;
         public float Maximum => Model.Maximum;
+        public float StartingMaximum => startingMaxHealth;
         public bool IsAlive => Model.IsAlive;
         public uint LifeVersion => Model.LifeVersion;
         /// <summary>Changes only for applied damage, including a lethal hit. Healing never hides a hit.</summary>

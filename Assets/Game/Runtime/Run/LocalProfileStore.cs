@@ -29,7 +29,8 @@ namespace WaitYourTurn.Run
                 if (!File.Exists(path) || new FileInfo(path).Length > MaximumBytes) return false;
                 var envelope = JsonUtility.FromJson<Envelope>(File.ReadAllText(path, Encoding.UTF8));
                 if (envelope == null || envelope.version != 1 || envelope.payload == null || LocalRunStore.Hash(envelope.payload) != envelope.checksum) return false;
-                profile = JsonUtility.FromJson<PlayerProfile>(envelope.payload); return profile != null && profile.Valid();
+                profile = JsonUtility.FromJson<PlayerProfile>(envelope.payload);
+                return profile != null && (profile.Valid() || profile.MigratePrevious());
             }
             catch (Exception e) when (e is IOException || e is UnauthorizedAccessException || e is ArgumentException) { return false; }
         }

@@ -12,6 +12,7 @@ namespace WaitYourTurn.Run
         [SerializeField] private RunDefenses defenses;
         [SerializeField] private RunDrone drone;
         [SerializeField] private RunProfile profile;
+        public RunProfile Profile => profile;
         public void ConfigureProfile(RunProfile permanent) => profile = permanent;
         public RunDrone Drone => drone;
         public void ConfigureDrone(RunDrone defense) => drone = defense;

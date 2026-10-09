@@ -36,6 +36,13 @@ namespace WaitYourTurn.Combat
         private float nextTrigger;
         private ulong attackId, triggerId;
         private bool firing;
+        private float rangeMultiplier = 1;
+        public float RangeMultiplier => rangeMultiplier;
+        public bool SetRangeMultiplier(float value)
+        {
+            if (firing || !(value >= 1 && value <= 1.1f)) return false;
+            rangeMultiplier = value; return true;
+        }
         public bool Paused { get; set; }
         public LayerMask HitMask => hitMask;
         public int EquippedIndex => equipped;
@@ -60,7 +67,7 @@ namespace WaitYourTurn.Combat
             else owned[index] = true;
             equipped = index; return true;
         }
-        public float Range => State.Spec.Range;
+        public float Range => State.Spec.Range * rangeMultiplier;
         public bool TryRefillOwned()
         {
             if (firing || Paused || Time.timeScale <= 0 || owner == null || !owner.IsAlive) return false;
@@ -117,7 +124,7 @@ namespace WaitYourTurn.Combat
             WeaponState state = State;
             if (!state.TryFire(Time.time)) return false;
             nextTrigger = Time.time + state.Spec.Interval;
-            Vector3 start = Muzzle; WeaponSpec spec = state.Spec;
+            Vector3 start = Muzzle; WeaponSpec spec = state.Spec; float shotRange = Range;
             Color color = Definition != null ? Definition.tracerColor : Color.yellow;
             EntityIdentity source = owner.Identity, credit = rewardOwner != null ? rewardOwner.Identity : source;
             Team team = owner.Team;
@@ -127,8 +134,8 @@ namespace WaitYourTurn.Combat
                 for (int i = 0; i < spec.Pellets; i++)
                 {
                     Vector3 ray = HitscanResolver.PelletDirection(direction, i, spec.Pellets, spec.SpreadDegrees, triggerId);
-                    Vector3 end = start + ray * spec.Range;
-                    if (resolver.Cast(start, ray, spec.Range, hitMask, owner, out RaycastHit hit))
+                    Vector3 end = start + ray * shotRange;
+                    if (resolver.Cast(start, ray, shotRange, hitMask, owner, out RaycastHit hit))
                     {
                         end = hit.point;
                         HealthComponent target = hit.collider != null ? hit.collider.GetComponentInParent<HealthComponent>() : null;

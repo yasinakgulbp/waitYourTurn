@@ -139727,6 +139727,12 @@ MonoBehaviour:
   soloBaseReward: 2
   soloCompletedStationReward: 3
   battlePlaceRewards: 140000000c000000080000000300000002000000i
+  upgrades:
+    healthStep: 0.02
+    rangeStep: 0.02
+    healthPrice: 10
+    rangePrice: 10
+    priceStep: 10
 --- !u!114 &1492631883
 MonoBehaviour:
   m_ObjectHideFlags: 0
