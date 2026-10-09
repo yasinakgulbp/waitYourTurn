@@ -4,7 +4,7 @@
 
 İlk sarı çizgili taslak kullanıcı tarafından reddedildi. Blokout yalnız ölçü referansıdır. Yeni tasarım kullanıcının metro görselindeki kırmızı kapı, kirli bej iç panel, koyu dış metal, basık cam ve yuvarlak kenar dilini esas alır.
 
-**Blender önizlemesi hazır; Unity sahnesine henüz kurulmadı.** Kullanıcı önce Blender tasarımını görmek istedi. Render gerçek `.blend` modelinden üretildi; oyun ekranı veya cihaz performans kanıtı değildir. İç dekor/karakter/VFX ve son ışıklandırma bu gövde tesliminin dışında kalır.
+**Kullanıcının önizleme sonrası isteğiyle SurvivalIntegration sahnesine kuruldu; kısa Unity Play kabulü geçti.** Blender renderi gerçek `.blend` modelinden üretildi; güncel oyun görüntüsü `docs/generated/survival-train-game.png` içindedir. İç dekor/karakter/VFX ve son ışıklandırma bu gövde tesliminin dışında kalır. Kullanıcı ilk denemeyi kabul etti; sarımsı pencere panelleri ve referanstan farklı zemin sonraki görsel düzeltme notlarıdır.
 
 | Dosya | Kullanım |
 | --- | --- |
@@ -40,12 +40,15 @@ Tam üç vagon +15 kapı +iki körük +lokomotif **30.364 üçgen**;10 benzersiz
 
 Kurulum ayarları: albedo2048 ASTC6×6, normal1024 ASTC6×6, metal/smooth512 ASTC8×8, mipmap; CPU Read/Write kapalı. ASTC destekli cihazda üç atlasın teorik GPU karşılığı yaklaşık3,2 MB'dır; toplam uygulama belleği/build boyutu değildir. JPEG disk boyutunu düşürür; GPU tasarrufu Android import sıkıştırmasıyla sağlanır. Yardımcı normal haritası ince kabartma içindir, fotoğraf detaylarının tam normal bake'i değildir.
 
-Blender üretimi, mesh indeks/UV/normal/yüz yönü/UInt16 önkontrolü ve Editor kodunun Unity6.6 referanslarıyla Roslyn derlemesi geçti. **Unity shader importu, Play/atış/kapı/geçit ve cihaz kontrolü bekliyor.** Eski blokout A54 FPS sonucu bu sanata taşınmaz; yeni FPS/ısınma/pil sonucu henüz yok.
+Blender üretimi, mesh indeks/UV/normal/yüz yönü/UInt16 önkontrolü, Unity derlemesi ve shader importu geçti. Kurulum hareket colliderı/agent/obstacle ve NavMesh kaynağının değişmediğini doğruladı. Tren geometrisinin açık renderer sayısı 243'ten 39'a indi; bu sayı toplam sahne draw call ölçümü değildir. Statik ortam cubemap'i kullanılır, realtime probe yoktur.
+
+**Kısa PC kabulü PASS:** 15 kapıda cam/metal rayları, kırılınca görselin kalkması ve onarımla geri gelmesi; 15 yan camda açıklık ve alt/üst/dikme metal engelleri; tam tren NavMesh rotası ve oyuncunun iki açık körükten fiziksel yürümesi. Test ayrı kayıt dosyasında çalıştı. Kanıtlar `docs/generated/survival-train-art-install.txt` ve `docs/generated/survival-train-art-pc-acceptance.txt`. Console'da kontrol sonrası hata/uyarı yoktu. **A54 sanat yükü, FPS/ısınma/pil kabulü bekliyor.** Eski blokout A54 FPS sonucu bu sanata taşınmaz.
 
 ## Yeniden üretim ve kurulum
 
 1. `python Tools/TrainArt/build_textures.py`: kaynak PNG'yi koruyarak JPEG ve yardımcı haritaları üretir.
 2. `blender --background --factory-startup --python Tools/TrainArt/build_train.py`: kaynak, FBX, mesh JSON ve render üretir. `-- --no-render` renderi atlar.
 3. `python Tools/TrainArt/check_meshes.py`: on parça, indeks/UV/normal/yüz yönü, UInt16 ve35k tam tren sınırı.
-4. Play durdurulmuş `SurvivalIntegration`: **Wait Your Turn → Survival → Install Textured Train Art** (Ctrl+Alt+L). Battle ve yanlış vagon sayısını reddeder; yeni sanat köklerini tekrar kurabilir.
+4. Play durdurulmuş `SurvivalIntegration`: **Wait Your Turn → Survival → Install Textured Train Art** (Ctrl+Shift+Alt+L). Battle ve yanlış vagon sayısını reddeder; yeni sanat köklerini tekrar kurabilir.
 5. Kurulum hareket/nav değişmemiş kontrolünü ve `docs/generated/survival-train-art-install.txt` kaydını üretir. Kurulum yapılmadan bu kayıt/kabul var sayılmaz.
+6. Play'de **Wait Your Turn → Survival → Check Train Art** (Ctrl+Shift+Alt+T), kısa izole kapı/cam/geçit kontrolünü ve oyun görüntüsünü üretir.

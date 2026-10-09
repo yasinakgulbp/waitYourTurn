@@ -22,7 +22,7 @@ namespace WaitYourTurn.Editor
         [Serializable] private sealed class Part
         { public string name = string.Empty; public float[] vertices = Array.Empty<float>(), normals = Array.Empty<float>(), uv = Array.Empty<float>(); public int[] triangles = Array.Empty<int>(); }
 
-        [MenuItem("Wait Your Turn/Survival/Install Textured Train Art %&l")]
+        [MenuItem("Wait Your Turn/Survival/Install Textured Train Art %#&l")]
         public static void Install()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Stop Play before installing art.");
@@ -52,7 +52,7 @@ namespace WaitYourTurn.Editor
                 Model(art, "Body", meshes[kind], steel); Model(art, "Windows", meshes[kind + "Glass"], glass);
                 foreach (var door in wagon.Doors)
                 {
-                    foreach (var name in new[] { "Lower panel", "Shoot-through glass" })
+                    foreach (var name in new[] { "Lower panel", "Shoot-through glass", "Repair floor strip" })
                     {
                         var oldPanel = door.transform.Find(name);
                         if (oldPanel.TryGetComponent<MeshRenderer>(out var r)) { Undo.RecordObject(r,"Replace door renderer"); r.enabled = false; }
@@ -86,6 +86,7 @@ namespace WaitYourTurn.Editor
                 2*meshes["Connector"].triangles.Length/3 + meshes["Locomotive"].triangles.Length/3;
             foreach(var mesh in meshes.Values) { mesh.UploadMeshData(true); EditorUtility.SetDirty(mesh); }
             AssetDatabase.SaveAssets();
+            EditorSceneManager.SaveScene(scene);
             string report = DateTime.UtcNow.ToString("O") + "\nPASS: unchanged movement collider/agent/obstacle geometry and nav asset; narrower shot apertures match art.\n" +
                 $"Train rendered triangles: {triangleCount}; geometry renderers before: {oldRenderers}, after: {EnabledRenderers(parent)}.\n" +
                 "Shared atlas albedo2048 ASTC6x6; normal1024 ASTC6x6; packed metal/smooth512 ASTC8x8. Mipmaps; Read/Write disabled.\n" +
@@ -171,10 +172,10 @@ namespace WaitYourTurn.Editor
             foreach(var c in root.GetComponentsInChildren<Collider>(true))
             {
                 if(c.TryGetComponent<NavMeshModifier>(out var modifier)&&modifier.ignoreFromBuild)continue;
-                data.Append(c.GetEntityId().ToString()).Append(JsonUtility.ToJson(c)).Append(c.transform.localToWorldMatrix);
+                data.Append(c.GetEntityId().ToString()).Append(EditorJsonUtility.ToJson(c)).Append(c.transform.localToWorldMatrix);
             }
-            foreach(var c in root.GetComponentsInChildren<UnityEngine.AI.NavMeshObstacle>(true))data.Append(c.GetEntityId().ToString()).Append(JsonUtility.ToJson(c));
-            foreach(var c in root.GetComponentsInChildren<UnityEngine.AI.NavMeshAgent>(true))data.Append(c.GetEntityId().ToString()).Append(JsonUtility.ToJson(c));
+            foreach(var c in root.GetComponentsInChildren<UnityEngine.AI.NavMeshObstacle>(true))data.Append(c.GetEntityId().ToString()).Append(EditorJsonUtility.ToJson(c));
+            foreach(var c in root.GetComponentsInChildren<UnityEngine.AI.NavMeshAgent>(true))data.Append(c.GetEntityId().ToString()).Append(EditorJsonUtility.ToJson(c));
             using(var hash=SHA256.Create())return Convert.ToBase64String(hash.ComputeHash(Encoding.UTF8.GetBytes(data.ToString())));
         }
         private static Cubemap Reflection()

@@ -2,6 +2,8 @@
 
 ## 2026-10-09 — D47: referansa dayalı tren sanatı
 
+**Devam / güncel durum:** Kullanıcı Blender önizlemesinden sonra ilk tasarımı Survival'a giydirmemizi istedi. Kurulum yapıldı; 15 kapı/cam/metal ve iki körük için kısa PC kabulü PASS. Hareket/nav kaynağı aynı; Battle sahnesi değişmedi. Sarımsı pencere panelleri ve zemin sonraki görsel düzeltmeler için not edildi. Android FPS/termal/pil ölçümü henüz yok. Aşağıdaki önizleme bekleme notu önceki teslim anının kaydıdır.
+
 Kullanıcı ilk sarı çizgili Blender taslağını reddetti: oyun blokout'u nihai görsel tasarım değildir; yalnız ölçüler korunur. Renk/doku/desen, iç-dış metal ve pencere oranları kullanıcının kırmızı kapılı metro referansına yaklaştırılacak. Üç Survival vagonu ve geniş açık körükler korunur. Kullanıcı bu turda **önce Blender tasarımını görmeyi** seçti; Unity sahnesine henüz kurulum yapılmaz. Yeni gövde, paketli kaynak ve gerçek Blender renderi hazır; görünüm değerlendirmesi bekler.
 
 Yeni pencere yüksekliği ve kapı yaprak çerçeveleri yalnız Survival sanat varyantına aittir. Metal görünümüyle atış colliderı eşlenecek; hareket/nav/kimlikler ve Battle sahnesi korunacak. Teknik aktarım kodu hazır/derlendi, offline mesh önkontrolü geçti; Unity shader/Play/cihaz kabulü henüz yapılmadı. Ayrıntı ve ölçüler [TRAIN_ART.md](TRAIN_ART.md). Bu kayıt sanat kalitesi veya FPS garantisi değildir.
