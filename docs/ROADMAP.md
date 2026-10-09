@@ -222,3 +222,7 @@ D31 kullanıcı revizyonu: sabit padler kaldırıldı, turret oyuncunun bulundu�
 ## Güncel D44 devam noktası
 
 Survival orta başlangıç/4→7→10/+3 dalga ve eşit20HP kapıları, sade HUD/fonsuz mini harita, katalogdan kaydırılabilir mağaza grupları, tüm dış kapılara koşu içi tahta/tel güçlendirme uygulanır. Yeni koşuda seviye/kapıHP sıfırlanır; kayıt bunları tutar. Damage onarım kesintileri ortak varsayılanda kapalıdır. Ayrıntı DECISIONS D44 ve PROGRESSION_DESIGN. Kalıcı RepairSpeed sonraki profil/menü görevinde iki mod için bekliyor. A54, sanat ve nihai denge kabulü tamamlanmış sayılmaz.
+
+### D45 — fiyatlar ve patlayıcı ekipman
+
+Survival fiyat/3000 test altını güncellendi; ortak bomba atar teslimi ve düşman tetiklemeli mayın mevcut Combat/ödül/kayıt sistemleri üzerinden kuruldu. Ayrıntılar: DIFFICULTY_AND_PRICES.md. Sonraki denge işi tek tek istasyon yazmak yerine tehdit bütçesi/tempo eğrisi;4/7/10 başlangıcı şimdilik korunur. Battle'a dönüldüğünde launcher+mine sahne bağları, bot kullanımı ve ayrı ekonomi kabulü eklenecek. Launcher'ın kalıcı silah kilidi/profil göçü ayrı iş; kalıcı hızlı onarım iki mod için bekler. Android patlayıcı ekipman kontrolü beklemede.

@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58f554feda633f0439651908a4be72fd, type: 3}
   m_Name: SurvivalShop
   m_EditorClassIdentifier: WaitYourTurn.Run::WaitYourTurn.Run.ShopCatalog
-  startingCoins: 1000
+  startingCoins: 3000
   purchaseCooldown: 0.35
   items:
   - id: heal
     label: Heal
-    price: 30
+    price: 150
     effect: 0
     weaponIndex: -1
     turretIndex: -1
     reinforcementLevel: 0
+    requiresWeaponUnlock: 1
   - id: repair
     label: Repair wagon doors
     price: 40
@@ -29,41 +30,47 @@ MonoBehaviour:
     weaponIndex: -1
     turretIndex: -1
     reinforcementLevel: 0
+    requiresWeaponUnlock: 1
   - id: smg
     label: SMG / refill
-    price: 60
+    price: 300
     effect: 2
     weaponIndex: 1
     turretIndex: -1
     reinforcementLevel: 0
+    requiresWeaponUnlock: 1
   - id: rifle
     label: Rifle / refill
-    price: 100
+    price: 2500
     effect: 2
     weaponIndex: 2
     turretIndex: -1
     reinforcementLevel: 0
+    requiresWeaponUnlock: 1
   - id: shotgun
     label: Shotgun / refill
-    price: 90
+    price: 1000
     effect: 2
     weaponIndex: 3
     turretIndex: -1
     reinforcementLevel: 0
+    requiresWeaponUnlock: 1
   - id: turret-normal
     label: Normal turret
-    price: 90
+    price: 500
     effect: 3
     weaponIndex: -1
     turretIndex: 0
     reinforcementLevel: 0
+    requiresWeaponUnlock: 1
   - id: turret-advanced
     label: Advanced turret
-    price: 160
+    price: 900
     effect: 3
     weaponIndex: -1
     turretIndex: 1
     reinforcementLevel: 0
+    requiresWeaponUnlock: 1
   - id: drone
     label: Companion drone
     price: 180
@@ -71,17 +78,36 @@ MonoBehaviour:
     weaponIndex: -1
     turretIndex: -1
     reinforcementLevel: 0
+    requiresWeaponUnlock: 1
   - id: wood
     label: Wood reinforcement
-    price: 80
+    price: 600
     effect: 5
     weaponIndex: -1
     turretIndex: -1
     reinforcementLevel: 1
+    requiresWeaponUnlock: 1
   - id: wire
     label: Wire reinforcement
-    price: 160
+    price: 1200
     effect: 5
     weaponIndex: -1
     turretIndex: -1
     reinforcementLevel: 2
+    requiresWeaponUnlock: 1
+  - id: launcher
+    label: Grenade launcher / refill
+    price: 6000
+    effect: 2
+    weaponIndex: 4
+    turretIndex: -1
+    reinforcementLevel: 0
+    requiresWeaponUnlock: 0
+  - id: mine
+    label: Proximity mine
+    price: 250
+    effect: 6
+    weaponIndex: -1
+    turretIndex: -1
+    reinforcementLevel: 0
+    requiresWeaponUnlock: 1

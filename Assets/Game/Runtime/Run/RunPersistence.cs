@@ -144,6 +144,7 @@ namespace WaitYourTurn.Run
             if (data.hasDrone)
                 data.drone = new DroneSave { state = drone.State, position = drone.transform.position, rotation = drone.transform.rotation,
                     searchRemaining = drone.SearchRemaining, weapon = drone.Weapon.Capture() };
+            data.mines = economy.Mines != null ? economy.Mines.Capture() : null;
             return data;
         }
         private Dictionary<string, EnemyProfile> Profiles()
@@ -174,6 +175,9 @@ namespace WaitYourTurn.Run
             {
                 var spec = run.Weapon.StateAt(i).Spec;
                 text.Append(run.Weapon.WeaponName(i)).Append(FormattableString.Invariant($"/{spec.Damage}/{spec.Interval}/{spec.Range}/{spec.MagazineSize}/{spec.ReloadSeconds}/{spec.InfiniteReserve}/{spec.InitialReserve}/{spec.Pellets}/{spec.SpreadDegrees}"));
+                var delivery = run.Weapon.DefinitionAt(i);
+                if (delivery != null && delivery.delivery != ShotDelivery.Hitscan)
+                    text.Append(FormattableString.Invariant($"/grenade-v1/{delivery.projectileSpeed}/{delivery.projectileRadius}/{delivery.blastRadius}"));
             }
             foreach (var program in spawner.Programs)
             {
@@ -185,6 +189,7 @@ namespace WaitYourTurn.Run
             }
             foreach (var definition in economy.Defenses.Definitions) text.Append(definition.name).Append(JsonUtility.ToJson(definition.weapon));
             text.Append(economy.Drone.Definition.name).Append(JsonUtility.ToJson(economy.Drone.Definition.weapon));
+            if (economy.Mines != null) text.Append(economy.Mines.DefinitionKey);
             if (run.Match != null) foreach (var bot in run.Match.Bots) text.Append(bot.Nickname).Append(JsonUtility.ToJson(bot.Profile));
             return LocalRunStore.Hash(text.ToString());
         }
@@ -194,6 +199,7 @@ namespace WaitYourTurn.Run
         private static bool Life(BodySave b) => b != null && b.maximum > 0 && b.maximum <= 1000000 &&
             b.current >= 0 && b.current <= b.maximum && b.protection >= 0 && b.protection <= 60 && Pose(b.position, b.rotation);
         private static bool Ammo(WeaponSnapshot saved, WeaponSpec spec) => saved != null && saved.equipped == 0 &&
+            (saved.projectiles == null || saved.projectiles.Length == 0) &&
             saved.owned != null && saved.owned.Length == 1 && saved.owned[0] && saved.ammo != null && saved.ammo.Length == 1 &&
             new WeaponState(spec).CanRestore(saved.ammo[0]) && saved.triggerRemaining >= 0 && saved.triggerRemaining <= 60;
         public bool Validate(RunSnapshot data, out string reason)
@@ -267,6 +273,7 @@ namespace WaitYourTurn.Run
                 }
             }
             reason = "Invalid drone or spawn schedule";
+            if (economy.Mines != null ? !economy.Mines.CanRestore(data.mines) : data.mines != null && data.mines.Length != 0) return false;
             if (data.hasDrone && (data.drone == null || data.drone.state < DroneState.Following || data.drone.state > DroneState.Diving ||
                 !Pose(data.drone.position, data.drone.rotation) || !(data.drone.searchRemaining >= 0) || data.drone.searchRemaining > economy.Drone.Definition.searchSeconds ||
                 !Ammo(data.drone.weapon, economy.Drone.Definition.weapon.CreateSpec()))) return false;
@@ -296,6 +303,7 @@ namespace WaitYourTurn.Run
                 if (data.mode == RunMode.Solo && run.Loot != null) run.Loot.Restore(data.claimedLoot);
                 foreach (var wagon in run.Wagons) foreach (var door in wagon.Doors) door.Portal.Restore(true, false, false);
                 foreach (var rack in economy.Defenses.Racks) rack.Clear(); economy.Drone.Actor.Clear();
+                if (economy.Mines != null) economy.Mines.Clear();
                 prepared = true;
             }
             catch (Exception e) { Status = "Load preparation failed: " + e.GetType().Name; }
@@ -349,6 +357,7 @@ namespace WaitYourTurn.Run
                 }
                 if (data.hasDrone && !economy.Drone.Restore(data.drone.weapon, data.drone.state, data.drone.position, data.drone.rotation, data.drone.searchRemaining))
                     throw new InvalidOperationException("Drone restore");
+                if (economy.Mines != null && !economy.Mines.Restore(data.mines)) throw new InvalidOperationException("Mine restore");
                 if (!spawner.Restore(data.spawner)) throw new InvalidOperationException("Spawn schedule restore");
                 if (economy.Profile != null && !economy.Profile.ApplyStats(false)) throw new InvalidOperationException("Human profile stats");
                 Physics.SyncTransforms(); runId = data.runId; invalidated = false; ownsSave = true; Status = "Run resumed locally"; ok = true;

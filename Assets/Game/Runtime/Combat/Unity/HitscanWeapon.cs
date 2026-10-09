@@ -10,14 +10,16 @@ namespace WaitYourTurn.Combat
         public bool[] owned;
         public AmmoSnapshot[] ammo;
         public float triggerRemaining;
+        public GrenadeFlightSnapshot[] projectiles;
     }
     public readonly struct ShotNotice
     {
         public readonly Vector3 Start, End;
         public readonly int Pellet, PelletCount;
         public readonly Color Color;
-        public ShotNotice(Vector3 start, Vector3 end, int pellet = 0, int pelletCount = 1, Color color = default)
-        { Start = start; End = end; Pellet = pellet; PelletCount = pelletCount; Color = color; }
+        public readonly bool Projectile;
+        public ShotNotice(Vector3 start, Vector3 end, int pellet = 0, int pelletCount = 1, Color color = default, bool projectile = false)
+        { Start = start; End = end; Pellet = pellet; PelletCount = pelletCount; Color = color; Projectile = projectile; }
     }
 
     /// <summary>Shared owner-independent weapon. Several definitions retain separate ammo when equipped.</summary>
@@ -29,6 +31,9 @@ namespace WaitYourTurn.Combat
         [SerializeField] private LayerMask hitMask = Physics.AllLayers;
         [SerializeField] private bool startingWeaponOnly;
         [SerializeField] private Transform muzzleSocket;
+        [SerializeField] private ExplosiveProjectiles projectiles;
+        public ExplosiveProjectiles Projectiles => projectiles;
+        public void ConfigureProjectiles(ExplosiveProjectiles delivery) => projectiles = delivery;
         private readonly HitscanResolver resolver = new HitscanResolver();
         private WeaponState[] states;
         private bool[] owned;
@@ -49,6 +54,7 @@ namespace WaitYourTurn.Combat
         public int WeaponCount => definitions == null || definitions.Length == 0 ? 1 : definitions.Length;
         public WeaponState State { get { EnsureInitialized(); return states[equipped]; } }
         public WeaponDefinition Definition => definitions == null || definitions.Length == 0 ? null : definitions[equipped];
+        public WeaponDefinition DefinitionAt(int index) => definitions != null && index >= 0 && index < definitions.Length ? definitions[index] : null;
         public string DisplayName => Definition != null ? Definition.displayName : "Pistol";
         public string WeaponName(int index) => definitions == null || definitions.Length == 0 ? "Pistol" : definitions[index].displayName;
         public int Rounds => State.Rounds;
@@ -87,6 +93,7 @@ namespace WaitYourTurn.Combat
         public void ResetWeapon()
         {
             if (firing) return;
+            if (projectiles != null) projectiles.Clear();
             states = new WeaponState[WeaponCount];
             owned = new bool[WeaponCount];
             for (int i = 0; i < states.Length; i++)
@@ -113,6 +120,10 @@ namespace WaitYourTurn.Combat
         {
             if (!HitscanResolver.Hostile(owner, target)) return false;
             Vector3 delta = target.transform.position + Vector3.up * .85f - Muzzle;
+            if (Definition != null && Definition.delivery == ShotDelivery.Grenade &&
+                (projectiles == null || !Definition.ValidDelivery || resolver.Sweep(Muzzle, delta.normalized, delta.magnitude,
+                    Definition.projectileRadius, hitMask, owner, out var sweep) &&
+                    (sweep.collider == null || sweep.collider.GetComponentInParent<HealthComponent>() != target))) return false;
             return delta.sqrMagnitude <= Range * Range && resolver.Cast(Muzzle, delta.normalized,
                 delta.magnitude + .2f, hitMask, owner, out RaycastHit hit) && hit.collider != null &&
                 hit.collider.GetComponentInParent<HealthComponent>() == target;
@@ -122,6 +133,8 @@ namespace WaitYourTurn.Combat
             if (firing || Paused || Time.timeScale <= 0 || owner == null || !owner.IsAlive ||
                 !Finite(direction) || direction.sqrMagnitude < .001f || Time.time < nextTrigger) return false;
             WeaponState state = State;
+            bool grenade = Definition != null && Definition.delivery == ShotDelivery.Grenade;
+            if (grenade && (!Definition.ValidDelivery || projectiles == null || !projectiles.CanLaunch)) return false;
             if (!state.TryFire(Time.time)) return false;
             nextTrigger = Time.time + state.Spec.Interval;
             Vector3 start = Muzzle; WeaponSpec spec = state.Spec; float shotRange = Range;
@@ -131,6 +144,12 @@ namespace WaitYourTurn.Combat
             triggerId++; firing = true;
             try
             {
+                if (grenade)
+                {
+                    projectiles.Launch(equipped, start, direction, shotRange, rewardOwner ?? owner);
+                    Fired?.Invoke(new ShotNotice(start, start, color: color, projectile: true));
+                    return true;
+                }
                 for (int i = 0; i < spec.Pellets; i++)
                 {
                     Vector3 ray = HitscanResolver.PelletDirection(direction, i, spec.Pellets, spec.SpreadDegrees, triggerId);
@@ -153,7 +172,8 @@ namespace WaitYourTurn.Combat
         public WeaponSnapshot Capture()
         {
             EnsureInitialized(); var data = new WeaponSnapshot { equipped = equipped, owned = (bool[])owned.Clone(),
-                ammo = new AmmoSnapshot[states.Length], triggerRemaining = Mathf.Max(0, nextTrigger - Time.time) };
+                ammo = new AmmoSnapshot[states.Length], triggerRemaining = Mathf.Max(0, nextTrigger - Time.time),
+                projectiles = projectiles != null ? projectiles.Capture() : null };
             for (int i = 0; i < states.Length; i++) data.ammo[i] = states[i].Capture(Time.time);
             return data;
         }
@@ -164,13 +184,17 @@ namespace WaitYourTurn.Combat
                 data.ammo.Length != states.Length || data.equipped < 0 || data.equipped >= states.Length || !data.owned[0] ||
                 !data.owned[data.equipped] || !(data.triggerRemaining >= 0) || data.triggerRemaining > 60) return false;
             for (int i = 0; i < states.Length; i++) if (!states[i].CanRestore(data.ammo[i])) return false;
+            if (projectiles != null ? !projectiles.CanRestore(data.projectiles, data.owned) :
+                data.projectiles != null && data.projectiles.Length != 0) return false;
             return true;
         }
         public bool Restore(WeaponSnapshot data)
         {
             if (!CanRestore(data)) return false;
             for (int i = 0; i < states.Length; i++) states[i].Restore(data.ammo[i], Time.time);
-            owned = (bool[])data.owned.Clone(); equipped = data.equipped; nextTrigger = Time.time + data.triggerRemaining; return true;
+            owned = (bool[])data.owned.Clone(); equipped = data.equipped; nextTrigger = Time.time + data.triggerRemaining;
+            if (projectiles != null) projectiles.Restore(data.projectiles);
+            return true;
         }
     }
 }

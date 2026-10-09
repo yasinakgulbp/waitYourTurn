@@ -209,3 +209,11 @@ Alt solda sıralı şarjör / yedek (sınırsızsa ---) / can / $ koşu altını
 Performans: tekrar GUIStyle/LINQ kapı listesi üretimi Survival HUD'dan kaldırılır, metinler0.12s aralıkla güncellenir; shop ürün etiketleri/grupları önbelleğe alınır; kamera kadraj uzaklığı yalnız ekran/safe-area/FOV/hacim değiştiğinde hesaplanır. On-demand8s Editor örneği cihaz/ısı/pil kabulü değildir. Kısa kritik birleşik kontrol sonrası kullanıcı oyun dengesi gözlemiyle devam edilir.
 
 D44 kısa kontrolünde, Restart'tan hemen savunmaya atlandığında önceki Flow'un tamamlanmış schedule'ının bir kare yeni kalkışı tetikleyebildiği görüldü. WaveCompleted artık observedFlow ile güncel run.Flow referansını da karşılaştırır; eski koşu bilgisi yeni dalganın bittiği sayılmaz. Test ayrıca başlangıçta schedule'ı temizler. Gerçek oyun ilerlemesini hızlandıran fixture ile normal yaklaşma akışı ayrıdır.
+
+## 2026-10-09 — D45: Survival fiyatları, bomba atar ve mayın
+
+Kullanıcı ilk can150, tahta600, normal turret500, gelişmiş900, SMG300, pompalı1000, rifle2500, bomba atar6000 istedi. Yanıtla tel1200 ve mayın250 seçildi. Başlangıç3000 test altını. Diğer ürün fiyatları ve Battle bot ekonomisi değiştirilmez. Mevcut Intro ödülü12 korunur. Tahta/tel tüm dış kapıların koşu gücüdür; pencere kırılma sistemi eklenmez.
+
+Ortak WeaponDefinition/atış teslimi bomba atarı taşır; sınırlı6+12 mühimmat, temas patlaması90/2.4m, süpürülen uçuş. Ortak MineController yalnız düşmanla tetiklenir,80/2m; küçük collider-free gövde ve gerçek ışık kullanmayan kırmızı gösterge. Metal atış ve patlamayı durdurur; cam atış açıklığı kalır. Hasar/ödül mevcut Combat/KillRewards üzerinde; ayrı hasar veya para motoru yok. Sınırlı yeniden kullanılan havuzlar, canlı kayıt ve yeni koşuda temizleme birlikte eklendi. İlk sahne Survival; Battle sahnesine ve bot kullanımına dönünce iki mekanik de eklenecek açık görev.
+
+Bomba atar yalnız koşu satın alımıyla denemeye açıktır; mevcut dört silahlı kalıcı profile yeni kilit eklenmez, ürün requiresWeaponUnlock=false. Daha sonra kalıcı açılış eklenirken profil göçü yapılacak. Zorluk bütçesi ve tempo önerisi docs/DIFFICULTY_AND_PRICES.md içindedir; mevcut4/7/10 başlangıcı değiştirilmez. Araştırılan Director tempo örneği, bizim tehdit maliyeti önerisinden ayrıdır.

@@ -255,6 +255,7 @@ namespace WaitYourTurn.Editor
             }
             TurretContentBuilder.Install(run, registry, economy, spawner, survival);
             DroneContentBuilder.Install(run, registry, economy, spawner);
+            if (survival) ExplosivesContentBuilder.Install(run, registry, economy);
             if (survival)
             {
                 var matchRoot = new GameObject("Survival - single human participant"); matchRoot.SetActive(false);
@@ -307,6 +308,7 @@ namespace WaitYourTurn.Editor
                     if (fixture.GetType().Name.EndsWith("Acceptance")) Object.DestroyImmediate(fixture);
                 new GameObject("Survival focused acceptance").AddComponent<SurvivalAcceptance>().Configure(run, spawner, Object.FindAnyObjectByType<RunPersistence>());
                 new GameObject("Survival onboarding and shop acceptance").AddComponent<SurvivalOnboardingAcceptance>().Configure(run, spawner, Object.FindAnyObjectByType<RunPersistence>(), economy);
+                new GameObject("Explosives focused acceptance").AddComponent<ExplosivesAcceptance>().Configure(run, economy, spawner, Object.FindAnyObjectByType<RunPersistence>(), registry);
             }
             else
             {

@@ -13,6 +13,9 @@ namespace WaitYourTurn.Run
         [SerializeField] private RunDrone drone;
         [SerializeField] private RunProfile profile;
         [SerializeField] private RunReinforcement reinforcement;
+        [SerializeField] private RunMines mines;
+        public RunMines Mines => mines;
+        public void ConfigureMines(RunMines traps) => mines = traps;
         public RunDriver Run => run;
         public RunReinforcement Reinforcement => reinforcement;
         public void ConfigureReinforcement(RunReinforcement strength) => reinforcement = strength;
@@ -87,10 +90,11 @@ namespace WaitYourTurn.Run
                 case ShopEffect.RepairWagon:
                     foreach (var door in run.CurrentWagon.Doors) if (door.NeedsRepair) return true;
                     return false;
-                case ShopEffect.Weapon: return (profile == null || profile.WeaponUnlocked(product.WeaponIndex)) && run.Weapon.CanGrantOrRefill(product.WeaponIndex);
+                case ShopEffect.Weapon: return (!product.RequiresWeaponUnlock || profile == null || profile.WeaponUnlocked(product.WeaponIndex)) && run.Weapon.CanGrantOrRefill(product.WeaponIndex);
                 case ShopEffect.Turret: return defenses != null && defenses.CanBuy(product.TurretIndex);
                 case ShopEffect.Drone: return drone != null && drone.CanBuy;
                 case ShopEffect.ReinforceDoors: return reinforcement != null && reinforcement.CanUpgrade(product.ReinforcementLevel);
+                case ShopEffect.Mine: return mines != null && mines.CanBuy;
                 default: return false;
             }
         }
@@ -109,6 +113,7 @@ namespace WaitYourTurn.Run
                 case ShopEffect.Turret: return defenses != null && defenses.TryBuy(product.TurretIndex);
                 case ShopEffect.Drone: return drone != null && drone.TryBuy();
                 case ShopEffect.ReinforceDoors: return reinforcement != null && reinforcement.TryUpgrade(product.ReinforcementLevel);
+                case ShopEffect.Mine: return mines != null && mines.TryBuy();
                 default: return false;
             }
         }

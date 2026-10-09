@@ -70,8 +70,8 @@ namespace WaitYourTurn.Editor
             }
             var manager = new GameObject("Run defenses - wagon mounts and gameplay gate").AddComponent<RunDefenses>();
             manager.Configure(run, registry, racks, types); economy.ConfigureDefenses(manager);
-            AddProduct(economy.Catalog, "turret-normal", "Normal turret", 90, 0);
-            AddProduct(economy.Catalog, "turret-advanced", "Advanced turret", 160, 1);
+            AddProduct(economy.Catalog, "turret-normal", "Normal turret", survival ? 500 : 90, 0);
+            AddProduct(economy.Catalog, "turret-advanced", "Advanced turret", survival ? 900 : 160, 1);
             new GameObject("Turret acceptance - F12").AddComponent<TurretAcceptance>().Configure(run, economy, spawner, manager, registry);
             Export(racks, run, survival);
         }

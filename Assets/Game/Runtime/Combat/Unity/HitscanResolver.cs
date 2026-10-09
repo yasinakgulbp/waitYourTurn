@@ -7,6 +7,21 @@ namespace WaitYourTurn.Combat
     public sealed class HitscanResolver
     {
         private readonly RaycastHit[] hits = new RaycastHit[64];
+        public bool Sweep(Vector3 start, Vector3 direction, float range, float radius, LayerMask mask,
+            HealthComponent owner, out RaycastHit closest)
+        {
+            closest = default;
+            int count = Physics.SphereCastNonAlloc(start, radius, direction, hits, range, mask, QueryTriggerInteraction.Ignore);
+            if (count == hits.Length) { closest.point = start; return true; }
+            bool found = false; float distance = float.PositiveInfinity;
+            for (int i = 0; i < count; i++)
+            {
+                var hit = hits[i];
+                if (owner != null && hit.collider.GetComponentInParent<HealthComponent>() == owner || hit.distance >= distance) continue;
+                distance = hit.distance; closest = hit; found = true;
+            }
+            return found;
+        }
         public bool Cast(Vector3 start, Vector3 direction, float range, LayerMask mask,
             HealthComponent owner, out RaycastHit closest)
         {

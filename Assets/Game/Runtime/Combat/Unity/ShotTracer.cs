@@ -32,6 +32,7 @@ namespace WaitYourTurn.Combat
         {
             if (lines == null) return;
             if (shot.Pellet == 0) Hide();
+            if (shot.Projectile) return;
             LineRenderer trace = lines[shot.Pellet];
             if (trace == null) return;
             trace.startColor = trace.endColor = shot.Color;

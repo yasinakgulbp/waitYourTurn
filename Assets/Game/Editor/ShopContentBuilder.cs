@@ -17,10 +17,21 @@ namespace WaitYourTurn.Editor
             if (survival)
             {
                 catalog = Object.Instantiate(EnsureCatalog());
+                catalog.startingCoins = 3000;
+                foreach (var item in catalog.items)
+                    switch (item.id)
+                    {
+                        case "heal": item.price = 150; break;
+                        case "smg": item.price = 300; break;
+                        case "rifle": item.price = 2500; break;
+                        case "shotgun": item.price = 1000; break;
+                        case "turret-normal": item.price = 500; break;
+                        case "turret-advanced": item.price = 900; break;
+                    }
                 var products = new System.Collections.Generic.List<ShopItem>(catalog.items);
-                products.Add(new ShopItem { id = "wood", label = "Wood reinforcement", price = 80,
+                products.Add(new ShopItem { id = "wood", label = "Wood reinforcement", price = 600,
                     effect = ShopEffect.ReinforceDoors, reinforcementLevel = 1 });
-                products.Add(new ShopItem { id = "wire", label = "Wire reinforcement", price = 160,
+                products.Add(new ShopItem { id = "wire", label = "Wire reinforcement", price = 1200,
                     effect = ShopEffect.ReinforceDoors, reinforcementLevel = 2 });
                 catalog.items = products.ToArray();
                 AssetDatabase.CreateAsset(catalog, path); return catalog;

@@ -125,3 +125,9 @@ Kamera tek `RunPresentation` otoritesindedir; Survival'da oyuncunun X/Z konumuna
 ## D44 kapı güçlendirme görselleri
 
 Survival dış kapıların tabanHP'si eşit20;4/5/6 kapı fiziksel yerleşimi değişmedi. Tahta/tel tasarım modelleri DoorReinforcementVisual altında değiştirilir: genişlik1.2m, yerel yükseklik yaklaşık0.5–1.4m, yerelZ−0.13m. Kapı metal/glass gameplay collider'ları ve hareket/nav sınırları aynı kalır. Güçlendirme kapıya ek dayanıklılık sağlar; bu ilk sürümde tahta/tel görseli mermiyi engellemez. Görsel köklere collider/obstacle/gerçek ışık eklenmez. Kırıkken görünmez, onarımda mevcut seviyenin görünümü geri gelir. Her kapıda tek paylaşılan mesh/renderer; sanat meshleri de tek kapı aşaması olarak bu kökte takılır. Pencerelerde yeni hasar/kırılma davranışı yoktur.
+
+## D45 — mayın ve bomba atar giydirme ölçüsü
+
+Mayın oyun kökü zemin+0.025m; silindir blokout çap0.30m, yükseklik0.09m, köke göre merkezY0.055m. Kırmızı gösterge0.075m çap, merkezY0.115m; gövde/gösterge yalnız görsel, collider/Rigidbody/NavMeshObstacle/Light yok. Modeller bu kökü ve oyuncu geçiş kuralını değiştirmemeli. Tetik yarıçapı0.65m, alan hasarı2m görsel ölçüden ayrı Mine.asset verisidir.
+
+Bomba görsel çap0.20m; süpürme yarıçapı0.10m. Muzzle mevcut oyuncu kökü+0.9m; uçan objenin görseline collider veya hit script eklenmez. Blokout temas uçuşu düz; balistik yay/sekme bu sürümde yok. Patlama ortak32 noktalı,0.35s genişleyen görsel halka/küçük flash; yalnız sunum, hasar scripti eklenmez. Runtime Instantiate/Destroy ve gerçek Light içermez. Son modelde görsel değişebilir; hasar, havuz, katman ve kayıt bağları gameplay köklerinde kalır.

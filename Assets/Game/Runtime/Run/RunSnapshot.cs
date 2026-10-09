@@ -78,5 +78,6 @@ namespace WaitYourTurn.Run
         // Unity serializes inline null classes as empty objects; presence must be explicit.
         public bool hasDrone;
         public DroneSave drone;
+        public MineSave[] mines;
     }
 }

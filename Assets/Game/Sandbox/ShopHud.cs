@@ -41,7 +41,7 @@ namespace WaitYourTurn.Sandbox
                 switch (items[i].effect)
                 {
                     case ShopEffect.Weapon: weapons.Add(i); break;
-                    case ShopEffect.Turret: case ShopEffect.Drone: defenses.Add(i); break;
+                    case ShopEffect.Turret: case ShopEffect.Drone: case ShopEffect.Mine: defenses.Add(i); break;
                     default: supplies.Add(i); break;
                 }
             }

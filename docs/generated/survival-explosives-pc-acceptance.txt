@@ -1,0 +1,26 @@
+D45 - Survival explosives and prices, 2026-10-09
+Unity 6000.6.4f1, Windows Editor, Android project target.
+
+WeaponTests: 31 passed, 0 failed, 17:20:54 UTC, 0.150196 s.
+Includes 6 new explosive cases: moving grenade cluster, swept thin metal,
+flight restore/no extra ammo, hostile-only single mine blast, metal/life
+guards, shot-transparent glass versus metal.
+EconomyTests: 13 passed, 0 failed, 17:29:31 UTC, 0.098423 s.
+
+Focused Play acceptance: PASS, 17:28:08.0946043 UTC.
+- Requested prices and exactly 3000 production starting coins.
+- Mine bought at player feet; no collider; player safe.
+- One mine blast, one death reward; pooled enemy reuse.
+- Launcher bought/equipped, 6 magazine + 12 reserve, finite reload.
+- Moving projectile, no instant hit; cluster damage, two distinct rewards.
+- Live mine and projectile saved/restored without extra ammunition.
+- Invalid saved mine slot rejected.
+- New run clears deployed mines, projectiles and purchased launcher.
+The fixture uses 12000 coins for launcher checks, then restores production
+store and a fresh run with 3000. Its isolated spawner schedule is reset
+before disabling spawning, so an old station does not contaminate capture.
+
+Visual shop check: all requested prices shown, launcher/refill and mine
+cards present, five weapon buttons, 3000 coins, no red Console errors.
+Shared runtime implementations; Battle equipment composition is deferred.
+No Android FPS, thermal, battery or long-session acceptance in this step.

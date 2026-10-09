@@ -60,10 +60,11 @@ namespace WaitYourTurn.Sandbox
             { spawner.enabled = true; run.ControlsAllowed = run.AimAllowed = true; run.Repair.enabled = true; run.Restart(); }
             if (GUI.Button(new Rect(width - 98, 8, 86, 25), "Check (F10)")) StartCheck();
             float total = hudGuns.Length * 86;
+            float gunStart = Mathf.Max(300, (width - total) * .5f);
             for (int i = 0; i < hudGuns.Length; i++)
             {
                 GUI.enabled = !checking && run.Weapon.IsOwned(i);
-                if (GUI.Button(new Rect((width - total) * .5f + i * 86, height - 55, 80, 43), hudGuns[i], hudButton)) run.Weapon.Equip(i);
+                if (GUI.Button(new Rect(gunStart + i * 86, height - 55, 80, 43), hudGuns[i], hudButton)) run.Weapon.Equip(i);
             }
             GUI.enabled = true;
             GUI.Box(new Rect(12, height - 38, 68, 27), hudAmmo, hudStat);

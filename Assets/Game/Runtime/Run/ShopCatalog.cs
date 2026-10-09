@@ -13,7 +13,8 @@ namespace WaitYourTurn.Run
         public int weaponIndex = -1;
         public int turretIndex = -1;
         [Range(0, 2)] public int reinforcementLevel;
-        public ShopProduct Product => new ShopProduct(id, price, effect, weaponIndex, turretIndex, reinforcementLevel);
+        public bool requiresWeaponUnlock = true;
+        public ShopProduct Product => new ShopProduct(id, price, effect, weaponIndex, turretIndex, reinforcementLevel, requiresWeaponUnlock);
     }
     [CreateAssetMenu(menuName = "Wait Your Turn/Shop Catalog")]
     public sealed class ShopCatalog : ScriptableObject
