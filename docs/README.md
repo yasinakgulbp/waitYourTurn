@@ -12,6 +12,8 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 
 ## Okuma sırası
 
+**Güncel yayın yolu:** [RELEASE_PLAN.md](RELEASE_PLAN.md) — Battle ve Solo eşit önemde; önce A54 temeli, sonra hafif kamera/ses/akış, dış oynanış değerlendirmesi, tek vagon sanat örneği, bütçeli üretim, gelir ve sınırlı yayın. Teknik PASS eğlence/kâr kanıtı değildir. Ana planın eski durum başlığı güncellendi; tarihsel kayıtlar korunur.
+
 **Son kullanıcı düzeltmesi D35:** açık kapıda kalabalık baskısına karşı gerçek kapsül sınırı ve insan/bot için yumuşak yürüyüş dönüşü. Davranış, Inspector ayarı ve F3 yeniden üretim testi [PLAYER_MOVEMENT.md](PLAYER_MOVEMENT.md) içinde. M8b sıradaki aşama olarak kalır.
 
 **Güncel adım M8a yerel kayıt:** [PERSISTENCE.md](PERSISTENCE.md). İnsan/bot yön davranışı ve aynı koşuya devam temeli uygulanır. Editor F5 kaydet / F6 devam; mobil build otomatik kayıt/devam kullanır. PC kabulü ile Android süreç kapatma kabulü ayrı tutulur; M8 denge/oyuncu arayüzü ve bulut tamamlanmış değildir.

@@ -145,3 +145,9 @@ Kullanıcı talebi: insan ve bot yürürken hareket yönüne baksın; geçerli a
 ## 2026-10-09 — D35: kalabalıkta vagon sınırı ve yumuşak yürüyüş dönüşü
 
 Kullanıcı açık kapıda zombi baskısının oyuncuyu dışarı ittiğini ve WASD yürüyüş dönüşlerinin keskin olduğunu bildirdi. Ortak motor çarpışma sonrası gerçek kapsülü de MovementArea içinde tutar. İnsan ve bot, hedef yokken yürüyüş girdisi yönüne ayarlanabilir 720°/sn ile döner; nişan önceliği/hızlı dönüş korunur. Fiziksel itme boşta yön seçmez. Kapı/zombi navigasyonu ve model ölçüleri değişmez. Aynı kapı-kalabalık testi eski kodda başarısız, yeni kodda başarılıdır; uygulama ve kabul kaydı PLAYER_MOVEMENT.md içindedir. Bu bir M8a sonrası hata düzeltmesidir; sıradaki aşama M8b kalır.
+
+## 2026-10-09 — D36: iki mod ve yayın doğrulama yolu
+
+Kullanıcı ilk yayında Battle ve Solo'yu **eşit önemde** seçti; bir mod otomatik ertelenmez. Kullanıcı kamera/hasar/patlama hissi, cihaz akıcılığı ve ticari başarıyı önceliklendirdi; IAP ürünlerini kesinleştirmedi. Mühendislik önerisi: mevcut A54 ölçümü → hafif geri bildirim/akış → iki modda oynanış değerlendirmesi → tek vagon sanat örneği → bütçeli içerik/gelir/sınırlı yayın. Bu sıranın kabul koşulları RELEASE_PLAN.md içinde; kamera efektleri, telemetri, reklam/IAP ve yeni cihaz kabulü henüz uygulanmış değildir. Her telefonda sıfır düşüş veya garantili gelir/mağazada öne çıkarılma iddiası yapılmaz; cihaz bütçesi ve gerçek kullanıcı/gelir ölçümüyle ilerlenir.
+
+Battle süre açıklaması: kullanıcı 5–8 dakika yanıtını hemen ardından kesinleştirmediğini belirtti; yaşayanların devam edebilmesini istedi. Zorunlu toplam yarış sayacı eklenmez; D33 sürer. 5–8 dakika yalnız ilk tempo değerlendirmesi için geçici referans, garanti veya bitiş kuralı değildir.

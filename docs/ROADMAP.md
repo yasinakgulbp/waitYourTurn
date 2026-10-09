@@ -1,6 +1,6 @@
 # Sıralı geliştirme planı
 
-Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruldu; ilk sürüm PC'de 10/10 birleşik kontrolü geçti. D15/D16 cam kapı ve vagon sınırı revizyonu odaklı PC kontrolünü geçti (UTC 18:53:55); kullanıcı PC değerlendirmesini kabul etti; cihaz hissi ileride uygun zamanda kontrol edilecek. M1'in temel kapı/rota kontrolü tamamlandı; eski 30-agent gridinde gözlenen hedef yerleşimi sorunu büyük kalabalık için açık kalır. M3 gerçek brain sabit grid yerine oyuncu menzilini hedefler; bu büyük kalabalığın kanıtı değildir. Vagon kenarındaki yakın zeminler ortak NavMesh + carving kullanır. Önceki A54 performans/100-agent kanıtı eski link geometrisine aittir. Rutin testler PC'de; uygun zamanda önemli birleşik oynanış değişimi Android'de değerlendirilecek. Ayrıntılar NAVIGATION_LAB.md, COMBAT_LAB.md ve GAMEPLAY_LAB.md içinde.
+Güncel durum: 2026-10-09 — ortak savaş/kapı, beş vagonlu iki taraflı geometri, spawn, mağaza, turret, dron ve dört bot PC teknik kabulüne ulaştı. M8a yerel kayıt PC'de doğrulandı; D35 kalabalıkta oyuncu sınırı ve yumuşak dönüş düzeltmesi geçti. Güncel birleşik oyunun Android kaydı, dokunma hissi, uzun oturum ve görsel yükü henüz kabul edilmedi. Eski A54 navigasyon ölçümü bugünkü oyunun performans kanıtı değildir. Sıradaki M8b cihaz temeli; sonra hafif geri bildirim, iki modun oynanış değerlendirmesi, sanat örneği ve yayın yolu. Ayrıntılı güncel sıra ve karar kapıları [RELEASE_PLAN.md](RELEASE_PLAN.md) içindedir. Aşağıdaki tarihli laboratuvar kayıtları geçmiş kanıttır; güncel yapılacaklar listesi olarak okunmaz.
 
 ## Öncelik mantığı
 
@@ -23,10 +23,10 @@ Durum: 2026-10-07 — M0 ve M2 tamamlandı. M3 tek vagon teknik parçası kuruld
 | M5 | Mobil kontrolü iyileştirme ve silah çeşitliliği | M2, M4b | PC teknik parça PASS: 13 silah testi, dört profil cam/duvar/alt panel kontrolü ve sınırlı mermili 10/10 vagon geçişi. D19 uygulanır; mevcut sol kontrol korunur. Kullanıcı/cihaz değerlendirmesi açık. WEAPONS_LAB.md |
 | M6a | Hedef vagon/kamera ve iki taraflı çok kapı entegrasyonu | M3–M5 temel kuralları | İlk altı-kapılı entegrasyon PASS. D23 yeni oran/kapsül/4–6 kapı revizyonu da beş-vagonda PASS: 10 geçiş, durum kalıcılığı ve 60 düşman sınırı. 38 can/onarım/geometri/yerleşim + 15 yolculuk/kamera testi PASS; 16:9/4:3 Editor kadrajı görüldü. Kullanıcı his ve Android değerlendirmesi açık. VISUAL_SCALE.md, TRAIN_INTEGRATION.md |
 | M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M6a kabulü | PC teknik kabulü: üç ortak profil, veri programı ve sınırlı director kuruldu; 26 kural/yolculuk testi, 30 istasyon/5 yolcu/60 sabit havuz ve eski birleşik kabul PASS. Android kalabalık profili henüz yapılmadı; SPAWNING.md |
-| M7 | Para, mağaza, turret ve dron | M2, M4–M6 | M7a PC teknik kabulü PASS: para/tek ölüm ödülü/iyileşme/yerel onarım/silah-refill; ECONOMY.md. M7b sabit turret de PC teknik kabulünü geçti; DEFENSES.md. M7c dron PC kabulü PASS; DRONE.md. Sıradaki Mod/Bot; mobil ergonomi ve denge açık |
+| M7 | Para, mağaza, turret ve dron | M2, M4–M6 | M7a/M7b/M7c PC teknik kabulü PASS; ECONOMY.md, DEFENSES.md, DRONE.md. Mod/Bot artık uygulandı; mobil ergonomi ve denge açık |
 | Mod/Bot | Battle için komşu vagon botları, en az 3 beceri profili ve eleme/sıralama; botsuz ilerleme modu politikası | M4b ortak döngü, M5/M6 savaş, M7 ekonomi | İlk PC kabulü PASS: 4 bot / 3 profil, ortak savaş/onarım/ekonomi, eşsiz atama, eleme/sıralama ve Solo; BOTS.md. Uzak simülasyon/Android/uzun denge açık; gerçek multiplayer yok |
-| M8 | Etap dengesi, kayıt ve koşu deneyimi | M4–M7 | Bekliyor |
-| M9 | Mobil performans ve yayın hazırlığı | Önceki aşamalar | Bekliyor |
+| M8 | Etap dengesi, kayıt ve koşu deneyimi | M4–M7 | M8a PC kayıt temeli PASS; M8b Android kayıt/kontrol/performans temeli → M8c hafif kamera/ses/geri bildirim + akış UI → M8d iki modda ilk oynanış değerlendirmesi. RELEASE_PLAN.md |
+| M9 | Sanat, mobil kalite, gelir ve yayın doğrulaması | M8 değerlendirmesi | M9a tek vagon sanat örneği → M9b bütçeli içerik/denge → M9c gelir/ölçüm adaptörleri → M9d kapalı ve sınırlı yayın → M9e ölçümlü genel yayın. RELEASE_PLAN.md |
 
 Performans ölçümü M1'den itibaren başlar; M9'a ertelenmez. Pooling M3'te temel yaşam döngüsü, M6'da geniş spawn sistemi olarak gelişir. Aşağıdaki maddelerde geçen M4, M4a/M4b bütününü ifade eder.
 
@@ -197,7 +197,7 @@ Kabul: seçilen cihaz/kalite profili/FPS ve canlı sınırı raporlanır; ölç�
 - Havuz kullanılan işlerde eski callback/kuşak/abonelik temizliği o özellik eklenirken kontrol edilir; bu doğrulama kalite aşamasına ertelenmez.
 - Doğrulama sonucu ve bilinen sınırlar kayda yazılır; tüm testler her küçük değişiklikte gereksiz yere yeniden koşturulmaz.
 
-## Bir sonraki somut iş
+## Önceki aşamaların tarihsel geçiş kayıtları
 
 D23 ölçek/kadraj revizyonu M6 öncesine eklendi: yeni üç kullanıcı referansına yakın blok vagon, 1,7 boyunda kapsüller, 4–6 kapı ve responsive perspektif. Altı kapı sabiti sonraki verilerde varsayılmaz; M6 doğuş/kapı listelerini mevcut geometriden okur. Güncel ölçüler ve revizyon kanıtı VISUAL_SCALE.md içindedir.
 
