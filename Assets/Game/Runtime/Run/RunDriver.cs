@@ -22,6 +22,9 @@ namespace WaitYourTurn.Run
         public RunMatch Match => match;
         [SerializeField] private SoloProgression solo;
         public SoloProgression Solo => solo;
+        [SerializeField] private SoloLoot loot;
+        public SoloLoot Loot => loot;
+        public void ConfigureLoot(SoloLoot rewards) => loot = rewards;
         public bool UsesSoloProgression => solo != null && match != null && match.Mode == RunMode.Solo && !match.Suppressed;
         public void ConfigureSolo(SoloProgression policy) => solo = policy;
         public void ConfigureMatch(RunMatch participants) => match = participants;

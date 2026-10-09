@@ -1,0 +1,2 @@
+2026-10-09T11:33:21.6216766Z
+PASS: Owned ammo once; full crate retained; loot/ammo JSON resume; Solo death fresh rear/station 1 with reset coins/guns/loot; permanent wallet retained; Solo/Battle result once with durable receipt; insufficient/duplicate unlock no debit; unlock shared by modes, run purchase separate; IO failure reported. Test profile isolated from production.

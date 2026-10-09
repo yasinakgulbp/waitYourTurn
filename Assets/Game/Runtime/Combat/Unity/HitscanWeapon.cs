@@ -61,6 +61,13 @@ namespace WaitYourTurn.Combat
             equipped = index; return true;
         }
         public float Range => State.Spec.Range;
+        public bool TryRefillOwned()
+        {
+            if (firing || Paused || Time.timeScale <= 0 || owner == null || !owner.IsAlive) return false;
+            EnsureInitialized(); bool changed = false;
+            for (int i = 0; i < states.Length; i++) if (owned[i]) changed |= states[i].TryRefill();
+            return changed; // No unlock, equip change or bypass of nextShot.
+        }
         public Vector3 Muzzle => muzzleSocket != null ? muzzleSocket.position : transform.position + Vector3.up * .9f;
         public void ConfigureMuzzle(Transform socket) => muzzleSocket = socket;
         public event Action<ShotNotice> Fired;

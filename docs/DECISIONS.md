@@ -173,3 +173,9 @@ Kullanıcı seçti: satın alma ara kapının kilidini kaldırır; oyuncu yakın
 Uygulama: kuyrukta başlangıç, dört sıralı bağlantı, bağlı oda/koridor hareket hacimleri; eşikte güncel vagon bağlamı, tek Solo istasyon spawn bütçesi ve v2 yerel kayıt. Geçiş fiyatları 200/300/400/500 deneme değeridir; satın almak kapıyı otomatik açmaz. Geçitte canlı beden veya dron varken kapatma reddi mühendislik önlemidir. Dron 1,95 m uçuş yüksekliğini korur; üst metalin alt kotu 2,1 m'dir. Güncel ölçü CSV'leri MODEL_CONTRACT içindedir. Turretler eski vagonda kalır; yürüyüş ücretsiz koruma veya yeni koşu üretmez.
 
 Kullanıcı A54 kısa geçiş testini **sonraya bıraktı**; PC kontrolü tamamlanınca cihaz kabulü beklemede kaydedilir. Yeni vagon ganimeti/meta/sonuç teslimi bu parçanın tamamlandığı iddia edilen özellikler değildir; sonraki işte içerik ve teslim kararı gerekir.
+
+## 2026-10-09 — D40: Solo challenge ve küçük ilerleme parçaları
+
+Kullanıcı açıkça belirtti: Solo ölümden sonra her yeni oyunda **en baştan**, en uzak istasyona ulaşma challenge'ı olarak başlar. Canlı koşuya ara verme kaydı ölüm sonrası devam değildir. Yeni koşuda ilk istasyon/kuyruk, kilitli vagonlar, yeni sandıklar ve başlangıç envanteri/altını; kalıcı cüzdan ve açılmış silahlar korunur. Reklamla canlandırma eski fikir olarak kalır; bu parçada eklenmez.
+
+Kullanıcı testleri verimli tutmayı istedi: küçük parçalarda kritik birkaç kontrol, ardından iki parçanın birleşik testi; uzun eski kabul paketleri tekrar tekrar çalıştırılmaz. İlk küçük parçalar cephane sandığı ve ayrı kalıcı cüzdan/sonuç/silah açılışıdır. Fiyat/ödül sayıları mühendislik deneme değerleri ve Inspector ayarlarıdır; kalıcı güç, üretim ana menüsü, reklam/IAP SDK ve yeni cihaz kabulü bu parçaya dahil değildir. Sınırlar PROGRESSION_DESIGN.md içinde.

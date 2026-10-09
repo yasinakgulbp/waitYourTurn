@@ -32,6 +32,8 @@ namespace WaitYourTurn.Run
         public void Configure(RunDriver owner, RunEconomy shop, StationSpawner waves)
         { run = owner; economy = shop; spawner = waves; }
         public string SavePath => store.Path;
+        public string RunId => runId;
+        public bool IsTestStore => store != null && store.Path != Path.Combine(Application.persistentDataPath, "active-run.json");
         public void UseTestStore(string path) { store = new LocalRunStore(path); }
         private void Awake() { store = new LocalRunStore(Path.Combine(Application.persistentDataPath, "active-run.json")); }
         private void OnEnable() { run.Restarted += OnRestart; }
@@ -108,7 +110,8 @@ namespace WaitYourTurn.Run
                 ranks = battle ? run.Match.Roster.CapturePlaces() : null, timings = run.Timings,
                 participants = new ParticipantSave[battle ? run.Match.Bots.Length + 1 : 1], wagons = new WagonSave[run.Wagons.Length],
                 spawner = spawner.Capture(), soloUnlockedThrough = run.UsesSoloProgression ? run.Solo.UnlockedThrough : 0,
-                interiorGates = run.UsesSoloProgression ? run.Solo.CaptureGates() : null };
+                interiorGates = run.UsesSoloProgression ? run.Solo.CaptureGates() : null,
+                claimedLoot = run.UsesSoloProgression && run.Loot != null ? run.Loot.Capture() : null };
             for (int i = 0; i < data.participants.Length; i++) data.participants[i] = CaptureParticipant(i);
             for (int w = 0; w < data.wagons.Length; w++)
             {
@@ -148,6 +151,7 @@ namespace WaitYourTurn.Run
         {
             // Revision is explicit for migrations; authored geometry/configuration also reject mismatched old saves.
             var text = new StringBuilder(contentRevision);
+            if (run.Loot != null) text.Append("/owned-ammo-loot-v3/").Append(JsonUtility.ToJson(run.Loot.LocalPosition)).Append(run.Loot.PickupRadius);
             if (run.Solo != null)
                 foreach (var connection in run.Solo.Connections)
                     text.Append("/interior-v2/").Append(JsonUtility.ToJson(connection.transform.position)).Append(JsonUtility.ToJson(connection.Passage)).Append(connection.UnlockPrice);
@@ -200,6 +204,7 @@ namespace WaitYourTurn.Run
                 if (data.soloUnlockedThrough < 0 || data.soloUnlockedThrough >= used.Length || data.interiorGates == null ||
                     data.interiorGates.Length != run.Solo.Connections.Length) return false;
                 for (int i = data.soloUnlockedThrough; i < data.interiorGates.Length; i++) if (data.interiorGates[i]) return false;
+                if (run.Loot != null && !run.Loot.Valid(data.claimedLoot, data.soloUnlockedThrough)) return false;
             }
             for (int i = 0; i < data.participants.Length; i++)
             {
@@ -271,6 +276,7 @@ namespace WaitYourTurn.Run
             {
                 run.Match.SetMode(data.mode); run.SetLoadingGate(true);
                 if (data.mode == RunMode.Solo && run.Solo != null) run.Solo.Restore(data.soloUnlockedThrough, data.interiorGates);
+                if (data.mode == RunMode.Solo && run.Loot != null) run.Loot.Restore(data.claimedLoot);
                 foreach (var wagon in run.Wagons) foreach (var door in wagon.Doors) door.Portal.Restore(true, false, false);
                 foreach (var rack in economy.Defenses.Racks) rack.Clear(); economy.Drone.Actor.Clear();
                 prepared = true;

@@ -58,7 +58,7 @@ namespace WaitYourTurn.Run
     }
     [Serializable] public sealed class RunSnapshot
     {
-        public const int Version = 2;
+        public const int Version = 3;
         public int version = Version;
         public string content, runId;
         public RunMode mode;
@@ -73,6 +73,7 @@ namespace WaitYourTurn.Run
         public SpawnerSnapshot spawner;
         public int soloUnlockedThrough;
         public bool[] interiorGates;
+        public bool[] claimedLoot;
         // Unity serializes inline null classes as empty objects; presence must be explicit.
         public bool hasDrone;
         public DroneSave drone;

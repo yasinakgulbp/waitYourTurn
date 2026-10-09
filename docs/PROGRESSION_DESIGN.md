@@ -1,6 +1,6 @@
 # İki mod, kalıcı ilerleme ve ilk ürün kapsamı
 
-2026-10-09. Kullanıcı kararları ile mühendislik önerileri ayrı tutulur. M8s fiziksel Solo geçişi uygulanmıştır; kalıcı ekonomi, sonuç ödülü ve yeni vagon ganimeti hâlâ tasarımdır. PC kabulü ve ertelenen cihaz kontrolü aşağıda ayrı izlenir.
+2026-10-09. Kullanıcı kararları ile mühendislik önerileri ayrı tutulur. M8s fiziksel Solo geçişi ve cephane sandığı; M8e sonuç ödülü, ayrı kalıcı cüzdan ve silah açılışı uygulanmıştır. Küçük güç geliştirmeleri ve üretim menüsü henüz yoktur. PC kabulü ve ertelenen cihaz kontrolü ayrı izlenir.
 
 ## Kararlaştırılan deneyim
 
@@ -10,7 +10,8 @@
 | Solo ilerleme | En zayıf kuyruk vagonundan başla; koşu parasıyla sıradaki daha güçlü vagonu aç. Yolculukta rastgele atama yerine fiziksel geçiş. |
 | Solo saldırı | Açılmış vagonlar arasında geçiş serbest. Yeni saldırılar oyuncunun bulunduğu vagona yönelir; içeri girmiş zombiler korunur. Eski zombiler sırf vagon değiştirilince silinmez. |
 | Ara kapı | Satın alma kilidi kaldırır; yakında düğmeyle aç/kapat. Zombiler açık geçitten takip eder, kapalıyı geçemez ve ilk sürümde kıramaz. Dış savunma kapısından ayrı mekanik. |
-| Yeni vagon | Bir defalık toplanabilir yardım/ganimet; cephane, silah veya destek örnekleri. Kesin ganimet listesi ve rastgelelik henüz seçilmedi. Toplanan nesne kaybolur. |
+| Yeni vagon | İlk parça: açılan her yeni vagonda tek cephane sandığı. Yakında otomatik alınır, yalnız sahip olunan silahların cephanesini tamamlar. Doluyken harcanmaz; silah açmaz. Diğer ganimetler sonra. |
+| Solo ölüm / yeni koşu | **D40:** her yeni challenge ilk istasyonda, en zayıf kuyruk vagonunda başlar. Vagon kilitleri, sandıklar, koşu altını, silah envanteri, zombiler ve savunmalar sıfırlanır. Yaşarken uygulamaya ara verme kaydı aynı koşuya devam içindir; ölümden sonra otomatik devam değildir. |
 | Battle | Mevcut ayrı vagon, rastgele atama, eleme ve sıralama korunur. Yarış için zorunlu toplam zaman sınırı yok. |
 | Kalıcı güç | Kullanıcı, can/menzil/hız geliştirmelerinin **iki modda da** çalışmasını seçti. Battle değerlerini eşitleme önerisi seçilmedi. |
 | Kalıcı silah açılışı | Tabanca başlangıçta açık; diğer üç silah ana menüde bir kez açılır. Açılmış silahı koşu sırasında ayrıca koşu parasıyla alma hedefi. |
@@ -40,7 +41,7 @@ Yeni büyük framework yerine mevcut bağlayıcının dar sorumlulukları ayrıl
 | Koşu ödülü | Mod/ilerleme/sıra üzerinden kesinleşmiş tek sonuç; reklam/IAP SDK'sına bağımlı değildir. Ürün ve callback teslimi sonradan adaptörle bağlanır. |
 | Görünmeyen vagon | İlk olarak ölç; sonra insan+komşular ayrıntılı, uzak botlar düşük sıklıkta simüle edilebilir. Mantıksal can/para/kapı/enemy/ödül durumu korunur. Gizlemek tek başına simülasyon maliyetini kaldırmaz. |
 
-`RunSnapshot` v2 açılmış vagon sınırını, ara kapıları, bağlantıdaki insanı ve başka vagona yürümüş havuz düşmanını kaydeder. v1/önceki geometri kontrollü reddedilir; yeni koşu başlatılır, bu sürüm otomatik göç yapmaz. Kalıcı profil ve ganimet kaydı henüz yoktur; koşu kaydı bunların yerine geçmez.
+`RunSnapshot` v3 açılmış vagon sınırını, ara kapıları, bağlantıdaki insanı, başka vagona yürümüş havuz düşmanını ve alınan sandıkları kaydeder. v1/v2 kontrollü reddedilir; bu geliştirme sürümünde otomatik göç yoktur. `player-profile.json` kalıcı cüzdan/silah açılışlarını bağımsız tutar; koşu kaydı veya ölüm bu profili sıfırlamaz.
 
 ## M8s uygulama sınırı
 
@@ -48,7 +49,17 @@ Yeni büyük framework yerine mevcut bağlayıcının dar sorumlulukları ayrıl
 
 Spawn tüm vagonlar için ayrı Solo bütçe üretmez: `wagon=-1` mobil bantları istasyonda tek program olur, her yeni istek güncel vagona yönelir. Sadece belirli vagona yazılan bantlar Battle içeriğidir; Solo programında en az bir mobil bant gerekir. Geçiş mevcut programı veya bekleyen istekleri sıfırlamaz. Zombi fiziksel olarak başka vagona geçse de doğduğu havuzda kalır; havuz kapasitesi, hasar ödülü ve kaydı aynı sahipliği kullanır.
 
-Kullanıcı A54 geçiş testini sonraya bıraktı. PC kanıtı `generated/solo-progression-pc-acceptance.txt` içinde; cihaz kabulü tamamlandı sayılmaz. Yeni vagon ganimeti, ana menü, kalıcı silah/güç, sonuç ödülü ve reklam bu parçaya eklenmedi. Sonraki küçük işte tek ganimet/tek teslim kuralı kesinleştirilir; M8e ekonomi kararı ayrı alınır.
+Kullanıcı A54 geçiş testini sonraya bıraktı. Geçiş PC kanıtı `generated/solo-progression-pc-acceptance.txt` içinde; cihaz kabulü tamamlandı sayılmaz. Sandık ve minimum profil ayrıca eklenir; üretim ana menüsü, güç yükseltmesi ve reklam bu parçanın kapsamı değildir.
+
+## Sandık ve minimum profil sözleşmesi
+
+`SoloLoot` vagon başına alınma bayrağını yönetir; `HitscanWeapon.TryRefillOwned` mevcut silahları doldurur, seçili silahı ve ateş beklemesini değiştirmez. Sandık görselinin collider/NavMesh rolü yoktur. Yakınlık merkezinin yerel konumu (-3.6, 0.05, 0), yarıçapı 0.9 m; görsel merkez (-3.6, 0.3, 0), boyut 0.55 × 0.5 × 0.5 m. Mekanik konum ve yarıçap Inspector'dan ayarlanır; görsel model değişimi pickup kuralını değiştirmez.
+
+`RunProfile` sonuç kesinleştikten sonra çalışır; `PlayerProfile` para/silah kuralları, `LocalProfileStore` atomik dosya teslimidir. Ödül ve koşu kimliği aynı yazmada kaydedilir; başarılı yazmadan canlı bakiye değişmez. Son 128 sonuç kimliği tutulur; normal akışta eski koşu kaydı ayrıca emekliye ayrılır. Bu yerel temel hile koruması veya gelecekteki reklam/IAP işlem makbuzu deposu değildir. Profil okunamıyorsa mevcut dosya korunur; sessizce boş profil yazılmaz. Eski acceptance fixture'ları gerçek profile para/harcama uygulamaz.
+
+**Geçici denge:** Solo 2 + tamamlanan istasyon başına 3 jeton; Battle sıra ödülleri 20/12/8/3/2. SMG/tüfek/pompalı kalıcı açılışı 20/40/60 jeton. Değerler `RunProfile` Inspector alanlarıdır, yayın dengesi değildir. Tabanca ücretsiz açık; kalıcı açılış koşuya silah hediye etmez, koşu mağazasında ayrıca altınla alınır. Sonuç ekranında deneme profil paneli vardır; üretim ana menüsü sonraki adımdır. Ölüm sonrası otomatik diriltme yoktur; eski D30 reklamla canlandırma fikri ayrı karar/servis olmadan uygulanmaz. Güç yükseltmeleri ve SDK'lar henüz eklenmedi.
+
+PC kısa birleşik kabul PASS (2026-10-09 11:33:21 UTC): tek sandık, dolu cephane, gerçek dosyadan ganimet/mermi devamı, Solo ölümde sıfır vagon/sandık/altın/koşu silahı, kalıcı bakiye korunması, iki modun tek sonuç ödülü, dosya tekrarında makbuz, yetersiz/tekrarlı kalıcı satın alma, iki modda silah açılışı ve ayrı koşu satın alması, disk hatası bildirimi. Kanıt `generated/loot-profile-pc-acceptance.txt`; test profili gerçek profilden ayrıdır. Menü: `Wait Your Turn/Progression/Install Loot and Profile` (Ctrl+Alt+F9), Play'de `Check Loot and Profile` (Ctrl+Alt+L). Önceki uzun kontroller bu turda tekrar çalıştırılmadı; A54 yeni sandık/profil kabulü bekliyor.
 
 ## İlk uygulanacak küçük parça
 

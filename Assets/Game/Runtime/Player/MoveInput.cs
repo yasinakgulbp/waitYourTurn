@@ -13,6 +13,7 @@ namespace WaitYourTurn.Player
         public Rect BlockedScreenArea { get; set; }
         public Rect SecondaryBlockedScreenArea { get; set; }
         public Rect ModalBlockedScreenArea { get; set; }
+        public Rect ProfileBlockedScreenArea { get; set; }
         private float Radius => Mathf.Clamp(Screen.width * 0.09f, 45f, 110f);
         private void Update()
         {
@@ -30,7 +31,7 @@ namespace WaitYourTurn.Player
                 Touch touch = Input.GetTouch(i);
                 Vector2 guiPoint = new Vector2(touch.position.x, Screen.height - touch.position.y);
                 if (finger < 0 && touch.phase == TouchPhase.Began && Screen.safeArea.Contains(touch.position) && touch.position.x < Screen.width * 0.5f &&
-                    !BlockedScreenArea.Contains(guiPoint) && !SecondaryBlockedScreenArea.Contains(guiPoint) && !ModalBlockedScreenArea.Contains(guiPoint))
+                    !BlockedScreenArea.Contains(guiPoint) && !SecondaryBlockedScreenArea.Contains(guiPoint) && !ModalBlockedScreenArea.Contains(guiPoint) && !ProfileBlockedScreenArea.Contains(guiPoint))
                 { finger = touch.fingerId; origin = touch.position; }
                 if (touch.fingerId != finger) continue;
                 found = true;

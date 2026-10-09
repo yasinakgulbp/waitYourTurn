@@ -11,6 +11,8 @@ namespace WaitYourTurn.Run
         [SerializeField] private ShopCatalog catalog;
         [SerializeField] private RunDefenses defenses;
         [SerializeField] private RunDrone drone;
+        [SerializeField] private RunProfile profile;
+        public void ConfigureProfile(RunProfile permanent) => profile = permanent;
         public RunDrone Drone => drone;
         public void ConfigureDrone(RunDrone defense) => drone = defense;
         public RunDefenses Defenses => defenses;
@@ -80,7 +82,7 @@ namespace WaitYourTurn.Run
                 case ShopEffect.RepairWagon:
                     foreach (var door in run.CurrentWagon.Doors) if (door.NeedsRepair) return true;
                     return false;
-                case ShopEffect.Weapon: return run.Weapon.CanGrantOrRefill(product.WeaponIndex);
+                case ShopEffect.Weapon: return (profile == null || profile.WeaponUnlocked(product.WeaponIndex)) && run.Weapon.CanGrantOrRefill(product.WeaponIndex);
                 case ShopEffect.Turret: return defenses != null && defenses.CanBuy(product.TurretIndex);
                 case ShopEffect.Drone: return drone != null && drone.CanBuy;
                 default: return false;

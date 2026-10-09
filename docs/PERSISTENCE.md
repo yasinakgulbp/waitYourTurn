@@ -1,8 +1,8 @@
 # Yerel koşu kaydı — M8a
 
-**D39 / M8s:** şema v2, açılmış vagon sınırı ve ara kapı durumlarını içerir. Bağlantı koridorundaki Solo konumu ve doğduğu havuzdan başka vagona yürümüş içerideki zombi konumu doğrulanır. Kapı topolojisi NavMesh yerleştirmesinden önce yüklenir. Önceki v1/önceki geometri dosyası açıkça reddedilir; oyuncu yeni koşu başlatabilir, otomatik dönüştürme yapılmaz. Kalıcı profil/ganimet henüz eklenmedi. [Tasarım](PROGRESSION_DESIGN.md).
+**D39/D40 / M8s:** şema v3, açılmış vagon sınırı, ara kapı durumları ve alınmış cephane sandıklarını içerir. Bağlantı koridorundaki Solo konumu ve doğduğu havuzdan başka vagona yürümüş içerideki zombi konumu doğrulanır. Kapı topolojisi NavMesh yerleştirmesinden önce yüklenir. Önceki v1/v2 dosyası açıkça reddedilir; otomatik dönüştürme yapılmaz. Kalıcı profil koşudan ayrı dosyada tutulur. [Tasarım](PROGRESSION_DESIGN.md).
 
-İlk kayıt hedefi aynı koşuya devam etmektir; tamamlanmış/ölünmüş Battle geri açılmaz. Google Play bulut, giriş, reklam ödülü ve IAP teslimi bu aşamada bağlanmaz. İlk cihaz kaydı sağlayıcısı `LocalRunStore`, sahne bağlayıcısı `RunPersistence`, veri sözleşmesi `RunSnapshot` v2 olur.
+Kayıt hedefi hayattayken ara verilip aynı koşuya devam etmektir; ölümden sonra Solo/Battle geri açılmaz. Solo yeni challenge ilk istasyon/kuyruktan başlar. Google Play bulut, giriş, reklam ödülü ve IAP teslimi bu aşamada bağlanmaz. Cihaz kaydı sağlayıcısı `LocalRunStore`, sahne bağlayıcısı `RunPersistence`, veri sözleşmesi `RunSnapshot` v3 olur.
 
 ## Kullanım ve yaşam döngüsü
 
@@ -43,4 +43,6 @@ Dosya boyutu 2 MiB ile sınırlı; checksum bozulmayı tespit eder, hile korumas
 
 2026-10-09 PC: 38 Run + 25 silah + 41 can/onarım testi PASS. F4 gerçek dosyadan dronlu Battle/dronsuz Solo, yedi evre, eleme/RNG/mermi/onarım kalıcılığı, geçersiz kayıt reddi, ölüm tombstone ve yön davranışını doğruladı. F7 bot, F9 mağaza ve F10 tren kontrolleri PASS. Kanıt [generated/m8a-pc-acceptance.txt](generated/m8a-pc-acceptance.txt). Yeni bir Play oturumunda F6 ile gerçek dosyadan devam da geçti; Android kabulü değildir.
 
-Bu aşama yerel kayıt temelidir. Android arka plan/süreç kapatma/yeniden açma ve dosya değiştirme desteği cihazda ayrıca doğrulanmalıdır. Bulut çakışma çözümü, sonuç ödülünün kalıcı teslimi, kalıcı ekonomi, kullanıcıya dönük devam menüsü/öğretici, uzun oturum dengesi ve uzak vagon optimizasyonu açık kalır. M8'in tamamı bitmiş sayılmaz.
+Bu aşama yerel kayıt temelidir. Android arka plan/süreç kapatma/yeniden açma ve dosya değiştirme desteği cihazda ayrıca doğrulanmalıdır. Bulut çakışma çözümü, kullanıcıya dönük devam menüsü/öğretici, uzun oturum dengesi ve uzak vagon optimizasyonu açık kalır. M8'in tamamı bitmiş sayılmaz.
+
+2026-10-09 D40: v3 sandık alınma bayraklarını ekler; v2 kayıt kontrollü reddedilir, geliştirme sürümünde göç yoktur. `player-profile.json` ayrı kalıcı jeton/silah profilidir, koşu snapshot'ına geri sarılmaz. Ödül ve sonuç kimliği birlikte atomik yazılır. Solo ölümde eski koşu emekliye ayrılır; sonraki oyun ilk istasyon/kuyruktan başlar. Canlı koşu kaydı yalnız ara verip geri açma içindir. Profil/sandık sınırları PROGRESSION_DESIGN.md içinde.
