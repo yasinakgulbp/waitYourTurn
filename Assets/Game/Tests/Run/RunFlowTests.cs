@@ -7,6 +7,25 @@ namespace WaitYourTurn.Tests
     public sealed class RunFlowTests
     {
         [Test]
+        public void SurvivalWaitsForBoardingAndTravelsWithoutPauseOrAssignment()
+        {
+            var flow = new RunFlow(new RunTimings(), true);
+            flow.Tick(10); flow.Tick(1000);
+            Assert.That(flow.Phase, Is.EqualTo(RunPhase.Defense));
+            var restored = new RunFlow(new RunTimings(), true);
+            restored.Restore(flow.Phase, flow.Station, flow.Elapsed);
+            Assert.That(restored.CompleteBoardingWave(), Is.True);
+            Assert.That(restored.CompleteBoardingWave(), Is.False);
+            restored.Tick(3);
+            Assert.That(restored.Phase, Is.EqualTo(RunPhase.Cruising));
+            Assert.That(restored.Paused, Is.False);
+            restored.Tick(10);
+            Assert.That(restored.Phase, Is.EqualTo(RunPhase.Approach));
+            Assert.That(restored.Station, Is.EqualTo(2));
+            Assert.Throws<System.ArgumentException>(() => restored.Restore(RunPhase.Hidden, 1, 0));
+            Assert.Throws<System.ArgumentException>(() => new RunFlow(new RunTimings()).Restore(RunPhase.Cruising, 1, 0));
+        }
+        [Test]
         public void LongFrameCannotSkipDeparturePauseOrAssignment()
         {
             var flow = new RunFlow(new RunTimings());

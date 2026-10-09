@@ -113,3 +113,11 @@ Sahne `Assets/Game/Scenes/SurvivalIntegration.unity`; Battle modeli/sahnesi ve e
 Üretilen ölçü kaynakları `generated/survival-model-dimensions.csv` ve `generated/survival-passage-dimensions.csv`. Root/pivot/collider/nav/silah köklerini değiştirmeden yalnız sanat çocuklarını giydir. Oyuncu/zombi/dron ölçeği önceki sözleşmeyle aynıdır; daha geniş bağlantı için karakterleri ölçeklemek gerekmez. Sonradan eklenecek barricade/kapı yükseltmesi yalnız kozmetik çocuk değildir: dayanıklılık ve kayıt sözleşmesi ayrı geliştirilecektir.
 
 Hayatta Kalma turret ölçü çıktısı ayrıca `generated/survival-turret-mount-dimensions.csv` içindedir; Battle turret CSV'si yeniden yazılmaz. Açık uçların merkezinde önceki kapalı uçtan kalan lamba/kuplör görselleri kaldırılır; geçit zemini düz ve okunur kalır.
+
+## D43 — Seyir dekoru, uzak spawn ve kamera
+
+Survival dış platform colliderları artık 14 m genişliktedir: merkez Z=±9,18 m, iç kenar ±2,18 m, dış kenar ±16,18 m. Vagon gövdesi/kapı/cam-metal açıklığı/ara geçit ölçüleri değişmez. Doğma ankrajlarının iki sırası Z=±14 ve ±15,2 m'dir; bunlar sabit oyun kökünde kalır. Sanat modelleri spawn kaynağı, nav yüzeyi veya kapı yerine kullanılmaz.
+
+`Journey scenery - no physics` altında seyrek elektrik direkleri (3,5 m boy / 0,13 m kalınlık; 20 m tekrar), küçük ekipman kutuları ve işaretler vardır. Collider, Light, NavMesh veya sağlık eklenmez. Lambanın ilk sarı parçası ışık kaynağı değildir. İki `Station visuals` kopyası yalnız sunum içindir; görsel kopyaya sabit platform colliderı taşıma. Traversler ve yol görselleri hareket eder; oyun zemini/navigasyon sabittir.
+
+Kamera tek `RunPresentation` otoritesindedir; Survival'da oyuncunun X/Z konumuna odaklanır, eğim 55° ve FOV 35° referansı korunur. Korunan sunum hacmi 13 × 2,4 × 8,2 m, merkezi Y=0,4 m; gerçek kamera uzaklığı telefon/tablet safe-area oranından hesaplanır. Sağ alt mini harita bir HUD çizimidir; sanat için ikinci dünya kamerası veya minimap colliderı eklenmez. Cam/metal raycast maskeleri ve mekanik namlu soketleri değişmez. Pencere hasarı/onarımı bu sunum parçasına dahil değildir; gelecekte ayrı mekanik sözleşmesi gerekir.

@@ -9,6 +9,7 @@ namespace WaitYourTurn.Run
         [SerializeField] private Transform environment;
         [SerializeField] private Transform stationVisuals;
         [SerializeField] private Transform scenery;
+        [SerializeField] private Transform incomingStation;
         [SerializeField, Min(.1f)] private float cruiseSpeed = 5;
         [SerializeField, Min(2)] private float sceneryRepeat = 20;
         [SerializeField] private Camera view;
@@ -37,6 +38,7 @@ namespace WaitYourTurn.Run
         { run = owner; environment = visualRoot; view = camera; }
         public void ConfigureJourney(Transform stationRoot, Transform sceneryRoot)
         { stationVisuals = stationRoot; scenery = sceneryRoot; }
+        public void ConfigureIncomingStation(Transform visualRoot) => incomingStation = visualRoot;
         private void Awake()
         {
             environmentOrigin = environment.position;
@@ -74,13 +76,19 @@ namespace WaitYourTurn.Run
             if (scenery != null) scenery.position = sceneryOrigin - axis * distance;
             if (stationVisuals != null && !run.Flow.Terminal)
             {
-                // The station swaps between visits only while black; it never loops with sleepers.
+                // Survival uses two identical visual copies to bring the next station into view continuously.
                 bool visible = run.Flow.Phase != RunPhase.Hidden;
                 if (stationVisuals.gameObject.activeSelf != visible) stationVisuals.gameObject.SetActive(visible);
                 if (visible)
                 {
                     StationOffset = JourneyMotion.StationOffset(run.Flow, cruiseSpeed);
                     stationVisuals.position = stationOrigin + axis * StationOffset;
+                    if (incomingStation != null)
+                    {
+                        float spacing = cruiseSpeed * (run.Flow.DepartureDuration * .5f +
+                            run.Flow.CruiseDuration + run.Flow.NextApproachDuration * .5f);
+                        incomingStation.position = stationOrigin + axis * (StationOffset + spacing);
+                    }
                 }
             }
             Vector3 cameraPosition = run.CurrentWagon.transform.position + cameraOffset;
@@ -96,11 +104,13 @@ namespace WaitYourTurn.Run
                 protectedVolume.Expand(new Vector3(playerFollowLimit * 2, 0, 0));
                 float d = WagonCameraFraming.Distance(protectedVolume, cameraRotation, view.fieldOfView,
                     safe.width / Mathf.Max(1, safe.height), WagonCameraFraming.ProtectedViewport);
-                cameraPosition = run.CurrentWagon.transform.position + Vector3.right * follow - cameraRotation * Vector3.forward * d;
+                cameraPosition = run.UsesOpenTrainSurvival ?
+                    new Vector3(run.Player.transform.position.x, framingVolume.center.y, run.Player.transform.position.z) - cameraRotation * Vector3.forward * d :
+                    run.CurrentWagon.transform.position + Vector3.right * follow - cameraRotation * Vector3.forward * d;
             }
             else if (followPlayerAlongTrain) cameraPosition.x = run.Player.transform.position.x + cameraOffset.x;
             // Walking through a Solo connector must not jump a whole wagon at the midpoint.
-            if (run.UsesSoloProgression)
+            if (run.UsesSoloProgression && !run.UsesOpenTrainSurvival)
                 cameraPosition.x = Mathf.MoveTowards(view.transform.position.x, cameraPosition.x, 12 * Time.unscaledDeltaTime);
             view.transform.SetPositionAndRotation(cameraPosition, cameraRotation);
         }

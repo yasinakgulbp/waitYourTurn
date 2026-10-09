@@ -52,3 +52,9 @@ D41: **kalıcı profil** v2 can/menzil seviyelerini ekler; profil v1 para/silah/
 ## D42 — Hayatta Kalma kayıt ayrımı
 
 Üç-vagon `SurvivalIntegration` koşusu `survival-run.json` kullanır; mevcut Battle/önceki Solo `active-run.json` dosyası korunur. Aynı kalıcı `player-profile.json` iki deneyimin oyuncu gelişimini paylaşır. `RunPersistence.saveFileName` üretim slotunu belirler; izole kabul store'u bu slotla karşılaştırılır ve üretim profilini etkilemez. İçerik hash'ine açık-tren politikası eklenir. Hayatta Kalma yüklemesinde üç vagon açık ve her iki bağlantı açık olmak zorundadır; kapalı/eksik topoloji reddedilir. Bu parça run v3 alanlarını kullanır, yeni şema sürümü gerektirmez. Ölümde kendi koşu slotu emekliye ayrılır; yeni challenge ilk istasyon/kuyruk ve başlangıç üç açık vagonla başlar.
+
+## D43 — Süresiz savunma ve görünür seyir kaydı
+
+Survival aynı `survival-run.json` slotunda, yeni `/continuous-survival-v2/` içerik politikasıyla çalışır. Eski zamanlı Survival koşusu sessizce yanlış akışa yüklenmez; hash uyumsuzluğuyla reddedilir. Profil ve Battle slotu korunur. `RunPhase.Cruising` enum sonuna eklenmiştir; eski enum sayıları değişmez. Run v3 alanları yeterlidir. Survival yalnız Approach/Defense/Departing/Cruising canlı fazlarını kabul eder; Defense geçen süre üst sınırını 60 saniyeye bağlamaz. Battle önceki faz/süre kontrollerini korur. `RunDriver.CreateFlow` başlatma, geri yükleme ve doğrulama için aynı politikayı kurar.
+
+Seyir süresi içerik anahtarına dahildir. Dalga tamamlanması mevcut scheduler emitted/pending verisinden; dış canlı sayısı mevcut enemy OnBoard/Health durumundan türetilir. Yeni bağımsız bayrak kaydedilmez. Seyirde on-board düşmanlar ve hasarlı kapılar normal snapshot'ta korunur; yüklemek can/mermi doldurmaz, fazı karanlığa çevirmez. Kamera/mini harita/yol dekorları sunumdur, koşu otoritesi veya ayrı ekonomik kayıt değildir.

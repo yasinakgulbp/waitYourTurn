@@ -26,6 +26,10 @@ namespace WaitYourTurn.Run
         public SoloLoot Loot => loot;
         public void ConfigureLoot(SoloLoot rewards) => loot = rewards;
         public bool UsesSoloProgression => solo != null && match != null && match.Mode == RunMode.Solo && !match.Suppressed;
+        public bool UsesOpenTrainSurvival => UsesSoloProgression && solo.OpenTrainSurvival;
+        [SerializeField, Min(10)] private float survivalCruiseSeconds = 10;
+        public float SurvivalCruiseSeconds => survivalCruiseSeconds;
+        public RunFlow CreateFlow(RunTimings configuration = null) => new RunFlow(configuration ?? timings, UsesOpenTrainSurvival, survivalCruiseSeconds);
         public void ConfigureSolo(SoloProgression policy) => solo = policy;
         public void ConfigureMatch(RunMatch participants) => match = participants;
         [SerializeField] private RunTimings timings = new RunTimings();
@@ -80,7 +84,7 @@ namespace WaitYourTurn.Run
                 foreach (DoorController door in wagon.Doors) door.Durability.ResetForSpawn(door.Durability.Maximum, Team.Neutral);
             }
             player.ResetForSpawn(player.Maximum, Team.Player); pistol.ResetWeapon(); repair.Cancel(); aim.ClearTarget();
-            Flow = new RunFlow(overrideTimings ?? timings); Flow.Changed += OnPhase;
+            Flow = CreateFlow(overrideTimings); Flow.Changed += OnPhase;
             match?.BeginRun(ActualRunSeed);
             solo?.ResetForRun();
             int first = UsesSoloProgression ? 0 : randomInitialWagon ? random.Next(wagons.Length) : Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1);
@@ -91,7 +95,7 @@ namespace WaitYourTurn.Run
         public void RestoreFlow(int runSeed, uint rng, RunPhase phase, int station, float elapsed, int assignments)
         {
             SetGate(false); Flow.Changed -= OnPhase;
-            Flow = new RunFlow(timings); Flow.Restore(phase, station, elapsed); Flow.Changed += OnPhase;
+            Flow = CreateFlow(); Flow.Restore(phase, station, elapsed); Flow.Changed += OnPhase;
             ActualRunSeed = runSeed; random = new RunRandom(runSeed) { State = rng }; Assignments = assignments;
             foreach (var wagon in wagons) wagon.SetStationAccess(phase == RunPhase.Defense || phase == RunPhase.DepartureWarning);
         }

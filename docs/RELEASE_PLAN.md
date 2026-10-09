@@ -14,7 +14,7 @@ Güncel birleşik APK A54'e kuruldu; açılış, otomatik kayıt ve canlı Battl
 
 ## Sıra ve kabul kapıları
 
-**D42 güncellemesi:** üretim menüsü/kamera adımından önce ayrı üç-vagon Hayatta Kalma sahnesi kurulur. İki geniş sürekli açık bağlantı, üç vagona iki taraflı saldırı, tren boyunca takip ve ayrı koşu kaydı küçük birleşik PC kontrolüyle doğrulanır. A54 kabulü kullanıcı isteğiyle sonra yapılır. Ardından kullanıcı bu yeni oynanışı değerlendirir; kapı güçlendirmesi ve bütün tren onarımı ayrı küçük parçalar olur. Eski M8s manuel kapı/yalnız güncel vagon saldırısı güncel ürün hedefi değildir; geçmiş prototip kabulüdür. Detaylar PROGRESSION_DESIGN.md D42 içinde. Battle aynı sahnede korunur.
+**D42/D43 güncellemesi:** ayrı üç-vagon Hayatta Kalma sahnesi vardır. İki geniş sürekli açık bağlantı, üç vagona iki taraflı saldırı, tren boyunca takip ve ayrı koşu kaydı korunur. D43'te kamera oyuncuyu sürekli takip eder; yerde ödül yoktur. Savunma süreyle bitmez: bütün dalga üretilip son dış canlı bindiğinde/öldüğünde kalkış, görünür seyir ve sonraki istasyon gelir. Yol boyunca savaş/onarım sürer; karartma ve rastgele atama yoktur. Koyu çevre, seyrek yol dekorları, uzak ekran dışı spawn ve sağ altta konum tabanlı mini harita ilk sunum parçasıdır. A54 kabulü kullanıcı isteğiyle sonra yapılır. Kullanıcı yeni oynanışı değerlendirir; kapı güçlendirmesi ve bütün tren onarımı ayrı küçük parçalar olur. Eski M8s manuel kapı/yalnız güncel vagon saldırısı tarihsel prototip kabulüdür. Detaylar PROGRESSION_DESIGN.md D42/D43 içinde. Battle ayrı sahnede, eski zamanlı/karartmalı akışıyla korunur.
 
 | Adım | Somut iş | Sonraki adıma geçme koşulu |
 | --- | --- | --- |

@@ -39,6 +39,15 @@ namespace WaitYourTurn.Run
         private int head, count, cursor;
         private bool stopped;
         public int Pending => count;
+        public bool Completed
+        {
+            get
+            {
+                if (stopped || count != 0) return false;
+                for (int i = 0; i < streams.Length; i++) if (emitted[i] < streams[i].Count) return false;
+                return true;
+            }
+        }
         public int Spawned { get; private set; }
         public int Dropped { get; private set; }
         public int Attempts { get; private set; }

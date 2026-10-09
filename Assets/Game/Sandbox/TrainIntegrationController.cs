@@ -46,7 +46,11 @@ namespace WaitYourTurn.Sandbox
             GUI.matrix=Matrix4x4.TRS(offset,Quaternion.identity,new Vector3(scale,scale,1));
             var label=new GUIStyle(GUI.skin.label){fontSize=16};
             GUI.Label(new Rect(12,8,width-220,24),$"{(IsSurvival ? "SURVIVAL / " : "")}{run.CurrentWagon.Id} / STATION {run.Flow.Station} / {run.CurrentWagon.Doors.Length} DOORS",label);
-            GUI.Label(new Rect(12,32,width-24,24),$"{run.Flow.Phase} {run.Flow.Remaining:F1}s | HP {run.Player.Current:F0} | {run.Weapon.DisplayName} {run.Weapon.Rounds} | Repair {run.Repair.Progress:P0}",label);
+            string phaseText = IsSurvival ? run.Flow.Phase switch
+            { RunPhase.Defense => spawner.WaveCompleted ? "Wave spawned / boarding" : "Defend the train",
+                RunPhase.Approach => "Arriving at station", RunPhase.Departing => "Departing", RunPhase.Cruising => "On the move", _ => run.Flow.Phase.ToString() } :
+                $"{run.Flow.Phase} {run.Flow.Remaining:F1}s";
+            GUI.Label(new Rect(12,32,width-24,24),$"{phaseText} | HP {run.Player.Current:F0} | {run.Weapon.DisplayName} {run.Weapon.Rounds} | Repair {run.Repair.Progress:P0}",label);
             GUI.Label(new Rect(12,56,width-24,23),$"Doors: {string.Join("  ",run.CurrentWagon.Doors.Select((d,i)=>$"{i+1}:{d.Durability.Current:F0}"))} | Enemies {run.CurrentWagon.Enemies.Active.Count}/{run.CurrentWagon.Enemies.Capacity} | Train {spawner.TotalActive} | Queue {spawner.Pending} | F11: spawn checks",new GUIStyle(label){fontSize=12});
             GUI.enabled=!checking;
             if(GUI.Button(new Rect(width-180,8,76,25),"Restart")){spawner.enabled=true;run.ControlsAllowed=run.AimAllowed=true;run.Repair.enabled=true;run.Restart();}

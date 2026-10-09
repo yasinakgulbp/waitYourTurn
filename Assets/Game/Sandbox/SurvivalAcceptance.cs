@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using WaitYourTurn.Player;
 using WaitYourTurn.Run;
+using WaitYourTurn.Combat;
 
 namespace WaitYourTurn.Sandbox
 {
@@ -81,7 +82,77 @@ namespace WaitYourTurn.Sandbox
             yield return save.LoadNow();
             if (!Require(save.Status == "Run resumed locally" && solo.UnlockedThrough == 2 && solo.Connections.All(g => g.IsOpen),
                 "Isolated survival save/resume")) yield break;
-            Finish(true, "3 accessible wagons; two permanent 3m passages; actual walking both ways; full NavMesh path; onboard pursuit across wagons; all-wagon bilateral bounded spawning; stable station budget; separate save/restore and invalid closed topology rejection.");
+            // Complete the actual schedule, rather than using an empty queue as a false wave-end signal.
+            run.ControlsAllowed = run.AimAllowed = false; run.Repair.enabled = false; run.Player.Invulnerable = true;
+            run.Flow.Tick(100); spawner.SpawningAllowed = true;
+            for (int frame = 0; frame < 8; frame++) yield return null;
+            if (!Require(spawner.WaveCompleted && spawner.Dropped == 0 && run.Flow.Phase == RunPhase.Defense,
+                "Untimed defense waits for exterior survivors after all 18 spawns")) yield break;
+            spawner.SpawningAllowed = false;
+            foreach (var wagon in run.Wagons) wagon.Enemies.ClearAlive();
+            motor.Place(new Vector3(0, .05f, 0)); yield return new WaitForEndOfFrame();
+            var view = Camera.main; Vector3 cameraBefore = view.transform.position;
+            motor.Place(new Vector3(3, .05f, 1)); yield return new WaitForEndOfFrame();
+            if (!Require(Vector3.Distance(view.transform.position - cameraBefore, new Vector3(3, 0, 1)) < .03f &&
+                run.Loot == null && FindAnyObjectByType<SurvivalMiniMap>() != null, "Continuous player X/Z camera, no floor loot, minimap installed")) yield break;
+            // Check offscreen anchors at the most exposed player positions and common landscape aspects.
+            var visual = FindAnyObjectByType<RunPresentation>();
+            foreach (float aspect in new[] { 4f / 3, 16f / 9, 20f / 9 })
+            {
+                Bounds volume = visual.FramingVolume; volume.Expand(new Vector3(1.3f, 0, 0));
+                float distance = WagonCameraFraming.Distance(volume, view.transform.rotation, view.fieldOfView, aspect, WagonCameraFraming.ProtectedViewport);
+                view.aspect = aspect;
+                foreach (var wagon in run.Wagons) foreach (float z in new[] { -1.5f, 1.5f })
+                {
+                    view.transform.position = wagon.transform.position + new Vector3(0, .4f, z) - view.transform.forward * distance;
+                    for (int anchor = 0; anchor < wagon.Geometry.SpawnCount; anchor++) foreach (float height in new[] { 0f, .85f, 1.7f })
+                    {
+                        Vector3 p = view.WorldToViewportPoint(wagon.Geometry.StationSpawn(anchor) + Vector3.up * height);
+                        if (!Require(p.z <= 0 || p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1, "Spawn silhouette outside camera / aspect " + aspect))
+                        { view.ResetAspect(); yield break; }
+                    }
+                }
+                Rect panel = SurvivalMiniMap.Panel(aspect * 540, 540);
+                if (!Require(panel.xMin > 0 && panel.yMin > 0 && panel.xMax < aspect * 540 && panel.yMax < 540,
+                    "Minimap safe-area bounds / aspect " + aspect)) { view.ResetAspect(); yield break; }
+            }
+            view.ResetAspect(); yield return new WaitForEndOfFrame();
+            var entry = run.Wagons[0].Doors[0];
+            motor.Place(entry.RepairPosition + Vector3.up * .05f);
+            var boarder = pool.RestoreEnemy(entry.Portal.OutsideApproach, entry, spawner.Programs[0].bands[0].profile, 1, 0);
+            var doomed = pool.RestoreEnemy(run.Wagons[0].Geometry.StationSpawn(1), run.Wagons[0].Doors[1], spawner.Programs[0].bands[0].profile, 1, 0);
+            if (!Require(boarder != null && doomed != null, "Boarding and exterior-death setup")) yield break;
+            doomed.Health.TryApplyDamage(new DamageContext(9999, default, Team.Player, 91001, doomed.Health.LifeVersion));
+            spawner.SpawningAllowed = true; yield return null;
+            if (!Require(run.Flow.Phase == RunPhase.Defense && FindAnyObjectByType<SurvivalJourney>().ExteriorAlive == 1,
+                "Dead exterior enemy resolved; last live outsider still blocks departure")) yield break;
+            entry.Durability.TryApplyDamage(new DamageContext(9999, default, Team.Enemy, 91002, entry.Durability.LifeVersion));
+            deadline = Time.time + 5;
+            while (run.Flow.Phase == RunPhase.Defense && Time.time < deadline) yield return null;
+            if (!Require(run.Flow.Phase == RunPhase.Departing && boarder.OnBoard && pool.Active.Contains(boarder),
+                "Actual last boarding departs immediately and retains onboard enemy")) yield break;
+            run.Flow.Tick(run.Flow.Remaining + .01f); yield return new WaitForEndOfFrame();
+            if (!Require(run.Flow.Phase == RunPhase.Cruising && !run.Flow.Paused && visual.Darkness == 0 &&
+                visual.Speed > 0 && !boarder.Paused, "Visible moving cruise keeps gameplay active")) yield break;
+            float hp = run.Player.Current; run.Player.Invulnerable = false;
+            deadline = Time.time + 3;
+            while (run.Player.Current >= hp && Time.time < deadline) yield return null;
+            run.Player.Invulnerable = true;
+            if (!Require(run.Player.Current < hp, "Onboard enemy inflicts damage during travel")) yield break;
+            run.Repair.SetDoor(entry); run.Repair.Cancel(); run.Repair.Tick(3.1f);
+            if (!Require(entry.Durability.Current == entry.Durability.Maximum && run.Flow.Phase == RunPhase.Cruising,
+                "Repair during visible travel")) yield break;
+            if (!Require(save.Validate(save.Capture(), out reason) && save.SaveNow(), "Cruise save: " + reason + " / " + save.Status)) yield break;
+            yield return save.LoadNow();
+            if (!Require(save.Status == "Run resumed locally" && run.Flow.Phase == RunPhase.Cruising && !run.Flow.Paused,
+                "Visible cruise resumes from isolated save")) yield break;
+            run.Flow.Tick(run.Flow.Remaining + .01f); yield return null;
+            if (!Require(run.Flow.Phase == RunPhase.Approach && run.Flow.Station == 2 && visual.Darkness == 0,
+                "Next station without fade or reassignment")) yield break;
+            var battle = new RunFlow(new RunTimings());
+            for (int boundary = 0; boundary < 4; boundary++) battle.Tick(1000);
+            if (!Require(battle.Phase == RunPhase.FadeOut && battle.Paused, "Battle retains timed defense and dark transition")) yield break;
+            Finish(true, "Open 3-wagon walking/navigation and pursuit; bilateral 18-enemy wave; untimed boarding departure including exterior kills; continuous player X/Z camera; offscreen spawn silhouettes at 4:3/16:9/20:9; minimap bounds; no floor loot; visible moving travel with enemy damage and repair; cruise save/resume; next station without fade/assignment; Battle timed/fade policy unchanged.");
         }
         private bool Require(bool value, string message) { if (!value) Finish(false, message); return value; }
         private void Finish(bool pass, string message)

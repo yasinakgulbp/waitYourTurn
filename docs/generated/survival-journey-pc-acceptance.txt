@@ -1,0 +1,6 @@
+2026-10-09T14:50:36.0289959Z
+PASS: Open 3-wagon walking/navigation and pursuit; bilateral 18-enemy wave; untimed boarding departure including exterior kills; continuous player X/Z camera; offscreen spawn silhouettes at 4:3/16:9/20:9; minimap bounds; no floor loot; visible moving travel with enemy damage and repair; cruise save/resume; next station without fade/assignment; Battle timed/fade policy unchanged.
+EditMode: 42/42 passed, 0 failed; 2026-10-09 14:49:01Z; 0.2862564s. Includes boarding flow, bounded spawn completion/retry/restore, existing Battle/timer/persistence rules.
+Runtime Console after acceptance: 0 errors / 0 warnings.
+PC only. Samsung A54 and battery/thermal acceptance deferred by user. No claim of device performance validation for this stage.
+Battle scene, NavMesh and station programs unchanged. Battle default timed/fade policy checked in EditMode and combined fixture; no new full Battle scene suite run.

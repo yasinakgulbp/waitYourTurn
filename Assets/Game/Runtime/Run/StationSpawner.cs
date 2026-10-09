@@ -30,6 +30,8 @@ namespace WaitYourTurn.Run
         public int CreatedThisFrame { get; private set; }
         public int SpawnedThisFrame { get; private set; }
         public int Pending => schedule?.Pending ?? 0;
+        public bool WaveCompleted => run.Flow != null && run.Flow.Phase == RunPhase.Defense &&
+            station == run.Flow.Station && schedule != null && schedule.Completed;
         public int Spawned => schedule?.Spawned ?? 0;
         public int Dropped => schedule?.Dropped ?? 0;
         public int SuppressedStreams => schedule?.SuppressedStreams ?? 0;

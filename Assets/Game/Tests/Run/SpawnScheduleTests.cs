@@ -9,6 +9,23 @@ namespace WaitYourTurn.Tests
     public sealed class SpawnScheduleTests
     {
         [Test]
+        public void CompletionWaitsForFutureRequestsAndCapacityRetriesAndSurvivesRestore()
+        {
+            var streams = new[] { new SpawnStream(0, 0, 2, 0, 10) };
+            var schedule = new SpawnSchedule(streams, 1, 3, .1f);
+            schedule.Tick(0, 1, _ => SpawnResult.Spawned);
+            Assert.That(schedule.Pending, Is.Zero);
+            Assert.That(schedule.Completed, Is.False);
+            schedule.Tick(10, 1, _ => SpawnResult.CapacityFull);
+            Assert.That(schedule.Completed, Is.False);
+            schedule.Tick(11, 1, _ => SpawnResult.Spawned);
+            Assert.That(schedule.Completed, Is.True);
+            var restored = new SpawnSchedule(streams, 1, 3, .1f);
+            Assert.That(restored.Restore(schedule.Capture()), Is.True);
+            Assert.That(restored.Completed, Is.True);
+            restored.Clear(); Assert.That(restored.Completed, Is.False);
+        }
+        [Test]
         public void EmptyWagonCancelsItsStationStreamWithoutBacklogOrStarvingOccupiedWagon()
         {
             var streams = new[] { new SpawnStream(0, 0, 100, 0, .01f), new SpawnStream(1, 0, 3, 0, .1f) };

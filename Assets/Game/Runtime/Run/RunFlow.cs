@@ -2,7 +2,7 @@ using System;
 
 namespace WaitYourTurn.Run
 {
-    public enum RunPhase { Approach, Defense, DepartureWarning, Departing, FadeOut, Hidden, FadeIn, GameOver, Faulted }
+    public enum RunPhase { Approach, Defense, DepartureWarning, Departing, FadeOut, Hidden, FadeIn, GameOver, Faulted, Cruising }
 
     [Serializable]
     public sealed class RunTimings
@@ -18,6 +18,8 @@ namespace WaitYourTurn.Run
     public sealed class RunFlow
     {
         private readonly RunTimings timings;
+        public bool BoardingWaves { get; }
+        public float CruiseDuration { get; }
         public RunPhase Phase { get; private set; }
         public int Station { get; private set; } = 1;
         public float Elapsed { get; private set; }
@@ -33,6 +35,7 @@ namespace WaitYourTurn.Run
             RunPhase.FadeOut => timings.fadeOut,
             RunPhase.Hidden => timings.hidden,
             RunPhase.FadeIn => timings.fadeIn,
+            RunPhase.Cruising => CruiseDuration,
             _ => 0
         };
         public float Remaining => Math.Max(0, Duration - Elapsed);
@@ -40,15 +43,18 @@ namespace WaitYourTurn.Run
         public float DepartureDuration => timings.departure;
         public float Progress => Duration > 0 ? Math.Min(1, Elapsed / Duration) : 0;
         public event Action<RunPhase> Changed;
-        public RunFlow(RunTimings configuration)
+        public RunFlow(RunTimings configuration, bool boardingWaves = false, float cruiseSeconds = 10)
         {
             if (configuration == null || !configuration.Valid) throw new ArgumentException("Run timings must be finite and positive.");
+            if (!(cruiseSeconds > 0) || float.IsInfinity(cruiseSeconds)) throw new ArgumentException("Invalid cruise duration.");
+            BoardingWaves = boardingWaves; CruiseDuration = cruiseSeconds;
             timings = configuration; Phase = RunPhase.Approach;
         }
         public void Tick(float realSeconds)
         {
             if (Terminal || realSeconds <= 0 || float.IsNaN(realSeconds) || float.IsInfinity(realSeconds)) return;
             Elapsed += realSeconds;
+            if (BoardingWaves && Phase == RunPhase.Defense) return;
             if (Elapsed < Duration) return;
             // One boundary per tick: a slow frame cannot skip setup, pause or assignment callbacks.
             RunPhase next = Phase switch
@@ -56,7 +62,7 @@ namespace WaitYourTurn.Run
                 RunPhase.Approach => RunPhase.Defense,
                 RunPhase.Defense => RunPhase.DepartureWarning,
                 RunPhase.DepartureWarning => RunPhase.Departing,
-                RunPhase.Departing => RunPhase.FadeOut,
+                RunPhase.Departing => BoardingWaves ? RunPhase.Cruising : RunPhase.FadeOut,
                 RunPhase.FadeOut => RunPhase.Hidden,
                 RunPhase.Hidden => RunPhase.FadeIn,
                 _ => RunPhase.Approach
@@ -65,12 +71,20 @@ namespace WaitYourTurn.Run
             Set(next);
         }
         public void EndRun() => Set(RunPhase.GameOver);
+        // The scene adapter resolves the wave and boarding. The clock cannot end this defense.
+        public bool CompleteBoardingWave()
+        {
+            if (!BoardingWaves || Phase != RunPhase.Defense) return false;
+            Set(RunPhase.Departing); return true;
+        }
         public void Restore(RunPhase phase, int station, float elapsed)
         {
-            if (phase < RunPhase.Approach || phase > RunPhase.FadeIn || station < 1 || station > 100000 ||
+            bool validPhase = BoardingWaves ? phase == RunPhase.Approach || phase == RunPhase.Defense ||
+                phase == RunPhase.Departing || phase == RunPhase.Cruising : phase >= RunPhase.Approach && phase <= RunPhase.FadeIn;
+            if (!validPhase || station < 1 || station > 100000 ||
                 float.IsNaN(elapsed) || float.IsInfinity(elapsed) || elapsed < 0) throw new ArgumentException("Invalid saved run flow.");
             Phase = phase; Station = station;
-            if (elapsed > Duration) throw new ArgumentException("Saved phase timer exceeds duration.");
+            if (!(BoardingWaves && phase == RunPhase.Defense) && elapsed > Duration) throw new ArgumentException("Saved phase timer exceeds duration.");
             Elapsed = elapsed;
         }
         public void Fail() => Set(RunPhase.Faulted);

@@ -13,7 +13,7 @@ namespace WaitYourTurn.Run
             {
                 RunPhase.Approach => cruiseSpeed * (1 - smooth),
                 RunPhase.Departing => cruiseSpeed * smooth,
-                RunPhase.FadeOut or RunPhase.Hidden or RunPhase.FadeIn => cruiseSpeed,
+                RunPhase.FadeOut or RunPhase.Hidden or RunPhase.FadeIn or RunPhase.Cruising => cruiseSpeed,
                 _ => 0
             };
         }
@@ -27,6 +27,7 @@ namespace WaitYourTurn.Run
             {
                 RunPhase.Approach => cruiseSpeed * flow.Duration * Math.Max(0, .5f - p + accelerationDistance),
                 RunPhase.Departing => -cruiseSpeed * flow.Duration * accelerationDistance,
+                RunPhase.Cruising => -cruiseSpeed * (flow.DepartureDuration * .5f + flow.Elapsed),
                 RunPhase.FadeOut => -cruiseSpeed * (flow.DepartureDuration * .5f + flow.Elapsed),
                 RunPhase.FadeIn => cruiseSpeed * (flow.NextApproachDuration * .5f + flow.Remaining),
                 _ => 0

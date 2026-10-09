@@ -71,10 +71,11 @@ namespace WaitYourTurn.Editor
             tracer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Game/Content/CombatLab/Tracer.mat"); tracer.enabled = false;
             hero.GetComponent<ShotTracer>().Configure(hero.GetComponent<HitscanWeapon>(), tracer);
             var light = new GameObject("Blockout key light").AddComponent<Light>(); light.type = LightType.Directional;
-            light.intensity = .95f; light.color = new Color(.95f, .93f, .88f); light.shadows = LightShadows.None;
+            light.intensity = survival ? .8f : .95f; light.color = new Color(.95f, .93f, .88f); light.shadows = LightShadows.None;
             light.transform.rotation = Quaternion.Euler(48, -30, 0);
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(.5f, .52f, .56f);
+            RenderSettings.ambientLight = survival ? new Color(.3f, .34f, .39f) : new Color(.5f, .52f, .56f);
+            Material journeyGround = survival ? Material("SurvivalRoad", new Color(.035f, .045f, .06f)) : ground;
             var track = new GameObject("Track visuals - no physics").transform;
             var station = new GameObject("Station visuals - both platforms - no physics").transform;
             var scenery = new GameObject("Journey scenery - no physics").transform;
@@ -130,7 +131,7 @@ namespace WaitYourTurn.Editor
                     Metal("Door top frame", x, layout.wallHeight - .1f, width, .1f, sign, trim);
                     Cube("Repair floor strip", entry.transform, new Vector3(0, .01f, .72f), new Vector3(.6f, .02f, .09f), yellow, false);
                     Cube("Sill", physics, new Vector3(x, -.1f, sign * (sideZ + .1f)), new Vector3(width, .2f, .25f), null, true);
-                    spawns.Add(Anchor("Station spawn " + spawns.Count, root.transform, new Vector3(x, 0, sign * (sideZ + 2))));
+                    spawns.Add(Anchor("Station spawn " + spawns.Count, root.transform, new Vector3(x, 0, sign * (survival ? 14 : sideZ + 2))));
                 }
                 // Second row follows all first-row anchors, independent of door count.
                 int firstRow = spawns.Count;
@@ -198,8 +199,9 @@ namespace WaitYourTurn.Editor
             BuildLocomotive(fixedTrain.transform, end + 5, maxWidth);
             for (int sign = -1; sign <= 1; sign += 2)
             {
-                Vector3 pos = new Vector3((start + end) * .5f, -.12f, sign * (maxWidth * .5f + 3.08f));
-                Vector3 size = new Vector3(end - start + 2, .24f, 6);
+                float platformWidth = survival ? 14 : 6;
+                Vector3 pos = new Vector3((start + end) * .5f, -.12f, sign * (maxWidth * .5f + platformWidth * .5f + .08f));
+                Vector3 size = new Vector3(end - start + 2, .24f, platformWidth);
                 Cube("Continuous fixed platform " + sign, fixedTrain.transform, pos, size, null, true);
                 Cube("Continuous moving platform " + sign, station, pos, size, ground, false);
                 for (float x = start - 1; x < end + 1; x += 2)
@@ -238,10 +240,18 @@ namespace WaitYourTurn.Editor
             else BotContentBuilder.Install(run, registry, economy, spawner);
             PersistenceContentBuilder.Install(run, survival ? "survival-run.json" : "active-run.json", !survival);
             SoloContentBuilder.Install(run, survival);
-            ProgressionContentBuilder.Install(run);
+            ProgressionContentBuilder.Install(run, !survival);
             new GameObject("Replaceable shop HUD").AddComponent<ShopHud>().Configure(economy, hero.GetComponent<MoveInput>());
             var presentation = new GameObject("Journey presentation - single camera owner").AddComponent<RunPresentation>(); presentation.Configure(run, track, camera); presentation.ConfigureJourney(station, scenery); presentation.ConfigurePlayerFollow(true);
-            presentation.ConfigureFraming(new Bounds(new Vector3(0, .4f, 0), new Vector3(layouts.Max(x => x.length) + 3, 2.4f, maxWidth + 4)));
+            if (survival)
+            {
+                var incoming = Object.Instantiate(station.gameObject).transform;
+                incoming.name = "Incoming station - visual only"; incoming.position = Vector3.right * 72.5f;
+                presentation.ConfigureIncomingStation(incoming);
+                new GameObject("Survival boarding departure policy").AddComponent<SurvivalJourney>().Configure(run, spawner);
+                new GameObject("Survival mini map - position data only").AddComponent<SurvivalMiniMap>().Configure(run, hero.GetComponent<MoveInput>());
+            }
+            presentation.ConfigureFraming(new Bounds(new Vector3(0, .4f, 0), new Vector3(layouts.Max(x => x.length) + (survival ? 1 : 3), 2.4f, maxWidth + 4)));
             Bounds previewVolume = presentation.FramingVolume; previewVolume.Expand(new Vector3(1.3f, 0, 0));
             float previewDistance = WagonCameraFraming.Distance(previewVolume, camera.transform.rotation, camera.fieldOfView, camera.aspect, WagonCameraFraming.ProtectedViewport);
             camera.transform.position = wagons[initial].transform.position - camera.transform.forward * previewDistance;
@@ -252,9 +262,18 @@ namespace WaitYourTurn.Editor
                 Cube("Rail", track, new Vector3((start + end) * .5f, -.22f, sign * 1.45f), new Vector3(end - start + 45, .1f, .09f), rail, false);
                 for (float x = start - 24; x < end + 44; x += 4)
                 {
-                    Cube("Journey ground", scenery, new Vector3(x, -.4f, sign * 8), new Vector3(4, .2f, 12), ground, false);
+                    Cube("Journey ground", scenery, new Vector3(x, -.4f, sign * 8), new Vector3(4, .2f, 12), journeyGround, false);
                     Cube("Passing scenery marker", scenery, new Vector3(x, -.25f, sign * 9), new Vector3(.25f, .08f, 1.2f), trim, false);
                 }
+                if (survival)
+                    for (float x = start - 24; x < end + 44; x += 20)
+                    {
+                        float poleX = x + (sign > 0 ? 8 : 0), z = sign * 7.5f;
+                        Cube("Passing electric pole - visual only", scenery, new Vector3(poleX, 1.65f, z), new Vector3(.13f, 3.5f, .13f), trim, false);
+                        Cube("Pole cross arm", scenery, new Vector3(poleX, 3.3f, z), new Vector3(1.1f, .12f, .12f), trim, false);
+                        Cube("Pole reflector - no real light", scenery, new Vector3(poleX, 2.5f, z), new Vector3(.15f, .1f, .15f), yellow, false);
+                        Cube("Trackside equipment box", scenery, new Vector3(poleX + 3, .15f, sign * 6), new Vector3(.65f, .4f, .45f), wall, false);
+                    }
             }
             new GameObject("Integration HUD and checks").AddComponent<TrainIntegrationController>().Configure(run, spawner, presentation);
             if (survival)

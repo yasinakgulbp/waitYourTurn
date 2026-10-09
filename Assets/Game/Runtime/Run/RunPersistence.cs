@@ -159,7 +159,7 @@ namespace WaitYourTurn.Run
             if (run.Loot != null) text.Append("/owned-ammo-loot-v3/").Append(JsonUtility.ToJson(run.Loot.LocalPosition)).Append(run.Loot.PickupRadius);
             if (run.Solo != null)
             {
-                if (run.Solo.OpenTrainSurvival) text.Append("/open-train-survival-v1/");
+                if (run.Solo.OpenTrainSurvival) text.Append("/continuous-survival-v2/").Append(run.SurvivalCruiseSeconds);
                 foreach (var connection in run.Solo.Connections)
                     text.Append("/interior-v2/").Append(JsonUtility.ToJson(connection.transform.position)).Append(JsonUtility.ToJson(connection.Passage)).Append(connection.UnlockPrice);
             }
@@ -202,7 +202,7 @@ namespace WaitYourTurn.Run
                 data.mode != RunMode.Solo && data.mode != RunMode.Battle || data.humanRandom == 0 || data.assignments < 0 || data.assignments > 100000 ||
                 data.participants == null || data.wagons == null || data.wagons.Length != run.Wagons.Length ||
                 data.participants.Length != (data.mode == RunMode.Battle ? run.Match.Bots.Length + 1 : 1)) return false;
-            try { new RunFlow(run.Timings).Restore(data.phase, data.station, data.elapsed); }
+            try { run.CreateFlow().Restore(data.phase, data.station, data.elapsed); }
             catch (ArgumentException) { return false; }
             if (data.mode == RunMode.Battle)
             { try { var roster = new BattleRoster(data.participants.Length); roster.Restore(data.ranks); if (data.botRandom == 0) return false; } catch (ArgumentException) { return false; } }
