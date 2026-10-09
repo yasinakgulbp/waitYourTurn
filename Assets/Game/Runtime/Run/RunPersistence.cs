@@ -182,6 +182,11 @@ namespace WaitYourTurn.Run
             foreach (var program in spawner.Programs)
             {
                 text.Append(program.name).Append(program.firstStation).Append(program.queueCapacity).Append(program.positionAttempts);
+                if (program.useThreatBudget)
+                {
+                    text.Append($"/threat-v1/{program.initialThreatBudget}/{program.threatBudgetPerStation}/{program.maximumThreatBudget}");
+                    foreach (var band in program.bands) text.Append($"/{band.threatCost}/{band.threatWeight}/{band.unlockStation}/{band.maximumCount}");
+                }
                 foreach (var band in program.bands) text.Append(band.profile.name).Append(JsonUtility.ToJson(band.profile))
                     .Append(band.wagon).Append(band.count).Append(band.firstAt.ToString("R", System.Globalization.CultureInfo.InvariantCulture))
                     .Append(band.interval.ToString("R", System.Globalization.CultureInfo.InvariantCulture))

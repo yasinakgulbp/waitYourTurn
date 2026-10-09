@@ -1,0 +1,37 @@
+D46 / 2026-10-09 / Unity 6000.6.4f1 / Windows Editor / SurvivalIntegration
+
+EditMode, actual Unity editor test runs:
+19:26:17 UTC WeaponTests: 38 passed, 0 failed (Logs/WeaponTests.xml).
+Includes constant-velocity grenade interception, metal-blocked lead fallback,
+unchanged hitscan aim, unreachable/invalid lead rejection; paid magazine capacity,
+normal empty reload and preservation of existing trigger/reload deadlines.
+19:26:37 UTC SpawnAndJourneyTests: 45 passed, 0 failed (Logs/SpawnAndJourneyTests.xml).
+Includes station 4/5/8 type gates, budget never exceeded through station100,
+max160, global allocation across3 wagons, deterministic restore plan, invalid data.
+19:29:56 UTC EconomyTests: 13 passed, 0 failed (Logs/EconomyTests.xml).
+These are the targeted assemblies, not all repository tests.
+
+Play focused check 19:30:25.9526756 UTC: PASS (Logs/ExplosivesAcceptance.txt).
+Actual scene purchases/collisions/kill rewards and persistence:
+- Catalog starts10000; requested equipment prices preserved.
+- Enemy-triggered mine detonates once; player safe; no collider.
+- Launcher buys loaded6 + reserve42; projectile cluster blast spends one round.
+- Fixture empties launcher; ammo-launcher purchase spends750, adds6 reserve,
+  rounds remain0 and ordinary timed reload starts; owned launcher full-price
+  purchase is unavailable. Original ammunition restored for save check.
+- Live mine and projectile resume without consuming another round.
+- Corrupt mine slot rejected; Restart clears purchased weapon/live explosives.
+Fixture temporarily uses12000 coins and separate acceptance save store;
+Finish restores production store and normal10000 Restart. No production coins
+or saves are used as test fixtures.
+
+Visual: Survival shop four ammo cards50/300/125/750 seen in Supplies / Ammo
+scroll group; launcher6000/shotgun1000 visible. Play Console0 errors0 warnings.
+Editor compile had existing obsolete Find API warnings; none were new failures.
+Play stopped afterward. Ctrl+Alt+U content update saved existing scene with
+Survival04 program added; no geometry/nav rebuild.
+
+Limits: no Android/thermal/battery acceptance this turn, no long balance run,
+no Battle scene/bot cheap-ammo integration acceptance. Handheld weapon assets
+are shared; Survival wave budget and magazine catalog remain mode configuration.
+Model sizes unchanged; current MODEL_CONTRACT is the Blender baseline.

@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
 using WaitYourTurn.Economy;
 using WaitYourTurn.Run;
 
@@ -37,6 +38,7 @@ namespace WaitYourTurn.Editor
                 products.Add(new ShopItem { id = "wire", label = "Wire reinforcement", price = 1200,
                     effect = ShopEffect.ReinforceDoors, reinforcementLevel = 2 });
                 catalog.items = products.ToArray();
+                AddAmmoProducts(catalog);
                 AssetDatabase.CreateAsset(catalog, path); return catalog;
             }
             catalog = ScriptableObject.CreateInstance<ShopCatalog>();
@@ -49,5 +51,19 @@ namespace WaitYourTurn.Editor
         }
         private static ShopItem Item(string id, string label, int price, ShopEffect effect, int weapon = -1) =>
             new ShopItem { id = id, label = label, price = price, effect = effect, weaponIndex = weapon };
+        public static void AddAmmoProducts(ShopCatalog catalog)
+        {
+            var products = new System.Collections.Generic.List<ShopItem>(catalog.items);
+            foreach (var weapon in catalog.items.Where(item => item.effect == ShopEffect.Weapon))
+            {
+                weapon.refillsOwnedWeapon = false; weapon.label = weapon.label.Replace(" / refill", "");
+                string id = "ammo-" + weapon.id;
+                if (products.Any(item => item.id == id)) continue;
+                int price = weapon.weaponIndex switch { 1 => 50, 2 => 300, 3 => 125, 4 => 750, _ => Mathf.Max(25, weapon.price / 8) };
+                products.Add(new ShopItem { id = id, label = weapon.label + " +1 magazine", price = price,
+                    effect = ShopEffect.Ammo, weaponIndex = weapon.weaponIndex, requiresWeaponUnlock = false });
+            }
+            catalog.items = products.ToArray(); EditorUtility.SetDirty(catalog);
+        }
     }
 }

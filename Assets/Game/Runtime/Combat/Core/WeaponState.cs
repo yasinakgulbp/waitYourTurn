@@ -38,6 +38,14 @@ namespace WaitYourTurn.Combat
         public bool Reloading => reloadUntil >= 0;
         public bool Empty => Rounds == 0 && !Spec.InfiniteReserve && Reserve == 0;
         public bool NeedsRefill => Rounds < Spec.MagazineSize || !Spec.InfiniteReserve && Reserve < Spec.InitialReserve;
+        public bool CanBuyMagazine => !Spec.InfiniteReserve && Reserve < Spec.InitialReserve;
+        public bool TryBuyMagazine(float now)
+        {
+            if (!CanBuyMagazine || now < 0 || float.IsNaN(now) || float.IsInfinity(now)) return false;
+            Reserve += Math.Min(Spec.MagazineSize, Spec.InitialReserve - Reserve);
+            if (Rounds == 0 && !Reloading) reloadUntil = now + Spec.ReloadSeconds;
+            return true; // One reserve magazine; preserve current rounds, reload and shot deadlines.
+        }
         private float nextShot, reloadUntil = -1;
         public WeaponState(WeaponSpec spec)
         {

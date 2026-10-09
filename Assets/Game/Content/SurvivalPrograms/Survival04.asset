@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d50f57312fde574b9bdbc750c3e959f, type: 3}
+  m_Name: Survival04
+  m_EditorClassIdentifier: WaitYourTurn.Run::WaitYourTurn.Run.StationDefinition
+  firstStation: 4
+  globalLiveLimit: 24
+  wagonLiveLimit: 8
+  queueCapacity: 32
+  requestsPerFrame: 2
+  warmupPerFrame: 4
+  positionAttempts: 3
+  retryDelay: 0.25
+  useThreatBudget: 1
+  initialThreatBudget: 13
+  threatBudgetPerStation: 3
+  maximumThreatBudget: 160
+  bands:
+  - profile: {fileID: 11400000, guid: ba99581a49354bd9831cc34aa233e0bb, type: 2}
+    wagon: -1
+    count: 1
+    maximumCount: 120
+    firstAt: 4
+    interval: 2.5
+    threatCost: 1
+    threatWeight: 6
+    unlockStation: 4
+  - profile: {fileID: 11400000, guid: 265f625ff3451884c8caad3631b9c6bf, type: 2}
+    wagon: -1
+    count: 1
+    maximumCount: 40
+    firstAt: 4
+    interval: 2.5
+    threatCost: 2
+    threatWeight: 2
+    unlockStation: 5
+  - profile: {fileID: 11400000, guid: 95a1b1b329c9c164cb899de558ddc9bc, type: 2}
+    wagon: -1
+    count: 1
+    maximumCount: 20
+    firstAt: 4
+    interval: 2.5
+    threatCost: 4
+    threatWeight: 1
+    unlockStation: 8

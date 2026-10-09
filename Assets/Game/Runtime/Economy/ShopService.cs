@@ -1,6 +1,6 @@
 namespace WaitYourTurn.Economy
 {
-    public enum ShopEffect { Heal, RepairWagon, Weapon, Turret, Drone, ReinforceDoors, Mine }
+    public enum ShopEffect { Heal, RepairWagon, Weapon, Turret, Drone, ReinforceDoors, Mine, Ammo }
     public enum PurchaseResult { Success, Closed, StaleContext, Duplicate, InvalidProduct, Unavailable, InsufficientFunds, Busy, ApplyFailed }
     public readonly struct ShopProduct
     {
@@ -8,10 +8,11 @@ namespace WaitYourTurn.Economy
         public readonly int Price, WeaponIndex, TurretIndex, ReinforcementLevel;
         public readonly ShopEffect Effect;
         public readonly bool RequiresWeaponUnlock;
-        public ShopProduct(string id, int price, ShopEffect effect, int weaponIndex = -1, int turretIndex = -1, int reinforcementLevel = 0, bool requiresWeaponUnlock = true)
-        { Id = id; Price = price; Effect = effect; WeaponIndex = weaponIndex; TurretIndex = turretIndex; ReinforcementLevel = reinforcementLevel; RequiresWeaponUnlock = requiresWeaponUnlock; }
+        public readonly bool RefillsOwnedWeapon;
+        public ShopProduct(string id, int price, ShopEffect effect, int weaponIndex = -1, int turretIndex = -1, int reinforcementLevel = 0, bool requiresWeaponUnlock = true, bool refillsOwnedWeapon = true)
+        { Id = id; Price = price; Effect = effect; WeaponIndex = weaponIndex; TurretIndex = turretIndex; ReinforcementLevel = reinforcementLevel; RequiresWeaponUnlock = requiresWeaponUnlock; RefillsOwnedWeapon = refillsOwnedWeapon; }
         public bool Valid => !string.IsNullOrWhiteSpace(Id) && Price > 0 &&
-            (Effect == ShopEffect.Heal || Effect == ShopEffect.RepairWagon || Effect == ShopEffect.Weapon && WeaponIndex > 0 ||
+            (Effect == ShopEffect.Heal || Effect == ShopEffect.RepairWagon || (Effect == ShopEffect.Weapon || Effect == ShopEffect.Ammo) && WeaponIndex > 0 ||
                 Effect == ShopEffect.Turret && TurretIndex >= 0 || Effect == ShopEffect.Drone || Effect == ShopEffect.Mine ||
                 Effect == ShopEffect.ReinforceDoors && ReinforcementLevel >= 1 && ReinforcementLevel <= 2);
     }

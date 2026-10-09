@@ -74,6 +74,47 @@ namespace WaitYourTurn.Tests
             var mine = root.AddComponent<MineController>(); mine.Configure(source, Root("Body").transform, Root("Diode").transform, Pulse());
             Assert.That(mine.TryDeploy(Keep(ScriptableObject.CreateInstance<MineDefinition>()), owner, registry, Physics.AllLayers, origin)); return mine;
         }
+        [Test] public void LeadingShotInterceptsCrossingEnemyBeforeMaximumRange()
+        {
+            var registry = Root("Targets").AddComponent<TargetRegistry>(); var gun = Launcher(registry, out _, out var delivery);
+            gun.Definition.projectileSpeed = 24; gun.Definition.range = 12;
+            var enemy = Body(Vector3.right * 6, Team.Enemy, 70); registry.Register(enemy);
+            Vector3 velocity = Vector3.forward * 4;
+            Physics.SyncTransforms(); Assert.That(gun.HasSight(enemy));
+            Assert.That(gun.AimDirectionFor(enemy, velocity).z, Is.GreaterThan(.9f));
+            Assert.That(gun.TryFireAt(enemy, velocity));
+            for (int i = 0; i < 6 && delivery.ActiveCount > 0; i++)
+            {
+                enemy.transform.position += velocity * .05f; Physics.SyncTransforms(); delivery.Tick(.05f);
+            }
+            Assert.That(delivery.Detonations, Is.EqualTo(1)); Assert.That(enemy.IsAlive, Is.False);
+        }
+        [Test] public void LeadingAimFallsBackWhenItsPathCrossesMetalWindowPost()
+        {
+            var registry = Root("Targets").AddComponent<TargetRegistry>(); var gun = Launcher(registry, out _, out _);
+            gun.Definition.projectileSpeed = 24; gun.Definition.range = 12;
+            var enemy = Body(Vector3.right * 6, Team.Enemy, 70);
+            var post = Root("Window metal post"); post.transform.position = origin + new Vector3(3, .9f, .5f);
+            post.AddComponent<BoxCollider>().size = new Vector3(.2f, 2, .25f); Physics.SyncTransforms();
+            Assert.That(gun.HasSight(enemy));
+            Vector3 direct = enemy.transform.position + Vector3.up * .85f - gun.Muzzle;
+            Assert.That(gun.AimDirectionFor(enemy, Vector3.forward * 4), Is.EqualTo(direct));
+        }
+        [Test] public void HitscanStillAimsDirectlyAtMovingTarget()
+        {
+            var registry = Root("Targets").AddComponent<TargetRegistry>(); var gun = Launcher(registry, out _, out _);
+            var enemy = Body(Vector3.right * 6, Team.Enemy, 70); Assert.That(gun.Equip(0));
+            Assert.That(gun.AimDirectionFor(enemy, Vector3.forward * 4),
+                Is.EqualTo(enemy.transform.position + Vector3.up * .85f - gun.Muzzle));
+        }
+        [Test] public void InterceptRejectsUnreachableTargetAndKeepsStationaryAim()
+        {
+            Vector3 offset = Vector3.right * 6;
+            Assert.That(ProjectileAim.TryLead(offset, Vector3.zero, 24, 12, out var aim)); Assert.That(aim, Is.EqualTo(offset));
+            Assert.That(ProjectileAim.TryLead(offset, Vector3.right * 20, 10, 12, out _), Is.False);
+            Assert.That(ProjectileAim.TryLead(Vector3.right * 13, Vector3.forward, 24, 12, out _), Is.False);
+            Assert.That(ProjectileAim.TryLead(offset, new Vector3(float.NaN, 0, 0), 24, 12, out _), Is.False);
+        }
         [Test] public void MineIgnoresPlayerAndFriendlyBodiesThenDetonatesOnlyOnceForEnemyCluster()
         {
             var registry = Root("Targets").AddComponent<TargetRegistry>(); var owner = Body(Vector3.zero, Team.Player, 100, false);

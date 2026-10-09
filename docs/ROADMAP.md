@@ -225,4 +225,10 @@ Survival orta başlangıç/4→7→10/+3 dalga ve eşit20HP kapıları, sade HUD
 
 ### D45 — fiyatlar ve patlayıcı ekipman
 
-Survival fiyat/3000 test altını güncellendi; ortak bomba atar teslimi ve düşman tetiklemeli mayın mevcut Combat/ödül/kayıt sistemleri üzerinden kuruldu. Ayrıntılar: DIFFICULTY_AND_PRICES.md. Sonraki denge işi tek tek istasyon yazmak yerine tehdit bütçesi/tempo eğrisi;4/7/10 başlangıcı şimdilik korunur. Battle'a dönüldüğünde launcher+mine sahne bağları, bot kullanımı ve ayrı ekonomi kabulü eklenecek. Launcher'ın kalıcı silah kilidi/profil göçü ayrı iş; kalıcı hızlı onarım iki mod için bekler. Android patlayıcı ekipman kontrolü beklemede.
+Survival fiyat/3000 test altını güncellendi; ortak bomba atar teslimi ve düşman tetiklemeli mayın mevcut Combat/ödül/kayıt sistemleri üzerinden kuruldu. Ayrıntılar: DIFFICULTY_AND_PRICES.md. Sonraki denge işi olarak belirlenen tehdit bütçesi D46'da uygulandı;4/7/10 başlangıcı korunur. Battle'a dönüldüğünde launcher+mine sahne bağları, bot kullanımı ve ayrı ekonomi kabulü eklenecek. Launcher'ın kalıcı silah kilidi/profil göçü ayrı iş; kalıcı hızlı onarım iki mod için bekler. Android patlayıcı ekipman kontrolü beklemede.
+
+### D46 — güncel devam noktası: mühimmat, nişan ve dalga bütçesi
+
+Ortak el silahları dolu+7 yedek şarjör; pompalı7m, launcher12m/24m/s ve hareketli hedef tahmini. Survival'da tek silah satın alma + ucuz bir şarjör ürünü/HUD düğmesi. Dördüncü istasyondan13/+3/max160 tehdit bütçesi, hızlı5/dayanıklı8, üç vagona tek toplam bütçe; canlı/kuyruk/havuz sınırları korunur. Kayıt içerik anahtarı eğriyi denetler. Ayrıntılar DIFFICULTY_AND_PRICES, kanıt generated/survival-ammo-aim-budget-pc-acceptance.txt. 10000 altın ve kalıcı silah kilidi bypass yalnız deneme ayarıdır.
+
+Sonraki somut iş kullanıcıyla Blender üç vagon/lokomotif görselini mevcut MODEL_CONTRACT/ölçü CSV'lerine göre tasarlamaktır. Renderer giydirme, oynanış collider/nav/atış açıklıkları ve kapı kimliklerinden ayrı tutulur. İlk giydirilen vagonla kısa mekanik/cihaz kontrolü yapılır; bütün sanatı bitirip sonra uyumu denemeyiz. Nihai denge, kalıcı hızlı onarım, üretim menü/öğretici, Battle ekipman entegrasyonu ve yayın hazırlığı açık görevdir; bu aşama bunları tamamlamış sayılmaz.

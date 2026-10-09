@@ -15,11 +15,11 @@ MonoBehaviour:
   displayName: Shotgun
   damage: 2
   fireInterval: 0.85
-  range: 8
+  range: 7
   reloadSeconds: 2
   magazineSize: 6
   infiniteReserve: 0
-  initialReserve: 18
+  initialReserve: 42
   pellets: 6
   spreadDegrees: 9
   tracerColor: {r: 1, g: 0.3, b: 0.6, a: 1}

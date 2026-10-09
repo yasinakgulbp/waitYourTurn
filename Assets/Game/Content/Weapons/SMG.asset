@@ -19,7 +19,7 @@ MonoBehaviour:
   reloadSeconds: 1.5
   magazineSize: 24
   infiniteReserve: 0
-  initialReserve: 72
+  initialReserve: 168
   pellets: 1
   spreadDegrees: 0
   tracerColor: {r: 0, g: 1, b: 1, a: 1}

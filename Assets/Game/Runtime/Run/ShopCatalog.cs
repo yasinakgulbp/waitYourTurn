@@ -14,7 +14,8 @@ namespace WaitYourTurn.Run
         public int turretIndex = -1;
         [Range(0, 2)] public int reinforcementLevel;
         public bool requiresWeaponUnlock = true;
-        public ShopProduct Product => new ShopProduct(id, price, effect, weaponIndex, turretIndex, reinforcementLevel, requiresWeaponUnlock);
+        public bool refillsOwnedWeapon = true;
+        public ShopProduct Product => new ShopProduct(id, price, effect, weaponIndex, turretIndex, reinforcementLevel, requiresWeaponUnlock, refillsOwnedWeapon);
     }
     [CreateAssetMenu(menuName = "Wait Your Turn/Shop Catalog")]
     public sealed class ShopCatalog : ScriptableObject
@@ -30,7 +31,7 @@ namespace WaitYourTurn.Run
             {
                 var item = items[i];
                 if (item == null || !item.Product.Valid || string.IsNullOrWhiteSpace(item.label) ||
-                    item.effect == ShopEffect.Weapon && item.weaponIndex >= weaponCount) return false;
+                    (item.effect == ShopEffect.Weapon || item.effect == ShopEffect.Ammo) && item.weaponIndex >= weaponCount) return false;
                 for (int j = 0; j < i; j++) if (items[j].id == item.id) return false;
             }
             return true;

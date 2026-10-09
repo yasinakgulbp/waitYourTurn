@@ -30,8 +30,9 @@ namespace WaitYourTurn.Editor
             if (launcher == null)
             {
                 launcher = ScriptableObject.CreateInstance<WeaponDefinition>(); launcher.displayName = "Grenade launcher";
-                launcher.delivery = ShotDelivery.Grenade; launcher.damage = 90; launcher.fireInterval = 1.25f; launcher.range = 14;
-                launcher.magazineSize = 6; launcher.reloadSeconds = 2.5f; launcher.infiniteReserve = false; launcher.initialReserve = 12;
+                launcher.delivery = ShotDelivery.Grenade; launcher.damage = 90; launcher.fireInterval = 1.25f; launcher.range = 12;
+                launcher.projectileSpeed = 24;
+                launcher.magazineSize = 6; launcher.reloadSeconds = 2.5f; launcher.infiniteReserve = false; launcher.initialReserve = 42;
                 launcher.tracerColor = new Color(1, .65f, .1f); AssetDatabase.CreateAsset(launcher, LauncherPath);
             }
             var definitions = new List<WeaponDefinition>();
@@ -85,6 +86,7 @@ namespace WaitYourTurn.Editor
                     price = 6000, effect = ShopEffect.Weapon, weaponIndex = index, requiresWeaponUnlock = false } }).ToArray();
             if (!economy.Catalog.items.Any(i => i.effect == ShopEffect.Mine))
                 economy.Catalog.items = economy.Catalog.items.Concat(new[] { new ShopItem { id = "mine", label = "Proximity mine", price = 250, effect = ShopEffect.Mine } }).ToArray();
+            ShopContentBuilder.AddAmmoProducts(economy.Catalog);
             EditorUtility.SetDirty(economy.Catalog); EditorUtility.SetDirty(economy); EditorUtility.SetDirty(run.Weapon);
             if (Object.FindAnyObjectByType<ExplosivesAcceptance>() == null)
                 new GameObject("Explosives focused acceptance").AddComponent<ExplosivesAcceptance>().Configure(run, economy,

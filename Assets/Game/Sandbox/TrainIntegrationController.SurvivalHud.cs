@@ -49,7 +49,7 @@ namespace WaitYourTurn.Sandbox
             float width = safe.width / scale, height = safe.height / scale;
             hudInput.BlockedScreenArea = new Rect(offset.x, offset.y, safe.width, 85 * scale);
             hudInput.SecondaryBlockedScreenArea = new Rect(offset.x + safe.width * .28f,
-                offset.y + safe.height - 62 * scale, safe.width * .72f, 62 * scale);
+                offset.y + safe.height - 100 * scale, safe.width * .72f, 100 * scale);
             hudInput.StatsBlockedScreenArea = new Rect(offset.x, offset.y + safe.height - 42 * scale, 282 * scale, 42 * scale);
             Matrix4x4 old = GUI.matrix;
             GUI.matrix = Matrix4x4.TRS(offset, Quaternion.identity, Vector3.one * scale);

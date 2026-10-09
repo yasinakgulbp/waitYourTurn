@@ -49,7 +49,7 @@ namespace WaitYourTurn.Sandbox
             if (!Require(!enemy.Health.IsAlive && !mine.Deployed && economy.Wallet.Balance == coins + intro.reward && mine.Detonations == 1,
                 "Enemy-only single blast and exactly one kill reward")) yield break;
             yield return null; economy.RestoreWallet(12000, 0);
-            if (!Require(Buy("launcher") == PurchaseResult.Success && run.Weapon.EquippedIndex == 4 && run.Weapon.Rounds == 6 && run.Weapon.Reserve == 12,
+            if (!Require(Buy("launcher") == PurchaseResult.Success && run.Weapon.EquippedIndex == 4 && run.Weapon.Rounds == 6 && run.Weapon.Reserve == run.Weapon.Definition.initialReserve,
                 "Buy finite launcher / no premature permanent gate")) yield break;
             var a = pool.RestoreEnemy(center + new Vector3(2, .05f, 0), run.Wagons[1].Doors[0], intro, 1, 0);
             var b = pool.RestoreEnemy(center + new Vector3(2, .05f, .7f), run.Wagons[1].Doors[0], intro, 1, 1);
@@ -62,6 +62,17 @@ namespace WaitYourTurn.Sandbox
             if (!Require(!a.Health.IsAlive && !b.Health.IsAlive && run.Weapon.Rounds == 5 && economy.Wallet.Balance == coins + 2 * intro.reward,
                 "Launcher cluster blast / ammo / two distinct kill rewards")) yield break;
             yield return null; yield return new WaitForSeconds(.4f); economy.RestoreWallet(12000, 0);
+            var originalGun = run.Weapon.Capture(); var emptyGun = run.Weapon.Capture();
+            emptyGun.ammo[4].rounds = emptyGun.ammo[4].reserve = 0;
+            emptyGun.ammo[4].reloadRemaining = -1; emptyGun.ammo[4].shotRemaining = 0;
+            if (!Require(run.Weapon.Restore(emptyGun), "Empty weapon fixture")) yield break;
+            coins = economy.Wallet.Balance;
+            if (!Require(Buy("ammo-launcher") == PurchaseResult.Success && economy.Wallet.Balance == coins - 750 &&
+                run.Weapon.Rounds == 0 && run.Weapon.Reserve == 6 && run.Weapon.Reloading &&
+                !economy.CanApply(economy.Catalog.items.First(i => i.id == "launcher").Product),
+                "Cheap single magazine / normal reload / no full-price owned weapon purchase")) yield break;
+            if (!Require(run.Weapon.Restore(originalGun), "Original ammunition restore")) yield break;
+            economy.RestoreWallet(12000, 0);
             run.Player.GetComponent<PlayerMotor>().Place(center + new Vector3(-2, .05f, 0));
             if (!Require(Buy("mine") == PurchaseResult.Success, "Persistent mine purchase")) yield break;
             run.Weapon.Projectiles.Launch(4, run.Weapon.Muzzle, Vector3.right, 8, run.Player);

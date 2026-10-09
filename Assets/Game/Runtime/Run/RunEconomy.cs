@@ -90,7 +90,9 @@ namespace WaitYourTurn.Run
                 case ShopEffect.RepairWagon:
                     foreach (var door in run.CurrentWagon.Doors) if (door.NeedsRepair) return true;
                     return false;
-                case ShopEffect.Weapon: return (!product.RequiresWeaponUnlock || profile == null || profile.WeaponUnlocked(product.WeaponIndex)) && run.Weapon.CanGrantOrRefill(product.WeaponIndex);
+                case ShopEffect.Weapon: return (product.RefillsOwnedWeapon || !run.Weapon.IsOwned(product.WeaponIndex)) &&
+                    (!product.RequiresWeaponUnlock || profile == null || profile.WeaponUnlocked(product.WeaponIndex)) && run.Weapon.CanGrantOrRefill(product.WeaponIndex);
+                case ShopEffect.Ammo: return run.Weapon.CanBuyMagazine(product.WeaponIndex);
                 case ShopEffect.Turret: return defenses != null && defenses.CanBuy(product.TurretIndex);
                 case ShopEffect.Drone: return drone != null && drone.CanBuy;
                 case ShopEffect.ReinforceDoors: return reinforcement != null && reinforcement.CanUpgrade(product.ReinforcementLevel);
@@ -110,6 +112,7 @@ namespace WaitYourTurn.Run
                     if (repaired) run.Repair.Cancel();
                     return repaired;
                 case ShopEffect.Weapon: return run.Weapon.TryGrantOrRefill(product.WeaponIndex);
+                case ShopEffect.Ammo: return run.Weapon.TryBuyMagazine(product.WeaponIndex);
                 case ShopEffect.Turret: return defenses != null && defenses.TryBuy(product.TurretIndex);
                 case ShopEffect.Drone: return drone != null && drone.TryBuy();
                 case ShopEffect.ReinforceDoors: return reinforcement != null && reinforcement.TryUpgrade(product.ReinforcementLevel);

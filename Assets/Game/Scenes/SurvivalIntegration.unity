@@ -17818,6 +17818,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f10bb5eb11ab45340996193edae15456, type: 2}
   - {fileID: 11400000, guid: a993abf5055939d4ebacd26b2b009a69, type: 2}
   - {fileID: 11400000, guid: 88d4bd5237c6cf245b64ecd023965f2f, type: 2}
+  - {fileID: 11400000, guid: b7ee7741acdf4c42bde256f4ec9b1c18, type: 2}
   firstDelay: 2
   interval: 2
   initialBudgetPerWagon: 8

@@ -1,5 +1,7 @@
 # M5 — Ortak silah ve mermi laboratuvarı
 
+Bu M5 kaydı tarihseldir. 2026-10-09 D46 güncel menzil/başlangıç stoğu, bomba atar hedef tahmini ve Survival şarjör satın alma değerleri [DIFFICULTY_AND_PRICES.md](DIFFICULTY_AND_PRICES.md) içindedir. Aşağıdaki tablo eski M5 kabulünün değerlerini gösterir.
+
 2026-10-08. Beş vagonlu teknik aşama kullanıcı tarafından kabul edildi. `TrainSandbox` aynı evre, kapı, can ve vagon sistemlerini kullanarak genişletilir; mağaza veya turret/dron bu aşamada kurulmaz.
 
 ## Kurulum ve deneme

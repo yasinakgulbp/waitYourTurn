@@ -18,9 +18,9 @@ namespace WaitYourTurn.Editor
             if (!AssetDatabase.IsValidFolder(Folder)) AssetDatabase.CreateFolder("Assets/Game/Content", "Weapons");
             var definitions = new[] {
                 Definition("Pistol", 2, .35f, 10, 8, 1.2f, true, 0, 1, 0, Color.yellow),
-                Definition("SMG", 2, .12f, 10, 24, 1.5f, false, 72, 1, 0, Color.cyan),
-                Definition("Rifle", 5, .28f, 14, 20, 1.8f, false, 60, 1, 0, new Color(1, .5f, .1f)),
-                Definition("Shotgun", 2, .85f, 8, 6, 2, false, 18, 6, 9, new Color(1, .3f, .6f)) };
+                Definition("SMG", 2, .12f, 10, 24, 1.5f, false, 168, 1, 0, Color.cyan),
+                Definition("Rifle", 5, .28f, 14, 20, 1.8f, false, 140, 1, 0, new Color(1, .5f, .1f)),
+                Definition("Shotgun", 2, .85f, 7, 6, 2, false, 42, 6, 9, new Color(1, .3f, .6f)) };
             RunDriver run = Object.FindAnyObjectByType<RunDriver>();
             run.Weapon.ConfigureDefinitions(definitions); EditorUtility.SetDirty(run.Weapon);
             string flashPath = Folder + "/MuzzleFlash.prefab";

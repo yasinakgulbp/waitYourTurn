@@ -24,6 +24,31 @@ namespace WaitYourTurn.Tests
             Assert.That(state.TryFire(2)); state.Tick(100);
             Assert.That(state.Empty); Assert.That(state.Reloading, Is.False); Assert.That(state.TryFire(100), Is.False);
         }
+        [Test] public void PaidMagazineAddsOnlyOneReserveMagazineAndPreservesShotCooldown()
+        {
+            var state = new WeaponState(new WeaponSpec(2, 1, 10, 2, 1, false, 4));
+            state.TryFire(0); state.TryFire(1); state.Tick(2);
+            Assert.That(state.Reserve, Is.EqualTo(2)); Assert.That(state.TryFire(2));
+            Assert.That(state.TryBuyMagazine(2)); Assert.That(state.Reserve, Is.EqualTo(4));
+            Assert.That(state.Rounds, Is.EqualTo(1)); Assert.That(state.TryFire(2), Is.False);
+            Assert.That(state.TryBuyMagazine(2), Is.False);
+        }
+        [Test] public void PaidMagazineRestartsEmptyWeaponReloadWithoutInstantRounds()
+        {
+            var state = new WeaponState(new WeaponSpec(2, .1f, 10, 2, 1, false, 1));
+            state.TryFire(0); state.TryFire(.2f); state.Tick(2); state.TryFire(2); state.Tick(3);
+            Assert.That(state.Empty); Assert.That(state.TryBuyMagazine(10));
+            Assert.That(state.Rounds, Is.Zero); Assert.That(state.Reserve, Is.EqualTo(1));
+            Assert.That(state.TryFire(10), Is.False); state.Tick(11);
+            Assert.That(state.Rounds, Is.EqualTo(1)); Assert.That(state.Reserve, Is.Zero);
+        }
+        [Test] public void PaidMagazineRejectsInfiniteReserveAndInvalidTime()
+        {
+            Assert.That(new WeaponState(WeaponSpec.Pistol).TryBuyMagazine(0), Is.False);
+            var state = new WeaponState(new WeaponSpec(2, .1f, 10, 2, 1, false, 4));
+            state.TryFire(0); state.TryFire(.2f); state.Tick(2);
+            Assert.That(state.TryBuyMagazine(float.NaN), Is.False); Assert.That(state.Reserve, Is.EqualTo(2));
+        }
         [Test] public void InventoryLocksUntilPurchaseAndRefillKeepsFireCooldown()
         {
             HitscanWeapon gun = Gun(); gun.ConfigureDefinitions(new[] { Profile(1), Profile(1) }); gun.ConfigureInventory(true);

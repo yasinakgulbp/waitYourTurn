@@ -18,6 +18,8 @@ namespace WaitYourTurn.Sandbox
         private ShopCatalog displayedCatalog;
         private string[] captions;
         private int[][] groups;
+        private int[] ammoItems;
+        private string[] ammoCaptions;
         private readonly Vector2[] scroll = new Vector2[3];
         private int shownCoins = -1;
         private string money = "";
@@ -34,6 +36,8 @@ namespace WaitYourTurn.Sandbox
             displayedCatalog = economy.Catalog;
             var items = displayedCatalog.items;
             captions = new string[items.Length];
+            ammoItems = new int[economy.Run.Weapon.WeaponCount]; ammoCaptions = new string[ammoItems.Length];
+            for (int i = 0; i < ammoItems.Length; i++) ammoItems[i] = -1;
             var weapons = new List<int>(); var supplies = new List<int>(); var defenses = new List<int>();
             for (int i = 0; i < items.Length; i++)
             {
@@ -41,6 +45,9 @@ namespace WaitYourTurn.Sandbox
                 switch (items[i].effect)
                 {
                     case ShopEffect.Weapon: weapons.Add(i); break;
+                    case ShopEffect.Ammo:
+                        supplies.Add(i); ammoItems[items[i].weaponIndex] = i;
+                        ammoCaptions[items[i].weaponIndex] = "Reload / $ " + items[i].price; break;
                     case ShopEffect.Turret: case ShopEffect.Drone: case ShopEffect.Mine: defenses.Add(i); break;
                     default: supplies.Add(i); break;
                 }
@@ -81,7 +88,7 @@ namespace WaitYourTurn.Sandbox
                     float left = panel.x + 12, right = panel.x + 225, groupWidth = panel.width - 237;
                     float usable = panel.height - 75, suppliesHeight = usable * .52f;
                     DrawGroup(0, "Weapons", new Rect(left, panel.y + 37, 201, usable), 1);
-                    DrawGroup(1, "Health / Doors", new Rect(right, panel.y + 37, groupWidth, suppliesHeight), 2);
+                    DrawGroup(1, "Supplies / Ammo", new Rect(right, panel.y + 37, groupWidth, suppliesHeight), 2);
                     DrawGroup(2, "Defenses", new Rect(right, panel.y + 43 + suppliesHeight, groupWidth, usable - suppliesHeight - 6), 3);
                 }
                 else
@@ -94,6 +101,14 @@ namespace WaitYourTurn.Sandbox
                 GUI.Label(new Rect(panel.x + 12, panel.yMax - 32, panel.width - 24, 30), message, body);
             }
             else input.ModalBlockedScreenArea = default;
+            int equipped = economy.Run.Weapon.EquippedIndex;
+            int ammoItem = ammoItems[equipped];
+            if (survival && !open && ammoItem >= 0 && economy.Run.Weapon.State.Empty)
+            {
+                GUI.enabled = economy.CanApply(displayedCatalog.items[ammoItem].Product) && economy.Wallet.Available >= displayedCatalog.items[ammoItem].price;
+                if (GUI.Button(new Rect(Mathf.Max(300, width * .5f - 88), height - 99, 176, 35), ammoCaptions[equipped], card))
+                    economy.Buy(ammoItem, economy.Context, economy.NextRequest());
+            }
             GUI.enabled = true; GUI.matrix = old;
         }
         private void DrawGroup(int group, string heading, Rect area, int columns)

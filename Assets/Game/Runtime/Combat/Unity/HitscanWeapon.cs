@@ -66,6 +66,9 @@ namespace WaitYourTurn.Combat
         public void ConfigureInventory(bool onlyPistol) { startingWeaponOnly = onlyPistol; ResetWeapon(); }
         public bool CanGrantOrRefill(int index) => index > 0 && index < WeaponCount && !firing &&
             (!IsOwned(index) || StateAt(index).NeedsRefill);
+        public bool CanBuyMagazine(int index) => !firing && index > 0 && index < WeaponCount && IsOwned(index) && StateAt(index).CanBuyMagazine;
+        public bool TryBuyMagazine(int index) => CanBuyMagazine(index) && !Paused && Time.timeScale > 0 &&
+            owner != null && owner.IsAlive && StateAt(index).TryBuyMagazine(Time.time);
         public bool TryGrantOrRefill(int index)
         {
             if (!CanGrantOrRefill(index) || Paused || Time.timeScale <= 0 || owner == null || !owner.IsAlive) return false;
@@ -127,6 +130,24 @@ namespace WaitYourTurn.Combat
             return delta.sqrMagnitude <= Range * Range && resolver.Cast(Muzzle, delta.normalized,
                 delta.magnitude + .2f, hitMask, owner, out RaycastHit hit) && hit.collider != null &&
                 hit.collider.GetComponentInParent<HealthComponent>() == target;
+        }
+        public Vector3 AimDirectionFor(HealthComponent target, Vector3 velocity)
+        {
+            Vector3 direct = target.transform.position + Vector3.up * .85f - Muzzle;
+            if (Definition == null || Definition.delivery != ShotDelivery.Grenade || !Definition.ValidDelivery ||
+                !ProjectileAim.TryLead(direct, velocity, Definition.projectileSpeed, Range, out var lead)) return direct;
+            // A predicted point must not redirect the shot through door metal or a window post.
+            if (resolver.Sweep(Muzzle, lead.normalized, lead.magnitude, Definition.projectileRadius, hitMask, owner, out var hit))
+            {
+                var body = hit.collider != null ? hit.collider.GetComponentInParent<HealthComponent>() : null;
+                if (body == null || body.Team == Team.Neutral) return direct;
+            }
+            return lead;
+        }
+        public bool TryFireAt(HealthComponent target, Vector3 velocity)
+        {
+            if (Paused || Time.timeScale <= 0 || Time.time < nextTrigger || !HitscanResolver.Hostile(owner, target)) return false;
+            return TryFire(AimDirectionFor(target, velocity));
         }
         public bool TryFire(Vector3 direction)
         {
