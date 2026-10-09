@@ -1,6 +1,6 @@
-2026-10-09T20:44:29.1000491Z
+2026-10-09T21:33:45.3982833Z
 PASS: unchanged movement collider/agent/obstacle geometry and nav asset; narrower shot apertures match art.
-Train rendered triangles: 30364; geometry renderers before: 54, after: 39.
+Train rendered triangles: 24660; geometry renderers before: 39, after: 39.
 Shared atlas albedo2048 ASTC6x6; normal1024 ASTC6x6; packed metal/smooth512 ASTC8x8. Mipmaps; Read/Write disabled.
 Three bodies, shared door pair15 instances, two open gangways, closed non-gameplay control room. No lights, probes or navigation added.
 Battle scene untouched. Device FPS/thermal acceptance remains pending.

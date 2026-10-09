@@ -1,23 +1,23 @@
 {
   "Wagon6": {
-    "vertices": 16442,
-    "triangles": 7708
+    "vertices": 12336,
+    "triangles": 5828
   },
   "Wagon6Glass": {
     "vertices": 96,
     "triangles": 48
   },
   "Wagon5": {
-    "vertices": 16286,
-    "triangles": 7640
+    "vertices": 12180,
+    "triangles": 5760
   },
   "Wagon5Glass": {
     "vertices": 120,
     "triangles": 60
   },
   "Wagon4": {
-    "vertices": 15938,
-    "triangles": 7484
+    "vertices": 11832,
+    "triangles": 5604
   },
   "Wagon4Glass": {
     "vertices": 144,
@@ -32,8 +32,8 @@
     "triangles": 12
   },
   "Connector": {
-    "vertices": 2400,
-    "triangles": 1100
+    "vertices": 2328,
+    "triangles": 1068
   },
   "Locomotive": {
     "vertices": 2112,

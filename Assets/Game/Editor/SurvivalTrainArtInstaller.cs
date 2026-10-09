@@ -74,6 +74,18 @@ namespace WaitYourTurn.Editor
 
             RenderSettings.defaultReflectionMode = DefaultReflectionMode.Custom; RenderSettings.customReflectionTexture = Reflection();
             RenderSettings.reflectionIntensity = .75f;
+            // Reuse the one existing directional light; no extra realtime lights/shadows.
+            var key = UnityEngine.Object.FindObjectsByType<Light>()
+                .Single(l => l.type == LightType.Directional);
+            Undo.RecordObject(key,"Tune train key light"); Undo.RecordObject(key.transform,"Tune train light angle");
+            key.intensity = 1.15f; key.color = new Color(.94f,.96f,1f); key.shadows = LightShadows.None;
+            key.transform.rotation = Quaternion.Euler(58,-35,0);
+            RenderSettings.ambientMode = AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(.24f,.29f,.36f);
+            RenderSettings.ambientEquatorColor = new Color(.13f,.16f,.20f);
+            RenderSettings.ambientGroundColor = new Color(.055f,.065f,.08f);
+            var view = Camera.main; Undo.RecordObject(view,"Improve train depth precision");
+            view.nearClipPlane = .5f;
             // A small static environment texture, not a realtime reflection probe/light.
             if (GeometryKey(parent) != before || surface.navMeshData != nav ||
                 AssetDatabase.GetAssetDependencyHash(AssetDatabase.GetAssetPath(nav)).ToString() != navKey)
@@ -106,7 +118,13 @@ namespace WaitYourTurn.Editor
             mesh.RecalculateBounds();mesh.RecalculateTangents(); MeshUtility.Optimize(mesh);
             string path=Folder+"/Meshes/"+p.name+".asset";var old=AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if(old==null) AssetDatabase.CreateAsset(mesh,path);
-            else { EditorUtility.CopySerialized(mesh,old); UnityEngine.Object.DestroyImmediate(mesh); mesh=old; EditorUtility.SetDirty(mesh); }
+            else
+            {
+                // Serialized copying alone can retain an old renderer GPU buffer when
+                // the new mesh has fewer vertices. Invalidate it before replacing data.
+                old.Clear(); EditorUtility.CopySerialized(mesh,old); old.MarkModified();
+                UnityEngine.Object.DestroyImmediate(mesh); mesh=old; EditorUtility.SetDirty(mesh);
+            }
             // Installation counts triangles, then finalizes all meshes with Read/Write disabled.
             return mesh;
         }
@@ -125,8 +143,8 @@ namespace WaitYourTurn.Editor
         {
             var m=Mat("WornMetroSteel","Standard"); m.color=Color.white;m.mainTexture=Texture("TrainAtlas_Albedo.jpg",2048,TextureImporterType.Default,TextureImporterFormat.ASTC_6x6);
             m.SetTexture("_MetallicGlossMap",Texture("TrainAtlas_MetalSmooth.png",512,TextureImporterType.Default,TextureImporterFormat.ASTC_8x8));m.EnableKeyword("_METALLICGLOSSMAP");
-            m.SetTexture("_BumpMap",Texture("TrainAtlas_Normal.png",1024,TextureImporterType.NormalMap,TextureImporterFormat.ASTC_6x6));m.SetFloat("_BumpScale",.4f);m.EnableKeyword("_NORMALMAP");
-            m.SetFloat("_GlossMapScale",.65f);m.enableInstancing=true;EditorUtility.SetDirty(m);return m;
+            m.SetTexture("_BumpMap",Texture("TrainAtlas_Normal.png",1024,TextureImporterType.NormalMap,TextureImporterFormat.ASTC_6x6));m.SetFloat("_BumpScale",.2f);m.EnableKeyword("_NORMALMAP");
+            m.SetFloat("_GlossMapScale",.85f);m.enableInstancing=true;EditorUtility.SetDirty(m);return m;
         }
         private static Material Glass(string name,Color color)
         { var m=Mat(name,"WaitYourTurn/TrainGlass");m.color=color;m.enableInstancing=true;EditorUtility.SetDirty(m);return m; }

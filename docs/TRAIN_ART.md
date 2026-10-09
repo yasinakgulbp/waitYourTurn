@@ -1,17 +1,25 @@
 # Survival tren sanatı — D47, 2026-10-09
 
+## D48 görünüm ve titreme düzeltmesi — 2026-10-10
+
+Kullanıcı oyun içi görünümü yeterli bulmadı; Blender önizlemesi nihai görünüm kabulü değildir. Körükteki titreme fizik hareketinden değil, vagon/körük zeminlerinin ve uç dikme/yan yüzeylerinin aynı düzlemde örtüşmesinden kaynaklanabilecek somut bir geometri hatası içeriyordu. Görsel körük artık yalnız 1 m boşluğu doldurur; 1,4 m fizik/nav zemini güvenli bindirmesiyle korunur. Dört birleşimin dışa bakan eksen hizalı yüzeyleri için pozitif coplanar örtüşme kontrolü mesh önkontrolüne eklendi. Ana gövde zaten tek mesh; ayrı kalan parçalar cam, portal durumunu izleyen kapı yaprakları ve iki körüktür.
+
+36 tekrarlı parlak zemin karosu ve ince üst seam geometrisi yerine bir sürekli güverte kullanılır. Sarı/bej paneller nötr çeliğe döner; normal kabartma ve zemin parlaklığı azalır. Mevcut tek gölgesiz yönlü ışık yeniden ayarlanır, düşük ambient trilight ve statik cubemap kullanılır; ek realtime ışık/gölge/postprocess yoktur. Kamera near clip 0,1 → 0,5 m; far clip160 m kalır. Mesh yeniden kurulumunda eski GPU tamponu önce temizlenir; daha küçük mesh verisinde eski tamponun tutulup yüzeylerin yanlış çizilmesi önlenir. Mobil kabul ayrıca yapılır; görsel kalite kullanıcı oyun içi değerlendirmesiyle ilerler.
+
+D48 kısa PC kabulü geçti: 15 kapı/cam/metal/onarım, 15 yan cam ve iki körükten fiziksel yürüyüş. Güncel oyun/körük görüntüleri `docs/generated/survival-train-game.png` ve `survival-train-bridge-rear/front.png`; yeni offline kanıt `survival-train-mesh-preflight.txt`. Kontrol sonrasında Console hata/uyarı sayısı0. Bu kısa kontrol kullanıcının bütün kamera hareketlerindeki görsel değerlendirmesinin veya Android FPS ölçümünün yerine geçmez.
+
 ## Teslim durumu
 
 İlk sarı çizgili taslak kullanıcı tarafından reddedildi. Blokout yalnız ölçü referansıdır. Yeni tasarım kullanıcının metro görselindeki kırmızı kapı, kirli bej iç panel, koyu dış metal, basık cam ve yuvarlak kenar dilini esas alır.
 
-**Kullanıcının önizleme sonrası isteğiyle SurvivalIntegration sahnesine kuruldu; kısa Unity Play kabulü geçti.** Blender renderi gerçek `.blend` modelinden üretildi; güncel oyun görüntüsü `docs/generated/survival-train-game.png` içindedir. İç dekor/karakter/VFX ve son ışıklandırma bu gövde tesliminin dışında kalır. Kullanıcı ilk denemeyi kabul etti; sarımsı pencere panelleri ve referanstan farklı zemin sonraki görsel düzeltme notlarıdır.
+**Kullanıcının önizleme sonrası isteğiyle SurvivalIntegration sahnesine kuruldu; kısa Unity Play kabulü geçti.** Blender renderi gerçek `.blend` modelinden üretildi; güncel oyun görüntüsü `docs/generated/survival-train-game.png` içindedir. İç dekor/karakter/VFX ve son ışıklandırma bu gövde tesliminin dışında kalır. D48 oyun içi görünüm düzeltmesi yukarıda kayıtlıdır; ilk önizleme onayı nihai kalite onayı sayılmaz.
 
 | Dosya | Kullanım |
 | --- | --- |
 | `ArtSource/SurvivalTrain/SurvivalTrain.blend` | Düzenlenebilir, dokuları paketli kaynak |
 | `ArtSource/SurvivalTrain/SurvivalTrain.fbx` | Gövde/cam/yaprak/körük parça aktarımı; Assets dışında, ikinci otomatik Blender importu yok |
 | `ArtSource/SurvivalTrain/train-preview.png` | Blender renderi |
-| `ArtSource/SurvivalTrain/TrainAtlas_Albedo_Source.png` | Imagegen ile referans malzeme dilinden üretilmiş 4×4 atlas;1254×1254, çalışma JPEG'i aynı çözünürlükte |
+| `ArtSource/SurvivalTrain/TrainAtlas_Albedo_Source.png` | İlk D47 atlası; D48 güncel nötr çelik/sakin zemin kaynağı `TrainAtlas_Albedo_V3.png`, üretim promptları aynı klasörde |
 | `Assets/Game/Art/SurvivalTrain/SourceData/TrainMeshes.json` | Yalnız Editor kurulumu okur; runtime/Resources referansı yok |
 
 ## Ölçüler ve mekanik bağ
@@ -36,7 +44,7 @@ Kurucu görünen metal için atış kutularını eşler; **bu kısım yalnız ko
 
 ## Mobil bütçe ve doğrulama
 
-Tam üç vagon +15 kapı +iki körük +lokomotif **30.364 üçgen**;10 benzersiz mesh, her biri UInt16 sınırının altında. Kapılar/körükler mesh paylaşır. Opak parçalar aynı atlas/materiali paylaşır; cam ayrı hafif tek pass shaderdır. Yeni gerçek ışık, realtime reflection probe, postprocess veya minimap kamerası eklenmez. Blender sunum ışıkları/zemini gameplay'e aktarılmaz.
+Tam üç vagon +15 kapı +iki körük +lokomotif **24.660 üçgen**;10 benzersiz mesh, her biri UInt16 sınırının altında. Kapılar/körükler mesh paylaşır. Opak parçalar aynı atlas/materiali paylaşır; cam ayrı hafif tek pass shaderdır. Yeni gerçek ışık, realtime reflection probe, postprocess veya minimap kamerası eklenmez. Blender sunum ışıkları/zemini gameplay'e aktarılmaz.
 
 Kurulum ayarları: albedo2048 ASTC6×6, normal1024 ASTC6×6, metal/smooth512 ASTC8×8, mipmap; CPU Read/Write kapalı. ASTC destekli cihazda üç atlasın teorik GPU karşılığı yaklaşık3,2 MB'dır; toplam uygulama belleği/build boyutu değildir. JPEG disk boyutunu düşürür; GPU tasarrufu Android import sıkıştırmasıyla sağlanır. Yardımcı normal haritası ince kabartma içindir, fotoğraf detaylarının tam normal bake'i değildir.
 

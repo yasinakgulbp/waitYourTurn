@@ -111,7 +111,7 @@ def sidewall(a,b,sign,group):
         box('Corner ventilation',(mid,.4,z+sign*.097),(max(.3,b-a-.25),.42,.016),5,.003,group)
         box('Transit stencil',(mid,1.14,z-sign*.103),(.85,.30,.012),15,.002,group)
     else:
-        skin=lambda f:9 if f.normal.y*sign<-.2 else 1
+        skin=lambda f:9 if f.normal.y*sign<-.2 else 0
         for x in (a+.21,b-.21):box('Window wide border',(x,1.05,z),(.42,2.1,.18),skin,.018,group)
         usable=b-a-.84;panes=math.ceil((usable+.32)/(2.2+.32));width=(usable-(panes-1)*.32)/panes
         for i in range(panes):
@@ -129,10 +129,8 @@ def sidewall(a,b,sign,group):
     for y in (.11,.23,.35,.47):box('Exterior lower fluting',(mid,y,z+sign*.098),(b-a,.024,.025),6,.005,group)
 def wagon(count,open_left,open_right):
     group='Wagon'+str(count)
-    for i in range(12):
-        for j in range(3):box('Anti-slip floor plate',(-5.5+i,-.055,(j-1)*1.394),(.993,.11,1.389),4,.003,group)
-    for z in (-.7,.7):box('Floor longitudinal service seam',(0,.004,z),(11.8,.008,.035),6,.001,group)
-    for x in (-4.5,-2.5,-.5,1.5,3.5):box('Floor transverse plate seam',(x,.005,0),(.025,.01,4.05),6,.001,group)
+    # One quiet continuous deck: no 36 repeated metallic tiles or raised seam strips.
+    box('Continuous anti-slip deck',(0,-.055,0),(12,.11,4.2),4,0,group)
     box('Underframe',(0,-.32,0),(11.7,.42,3.9),2,.05,group)
     for x in (-3.95,3.95):
         box('Bogie frame',(x,-.55,0),(1.8,.25,3.6),5,.025,group)
@@ -170,13 +168,15 @@ box('Door clear upper glazing',(0,1.2,0),(1.19,.96,.025),11,0,'DoorGlass')
 # The metal seam starts at .95m, above the usual .85-.90m combat line.
 # Its shot collider is authored explicitly by the Unity installer.
 
-box('Gangway treadplate',(0,-.065,0),(1.4,.13,3.2),4,.015,'Connector')
+# The 1m visible bridge only fills the gap. Gameplay bridge remains 1.4m for
+# safe nav overlap, but art must NOT overlap the coplanar wagon deck/jambs.
+box('Gangway treadplate',(0,-.065,0),(1,.13,3.2),4,0,'Connector')
 for s in (-1,1):
-    box('Gangway side base',(0,.55,s*1.6),(1.4,1.1,.2),2,.025,'Connector')
+    box('Gangway side base',(0,.55,s*1.6),(1,1.1,.2),2,.025,'Connector')
     for i in range(10):
-        x=-.63+i*.14
+        x=-.45+i*.1
         box('Bellows pleat',(x,.56,s*1.735),(.055,1.08,.18),12,.01,'Connector')
-    box('Gangway metal rail',(0,1.075,s*1.6),(1.4,.05,.21),6,.015,'Connector')
+    box('Gangway metal rail',(0,1.135,s*1.6),(1,.07,.21),6,.015,'Connector')
 # No cross-bar/door or roof across the 3m passage.
 box('Automated cab',(0,1,0),(8,2,4.2),9,.17,'Locomotive')
 box('Closed curved roof',(0,2.15,0),(8.04,.3,4.24),0,.065,'Locomotive')

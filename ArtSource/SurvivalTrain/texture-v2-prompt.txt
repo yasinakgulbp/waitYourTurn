@@ -1,0 +1,3 @@
+Built-in imagegen, precise-object-edit; source: TrainAtlas_Albedo_Source.png
+Prompt: Preserve exact equal 4x4 atlas grid, no gaps. Replace beige/yellow panel cells with neutral brushed medium grey steel; cool silver trim, dark graphite exterior. Floor cell row2 col1: low contrast fine stipple anti slip graphite, no bright diamond checker or panel lines. Preserve deep red door cells, dark rubber/vents and AUTOMATED TRANSIT text. Flat unlit PBR base color; no baked lighting/perspective/reflections. Restrained edge grime. No new objects.
+Output: TrainAtlas_Albedo_V2.png; runtime conversion by Tools/TrainArt/build_textures.py. Original source retained.

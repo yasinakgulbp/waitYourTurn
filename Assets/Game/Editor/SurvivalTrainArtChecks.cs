@@ -84,6 +84,8 @@ namespace WaitYourTurn.Editor
                     motor.Place(new Vector3(x-1.5f,.05f,0)); motor.SetWorldMove(Vector3.right);
                     yield return new WaitForSeconds(1.1f); motor.SetWorldMove(Vector3.zero);
                     Require(run.Player.transform.position.x>x+1, "Physical open gangway " + x);
+                    yield return new WaitForEndOfFrame();
+                    ScreenCapture.CaptureScreenshot("docs/generated/survival-train-bridge-"+(x<10?"rear":"front")+".png");
                 }
                 motor.Configure(run.Player.GetComponent<MoveInput>(),run.Player,Camera.main);
                 run.Restart();

@@ -1,5 +1,9 @@
 # Karar kaydı
 
+## 2026-10-10 — D48: oyun içi tren görünümü ve yüzey kararlılığı
+
+Kullanıcı D47'nin oyun içi dokusunu/zeminini ve kamera hareketinde özellikle körükte görünen titremeyi kabul etmedi. Görünüm için sarımsı iç panel yerine nötr çelik, sakin koyu güverte ve daha okunur metal ışığı hedeflenir. Ana gövde zaten tek mesh; körük-vagon arasında aynı düzlemde örtüşen görsel yüzeyler kaldırılır. Fizik/nav güvenli bindirmesi korunur. Mevcut tek gölgesiz yönlü ışık ayarlanır, ek ışık/gölge/DOF yoktur. Kaynak .blend/atlas ve yeniden kurulum kodu birlikte güncellenir. Dört birleşimde coplanar art örtüşme kontrolü mesh preflight'e eklendi. Yeni tren24.660 üçgen;39 renderer. Kullanıcı görünüm kabulü ve Android ölçümü ayrıca gereklidir; referans atmosferi tamamlanmış sayılmaz.
+
 ## 2026-10-09 — D47: referansa dayalı tren sanatı
 
 **Devam / güncel durum:** Kullanıcı Blender önizlemesinden sonra ilk tasarımı Survival'a giydirmemizi istedi. Kurulum yapıldı; 15 kapı/cam/metal ve iki körük için kısa PC kabulü PASS. Hareket/nav kaynağı aynı; Battle sahnesi değişmedi. Sarımsı pencere panelleri ve zemin sonraki görsel düzeltmeler için not edildi. Android FPS/termal/pil ölçümü henüz yok. Aşağıdaki önizleme bekleme notu önceki teslim anının kaydıdır.

@@ -30,4 +30,40 @@ total += 15*(stats['DoorLower']['triangles'] + stats['DoorGlass']['triangles'])
 total += 2*stats['Connector']['triangles'] + stats['Locomotive']['triangles']
 assert total <= 35000, total
 print(f'PASS: 10 mesh parts; valid finite UV/indices/normals/winding; UInt16 vertices; {total} rendered triangles.')
+# Regression for visible depth fighting at the actual wagon/bridge joints.
+# Compare same-facing axis-aligned surfaces; touching edges and opposite-facing
+# seam caps are harmless, positive projected overlap on one plane is not.
+def flat_triangles(name, offset=0):
+    p=parts[name]; v=np.array(p['vertices']).reshape(-1,3)+[offset,0,0]
+    t=v[np.array(p['triangles']).reshape(-1,3)]
+    n=np.cross(t[:,1]-t[:,0],t[:,2]-t[:,0]);n/=np.linalg.norm(n,axis=1)[:,None]
+    return t,n
+
+def overlap_area(a,b):
+    def cross(v,w):return v[0]*w[1]-v[1]*w[0]
+    if cross(b[1]-b[0],b[2]-b[0])<0:b=b[::-1]
+    polygon=list(a)
+    for start,end in zip(b,np.roll(b,-1,axis=0)):
+        if not polygon:return 0
+        output=[];previous=polygon[-1];dp=cross(end-start,previous-start)
+        for current in polygon:
+            dc=cross(end-start,current-start)
+            if (dc>=-1e-9)!=(dp>=-1e-9):output.append(previous+(current-previous)*dp/(dp-dc))
+            if dc>=-1e-9:output.append(current)
+            previous,dp=current,dc
+        polygon=output
+    return abs(sum(cross(polygon[i],polygon[(i+1)%len(polygon)]) for i in range(len(polygon))))*.5
+
+for wagon,offset,bridge in [('Wagon6',0,6.5),('Wagon5',13,6.5),('Wagon5',13,19.5),('Wagon4',26,19.5)]:
+    deck,dn=flat_triangles(wagon,offset); connector,cn=flat_triangles('Connector',bridge)
+    for face,normal in zip(connector,cn):
+        axis=np.argmax(abs(normal))
+        if abs(normal[axis])<.99999:continue
+        axes=[i for i in range(3) if i!=axis]; a=face[:,axes]
+        candidates=(dn@normal>.99999)&(abs(deck[:,:,axis]-face[0,axis]).max(axis=1)<1e-5)
+        for target in deck[candidates]:
+            b=target[:,axes]
+            if (np.minimum(a.max(axis=0),b.max(axis=0))-np.maximum(a.min(axis=0),b.min(axis=0))<=1e-6).any():continue
+            assert overlap_area(a,b)<1e-7,f'{wagon} / Connector at {bridge}: visible coplanar overlap'
+print('PASS: no same-facing coplanar bridge/deck/jamb overlap at all four art joints.')
 print('Unity shot/portal/navigation and Android performance checks remain pending installation.')

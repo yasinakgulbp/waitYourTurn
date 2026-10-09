@@ -50,14 +50,8 @@ for index, color in enumerate(colors):
                 d.ellipse((x-3,y-3,x+2,y+2),fill=(155,157,148))
                 h.ellipse((x-4,y-4,x+4,y+4),fill=200)
     if index == 4:
-        # Fine treadplate plus worn panel borders; geometry stays flat.
-        for y in range(12,512,23):
-            for x in range(12,512,23):
-                a = x+(11 if (y//23)%2 else 0)
-                d.line((a,y,a+8,y+5),fill=(105,111,108),width=2)
-                d.line((a,y+3,a+8,y+8),fill=(39,46,47),width=2)
-                h.line((a,y,a+8,y+5),fill=171,width=3)
-        d.rectangle((2,2,509,509),outline=(26,32,34),width=4)
+        # Broad quiet roughness, no sharp normal-map checker sparkle on the deck.
+        hi = Image.new('L',(TILE,TILE),128)
     if index in (5,12):
         for y in range(9,512,15):
             d.rectangle((9,y,502,y+6),fill=(13,18,20)); d.line((9,y+7,502,y+7),fill=(78,86,86),width=2)
@@ -80,7 +74,7 @@ for index, color in enumerate(colors):
         d.text((42,145),'AUTOMATED',font=font,fill=(38,43,43))
         d.text((115,213),'TRANSIT',font=font,fill=(38,43,43))
         d.line((40,298,470,298),fill=(134,42,34),width=15)
-    smooth = {2:50,4:80,5:60,6:185,7:65,10:160,12:65}.get(index,110)
+    smooth = {0:145,2:50,4:35,5:60,6:185,7:65,9:110,10:160,12:65}.get(index,110)
     metal = {1:95,2:0,3:55,7:30,8:50,10:30,11:0,13:0,14:0}.get(index,175)
     mask = Image.new('RGBA',(TILE,TILE),(metal,0,0,smooth))
     px,py = (index%4)*TILE,(index//4)*TILE
@@ -91,7 +85,9 @@ hh=np.asarray(height.filter(ImageFilter.GaussianBlur(.65)),dtype=np.float32)/255
 gy,gx=np.gradient(hh); normal=np.dstack((-gx*3,-gy*3,np.ones_like(hh)))
 normal/=np.linalg.norm(normal,axis=2,keepdims=True)
 normal=np.clip((normal*.5+.5)*255,0,255).astype('uint8')
-source = ROOT/'ArtSource/SurvivalTrain/TrainAtlas_Albedo_Source.png'
+source = ROOT/'ArtSource/SurvivalTrain/TrainAtlas_Albedo_V3.png'
+if not source.exists(): source = ROOT/'ArtSource/SurvivalTrain/TrainAtlas_Albedo_V2.png'
+if not source.exists(): source = ROOT/'ArtSource/SurvivalTrain/TrainAtlas_Albedo_Source.png'
 if source.exists():
     albedo = Image.open(source).convert('RGB')
 albedo.save(OUT/'TrainAtlas_Albedo.jpg',quality=93,subsampling=0,optimize=True)

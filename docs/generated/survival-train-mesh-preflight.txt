@@ -1,0 +1,3 @@
+PASS: 10 mesh parts; valid finite UV/indices/normals/winding; UInt16 vertices; 24660 rendered triangles.
+PASS: no same-facing coplanar bridge/deck/jamb overlap at all four art joints.
+Unity shot/portal/navigation and Android performance checks remain pending installation.

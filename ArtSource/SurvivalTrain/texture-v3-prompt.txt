@@ -1,0 +1,3 @@
+Built-in imagegen precise-object-edit, second edit input TrainAtlas_Albedo_V2.png.
+Preserve 4x4 atlas layout and other fifteen cells. Replace ONLY row2 col1 floor with almost plain dark charcoal brushed antislip steel, very low contrast fine grain, flat matte, subtle worn smudges. No visible dots, circular studs, diamonds, highlights, borders, grid, bolts or baked lighting. Square atlas.
+Final output TrainAtlas_Albedo_V3.png; runtime conversion Tools/TrainArt/build_textures.py. Sources retained.
