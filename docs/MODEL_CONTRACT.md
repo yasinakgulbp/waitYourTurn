@@ -1,5 +1,7 @@
 # Model üretimi ve oyuna bağlama sözleşmesi
 
+**D47 Survival sanat varyantı:** Blender gövde kaynağı/gerçek renderi hazır; kullanıcı önce tasarımı görmek istediğinden Unity kurulumu bekler. Yeni yan cam Y=0,75…1,55, kapı alt yaprağı0,72 m; kırmızı yaprak çerçeveleri için ayrı eşlenmiş atış kutuları hazırlanır. Bu yeni kotlar yalnız üç vagon Survival varyantına aittir; aşağıdaki eski Battle/blokout kotları bu modelin cam yüksekliği için kullanılmaz. Kesin parça ölçüleri, kaynaklar ve aktarım durumu [TRAIN_ART.md](TRAIN_ART.md) içinde. Mevcut Survival CSV'si kurulum yapılınca yeniden üretilir; henüz yeni sanat ölçüsüymüş gibi okunmaz.
+
 **D39 — 2026-10-09 Solo bağlantısı:** 12 × 4,2 m dış gövde ve yan kapı/cam ölçüleri korunur. Komşu vagon uçlarında merkezde geçit, 1 m boşlukta sabit zemin ve ayrı manuel kapı vardır. Battle'da bu kapılar kapalıdır; Solo'da satın alınıp açılır. İç kapı dış savunma kapısı değildir. Güncel [geçit ölçü CSV'si](generated/solo-passage-dimensions.csv) aşağıdaki tabloyla birlikte kullanılır; PC kabulü cihaz kabulünün yerine geçmez. İlk tek-vagon sanat örneği bu ölçülerle hazırlanabilir, bütün uç modellerinin üretimi kullanıcı görünüm kabulünden sonra genişletilir.
 
 ## Solo ara bağlantı ölçüleri

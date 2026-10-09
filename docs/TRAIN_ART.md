@@ -1,0 +1,51 @@
+# Survival tren sanatı — D47, 2026-10-09
+
+## Teslim durumu
+
+İlk sarı çizgili taslak kullanıcı tarafından reddedildi. Blokout yalnız ölçü referansıdır. Yeni tasarım kullanıcının metro görselindeki kırmızı kapı, kirli bej iç panel, koyu dış metal, basık cam ve yuvarlak kenar dilini esas alır.
+
+**Blender önizlemesi hazır; Unity sahnesine henüz kurulmadı.** Kullanıcı önce Blender tasarımını görmek istedi. Render gerçek `.blend` modelinden üretildi; oyun ekranı veya cihaz performans kanıtı değildir. İç dekor/karakter/VFX ve son ışıklandırma bu gövde tesliminin dışında kalır.
+
+| Dosya | Kullanım |
+| --- | --- |
+| `ArtSource/SurvivalTrain/SurvivalTrain.blend` | Düzenlenebilir, dokuları paketli kaynak |
+| `ArtSource/SurvivalTrain/SurvivalTrain.fbx` | Gövde/cam/yaprak/körük parça aktarımı; Assets dışında, ikinci otomatik Blender importu yok |
+| `ArtSource/SurvivalTrain/train-preview.png` | Blender renderi |
+| `ArtSource/SurvivalTrain/TrainAtlas_Albedo_Source.png` | Imagegen ile referans malzeme dilinden üretilmiş 4×4 atlas;1254×1254, çalışma JPEG'i aynı çözünürlükte |
+| `Assets/Game/Art/SurvivalTrain/SourceData/TrainMeshes.json` | Yalnız Editor kurulumu okur; runtime/Resources referansı yok |
+
+## Ölçüler ve mekanik bağ
+
+Bir birim bir metre. Unity +X baş, +Y yukarı, +Z çapraz; Blender eşlemesi `(X, -Z, Y)`. Vagon pivotları X=0/13/26; gövde12×4,2 m, üst duvar kotu2,1 m, kapı düzenleri6/5/4. Lokomotif X=37, kapalı oynanış dışı kontrol odasıdır. Körükler X=6,5/19,5; net3 m açık geçit, karşıdan karşıya kapı/tavan/koltuk konulmaz.
+
+Gövde, cam, hareketli kapı yaprakları ve körük ayrı meshlerdir. Modellerde yeni Rigidbody/Agent/Health veya hareket scripti yoktur. Mevcut hareket colliderları, kimlikler, can, portal, turret slotu ve NavMesh veri kaynağı korunur.
+
+**Yeni Survival sanatının atış ölçüsü:**
+
+| Parça | Yerel ölçü |
+| --- | --- |
+| Yan cam | Y=0,75…1,55; yükseklik0,8 m, eski yatay açıklıklar korunur |
+| Dikey pencere metali | Ara dikme0,32 m; yan çerçeve0,42 m |
+| Kapı alt yaprağı | Y=0…0,72, genişlik1,45 m |
+| Kapı yan yaprakları | X=±0,66; genişlik0,13; Y=0,72…2,0 |
+| Kapı üst yaprağı | Y=1,68…2,0; genişlik1,45 |
+| Kapı orta metal dikişi | Genişlik0,035; Y=0,95…1,93; normal0,85–0,90 m atış çizgisinin üstünde başlar |
+| Sabit kapı üst çerçevesi | Y=2,0…2,1, kırılmada gövdede kalır |
+
+Kurucu görünen metal için atış kutularını eşler; **bu kısım yalnız kozmetik değişim değildir**. Cam rayı geçirir, metal keser. Yeni yaprak kutuları `Lower panel` altında kapıyla açılır/kapanır; NavMesh buildine katılmaz. `TrainDoorVisual` yalnız portal görünümünü takip eder. Battle sahnesi/layout'u değişmez. Kurulumdan sonra Survival ölçü CSV'si yeniden üretilir; yukarıdaki kotlar yalnız bu sanatın Survival düzeni için genel sözleşmenin eski kotlarını geçersiz kılar.
+
+## Mobil bütçe ve doğrulama
+
+Tam üç vagon +15 kapı +iki körük +lokomotif **30.364 üçgen**;10 benzersiz mesh, her biri UInt16 sınırının altında. Kapılar/körükler mesh paylaşır. Opak parçalar aynı atlas/materiali paylaşır; cam ayrı hafif tek pass shaderdır. Yeni gerçek ışık, realtime reflection probe, postprocess veya minimap kamerası eklenmez. Blender sunum ışıkları/zemini gameplay'e aktarılmaz.
+
+Kurulum ayarları: albedo2048 ASTC6×6, normal1024 ASTC6×6, metal/smooth512 ASTC8×8, mipmap; CPU Read/Write kapalı. ASTC destekli cihazda üç atlasın teorik GPU karşılığı yaklaşık3,2 MB'dır; toplam uygulama belleği/build boyutu değildir. JPEG disk boyutunu düşürür; GPU tasarrufu Android import sıkıştırmasıyla sağlanır. Yardımcı normal haritası ince kabartma içindir, fotoğraf detaylarının tam normal bake'i değildir.
+
+Blender üretimi, mesh indeks/UV/normal/yüz yönü/UInt16 önkontrolü ve Editor kodunun Unity6.6 referanslarıyla Roslyn derlemesi geçti. **Unity shader importu, Play/atış/kapı/geçit ve cihaz kontrolü bekliyor.** Eski blokout A54 FPS sonucu bu sanata taşınmaz; yeni FPS/ısınma/pil sonucu henüz yok.
+
+## Yeniden üretim ve kurulum
+
+1. `python Tools/TrainArt/build_textures.py`: kaynak PNG'yi koruyarak JPEG ve yardımcı haritaları üretir.
+2. `blender --background --factory-startup --python Tools/TrainArt/build_train.py`: kaynak, FBX, mesh JSON ve render üretir. `-- --no-render` renderi atlar.
+3. `python Tools/TrainArt/check_meshes.py`: on parça, indeks/UV/normal/yüz yönü, UInt16 ve35k tam tren sınırı.
+4. Play durdurulmuş `SurvivalIntegration`: **Wait Your Turn → Survival → Install Textured Train Art** (Ctrl+Alt+L). Battle ve yanlış vagon sayısını reddeder; yeni sanat köklerini tekrar kurabilir.
+5. Kurulum hareket/nav değişmemiş kontrolünü ve `docs/generated/survival-train-art-install.txt` kaydını üretir. Kurulum yapılmadan bu kayıt/kabul var sayılmaz.

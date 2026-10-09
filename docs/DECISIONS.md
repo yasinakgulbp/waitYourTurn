@@ -1,5 +1,11 @@
 # Karar kaydı
 
+## 2026-10-09 — D47: referansa dayalı tren sanatı
+
+Kullanıcı ilk sarı çizgili Blender taslağını reddetti: oyun blokout'u nihai görsel tasarım değildir; yalnız ölçüler korunur. Renk/doku/desen, iç-dış metal ve pencere oranları kullanıcının kırmızı kapılı metro referansına yaklaştırılacak. Üç Survival vagonu ve geniş açık körükler korunur. Kullanıcı bu turda **önce Blender tasarımını görmeyi** seçti; Unity sahnesine henüz kurulum yapılmaz. Yeni gövde, paketli kaynak ve gerçek Blender renderi hazır; görünüm değerlendirmesi bekler.
+
+Yeni pencere yüksekliği ve kapı yaprak çerçeveleri yalnız Survival sanat varyantına aittir. Metal görünümüyle atış colliderı eşlenecek; hareket/nav/kimlikler ve Battle sahnesi korunacak. Teknik aktarım kodu hazır/derlendi, offline mesh önkontrolü geçti; Unity shader/Play/cihaz kabulü henüz yapılmadı. Ayrıntı ve ölçüler [TRAIN_ART.md](TRAIN_ART.md). Bu kayıt sanat kalitesi veya FPS garantisi değildir.
+
 Tarih: 2026-10-07. `Kararlaştırıldı` kullanıcı tarafından netleştirilen tasarım veya görev kapsamıdır. `Teknik öneri` uygulanmadan önce ilgili aşamanın testinde doğrulanır; kullanıcı onayıymış gibi sunulmaz.
 
 ## Kararlaştırılanlar
