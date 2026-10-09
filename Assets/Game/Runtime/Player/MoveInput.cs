@@ -29,7 +29,7 @@ namespace WaitYourTurn.Player
             {
                 Touch touch = Input.GetTouch(i);
                 Vector2 guiPoint = new Vector2(touch.position.x, Screen.height - touch.position.y);
-                if (finger < 0 && touch.phase == TouchPhase.Began && touch.position.x < Screen.width * 0.5f &&
+                if (finger < 0 && touch.phase == TouchPhase.Began && Screen.safeArea.Contains(touch.position) && touch.position.x < Screen.width * 0.5f &&
                     !BlockedScreenArea.Contains(guiPoint) && !SecondaryBlockedScreenArea.Contains(guiPoint) && !ModalBlockedScreenArea.Contains(guiPoint))
                 { finger = touch.fingerId; origin = touch.position; }
                 if (touch.fingerId != finger) continue;
@@ -46,8 +46,12 @@ namespace WaitYourTurn.Player
         {
             if (finger < 0) return;
             float r = Radius;
-            Vector2 center = new Vector2(origin.x, Screen.height - origin.y);
-            GUI.Box(new Rect(center.x - r, center.y - r, r * 2, r * 2), "MOVE");
+            // Clamp only the visual; the input origin stays at the initial touch (no edge-touch jump).
+            Rect safe = Screen.safeArea;
+            float insetX = Mathf.Min(r + 16, safe.width * .5f), insetY = Mathf.Min(r + 16, safe.height * .5f);
+            Vector2 center = new Vector2(Mathf.Clamp(origin.x, safe.xMin + insetX, safe.xMax - insetX),
+                Screen.height - Mathf.Clamp(origin.y, safe.yMin + insetY, safe.yMax - insetY));
+            GUI.Box(new Rect(center.x - r, center.y - r, r * 2, r * 2), "");
             Vector2 handle = center + new Vector2(stick.x, -stick.y) * r;
             GUI.Box(new Rect(handle.x - 16, handle.y - 16, 32, 32), "");
         }

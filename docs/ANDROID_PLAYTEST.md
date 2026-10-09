@@ -12,7 +12,7 @@
 2. Mağazadan farklı silah, turret ve dron; dokunma/yerleşim ve saldırı altında alışveriş.
 3. Can, para, silah/mermi, kapı/turret ve istasyon durumu görüldükten sonra arka plana al/geri dön; kısa bekleme sonrası süreç kapat/geri aç. Son periyodik kayıttan devam beklenir, oyun kapalıyken süre ilerlemez.
 4. Ölüm/sonuç sonrası yeniden açılınca bitmiş Battle dirilmemeli. Solo düğmesiyle ayrı koşu ve kayıt kontrolü. **Bu APK'daki Solo hâlâ eski rastgele vagon modudur; D37 fiziksel geçiş henüz yoktur.**
-5. Kare zamanı/bellek ve hata kayıtları. `TrainIntegration` henüz açık bir `Application.targetFrameRate`/üretim kalite politikası kurmuyor; Android varsayılan tavanında görülen 30 FPS'den 60 kapasitesi sonucu çıkarılmaz. Hedef/tavan kayda geçirilir; 60 FPS hedef ölçümü ve ısı/pil/uzun oturum ayrı takip edilir.
+5. Kare zamanı/bellek ve hata kayıtları. `MobileFramePolicy` mobilde açık 60 FPS hedefi kurar; `SetTarget(30)` düşük güç profili için hazırdır. Android varsayılan tavanında görülen 30 FPS'den 60 kapasitesi sonucu çıkarılmaz. Hedef/tavan kayda geçirilir; 60 FPS hedef ölçümü ve ısı/pil/uzun oturum ayrı takip edilir.
 
 Development build teşhis içindir; sanat sonrası yayın benzeri build ayrıca ölçülür. Bir cihaz testi bütün telefon/tabletlerin kanıtı değildir. Raporlanacaklar: hangi mod/istasyon/yük, çözünürlük/kalite/FPS hedefi, kare süresi, canlı zombi/savunma sayısı, bellek/GC, hata, arka plan/devam sonucu ve dokunma gözlemi.
 
@@ -24,6 +24,16 @@ Development build teşhis içindir; sanat sonrası yayın benzeri build ayrıca 
 - Kullanıcının kapsamlı satın alınmış UI paketi mevcut Assets envanterinde tanınamadı. Paket adı öğrenilince önce tek HUD/mağaza ekranında Built-in/TMP/uGUI uyumu incelenir; çekirdek ekonomi paket scriptlerine bağlanmaz.
 
 APK derleme/kurulum/çalışma ve cihaz ölçüm sonucu aşağıya gerçek kanıt geldikçe eklenir; hazırlık tamamlandı diye test PASS yazılmaz.
+
+## Yatay ekran, güvenli alan ve yerel ölçüm aracı
+
+Yalnız iki yatay yön açıktır; portre ve ters portre kapalıdır. Build menüsü bu ürün kuralını PlayerSettings'e kalıcı uygular; uygulama kimliğini yine geri yükler. Kamera güvenli alanı kadraja alır. Güvenli alan dışındaki şeritler, geometri çizmeyen bir arka plan kamerasıyla her karede siyaha temizlenir; tam ekran güvenli alanda bu kamera çalışmaz. Dokunma başlangıcı güvenli alan içinde olmalıdır; joystick yalnız görsel olarak kenardan içeri alınır, hareket girdisinin başlangıç noktası değiştirilmez. Geçici `MOVE` etiketi kaldırılır. Bu düzeltme ekran izini gidermek içindir, savaş/atış/onarım kurallarını değiştirmez.
+
+`AndroidPlaytestDiagnostics` yalnız Android Development build'e dahil edilir; normal yayın derlemesinde sınıf ve bootstrap yoktur. TrainIntegration'da yerel `perf-UTC.csv` dosyasına 10 saniyelik kare dağılımı, FPS hedefi, canlı düşman zirvesi, Unity/managed bellek ve GC sayısı yazılır. Pil sıcaklığı Android'in sticky battery bildirimi, termal durum PowerManager API'sinden gelir; desteklenmeyen değerler -1'dir. Pil bildirimi gecikebileceğinden gerçek termal sensör okumaları ADB ile ayrıca kaydedilir. Otomatik 30/60 geçişi veya yayın kalite menüsü henüz yoktur; teşhis paneli hedefi değiştirebilir.
+
+`10m load` **isteğe bağlı sentetik yük** başlatır: insan ve dört bot zarar almaz; normal kapı/AI/silah/istasyon akışı kullanılır, havuz ve 60 global sınırı içinde ek zombi doğar; insan için normal turret/dron aktörleri alınır. Gerçek zorluk/ekonomi testi değildir. Test kaydı ayrı dosyaya yönlendirilir **önce** yeni koşu başlatılır. Test sonunda bu geçici koşu sıfırlanır, normal kayıt deposu geri seçilip önceki koşu yüklenir. Arka plana geçme yük testini sonlandırır; kapalı ekran süresi aktif test olarak raporlanmaz. Normal oyun için ekran uyku ayarı değiştirilmez; yalnız fixture boyunca açık tutulur ve sonra önceki değer geri döner.
+
+Ölçüm kapsamı ve somut cihaz sonuçları [A54_PERFORMANCE.md](A54_PERFORMANCE.md) içinde tutulur. USB güç bağlıyken pil yüzdesi/net şarj akımı oyun tüketimi veya batarya ömrü ölçümü değildir. [Android'in güç optimizasyonu rehberi](https://developer.android.com/games/optimize/power) kare hedefi ve frame pacing'i açıkça ele alır; projede optimized frame pacing zaten açıktır. [BatteryManager](https://developer.android.com/reference/android/os/BatteryManager) akımı net şarj/deşarj olarak tanımlar.
 
 ### 2026-10-09 ilk cihaz kanıtı — kısmi
 

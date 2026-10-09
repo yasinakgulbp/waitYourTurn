@@ -22,6 +22,12 @@ namespace WaitYourTurn.Editor
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             const string scene = "Assets/Game/Scenes/TrainIntegration.unity";
             if (!File.Exists(scene)) { Debug.LogError("TrainIntegration scene is missing."); return; }
+            // This is a product requirement, not a temporary test-app override.
+            PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
+            PlayerSettings.allowedAutorotateToPortrait = false;
+            PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
+            PlayerSettings.allowedAutorotateToLandscapeLeft = true;
+            PlayerSettings.allowedAutorotateToLandscapeRight = true;
             Object settings = Unsupported.GetSerializedAssetInterfaceSingleton("PlayerSettings");
             if (settings == null) { Debug.LogError("Cannot snapshot PlayerSettings; integration build cancelled."); return; }
             string settingsSnapshot = EditorJsonUtility.ToJson(settings);

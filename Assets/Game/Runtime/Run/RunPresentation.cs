@@ -22,6 +22,7 @@ namespace WaitYourTurn.Run
         public void ConfigurePlayerFollow(bool follow) => followPlayerAlongTrain = follow;
         private Vector3 environmentOrigin, stationOrigin, sceneryOrigin, cameraOffset;
         private Quaternion cameraRotation;
+        private Camera marginClear;
         private float distance;
         private RunFlow observedFlow;
         public float Speed { get; private set; }
@@ -42,6 +43,21 @@ namespace WaitYourTurn.Run
             if (stationVisuals != null) stationOrigin = stationVisuals.position;
             if (scenery != null) sceneryOrigin = scenery.position;
             cameraOffset = view.transform.position; cameraRotation = view.transform.rotation;
+            // A partial safe-area viewport never clears the unused backbuffer margins.
+            // Clear them before the game camera so transient touch/UI drawings cannot persist.
+            if (responsiveFraming)
+            {
+                var background = new GameObject("Safe area background clear");
+                background.transform.SetParent(transform, false);
+                marginClear = background.AddComponent<Camera>();
+                marginClear.clearFlags = CameraClearFlags.SolidColor;
+                marginClear.backgroundColor = Color.black;
+                marginClear.cullingMask = 0;
+                marginClear.allowHDR = marginClear.allowMSAA = false;
+                marginClear.useOcclusionCulling = false;
+                marginClear.depth = view.depth - 1;
+                marginClear.enabled = false;
+            }
         }
         private void LateUpdate()
         {
@@ -72,6 +88,7 @@ namespace WaitYourTurn.Run
             {
                 Rect safe = Screen.safeArea;
                 view.rect = new Rect(safe.x / Screen.width, safe.y / Screen.height, safe.width / Screen.width, safe.height / Screen.height);
+                if (marginClear != null) marginClear.enabled = safe.width < Screen.width || safe.height < Screen.height;
                 float follow = followPlayerAlongTrain ? Mathf.Clamp(run.Player.transform.position.x - run.CurrentWagon.transform.position.x,
                     -playerFollowLimit, playerFollowLimit) : 0;
                 // Fit the whole wagon and both approaches even at either extreme of the bounded follow.
