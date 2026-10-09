@@ -20,6 +20,10 @@ namespace WaitYourTurn.Run
         [SerializeField] private ProximityRepair repair;
         [SerializeField] private RunMatch match;
         public RunMatch Match => match;
+        [SerializeField] private SoloProgression solo;
+        public SoloProgression Solo => solo;
+        public bool UsesSoloProgression => solo != null && match != null && match.Mode == RunMode.Solo && !match.Suppressed;
+        public void ConfigureSolo(SoloProgression policy) => solo = policy;
         public void ConfigureMatch(RunMatch participants) => match = participants;
         [SerializeField] private RunTimings timings = new RunTimings();
         [SerializeField] private int seed = 12345;
@@ -75,7 +79,8 @@ namespace WaitYourTurn.Run
             player.ResetForSpawn(player.Maximum, Team.Player); pistol.ResetWeapon(); repair.Cancel(); aim.ClearTarget();
             Flow = new RunFlow(overrideTimings ?? timings); Flow.Changed += OnPhase;
             match?.BeginRun(ActualRunSeed);
-            int first = randomInitialWagon ? random.Next(wagons.Length) : Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1);
+            solo?.ResetForRun();
+            int first = UsesSoloProgression ? 0 : randomInitialWagon ? random.Next(wagons.Length) : Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1);
             if (!Assign(wagons[first], false)) { Flow.Fail(); return; }
             OnPhase(RunPhase.Approach);
             Restarted?.Invoke();
@@ -107,7 +112,7 @@ namespace WaitYourTurn.Run
                 foreach (WagonRuntime wagon in wagons)
                     if (!wagon.ResolveDeparture()) { Failure = "No clear interior position for a doorway survivor."; Flow.Fail(); return; }
             SetGate(Flow.Paused);
-            if (phase == RunPhase.FadeIn && !Assign(wagons[random.Next(wagons.Length)], true)) Flow.Fail();
+            if (phase == RunPhase.FadeIn && !UsesSoloProgression && !Assign(wagons[random.Next(wagons.Length)], true)) Flow.Fail();
         }
         private bool Assign(WagonRuntime wagon, bool count)
         {
@@ -123,12 +128,22 @@ namespace WaitYourTurn.Run
         public void ApplyPlayerAssignment(WagonRuntime wagon, Vector3 point, bool count)
         {
             repair.Cancel(); repair.SetDoor(wagon.NearestDoor(point));
-            motor.SetMovementArea(wagon.Area); motor.Place(point); aim.ClearTarget();
+            motor.SetMovementArea(UsesSoloProgression ? solo.Movement : wagon.Area); motor.Place(point); aim.ClearTarget();
             if (CurrentWagon != null && CurrentWagon.Defender == player) CurrentWagon.SetDefender(null);
             CurrentWagon = wagon; wagon.SetDefender(player);
             if (count) player.SetDamageProtection(arrivalProtectionSeconds);
             foreach (WagonRuntime coach in wagons) coach.Enemies.SetScope(coach.Id, coach.HasLivingDefender);
+            if (UsesSoloProgression) { solo.RefreshMovementContext(); solo.BindPursuit(); }
             if (count) Assignments++;
+            Assigned?.Invoke(wagon);
+        }
+        public void EnterWagonOnFoot(WagonRuntime wagon)
+        {
+            if (!UsesSoloProgression || wagon == CurrentWagon || Loading || Flow.Paused) return;
+            repair.Cancel(); repair.SetDoor(wagon.NearestDoor(player.transform.position)); aim.ClearTarget();
+            if (CurrentWagon.Defender == player) CurrentWagon.SetDefender(null);
+            CurrentWagon = wagon; wagon.SetDefender(player); solo.RefreshMovementContext(); solo.BindPursuit();
+            // Context notification only: no teleport, health reset, random roll or arrival shield.
             Assigned?.Invoke(wagon);
         }
         private void SetGate(bool closed)

@@ -19,6 +19,9 @@ namespace WaitYourTurn.Enemies
         private Color defaultTint;
         private DoorController door;
         private WagonGeometry geometry;
+        private IInteriorPursuit interiorPursuit;
+        private uint interiorRevision;
+        public void SetInteriorPursuit(IInteriorPursuit value) { interiorPursuit = value; portalRevision = uint.MaxValue; }
         private HealthComponent player;
         private Vector3 doorOffset;
         private float targetAngle;
@@ -43,7 +46,8 @@ namespace WaitYourTurn.Enemies
         public int AgentTypeId => motor.Agent.agentTypeID;
         public int AreaMask => motor.Agent.areaMask;
         public EnemyState State { get; private set; }
-        public bool IsInside => geometry != null ? geometry.Contains(transform.position) : door != null && door.Portal.IsInside(transform.position);
+        public bool IsInside => onBoard && interiorPursuit != null ? interiorPursuit.Contains(transform.position) :
+            geometry != null ? geometry.Contains(transform.position) : door != null && door.Portal.IsInside(transform.position);
         private bool InPassage => geometry != null ? geometry.InPassage(transform.position, motor.Agent.radius) : door.Portal.IsInPassage(transform.position, motor.Agent.radius);
         public bool NeedsSafeDeparture => door != null && (!IsInside || InPassage);
         public void SetScope(string wagonId, bool hasPlayer) { WagonId = wagonId; SetPlayerPresent(hasPlayer); }
@@ -166,6 +170,8 @@ namespace WaitYourTurn.Enemies
         {
             EntryPortal portal = door.Portal;
             bool routeChanged = portalRevision != portal.Revision;
+            if (interiorPursuit != null)
+            { routeChanged |= interiorRevision != interiorPursuit.Revision; interiorRevision = interiorPursuit.Revision; }
             portalRevision = portal.Revision;
             attackTarget = null;
             if (!motor.Ready) { State = EnemyState.WaitingForRoute; return; }
@@ -204,7 +210,8 @@ namespace WaitYourTurn.Enemies
             // Nearby attack range, rather than an exact occupied grid point, completes pursuit.
             Vector3 offset = new Vector3(Mathf.Sin(targetAngle), 0, Mathf.Cos(targetAngle)) * 0.8f;
             Vector3 goal = player.transform.position + offset;
-            if (geometry != null) goal = geometry.Constrain(goal, motor.Agent.radius + .1f);
+            if (onBoard && interiorPursuit != null) goal = interiorPursuit.Constrain(goal, motor.Agent.radius + .1f);
+            else if (geometry != null) goal = geometry.Constrain(goal, motor.Agent.radius + .1f);
             else
             {
                 float inward = Vector3.Dot(goal - portal.transform.position, portal.transform.forward);

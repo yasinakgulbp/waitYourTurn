@@ -208,3 +208,11 @@ M7c: aynı Defenses assembly içinde DroneController/DroneFlight/DronePresentati
 `RunSnapshot` v1 yalnız veri taşır. `LocalRunStore` sınırlı JSON/checksum/atomik dosya/yedek işlemini bilir; sahne veya oynanış kuralı bilmez. `RunPersistence` koşu katmanında mevcut bileşenlerin Capture/Restore API'lerini bağlar; Combat/Enemy/Defenses kayıt servisine bağımlı değildir. Veri bütünü doğrulanmadan sahne değiştirilmez. Yükleme sırasında oynanış gate ile kapanır; yeni runtime yaşamları kurulur, normal satın alma/ölüm/evre ödülleri tekrar çalıştırılmaz. `RunRandom` açık durumuyla insan ve bot atama dizilerini sürdürür. Ayrıntılar [PERSISTENCE.md](PERSISTENCE.md).
 
 İnsan ve bot kökünün tek dönüş sahibi `PlayerMotor.LateUpdate` olur. AutoAim geçerli görünür hedefi sunar; hedef varsa ona, yoksa gerçekleşen yatay harekete dönülür. Engelde durma veya boş girdi son yönü korur; atama hareket yönünü temizler. Model/animasyon bu mekanik kökü ayrıca döndürmez.
+
+## M8s — Solo topolojisi
+
+`InteriorConnection` Train katmanında metal engel/carving/görsel kapı ve dolu geçitte kapanış reddini yönetir; para, koşu evresi veya düşman AI bilmez. `SoloProgression` Run bağlayıcısı açılmış sınırı, satın alma, bağlı hareket odalarını ve yürüyerek güncel vagon değişimini kurar. `MovementArea` yalnız verilen dikdörtgen hacimleri kapsül yarıçapıyla sınırlar; kapalı kapının ötesindeki ayrık oda oyuncunun hareket alanına eklenmez. `SoloHud` değiştirilebilir sunumdur.
+
+Enemy → Run bağımlılığı eklenmez: `IInteriorPursuit` Enemies katmanının küçük isteğe bağlı sözleşmesidir, Solo bağlayıcısı uygular. İç zombi ortak NavMesh üzerinde oyuncuyu izler; topoloji revizyonu kapı açılınca yolu yeniletir. Aktörün doğduğu havuz/ödül kimliği değişmez. Battle bu sözleşmeyi kullanmaz. Yeni spawn yönü Solo'da güncel vagondur; istasyondaki tek program yürüyüşle yeniden kurulmaz.
+
+Yürüyerek geçiş `RunDriver.EnterWagonOnFoot` ile bağlam bildirir; yeni RunFlow, yerleştirme veya koruma üretmez. Turret yerinde kalır, dron genişleyen uçuş alanında fiziksel takip eder; kamera hâlâ tek `RunPresentation` sahibidir. v2 koşu kaydı topolojiyi beden yerleştirmeden önce kurar. Ölçüler MODEL_CONTRACT, ilerleme/gelecek meta sınırı PROGRESSION_DESIGN içinde tutulur.

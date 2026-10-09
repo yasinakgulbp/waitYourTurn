@@ -5,7 +5,6 @@ wagon-a,6,window_clear_opening,Window north 2,-1.9,1.3,2.1,1.51,1.2,0.18,false,t
 wagon-a,6,window_clear_opening,Window north 3,1.9,1.3,2.1,1.51,1.2,0.18,false,true
 wagon-a,6,physics_box,Floor collider,0,-0.12,0,12,0.24,4.2,true,true
 wagon-a,6,physics_box,End wall collider,-5.9,1.05,0,0.2,2.1,4.2,true,true
-wagon-a,6,physics_box,End wall collider,5.9,1.05,0,0.2,2.1,4.2,true,true
 wagon-a,6,physics_box,Movement blocker,-3.8,1.1,-2.1,1.45,2.2,0.16,false,true
 wagon-a,6,physics_box,Lower panel,-3.8,0.3,-2.1,1.45,0.6,0.16,true,true
 wagon-a,6,physics_box,Door jamb collider,-4.56,1.05,-2.1,0.07,2.1,0.18,true,true
@@ -70,14 +69,15 @@ wagon-a,6,physics_box,Window edge post collider,0.935,1.05,2.1,0.42,2.1,0.18,tru
 wagon-a,6,physics_box,Window edge post collider,2.865,1.05,2.1,0.42,2.1,0.18,true,true
 wagon-a,6,physics_box,Window wall movement boundary,5.263,1.05,2.1,1.475,2.1,0.18,false,true
 wagon-a,6,physics_box,Solid wall collider,5.263,1.05,2.1,1.475,2.1,0.18,true,true
+wagon-a,6,physics_box,Internal end jamb,5.9,1.05,-1.4,0.2,2.1,1.4,true,true
+wagon-a,6,physics_box,Internal end jamb,5.9,1.05,1.4,0.2,2.1,1.4,true,true
+wagon-a,6,physics_box,Internal end header,5.9,2.175,0,0.2,0.15,1.4,true,true
 wagon-b,5,window_clear_opening,Window south 0,-1.9,1.3,-2.1,1.51,1.2,0.18,false,true
 wagon-b,5,window_clear_opening,Window south 1,1.9,1.3,-2.1,1.51,1.2,0.18,false,true
 wagon-b,5,window_clear_opening,Window north 2,-1.877,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-b,5,window_clear_opening,Window north 3,0,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-b,5,window_clear_opening,Window north 4,1.877,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-b,5,physics_box,Floor collider,0,-0.12,0,12,0.24,4.2,true,true
-wagon-b,5,physics_box,End wall collider,-5.9,1.05,0,0.2,2.1,4.2,true,true
-wagon-b,5,physics_box,End wall collider,5.9,1.05,0,0.2,2.1,4.2,true,true
 wagon-b,5,physics_box,Movement blocker,-3.8,1.1,-2.1,1.45,2.2,0.16,false,true
 wagon-b,5,physics_box,Lower panel,-3.8,0.3,-2.1,1.45,0.6,0.16,true,true
 wagon-b,5,physics_box,Door jamb collider,-4.56,1.05,-2.1,0.07,2.1,0.18,true,true
@@ -133,14 +133,18 @@ wagon-b,5,physics_box,Window middle post collider,-0.938,1.05,2.1,0.32,2.1,0.18,
 wagon-b,5,physics_box,Window middle post collider,0.938,1.05,2.1,0.32,2.1,0.18,true,true
 wagon-b,5,physics_box,Window wall movement boundary,5.263,1.05,2.1,1.475,2.1,0.18,false,true
 wagon-b,5,physics_box,Solid wall collider,5.263,1.05,2.1,1.475,2.1,0.18,true,true
+wagon-b,5,physics_box,Internal end jamb,-5.9,1.05,-1.4,0.2,2.1,1.4,true,true
+wagon-b,5,physics_box,Internal end jamb,-5.9,1.05,1.4,0.2,2.1,1.4,true,true
+wagon-b,5,physics_box,Internal end header,-5.9,2.175,0,0.2,0.15,1.4,true,true
+wagon-b,5,physics_box,Internal end jamb,5.9,1.05,-1.4,0.2,2.1,1.4,true,true
+wagon-b,5,physics_box,Internal end jamb,5.9,1.05,1.4,0.2,2.1,1.4,true,true
+wagon-b,5,physics_box,Internal end header,5.9,2.175,0,0.2,0.15,1.4,true,true
 wagon-c,5,window_clear_opening,Window south 0,-1.9,1.3,-2.1,1.51,1.2,0.18,false,true
 wagon-c,5,window_clear_opening,Window south 1,1.9,1.3,-2.1,1.51,1.2,0.18,false,true
 wagon-c,5,window_clear_opening,Window north 2,-1.877,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-c,5,window_clear_opening,Window north 3,0,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-c,5,window_clear_opening,Window north 4,1.877,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-c,5,physics_box,Floor collider,0,-0.12,0,12,0.24,4.2,true,true
-wagon-c,5,physics_box,End wall collider,-5.9,1.05,0,0.2,2.1,4.2,true,true
-wagon-c,5,physics_box,End wall collider,5.9,1.05,0,0.2,2.1,4.2,true,true
 wagon-c,5,physics_box,Movement blocker,-3.8,1.1,-2.1,1.45,2.2,0.16,false,true
 wagon-c,5,physics_box,Lower panel,-3.8,0.3,-2.1,1.45,0.6,0.16,true,true
 wagon-c,5,physics_box,Door jamb collider,-4.56,1.05,-2.1,0.07,2.1,0.18,true,true
@@ -196,6 +200,12 @@ wagon-c,5,physics_box,Window middle post collider,-0.938,1.05,2.1,0.32,2.1,0.18,
 wagon-c,5,physics_box,Window middle post collider,0.938,1.05,2.1,0.32,2.1,0.18,true,true
 wagon-c,5,physics_box,Window wall movement boundary,5.263,1.05,2.1,1.475,2.1,0.18,false,true
 wagon-c,5,physics_box,Solid wall collider,5.263,1.05,2.1,1.475,2.1,0.18,true,true
+wagon-c,5,physics_box,Internal end jamb,-5.9,1.05,-1.4,0.2,2.1,1.4,true,true
+wagon-c,5,physics_box,Internal end jamb,-5.9,1.05,1.4,0.2,2.1,1.4,true,true
+wagon-c,5,physics_box,Internal end header,-5.9,2.175,0,0.2,0.15,1.4,true,true
+wagon-c,5,physics_box,Internal end jamb,5.9,1.05,-1.4,0.2,2.1,1.4,true,true
+wagon-c,5,physics_box,Internal end jamb,5.9,1.05,1.4,0.2,2.1,1.4,true,true
+wagon-c,5,physics_box,Internal end header,5.9,2.175,0,0.2,0.15,1.4,true,true
 wagon-d,4,window_clear_opening,Window south 0,-1.877,1.3,-2.1,1.557,1.2,0.18,false,true
 wagon-d,4,window_clear_opening,Window south 1,0,1.3,-2.1,1.557,1.2,0.18,false,true
 wagon-d,4,window_clear_opening,Window south 2,1.877,1.3,-2.1,1.557,1.2,0.18,false,true
@@ -203,8 +213,6 @@ wagon-d,4,window_clear_opening,Window north 3,-1.877,1.3,2.1,1.557,1.2,0.18,fals
 wagon-d,4,window_clear_opening,Window north 4,0,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-d,4,window_clear_opening,Window north 5,1.877,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-d,4,physics_box,Floor collider,0,-0.12,0,12,0.24,4.2,true,true
-wagon-d,4,physics_box,End wall collider,-5.9,1.05,0,0.2,2.1,4.2,true,true
-wagon-d,4,physics_box,End wall collider,5.9,1.05,0,0.2,2.1,4.2,true,true
 wagon-d,4,physics_box,Movement blocker,-3.8,1.1,-2.1,1.45,2.2,0.16,false,true
 wagon-d,4,physics_box,Lower panel,-3.8,0.3,-2.1,1.45,0.6,0.16,true,true
 wagon-d,4,physics_box,Door jamb collider,-4.56,1.05,-2.1,0.07,2.1,0.18,true,true
@@ -251,6 +259,12 @@ wagon-d,4,physics_box,Window middle post collider,-0.938,1.05,2.1,0.32,2.1,0.18,
 wagon-d,4,physics_box,Window middle post collider,0.938,1.05,2.1,0.32,2.1,0.18,true,true
 wagon-d,4,physics_box,Window wall movement boundary,5.263,1.05,2.1,1.475,2.1,0.18,false,true
 wagon-d,4,physics_box,Solid wall collider,5.263,1.05,2.1,1.475,2.1,0.18,true,true
+wagon-d,4,physics_box,Internal end jamb,-5.9,1.05,-1.4,0.2,2.1,1.4,true,true
+wagon-d,4,physics_box,Internal end jamb,-5.9,1.05,1.4,0.2,2.1,1.4,true,true
+wagon-d,4,physics_box,Internal end header,-5.9,2.175,0,0.2,0.15,1.4,true,true
+wagon-d,4,physics_box,Internal end jamb,5.9,1.05,-1.4,0.2,2.1,1.4,true,true
+wagon-d,4,physics_box,Internal end jamb,5.9,1.05,1.4,0.2,2.1,1.4,true,true
+wagon-d,4,physics_box,Internal end header,5.9,2.175,0,0.2,0.15,1.4,true,true
 wagon-e,4,window_clear_opening,Window south 0,-1.877,1.3,-2.1,1.557,1.2,0.18,false,true
 wagon-e,4,window_clear_opening,Window south 1,0,1.3,-2.1,1.557,1.2,0.18,false,true
 wagon-e,4,window_clear_opening,Window south 2,1.877,1.3,-2.1,1.557,1.2,0.18,false,true
@@ -258,7 +272,6 @@ wagon-e,4,window_clear_opening,Window north 3,-1.877,1.3,2.1,1.557,1.2,0.18,fals
 wagon-e,4,window_clear_opening,Window north 4,0,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-e,4,window_clear_opening,Window north 5,1.877,1.3,2.1,1.557,1.2,0.18,false,true
 wagon-e,4,physics_box,Floor collider,0,-0.12,0,12,0.24,4.2,true,true
-wagon-e,4,physics_box,End wall collider,-5.9,1.05,0,0.2,2.1,4.2,true,true
 wagon-e,4,physics_box,End wall collider,5.9,1.05,0,0.2,2.1,4.2,true,true
 wagon-e,4,physics_box,Movement blocker,-3.8,1.1,-2.1,1.45,2.2,0.16,false,true
 wagon-e,4,physics_box,Lower panel,-3.8,0.3,-2.1,1.45,0.6,0.16,true,true
@@ -306,3 +319,6 @@ wagon-e,4,physics_box,Window middle post collider,-0.938,1.05,2.1,0.32,2.1,0.18,
 wagon-e,4,physics_box,Window middle post collider,0.938,1.05,2.1,0.32,2.1,0.18,true,true
 wagon-e,4,physics_box,Window wall movement boundary,5.263,1.05,2.1,1.475,2.1,0.18,false,true
 wagon-e,4,physics_box,Solid wall collider,5.263,1.05,2.1,1.475,2.1,0.18,true,true
+wagon-e,4,physics_box,Internal end jamb,-5.9,1.05,-1.4,0.2,2.1,1.4,true,true
+wagon-e,4,physics_box,Internal end jamb,-5.9,1.05,1.4,0.2,2.1,1.4,true,true
+wagon-e,4,physics_box,Internal end header,-5.9,2.175,0,0.2,0.15,1.4,true,true

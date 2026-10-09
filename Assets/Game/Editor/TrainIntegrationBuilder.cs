@@ -228,6 +228,7 @@ namespace WaitYourTurn.Editor
             DroneContentBuilder.Install(run, registry, economy, spawner);
             BotContentBuilder.Install(run, registry, economy, spawner);
             PersistenceContentBuilder.Install(run);
+            SoloContentBuilder.Install(run);
             new GameObject("Replaceable shop HUD").AddComponent<ShopHud>().Configure(economy, hero.GetComponent<MoveInput>());
             var presentation = new GameObject("Journey presentation - single camera owner").AddComponent<RunPresentation>(); presentation.Configure(run, track, camera); presentation.ConfigureJourney(station, scenery); presentation.ConfigurePlayerFollow(true);
             presentation.ConfigureFraming(new Bounds(new Vector3(0, .4f, 0), new Vector3(layouts.Max(x => x.length) + 3, 2.4f, maxWidth + 4)));
@@ -253,7 +254,7 @@ namespace WaitYourTurn.Editor
             Debug.Log($"[TrainIntegration] Built {count} scale-reference wagons; doors {string.Join(",", wagons.Select(w => w.Doors.Length))}; bilateral geometry freshly baked.");
         }
 
-        private static void ExportModelGuide(WagonRuntime[] wagons)
+        internal static void ExportModelGuide(WagonRuntime[] wagons)
         {
             var csv = new System.Text.StringBuilder("wagon,doorCount,kind,name,centerX,centerY,centerZ,sizeX,sizeY,sizeZ,blocksShots,blocksMovement\n");
             foreach (var wagon in wagons)

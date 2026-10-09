@@ -99,6 +99,9 @@ namespace WaitYourTurn.Run
                 cameraPosition = run.CurrentWagon.transform.position + Vector3.right * follow - cameraRotation * Vector3.forward * d;
             }
             else if (followPlayerAlongTrain) cameraPosition.x = run.Player.transform.position.x + cameraOffset.x;
+            // Walking through a Solo connector must not jump a whole wagon at the midpoint.
+            if (run.UsesSoloProgression)
+                cameraPosition.x = Mathf.MoveTowards(view.transform.position.x, cameraPosition.x, 12 * Time.unscaledDeltaTime);
             view.transform.SetPositionAndRotation(cameraPosition, cameraRotation);
         }
     }

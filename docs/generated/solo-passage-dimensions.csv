@@ -1,0 +1,21 @@
+connection,kind,name,worldX,worldY,worldZ,localX,localY,localZ,sizeX,sizeY,sizeZ,unlockPrice
+0,movement_region,Open passage,6.5,1,0,0,1,0,3.4,2,1.4,200
+0,physics_box,Connector floor - fixed navigation,6.5,-0.12,0,0,-0.12,0,1.4,0.24,1.6,200
+0,physics_box,Connector side metal,6.5,0.55,-0.8,0,0.55,-0.8,1.4,1.1,0.2,200
+0,physics_box,Connector side metal,6.5,0.55,0.8,0,0.55,0.8,1.4,1.1,0.2,200
+0,physics_box,Manual gate - solid metal,6.5,1,0,0,1,0,0.16,2,1.4,200
+1,movement_region,Open passage,19.5,1,0,0,1,0,3.4,2,1.4,300
+1,physics_box,Connector floor - fixed navigation,19.5,-0.12,0,0,-0.12,0,1.4,0.24,1.6,300
+1,physics_box,Connector side metal,19.5,0.55,-0.8,0,0.55,-0.8,1.4,1.1,0.2,300
+1,physics_box,Connector side metal,19.5,0.55,0.8,0,0.55,0.8,1.4,1.1,0.2,300
+1,physics_box,Manual gate - solid metal,19.5,1,0,0,1,0,0.16,2,1.4,300
+2,movement_region,Open passage,32.5,1,0,0,1,0,3.4,2,1.4,400
+2,physics_box,Connector floor - fixed navigation,32.5,-0.12,0,0,-0.12,0,1.4,0.24,1.6,400
+2,physics_box,Connector side metal,32.5,0.55,-0.8,0,0.55,-0.8,1.4,1.1,0.2,400
+2,physics_box,Connector side metal,32.5,0.55,0.8,0,0.55,0.8,1.4,1.1,0.2,400
+2,physics_box,Manual gate - solid metal,32.5,1,0,0,1,0,0.16,2,1.4,400
+3,movement_region,Open passage,45.5,1,0,0,1,0,3.4,2,1.4,500
+3,physics_box,Connector floor - fixed navigation,45.5,-0.12,0,0,-0.12,0,1.4,0.24,1.6,500
+3,physics_box,Connector side metal,45.5,0.55,-0.8,0,0.55,-0.8,1.4,1.1,0.2,500
+3,physics_box,Connector side metal,45.5,0.55,0.8,0,0.55,0.8,1.4,1.1,0.2,500
+3,physics_box,Manual gate - solid metal,45.5,1,0,0,1,0,0.16,2,1.4,500

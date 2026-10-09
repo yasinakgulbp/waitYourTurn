@@ -14,7 +14,7 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 
 ## Okuma sırası
 
-**D37 güncel mod/ekonomi vizyonu:** [PROGRESSION_DESIGN.md](PROGRESSION_DESIGN.md). Solo'da kuyruktan başlayıp vagon açma ve fiziksel geçiş; iki toplam para kaynağı, kalıcı silah açma ve iki modda sınırlı güç geliştirmeleri. Yeni hedef henüz uygulanmadı. Battle'ın mevcut rastgele ataması korunur; Solo eski davranışı M8s'de değiştirilecek. Modelleme için uç geçit ölçüsü önce kabul edilir.
+**D39 / M8s güncel durum:** [PROGRESSION_DESIGN.md](PROGRESSION_DESIGN.md). Solo kuyrukta başlar; sıradaki vagon kilidini koşu parasıyla açar, manuel ara kapıdan yürür. Açık geçitten iç zombiler takip eder. Battle'ın rastgele ataması korunur. v2 kayıt ve [geçit model ölçüleri](MODEL_CONTRACT.md) eklendi. PC kabulü ile kullanıcının sonraya bıraktığı Android geçiş kabulü ayrıdır. İki toplam para kaynağı, kalıcı silah/güç, yeni vagon ganimeti ve sonuç ödülü henüz uygulanmadı.
 
 **Güncel yayın yolu:** [RELEASE_PLAN.md](RELEASE_PLAN.md) — Battle ve Solo eşit önemde; A54 temeli → Solo geçiş/açma → minimum meta/sonuç → hafif kamera/ses/UI → dış oynanış değerlendirmesi. Tek vagon sanat örneği Solo geçit ölçüsü kabulünden sonra başlayabilir; ardından bütçeli üretim, gelir ve sınırlı yayın. [Android hazırlığı ve test sınırları](ANDROID_PLAYTEST.md). Teknik PASS eğlence/kâr kanıtı değildir; tarihsel kayıtlar korunur.
 
@@ -56,6 +56,8 @@ Güncel D24: TrainIntegration iki taraflı ateş edilebilir yan pencereler kulla
 - Plan öncesindeki yerel prototip değişiklikleri ayrı başlangıç commitine alındı. Eski Windows buildleri/arşivi yerelde korundu ve Git dışında tutuldu; plan commitine dahil edilmedi.
 
 ## Her geliştirme adımının çalışma biçimi
+
+2026-10-09 M8s/D39: kuyruk başlangıcı, satın alma ile açılan manuel ara kapılar, fiziksel iki yönlü yürüyüş, açık geçitte zombi/dron takibi, eski vagonda turret kalıcılığı ve v2 bağlantı kaydı eklendi. 40 Run kural testi, F2 Solo, F4 kayıt, F7 Battle ve F10 yan cam/metal/tren döngüsü PASS; [PC kanıtı](generated/solo-progression-pc-acceptance.txt). A54 geçiş testi kullanıcı isteğiyle ertelendi. Geçiş bedelleri deneme değeridir; ganimet/meta/sonuç/reklam eklenmedi. Eski v1 test koşusu yüklenmez, yeni koşu başlatılır. Fiziksel ve model ölçüleri MODEL_CONTRACT/CSV'lerde günceldir.
 
 1. Yol haritasından tek bir aşama/iş seç; bağımlılıkları ve açık kararları oku.
 2. Hangi davranışın değişeceğini ve aşamanın kabul koşullarını belirle.

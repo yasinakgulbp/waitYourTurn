@@ -1,8 +1,8 @@
 # Yerel koşu kaydı — M8a
 
-**D37 tasarım notu:** mevcut v1 bağlantı koridorunda Solo konumunu, açılmış vagonları, toplanan ganimetleri veya kalıcı satın almaları kaydetmez. M8s/M8e yeni şema ve açık uyum/revizyon kararı getirecek; bugünkü PC PASS yeni Solo/meta kabulü değildir. Kalıcı profil koşu kaydından ayrı tutulacak. [Tasarım](PROGRESSION_DESIGN.md).
+**D39 / M8s:** şema v2, açılmış vagon sınırı ve ara kapı durumlarını içerir. Bağlantı koridorundaki Solo konumu ve doğduğu havuzdan başka vagona yürümüş içerideki zombi konumu doğrulanır. Kapı topolojisi NavMesh yerleştirmesinden önce yüklenir. Önceki v1/önceki geometri dosyası açıkça reddedilir; oyuncu yeni koşu başlatabilir, otomatik dönüştürme yapılmaz. Kalıcı profil/ganimet henüz eklenmedi. [Tasarım](PROGRESSION_DESIGN.md).
 
-İlk kayıt hedefi aynı koşuya devam etmektir; tamamlanmış/ölünmüş Battle geri açılmaz. Google Play bulut, giriş, reklam ödülü ve IAP teslimi bu aşamada bağlanmaz. İlk cihaz kaydı sağlayıcısı `LocalRunStore`, sahne bağlayıcısı `RunPersistence`, veri sözleşmesi `RunSnapshot` v1 olur.
+İlk kayıt hedefi aynı koşuya devam etmektir; tamamlanmış/ölünmüş Battle geri açılmaz. Google Play bulut, giriş, reklam ödülü ve IAP teslimi bu aşamada bağlanmaz. İlk cihaz kaydı sağlayıcısı `LocalRunStore`, sahne bağlayıcısı `RunPersistence`, veri sözleşmesi `RunSnapshot` v2 olur.
 
 ## Kullanım ve yaşam döngüsü
 

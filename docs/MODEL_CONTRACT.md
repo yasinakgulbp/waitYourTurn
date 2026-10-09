@@ -1,6 +1,21 @@
 # Model üretimi ve oyuna bağlama sözleşmesi
 
-**D37 — 2026-10-09 yeni Solo hedefi:** vagonlar arası fiziksel geçiş gerekecek. Mevcut CSV/uç duvarlar bugünkü kapalı Battle geometrisidir; nihai Solo uç kapısı ve 1 m bağlantı boşluğundaki yürüme zemini ölçüsü henüz kabul edilmedi. 12 × 4,2 m dış vagon ve mevcut yan kapı/cam ölçüleri korunur. Uç portal, hareketli iç kapı ve sabit bağlantı parçası M8s iki-vagon denemesinde kesinleşip CSV'ye eklenmeden bütün vagonların uç meshlerini sonlandırmayın. Aynı sanat gövdesi Battle kapalı uç / Solo açılabilir geçiş çocuk parçalarını desteklemeli; iç geçit dış savunma kapısı sayılmaz. İlk tek-vagon sanat örneği bu küçük ölçü kabulünden sonra başlayabilir. [Güncel tasarım](PROGRESSION_DESIGN.md).
+**D39 — 2026-10-09 Solo bağlantısı:** 12 × 4,2 m dış gövde ve yan kapı/cam ölçüleri korunur. Komşu vagon uçlarında merkezde geçit, 1 m boşlukta sabit zemin ve ayrı manuel kapı vardır. Battle'da bu kapılar kapalıdır; Solo'da satın alınıp açılır. İç kapı dış savunma kapısı değildir. Güncel [geçit ölçü CSV'si](generated/solo-passage-dimensions.csv) aşağıdaki tabloyla birlikte kullanılır; PC kabulü cihaz kabulünün yerine geçmez. İlk tek-vagon sanat örneği bu ölçülerle hazırlanabilir, bütün uç modellerinin üretimi kullanıcı görünüm kabulünden sonra genişletilir.
+
+## Solo ara bağlantı ölçüleri
+
+Bağlantı pivotu iki vagonun tam ortasında, Y=0/Z=0; dünya X=6,5/19,5/32,5/45,5. Yerel X tren boyuna eksenidir. Tüm ölçüler metre, tam boyuttur.
+
+| Parça | Yerel merkez | Boyut / kural |
+| --- | --- | --- |
+| Uç dikmeler (vagon pivotuna göre) | X=±5,9; Y=1,05; Z=±1,4 | 0,2 × 2,1 × 1,4; orta net açıklık 1,4 m. Metal atış/beden engeli. |
+| Uç üst metal (vagon pivotuna göre) | X=±5,9; Y=2,175; Z=0 | 0,2 × 0,15 × 1,4; alt kot 2,1 m, dron küresi için açık yükseklik. |
+| Bağlantı zemini | (0; −0,12; 0) | 1,4 × 0,24 × 1,6; üst kot 0, uçlarla 0,2 m bindirme. Sabit NavMesh kaynağı. |
+| Bağlantı yan metal | (0; 0,55; ±0,8) | 1,4 × 1,1 × 0,2; net iç genişlik 1,4 m. |
+| Manuel kapı | (0; 1; 0) | 0,16 × 2 × 1,4; kapalıyken metal atış/beden engeli ve carving. Açılınca mekanik engel devre dışıdır. |
+| İzinli geçiş hacmi | (0; 1; 0) | 3,4 × 2 × 1,4; açık komşu odalarla bindirir. Sanat boyutu veya bütün tren hareket sınırı değildir. |
+
+`Replaceable gate visual` ayrı görsel çocuktur. Model kapı açılma hareketini görselde uygular; kapı durumunun, collider/carving'in ve hareket hacminin sahibi `InteriorConnection`/`SoloProgression` kalır. Yeni görsel collider, root motion veya ikinci NavMeshSurface taşımaz. Uç dikme/üst metal ve bağlantı zemini kutularının rendererları sanatla değişebilir; fizik kökleri ve boyutları korunur. Dron uçuş kökü 1,95 m / küre 0,14 m olduğundan üst metali aşağı sarkıtmayın. Geçitte insan/zombi/dron varken kapanış reddedilir.
 
 2026-10-08 — D23 ölçüleri, D24 ateş edilebilir yan pencereler. Nihai sanat çalışmasına başlamadan modelci bu belgeyi, [görsel referansları](VISUAL_SCALE.md) ve sahneden üretilen [ölçü listesini](generated/train-model-dimensions.csv) birlikte kullanır. Yeni nesne/mekanik ölçüsü kararlaştırılırsa burada ve tanım varlığında güncellenir; sadece render modelini büyüterek fizik düzeltilmez.
 

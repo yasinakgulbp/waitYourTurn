@@ -1,0 +1,17 @@
+2026-10-09 / Unity 6000.6.4f1 / TrainIntegration / PC only
+Run rule tests: 40 passed, 0 failed (Logs/JourneyTests.xml, 2026-10-09 08:56:33Z).
+F2 Solo:
+2026-10-09T09:00:54.4068006Z
+PASS: Locked/paid/manual gates; continuous walk both ways; drone physical follow and turret retention; occupied close refusal; context without shield; connector and migrated enemy JSON restore; persistent station budget; exterior containment; no Solo random relocation; Battle gates/participants preserved.
+F4 Persistence:
+2026-10-09T09:01:39.5637567Z
+PASS: Human walking faces 4 directions; visible target overrides movement. Real disk JSON: Battle participant HP/max/coins/guns/ammo/roster/RNG; door damage/repair progress, retained passenger, turret and drone, spawn progress restored; eliminated bot stays out; all 7 phases preserve assignment count; next draw continues; invalid ammo rejected before mutation; Solo and death tombstone passed. PC only; Android pause/kill and device IO pending.
+F7 Battle:
+2026-10-09T09:02:37.5700012Z
+PASS: 5 unique participants / 3 profiles; real glass kill credits bot only, metal blocks; zombie attacks assigned bot; actor damage preserves repair, door damage cancels; actual AI moves, repairs and purchases shared guns; death ranks/releases defender; no new empty-wagon spawn and survivors retained; 10 dark assignments preserve identity/ammo/money and never respawn eliminated; human win/loss, solo isolation and same-object restart passed. PC only; distant simulation, long-session balance and Android pending.
+F10 Train:
+2026-10-09T09:03:36.1496868Z
+PASS: Door variants 6,5,5,4,4: repair/glass; every bilateral window passes all four guns, metal edges/panels block straight/oblique rays, movement/nav remain closed; bilateral door entry/thresholds and player boundary; responsive camera; 10 cycles visiting 5 wagons; HP/SMG/ammo/survivors/door damage preserved; full 60-enemy pool bound.
+Observed Console after these Play checks: 0 errors / 0 warnings. Existing Editor API deprecation warnings remain on recompilation.
+Android Solo passage test deferred by user. No device performance claim for this change.
+First failures resolved: fixture schedule initialization; clearance for 1.95m drone; turret credit Health incorrectly counted as a walking body in the room-overlap close guard.

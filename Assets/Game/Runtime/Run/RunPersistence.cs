@@ -107,7 +107,8 @@ namespace WaitYourTurn.Run
                 assignments = run.Assignments, humanRandom = run.RandomState, botRandom = battle ? run.Match.RandomState : 0,
                 ranks = battle ? run.Match.Roster.CapturePlaces() : null, timings = run.Timings,
                 participants = new ParticipantSave[battle ? run.Match.Bots.Length + 1 : 1], wagons = new WagonSave[run.Wagons.Length],
-                spawner = spawner.Capture() };
+                spawner = spawner.Capture(), soloUnlockedThrough = run.UsesSoloProgression ? run.Solo.UnlockedThrough : 0,
+                interiorGates = run.UsesSoloProgression ? run.Solo.CaptureGates() : null };
             for (int i = 0; i < data.participants.Length; i++) data.participants[i] = CaptureParticipant(i);
             for (int w = 0; w < data.wagons.Length; w++)
             {
@@ -147,6 +148,9 @@ namespace WaitYourTurn.Run
         {
             // Revision is explicit for migrations; authored geometry/configuration also reject mismatched old saves.
             var text = new StringBuilder(contentRevision);
+            if (run.Solo != null)
+                foreach (var connection in run.Solo.Connections)
+                    text.Append("/interior-v2/").Append(JsonUtility.ToJson(connection.transform.position)).Append(JsonUtility.ToJson(connection.Passage)).Append(connection.UnlockPrice);
             foreach (var wagon in run.Wagons)
             {
                 text.Append(wagon.Id).Append(JsonUtility.ToJson(wagon.Geometry.Interior)).Append(JsonUtility.ToJson(wagon.transform.position));
@@ -190,6 +194,13 @@ namespace WaitYourTurn.Run
             if (data.mode == RunMode.Battle)
             { try { var roster = new BattleRoster(data.participants.Length); roster.Restore(data.ranks); if (data.botRandom == 0) return false; } catch (ArgumentException) { return false; } }
             var used = new bool[run.Wagons.Length];
+            bool solo = data.mode == RunMode.Solo && run.Solo != null;
+            if (solo)
+            {
+                if (data.soloUnlockedThrough < 0 || data.soloUnlockedThrough >= used.Length || data.interiorGates == null ||
+                    data.interiorGates.Length != run.Solo.Connections.Length) return false;
+                for (int i = data.soloUnlockedThrough; i < data.interiorGates.Length; i++) if (data.interiorGates[i]) return false;
+            }
             for (int i = 0; i < data.participants.Length; i++)
             {
                 reason = "Invalid participant " + i; var p = data.participants[i];
@@ -201,7 +212,8 @@ namespace WaitYourTurn.Run
                 if (!living) { if (p.wagon != -1) return false; continue; }
                 if (p.wagon < 0 || p.wagon >= used.Length || used[p.wagon]) return false;
                 var wagon = run.Wagons[p.wagon];
-                if (!wagon.Geometry.Contains(p.body.position) || p.repairDoor < -1 || p.repairDoor >= wagon.Doors.Length) return false;
+                if (!(solo ? p.wagon <= data.soloUnlockedThrough && run.Solo.ContainsSaved(p.body.position, data.soloUnlockedThrough, data.interiorGates) :
+                    wagon.Geometry.Contains(p.body.position)) || p.repairDoor < -1 || p.repairDoor >= wagon.Doors.Length) return false;
                 used[p.wagon] = true;
             }
             var profiles = Profiles();
@@ -218,8 +230,9 @@ namespace WaitYourTurn.Run
                         enemy.profile.Length > 128 || enemy.profile != "" && !profiles.ContainsKey(enemy.profile) || enemy.door < 0 ||
                         enemy.door >= saved.doors.Length || enemy.station < 0 || enemy.station > data.station ||
                         !(enemy.attackRemaining >= 0) || enemy.attackRemaining > 60 ||
-                        (enemy.body.position - wagon.transform.position).sqrMagnitude > 2500 ||
-                        enemy.onBoard && !wagon.Geometry.Contains(enemy.body.position)) return false;
+                        (!solo || !enemy.onBoard) && (enemy.body.position - wagon.transform.position).sqrMagnitude > 2500 ||
+                        enemy.onBoard && !(solo ? run.Solo.ContainsSaved(enemy.body.position, data.soloUnlockedThrough, data.interiorGates) :
+                            wagon.Geometry.Contains(enemy.body.position))) return false;
                 var slots = new bool[economy.Defenses.Racks[w].Mounts.Length]; var types = new int[economy.Defenses.Definitions.Length];
                 foreach (var turret in saved.turrets)
                 {
@@ -241,7 +254,9 @@ namespace WaitYourTurn.Run
             {
                 StationDefinition definition = null;
                 foreach (var candidate in spawner.Programs) if (candidate.firstStation <= data.station && (definition == null || definition.firstStation < candidate.firstStation)) definition = candidate;
-                if (definition == null || data.spawner.station != data.station || !new SpawnSchedule(definition.BuildStreams(used.Length), definition.queueCapacity,
+                if (definition == null || data.spawner.station != data.station) return false;
+                var streams = spawner.BuildStreams(definition, solo);
+                if (streams.Length == 0 || !new SpawnSchedule(streams, definition.queueCapacity,
                     definition.positionAttempts, definition.retryDelay).Restore(data.spawner.schedule)) return false;
             }
             reason = null; return true;
@@ -255,6 +270,7 @@ namespace WaitYourTurn.Run
             try
             {
                 run.Match.SetMode(data.mode); run.SetLoadingGate(true);
+                if (data.mode == RunMode.Solo && run.Solo != null) run.Solo.Restore(data.soloUnlockedThrough, data.interiorGates);
                 foreach (var wagon in run.Wagons) foreach (var door in wagon.Doors) door.Portal.Restore(true, false, false);
                 foreach (var rack in economy.Defenses.Racks) rack.Clear(); economy.Drone.Actor.Clear();
                 prepared = true;

@@ -1,6 +1,6 @@
 # İki mod, kalıcı ilerleme ve ilk ürün kapsamı
 
-2026-10-09. Kullanıcı kararları ile mühendislik önerileri ayrı tutulur. Bu belge yeni tasarımdır; şu anki Solo kodu hâlâ rastgele vagon ataması kullanır. Aşağıdakiler uygulanmış özellik olarak sunulmaz.
+2026-10-09. Kullanıcı kararları ile mühendislik önerileri ayrı tutulur. M8s fiziksel Solo geçişi uygulanmıştır; kalıcı ekonomi, sonuç ödülü ve yeni vagon ganimeti hâlâ tasarımdır. PC kabulü ve ertelenen cihaz kontrolü aşağıda ayrı izlenir.
 
 ## Kararlaştırılan deneyim
 
@@ -9,6 +9,7 @@
 | İlk yayın | Battle ve Solo eşit önemli. İlk kısa öğretici Solo üzerinden; ardından Battle erişimi. Açılma koşulu henüz seçilmedi. |
 | Solo ilerleme | En zayıf kuyruk vagonundan başla; koşu parasıyla sıradaki daha güçlü vagonu aç. Yolculukta rastgele atama yerine fiziksel geçiş. |
 | Solo saldırı | Açılmış vagonlar arasında geçiş serbest. Yeni saldırılar oyuncunun bulunduğu vagona yönelir; içeri girmiş zombiler korunur. Eski zombiler sırf vagon değiştirilince silinmez. |
+| Ara kapı | Satın alma kilidi kaldırır; yakında düğmeyle aç/kapat. Zombiler açık geçitten takip eder, kapalıyı geçemez ve ilk sürümde kıramaz. Dış savunma kapısından ayrı mekanik. |
 | Yeni vagon | Bir defalık toplanabilir yardım/ganimet; cephane, silah veya destek örnekleri. Kesin ganimet listesi ve rastgelelik henüz seçilmedi. Toplanan nesne kaybolur. |
 | Battle | Mevcut ayrı vagon, rastgele atama, eleme ve sıralama korunur. Yarış için zorunlu toplam zaman sınırı yok. |
 | Kalıcı güç | Kullanıcı, can/menzil/hız geliştirmelerinin **iki modda da** çalışmasını seçti. Battle değerlerini eşitleme önerisi seçilmedi. |
@@ -23,7 +24,7 @@
 - **Parayla alınan Battle gücü yarış algısını etkiler.** Kullanıcının iki mod kararı korunur; az ve açık üst sınırlar, anlaşılır güç seviyesi ve ücretsiz kazanma yolu önerilir. Bot güç/ustalık aralıkları veriyle tanımlanır; oyuncu yükseltince bütün rakipleri gizlice aynı oranda güçlendiren lastik bant kullanılmaz. Gerçek PvP eklenirse ayrı eşleştirme/adalet tasarımı gerekir.
 - **Vagon değiştirerek baskı veya ödül üretme açığı bırakmayız.** Solo istasyonunun toplam spawn bütçesi vagon girip çıkınca sıfırlanmaz; bekleyen isteklerin yönlendirilmesi oyuncu varlığını izler. Mevcut `Unoccupied` akış bastırması Solo'da körlemesine yeniden kullanılmaz: boşken bastırılmış vagon sonradan açıldığında programın tamamen susmaması gerekir.
 - **Sonsuz ödül/kayıt tekrarı yok.** Vagon açılması, ganimet kimliği/toplanması, kalıcı satın alma ve sonuç teslimi kayıtlıdır. Yükleme yeni sandık, ikinci temel ödül veya ikinci 3× üretmez. Sonuç ödülü kalan koşu parasına eşit değildir; aksi hâlde para harcamak oyuncuyu cezalandırır.
-- **Daha iyi vagonu açınca mevcut turretler kendiliğinden taşınmaz.** Önceki sahiplik korunur; dron oyuncuyla gider. İlk öneri açılmış bağlantılardan iç zombilerin takip edebilmesi, kapalı vagonların erişilememesi. İç bağlantı kapılarını oyuncunun açıp kapatması, özel etkileşimi ve düşman hasarı sonraki karardır; dış savunma kapısı gibi sayılmaz.
+- **Daha iyi vagonu açınca mevcut turretler kendiliğinden taşınmaz.** Önceki sahiplik korunur; dron oyuncuyla gider. D39 ile açık bağlantıda iç zombi takibi, satın alma sonrası manuel kapı seçildi. Kapıda can/onarım yoktur; iç geçitte beden veya dron varken kapanış reddedilir.
 - Doğal nickler, farklı karar gecikmeleri, kısa dolaşma, onarım/alışveriş ve botların değişik ustalıkları hedefe uygundur. Sahte internet eşleşmesi/gerçek insan bulundu iddiası önerilmez: yerel rakip yarışını mod açıklamasında belirtip girişte “Tren hazırlanıyor / Yolcular yerleşiyor” kullanabiliriz. Uzun rastgele bekleme eklemeyiz. İsim/mesaj ve sunum henüz uygulanmadı.
 
 ## Ortak parçalar ve mod sınırları
@@ -39,7 +40,15 @@ Yeni büyük framework yerine mevcut bağlayıcının dar sorumlulukları ayrıl
 | Koşu ödülü | Mod/ilerleme/sıra üzerinden kesinleşmiş tek sonuç; reklam/IAP SDK'sına bağımlı değildir. Ürün ve callback teslimi sonradan adaptörle bağlanır. |
 | Görünmeyen vagon | İlk olarak ölç; sonra insan+komşular ayrıntılı, uzak botlar düşük sıklıkta simüle edilebilir. Mantıksal can/para/kapı/enemy/ödül durumu korunur. Gizlemek tek başına simülasyon maliyetini kaldırmaz. |
 
-Mevcut `RunSnapshot` v1 tek mevcut vagon içindeki konumu doğrular; bağlantı üstündeki konum/açılmış vagonlar/ganimet için yeni sürüm ve içerik revizyonu gerekir. Eski dosya uyumu açıkça migrate edilir veya kontrollü yeni koşu seçeneği sunulur. Kalıcı satın alma profili koşu revizyonuyla silinmez.
+`RunSnapshot` v2 açılmış vagon sınırını, ara kapıları, bağlantıdaki insanı ve başka vagona yürümüş havuz düşmanını kaydeder. v1/önceki geometri kontrollü reddedilir; yeni koşu başlatılır, bu sürüm otomatik göç yapmaz. Kalıcı profil ve ganimet kaydı henüz yoktur; koşu kaydı bunların yerine geçmez.
+
+## M8s uygulama sınırı
+
+İlk iki komşu vagon üzerinde kilit/açma/yürüme/takip/kayıt sınanır; aynı kurulum mevcut beşli trenin dört bağlantısında kullanılır. Geçiş fiyatları 200/300/400/500 koşu parasıdır, yayın dengesi değildir. Solo kuyrukta başlar; karanlık geçişte rastgele atama yapılmaz. Vagonun orta bağlantı eşiği geçilince onarım, mağaza, turret kurulumu, spawn ve kamera bağlamı güncellenir; can, para, silah ve konum sıfırlanmaz, geçiş koruması verilmez.
+
+Spawn tüm vagonlar için ayrı Solo bütçe üretmez: `wagon=-1` mobil bantları istasyonda tek program olur, her yeni istek güncel vagona yönelir. Sadece belirli vagona yazılan bantlar Battle içeriğidir; Solo programında en az bir mobil bant gerekir. Geçiş mevcut programı veya bekleyen istekleri sıfırlamaz. Zombi fiziksel olarak başka vagona geçse de doğduğu havuzda kalır; havuz kapasitesi, hasar ödülü ve kaydı aynı sahipliği kullanır.
+
+Kullanıcı A54 geçiş testini sonraya bıraktı. PC kanıtı `generated/solo-progression-pc-acceptance.txt` içinde; cihaz kabulü tamamlandı sayılmaz. Yeni vagon ganimeti, ana menü, kalıcı silah/güç, sonuç ödülü ve reklam bu parçaya eklenmedi. Sonraki küçük işte tek ganimet/tek teslim kuralı kesinleştirilir; M8e ekonomi kararı ayrı alınır.
 
 ## İlk uygulanacak küçük parça
 

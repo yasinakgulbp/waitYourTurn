@@ -61,7 +61,7 @@ namespace WaitYourTurn.Sandbox
             if(presentation.Darkness>0)
             {
                 GUI.color=new Color(0,0,0,presentation.Darkness);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=Color.white;
-                if(run.Flow.Phase==RunPhase.Hidden)GUI.Label(new Rect(Screen.width/2-120,Screen.height/2,280,60),$"Vagon dağılımı hazırlanıyor… {Mathf.CeilToInt(run.Flow.Remaining)}");
+                if(run.Flow.Phase==RunPhase.Hidden)GUI.Label(new Rect(Screen.width/2-120,Screen.height/2,280,60),$"{(run.UsesSoloProgression ? "Sonraki istasyona yolculuk…" : "Vagon dağılımı hazırlanıyor…")} {Mathf.CeilToInt(run.Flow.Remaining)}");
             }
         }
         private IEnumerator Check()

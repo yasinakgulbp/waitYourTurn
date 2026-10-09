@@ -2,6 +2,8 @@
 
 Sahne: `Assets/Game/Scenes/TrainIntegration.unity`. Orijinal `SampleScene 2` ve önceki küçük laboratuvarlar korunur. Bu sahne mevcut savaş/onarım/koşu çekirdeğini hedef geometriyle birleştirir; nihai sanat, UI, denge veya bot uygulaması değildir.
 
+**Güncel M8s/D39:** dört sabit bağlantı zemini ve manuel ara kapı eklendi. Solo kuyrukta başlar; kapıya yaklaşınca kilit için ödeme, ardından aç/kapat ve fiziksel yürüyüş. Dış kapı/cam/metal kuralı değişmez; Battle ara kapıları kapalı tutar. Kurulum mevcut sahneyi silmeden `Wait Your Turn/Solo/Install Wagon Passages` ile yapılır; tam tren builder'ı da aynı parçayı kurar. F2 ayrı test kaydıyla Solo geçiş/takip/kayıt, F4 kayıt, F7 Battle, F10 yan geometri kabulüdür. Modelci güncel MODEL_CONTRACT ve iki ölçü CSV'sini kullanır. Kalıcı ekonomi/ganimet ve Android geçiş kabulü bu teknik parçadan ayrıdır.
+
 **Güncel D23 revizyonu:** kullanıcı yeni görsellerle eski prefab ölçülerinin düzeltilmesini istedi. Sahne artık veriyle kurulan 12 × 4,2 blok vagon, 1,7 boyunda kapsüller, kuyruktan başa 6/5/5/4/4 kapı dizilimi ve sağda kapalı lokomotif ve responsive perspektif kullanır. Güncel kurulum/ölçü/model bağlama [VISUAL_SCALE.md](VISUAL_SCALE.md) içindedir. Aşağıdaki ilk referans ölçüleri ve test zamanları M6a'nın önceki sürümünün tarihsel kaydıdır.
 
 ## İlk M6a referansı ve kurulum geçmişi

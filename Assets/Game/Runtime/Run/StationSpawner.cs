@@ -94,7 +94,9 @@ namespace WaitYourTurn.Run
             foreach (var wagon in run.Wagons)
                 if (definition.wagonLiveLimit > wagon.Enemies.Capacity || wagon.Geometry == null || wagon.Geometry.SpawnCount == 0)
                     return Reject(wagon.Id + ": live limit exceeds pool capacity, or geometry/spawn anchors are missing.");
-            schedule = new SpawnSchedule(definition.BuildStreams(run.Wagons.Length), definition.queueCapacity,
+            var streams = BuildStreams(definition, run.UsesSoloProgression);
+            if (streams.Length == 0) return Reject("Solo requires at least one mobile (all-wagons) spawn band.");
+            schedule = new SpawnSchedule(streams, definition.queueCapacity,
                 definition.positionAttempts, definition.retryDelay);
             return true;
         }
@@ -102,15 +104,17 @@ namespace WaitYourTurn.Run
         { Diagnostic = reason; Debug.LogError("[StationSpawner] " + reason, this); return false; }
         private SpawnResult TrySpawn(SpawnRequest request)
         {
-            var wagon = run.Wagons[request.Wagon];
+            int target = run.UsesSoloProgression ? Array.IndexOf(run.Wagons, run.CurrentWagon) : request.Wagon;
+            var wagon = run.Wagons[target];
             if (!wagon.HasLivingDefender) return SpawnResult.Unoccupied;
-            if (totalActive >= definition.globalLiveLimit || activeCounts[request.Wagon] >= definition.wagonLiveLimit || !wagon.Enemies.CanRent)
+            if (totalActive >= definition.globalLiveLimit || activeCounts[target] >= definition.wagonLiveLimit || !wagon.Enemies.CanRent)
                 return SpawnResult.CapacityFull;
             // Each retry uses another authored anchor; neither moving scenery nor windows are spawn sources.
-            int anchor = attempted[request.Wagon]++;
+            int anchor = attempted[target]++;
             if (!wagon.SpawnOutside(anchor, definition.bands[request.Profile].profile, station)) return SpawnResult.InvalidPosition;
-            activeCounts[request.Wagon]++; totalActive++; SpawnedThisFrame++; return SpawnResult.Spawned;
+            activeCounts[target]++; totalActive++; SpawnedThisFrame++; return SpawnResult.Spawned;
         }
+        public SpawnStream[] BuildStreams(StationDefinition program, bool solo) => solo ? program.BuildSoloStreams(run.Wagons.Length) : program.BuildStreams(run.Wagons.Length);
         private void WarmPools(int budget)
         {
             int inspected = 0, created = 0;

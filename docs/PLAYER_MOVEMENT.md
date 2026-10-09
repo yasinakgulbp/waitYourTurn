@@ -6,6 +6,8 @@
 
 Bu oyuncu/bot sınırı açık kapıda da geçerlidir. Zombilerin kapıdan girişini, camdan atışı veya kapı hasar/onarımını kapatmaz. Gelecekte istasyonda yürüme için hareket alanı değiştirilebilir ya da `SetMovementArea(null)` ile kaldırılabilir; kalıcı tren bağımlılığı eklenmez. Sanat modeli collider veya root motion ile mekanik kökü ayrıca sürmez.
 
+M8s Solo: `MovementArea.ConfigureRegions` bağlı açık odalar ve bindirmeli ara koridor dikdörtgenleri alır. Her aday gerçek kapsül yarıçapıyla içeri alınır; en yakın geçerli aday seçilir. Kapalı kapının ötesindeki açık fakat ayrık oda oyuncunun bileşenine eklenmez. Büyük tek tren dikdörtgeni kullanılmadığı için vagon arası açık boşluğa veya dış kapıdan platforma kaçılmaz. Hacim dizisi sadece kilit/kapı/güncel vagon değişince kurulur, her kare tahsis edilmez. Battle ve eski laboratuvarlar tek vagon sınırını kullanır; fiziksel Solo eşiği respawn/koruma üretmez.
+
 Hedef yokken motor, verilen yatay yürüyüş yönüne **720 derece/sn** hızla döner (`walkingTurnSpeed`, Inspector). 90° yaklaşık 0,125 sn, 180° yaklaşık 0,25 sn sürer. WASD, dokunmatik joystick ve bot dünya yönü aynı dönüş kuralını kullanır; joystick tek başına önceki anlık dönüşü çözmüyordu. Girdi yokken son yön korunur; kalabalığın fiziksel itmesi kendi başına yüz yönü seçmez. Geçerli görünür ateş hedefi yürüyüşün önüne geçer ve önceki hızlı nişan dönüşünü korur. Duraklamada dönüş ilerlemez.
 
 ## PC kontrolü

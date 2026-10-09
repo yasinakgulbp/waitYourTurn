@@ -6,7 +6,9 @@ Güncelleme: 2026-10-08. Hedef sahne `Assets/Game/Scenes/TrainIntegration.unity`
 
 `Assets/Game/Content/StationPrograms` içindeki varlıklar Inspector'dan düzenlenir. Sahnedeki `Bounded station spawner` program listesini taşır. En büyük `firstStation <= mevcut istasyon` olan program seçilir: Station01 → 1–2, Station03 → 3–5, Station06 → 6 ve sonrası. Son program tekrar eder; sonsuza kadar otomatik artan sayılar eklenmedi. Bunlar ilk test değerleridir, nihai denge değildir.
 
-Her `SpawnBand`: zombi profili, vagon indeksi (`-1`: tüm vagonlar), adet, savunmanın başlangıcına göre ilk saniye ve doğuş aralığıdır. Adet vagon başınadır; başarılı doğuş veya sınırlı denemeden sonra iptal edilen istek bütçeyi tüketir. D27 ile canlı savunucusu olmayan vagonun akışı o istasyon için tamamen kapatılır. Savunma bittiğinde yetişmemiş doğuşlar sonraki istasyona taşınmaz.
+Her `SpawnBand`: zombi profili, vagon indeksi (`-1`: tüm vagonlar), adet, savunmanın başlangıcına göre ilk saniye ve doğuş aralığıdır. **Battle:** adet vagon başınadır; D27 ile canlı savunucusu olmayan vagonun akışı o istasyon için tamamen kapatılır. **M8s fiziksel Solo:** yalnız `wagon=-1` bantları tek mobil bütçe oluşturur; her yeni istek o anda insanın bulunduğu vagona yönelir. Vagon değiştirmek programı, yayılmış adetleri veya sıradaki isteği sıfırlamaz; vagon-indeksli bantlar Solo'ya çoğaltılmaz. En az bir mobil bant zorunludur. Her iki modda başarılı doğuş veya sınırlı denemeden sonra iptal edilen istek bütçeyi tüketir; savunma bittiğinde yetişmemiş doğuşlar sonraki istasyona taşınmaz.
+
+İç zombi açık ara kapıdan başka vagona yürüdüğünde doğduğu havuzda kalır. Kapasite/ödül/kayıt sahipliği bu havuza bağlıdır; fiziksel oda üyeliği Solo topolojisinden okunur. Zombi sırf insan başka vagona yürüdü diye silinmez. Geçişte toplam canlı/havuz sınırı korunur, ek bir havuz veya sınırsız yeniden spawn eklenmez.
 
 ## D27 — Canlı savunucu uygunluğu
 

@@ -40,8 +40,12 @@ namespace WaitYourTurn.Enemies
             var enemy = available.Pop();
             if (!enemy.Spawn(point, entry, player, slot, geometry, profile, station))
             { enemy.Despawn(); enemy.gameObject.SetActive(false); available.Push(enemy); return null; }
+            enemy.SetInteriorPursuit(interiorPursuit);
             enemy.SetScope(wagonId, playerPresent); active.Add(enemy); registry.Register(enemy.Health); return enemy;
         }
+        private IInteriorPursuit interiorPursuit;
+        public void SetInteriorPursuit(IInteriorPursuit value)
+        { interiorPursuit = value; foreach (var enemy in active) enemy.SetInteriorPursuit(value); }
         public void SetDefender(HealthComponent defender)
         {
             player = defender; playerPresent = defender != null;
@@ -91,6 +95,7 @@ namespace WaitYourTurn.Enemies
             if (!enemy.Spawn(hit.position, entry, player, spawnSequence++ % capacity, geometry, profile, station))
             { enemy.Despawn(); enemy.gameObject.SetActive(false); available.Push(enemy); return false; }
             enemy.gameObject.SetActive(true);
+            enemy.SetInteriorPursuit(interiorPursuit);
             enemy.SetScope(wagonId, playerPresent);
             active.Add(enemy);
             registry.Register(enemy.Health);

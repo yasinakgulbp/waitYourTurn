@@ -165,3 +165,11 @@ Güncel tasarım PROGRESSION_DESIGN.md, sıra RELEASE_PLAN.md. M8b mevcut cihaz 
 Kullanıcı portre açılışın yanlış olduğunu ve joystick dokunuşlarının siyah kenarlarda `Move` izleri bıraktığını bildirdi. Yalnız iki yatay yön açık kalır. Güvenli alan dışındaki arka tampon her karede temizlenir; joystick görseli güvenli alanda tutulur, giriş başlangıcı yer değiştirmez. Kamera/framing, collider, atış ve hasar sözleşmeleri korunur. Mobilde açık 60 FPS hedefi ve seçilebilir 30 FPS API'si uygulanır; bu bütün cihazlarda 60 garantisi değildir.
 
 Kullanıcı bu turda **kablolu sıcaklık/FPS testi** seçti. USB güç varken pil tüketimi sonucu üretilmez. Android Development APK'da yerel teşhis ve isteğe bağlı 10 dakika/60 havuz sınırında sentetik savaş fixture'ı bulunur; yayın build'inden çıkarılır. Normal koşu kaydı ayrı korunur. Ölçüm yöntemi ANDROID_PLAYTEST.md, gerçek A54 sonuçları A54_PERFORMANCE.md içinde. Bu test yeni Solo fiziksel ilerlemesi, son modeller/animasyonlar, üretim UI/reklamlar veya bütün cihazların yayın kabulü değildir. Açılıştaki AssetPackManager sınıf hatası çözülmeden temiz Android yayın kabulü verilmez.
+
+## 2026-10-09 — D39: Solo manuel ara kapı ve takip
+
+Kullanıcı seçti: satın alma ara kapının kilidini kaldırır; oyuncu yakında düğmeyle açar/kapatır. İç zombiler açık bağlantıdan takip eder, kapalıdan geçmez; ilk sürümde ara kapıya hasar vermez. Dış savunma kapısının dayanıklılık/onarım mekaniği bu kapıya uygulanmaz.
+
+Uygulama: kuyrukta başlangıç, dört sıralı bağlantı, bağlı oda/koridor hareket hacimleri; eşikte güncel vagon bağlamı, tek Solo istasyon spawn bütçesi ve v2 yerel kayıt. Geçiş fiyatları 200/300/400/500 deneme değeridir; satın almak kapıyı otomatik açmaz. Geçitte canlı beden veya dron varken kapatma reddi mühendislik önlemidir. Dron 1,95 m uçuş yüksekliğini korur; üst metalin alt kotu 2,1 m'dir. Güncel ölçü CSV'leri MODEL_CONTRACT içindedir. Turretler eski vagonda kalır; yürüyüş ücretsiz koruma veya yeni koşu üretmez.
+
+Kullanıcı A54 kısa geçiş testini **sonraya bıraktı**; PC kontrolü tamamlanınca cihaz kabulü beklemede kaydedilir. Yeni vagon ganimeti/meta/sonuç teslimi bu parçanın tamamlandığı iddia edilen özellikler değildir; sonraki işte içerik ve teslim kararı gerekir.

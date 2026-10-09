@@ -54,5 +54,15 @@ namespace WaitYourTurn.Run
                     streams[next++] = new SpawnStream(wagon, i, bands[i].count, bands[i].firstAt, bands[i].interval);
             return streams;
         }
+        public SpawnStream[] BuildSoloStreams(int wagonCount)
+        {
+            if (!Validate(wagonCount, out string reason)) throw new ArgumentException(reason);
+            // A mobile defender has one station budget. Explicit wagon-only bands belong to Battle.
+            int count = 0; foreach (var band in bands) if (band.wagon == -1) count++;
+            var streams = new SpawnStream[count]; int next = 0;
+            for (int i = 0; i < bands.Length; i++) if (bands[i].wagon == -1)
+                streams[next++] = new SpawnStream(0, i, bands[i].count, bands[i].firstAt, bands[i].interval);
+            return streams;
+        }
     }
 }
