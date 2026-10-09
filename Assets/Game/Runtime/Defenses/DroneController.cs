@@ -32,6 +32,13 @@ namespace WaitYourTurn.Defenses
         public int BlastHits { get; private set; }
         public int TimedOut { get; private set; }
         public float SearchRemaining => Mathf.Max(0, searchUntil - Time.time);
+        public void RestoreFlight(DroneState state, Vector3 position, Quaternion rotation, float searchRemaining)
+        {
+            transform.SetPositionAndRotation(position, rotation); velocity = Vector3.zero; target = null;
+            State = state == DroneState.Diving ? DroneState.Searching : state;
+            searchUntil = Time.time + searchRemaining; nextSelection = Time.time;
+            if (State == DroneState.Searching) presentation.SetKamikaze();
+        }
         public void Configure(HealthComponent life, HitscanWeapon gun, DronePresentation view)
         { source = life; weapon = gun; presentation = view; }
         public bool TryDeploy(DroneDefinition definition, HealthComponent credit, TargetRegistry targets, Transform frame, Bounds bounds)

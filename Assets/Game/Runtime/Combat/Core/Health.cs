@@ -65,6 +65,13 @@ namespace WaitYourTurn.Combat
             return true;
         }
 
+        // Loading is a new runtime life, not a combat hit/death and never an earned reward.
+        public bool Restore(float current, float maximum, Team team)
+        {
+            if (!ValidPositive(maximum) || float.IsNaN(current) || current < 0 || current > maximum) return false;
+            ResetForSpawn(maximum, team); Current = current; return true;
+        }
+
         private static bool ValidPositive(float value) => value > 0f && !float.IsNaN(value) && !float.IsInfinity(value);
     }
 }

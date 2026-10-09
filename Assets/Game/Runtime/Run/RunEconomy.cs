@@ -30,6 +30,9 @@ namespace WaitYourTurn.Run
             !run.Flow.Paused && run.Player.IsAlive;
         public void Configure(RunDriver owner, ShopCatalog products) { run = owner; catalog = products; }
         public ulong NextRequest() => ++nextRequest;
+        public float PurchaseRemaining => Mathf.Max(0, nextPurchase - Time.unscaledTime);
+        public void RestoreWallet(int coins, float remaining)
+        { wallet.Reset(coins); rewards.BeginRun(run.Player.Identity); context++; shop.SetContext(context); nextPurchase = Time.unscaledTime + remaining; }
         private void OnEnable()
         {
             if (run == null || catalog == null || !catalog.Valid(run.Weapon.WeaponCount))

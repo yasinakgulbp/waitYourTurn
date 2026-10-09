@@ -44,6 +44,9 @@ namespace WaitYourTurn.Run
         public bool ThinkingEnabled { get; set; } = true;
         public int Shots { get; private set; }
         public int Purchases { get; private set; }
+        public float PurchaseRemaining => Mathf.Max(0, nextPurchase - Time.time);
+        public void RestoreWallet(int coins, float remaining)
+        { wallet.Reset(coins); rewards.BeginRun(health.Identity); context++; shop.SetContext(context); nextPurchase = Time.time + remaining; }
         public bool CanShop => health.IsAlive && Wagon != null && run.Flow != null && !run.Flow.Paused;
         public void Configure(string name, BotProfile skill, HealthComponent life, PlayerMotor movement,
             AutoAim targeting, HitscanWeapon gun, ProximityRepair interaction)

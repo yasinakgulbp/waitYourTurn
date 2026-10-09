@@ -31,7 +31,8 @@ namespace WaitYourTurn.Sandbox
         {
             checking = true; restoreFixed = run.UseFixedSeed; restoreInitial = run.RandomInitialWagon; restoreMode = match.Mode;
             views = new Behaviour[] { FindAnyObjectByType<TrainIntegrationController>(), FindAnyObjectByType<ShopHud>(), FindAnyObjectByType<BattleHud>(),
-                FindAnyObjectByType<SpawnAcceptance>(), FindAnyObjectByType<EconomyAcceptance>(), FindAnyObjectByType<TurretAcceptance>(), FindAnyObjectByType<DroneAcceptance>() };
+                FindAnyObjectByType<SpawnAcceptance>(), FindAnyObjectByType<EconomyAcceptance>(), FindAnyObjectByType<TurretAcceptance>(), FindAnyObjectByType<DroneAcceptance>(),
+                FindAnyObjectByType<RunPersistence>(), FindAnyObjectByType<PersistenceHud>() };
             viewEnabled = views.Select(v => v != null && v.enabled).ToArray(); foreach (var view in views) if (view != null) view.enabled = false;
             run.ControlsAllowed = run.AimAllowed = false; run.Repair.enabled = false; spawner.enabled = false; match.AiAllowed = false;
             run.ConfigureRandomAssignments(true, false); run.ConfigureInitialWagon(2); match.SetMode(RunMode.Battle);

@@ -1,16 +1,18 @@
 # Wait Your Turn — geliştirme kaydı
 
-Güncelleme: 2026-10-08. Doküman dili Türkçe; kod, tip adları ve commit mesajları İngilizce.
+Güncelleme: 2026-10-09. Doküman dili Türkçe; kod, tip adları ve commit mesajları İngilizce.
 
 Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştirmek; yeni mekanikler eklenirken önceki mekaniklerin korunmasını sağlamak.
 
-**TrainSandbox nihai oyun değildir.** İlk prototip yerleşim/oynanış referansıdır; güncel fiziksel oran ve kamera hedefi D23 kullanıcı görselleridir. Yeni geliştirmeden önce [görsel hedef ve entegrasyon denetimi](VISION_AND_INTEGRATION.md) ile [güncel ölçek](VISUAL_SCALE.md) okunur. `TrainIntegration` beş vagonlu PC teknik kabulünü geçti. Bağlama kuralları, test kanıtı ve açık değerlendirmeler [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md) içindedir. M6 spawn/tür/bütçe ve M7a cüzdan/ödül/mağaza PC teknik kabulüne ulaştı; güncel ayarlar ve sınırlar [SPAWNING.md](SPAWNING.md) ve [ECONOMY.md](ECONOMY.md) içindedir. M7b sabit turret de PC teknik kabulüne ulaştı; [DEFENSES.md](DEFENSES.md) ayar/sahiplik/test kaydıdır. M7c dron da PC kabulüne ulaştı; [DRONE.md](DRONE.md) davranış, ayar ve test kaydıdır. Mod/Bot ilk PC kabulü PASS: dört yerel bot, üç profil ve D33 eleme/sonuç; BOTS.md. Sıradaki M8 kayıt; Android kalabalık profili/mağaza ergonomisi açık kalır.
+**TrainSandbox nihai oyun değildir.** İlk prototip yerleşim/oynanış referansıdır; güncel fiziksel oran ve kamera hedefi D23 kullanıcı görselleridir. Yeni geliştirmeden önce [görsel hedef ve entegrasyon denetimi](VISION_AND_INTEGRATION.md) ile [güncel ölçek](VISUAL_SCALE.md) okunur. `TrainIntegration` beş vagonlu PC teknik kabulünü geçti. Bağlama kuralları, test kanıtı ve açık değerlendirmeler [TRAIN_INTEGRATION.md](TRAIN_INTEGRATION.md) içindedir. M6 spawn/tür/bütçe ve M7a cüzdan/ödül/mağaza PC teknik kabulüne ulaştı; güncel ayarlar ve sınırlar [SPAWNING.md](SPAWNING.md) ve [ECONOMY.md](ECONOMY.md) içindedir. M7b sabit turret de PC teknik kabulüne ulaştı; [DEFENSES.md](DEFENSES.md) ayar/sahiplik/test kaydıdır. M7c dron da PC kabulüne ulaştı; [DRONE.md](DRONE.md) davranış, ayar ve test kaydıdır. Mod/Bot ilk PC kabulü PASS: dört yerel bot, üç profil ve D33 eleme/sonuç; BOTS.md. M8a yerel kayıt temeli eklendi; güncel sözleşme PERSISTENCE.md; Android kalabalık profili/mağaza ergonomisi açık kalır.
 
 **D23 güncel görsel/ölçek hedefi:** kullanıcının üç yeni referansı eski prototipteki oranları düzeltir. Şimdiki TrainIntegration sade 12 × 4,2 vagon, yönü okunabilen kapsüller, 4–6 kapı varyantları ve ekran oranına uyarlanan perspektif kullanır. Güncel ölçü/model bağlama ve referanslar [VISUAL_SCALE.md](VISUAL_SCALE.md) içindedir; ilk prefabın oranları ve altı-kapı zorunluluğu artık hedef değildir.
 
 **D27/D28 güncel durum:** boş/elenmiş vagonlara yeni saldırı üretilmez; içeridekiler korunur. Rastgele atamada geçerli adaylar içinde düşmana en yüksek mesafe ve ayarlanabilir 2 sn hasar koruması kullanılır. 28 spawn/yolculuk + 40 can/onarım testi, F11 30 geçiş, F9 mağaza ve F10 birleşik çekirdek PC kabulü PASS. [Kısa kanıt](generated/occupancy-arrival-pc-acceptance.txt). Bu D27/D28 kanıtı botlardan önce alınmıştır; güncel bot uygulaması BOTS.md içindedir. Gelir önerileri [MONETIZATION.md](MONETIZATION.md) içinde, servisler eklenmedi.
 
 ## Okuma sırası
+
+**Güncel adım M8a yerel kayıt:** [PERSISTENCE.md](PERSISTENCE.md). İnsan/bot yön davranışı ve aynı koşuya devam temeli uygulanır. Editor F5 kaydet / F6 devam; mobil build otomatik kayıt/devam kullanır. PC kabulü ile Android süreç kapatma kabulü ayrı tutulur; M8 denge/oyuncu arayüzü ve bulut tamamlanmış değildir.
 
 Güncel Mod/Bot: [BOTS.md](BOTS.md) — ortak bileşenler, profiller, sıralama, atama, testler ve açık maliyet işleri.
 
@@ -59,6 +61,8 @@ Güncel D24: TrainIntegration iki taraflı ateş edilebilir yan pencereler kulla
 Yeni bir oturumda bu dizin, güncel kod, Git durumu ve Unity sahnesi birlikte okunur. Plan belgesi tek başına uygulamanın kanıtı değildir. Değişen tasarım kararının gerekçesi `DECISIONS.md` içine eklenir; eski karar sessizce değiştirilmez.
 
 ## İlerleme kaydı
+
+2026-10-09 M8a/D34: hedef yokken insan/bot gerçekleşen hareket yönüne bakar; görünür hedef dönüşte önceliklidir. Yerel kayıt katılımcı/vagon/eleme, can/para/mermi/onarım, savunmalar, spawn ve atama RNG durumunu korur. 104 ilgili kural testi ile F4/F7/F9/F10 PC kabulleri PASS; kayıt JSON'undaki dronsuz durum ayrıca doğrulandı. Editor F5 kaydet / F6 devam; Android yaşam döngüsü, bulut, sonuç arayüzü ve denge açık. [Kayıt sözleşmesi](PERSISTENCE.md), [PC kanıtı](generated/m8a-pc-acceptance.txt).
 
 | Tarih | İş | Durum | Doğrulama / sonraki adım |
 | --- | --- | --- | --- |

@@ -135,3 +135,9 @@ Kullanıcı onayı: mermisi biten dron erişebildiği en yakın zombiye gider; k
 ## 2026-10-08 — D33: Battle elemesi ve sonuç
 
 Kullanıcı soruda onayladı: insan ölünce sırası gösterilip koşu biter; bütün botlar elenip yalnız insan kalınca birincilikle biter. Aynı karede elenenler aynı sırayı paylaşır. Teknik uygulama ölüm bayraklarını kare sonunda toplar; son iki katılımcı birlikte ölürse yaşayan kazanan ilan etmez, ortak sıra ve beraberlik gösterir. Ölü katılımcı aynı koşuda yeniden doğmaz. Yeni atama tüm yaşayan katılımcıları çakışmadan dağıtır; boş vagonlar yeni atamada seçilebilir. Yerel botlu Battle ile botsuz ilerleme modu ortak RunFlow kullanır. BOTS.md uygulama/sınır/ayar kaydıdır; gerçek multiplayer, sonuç reklamı veya kalıcı ödül eklenmedi.
+
+## 2026-10-09 — D34: hareket yönü ve M8a kayıt temeli
+
+Kullanıcı talebi: insan ve bot yürürken hareket yönüne baksın; geçerli ateş hedefi varsa yüzünü ona dönsün. Ortak motor bunu uygular; görsel model değişimi kuralı değiştirmez.
+
+Önceden seçilen uygulama kapanınca mevcut koşuya devam / ölümde yeni koşu hedefi M8a yerel kayıtla uygulanır. Battle elemesi, vagonların ayrı durumu ve RNG ilerlemesi birlikte korunur. Mühendislik başlangıç ayarı beş saniyelik periyodik kayıt ve mobil yaşam döngüsü callback'leridir; Inspector'dan değişir. Editor test izolasyonu için otomatik devam varsayılan kapalı, F5/F6 açıktır. Bulut, kalıcı ödül/IAP ve kullanıcı menüsü bu adımda eklenmedi; Android süreç kapatma kabulü ayrı kalır. Sözleşme ve sınırlar PERSISTENCE.md içindedir.

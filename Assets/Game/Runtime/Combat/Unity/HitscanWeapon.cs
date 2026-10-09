@@ -3,6 +3,14 @@ using UnityEngine;
 
 namespace WaitYourTurn.Combat
 {
+    [Serializable]
+    public sealed class WeaponSnapshot
+    {
+        public int equipped;
+        public bool[] owned;
+        public AmmoSnapshot[] ammo;
+        public float triggerRemaining;
+    }
     public readonly struct ShotNotice
     {
         public readonly Vector3 Start, End;
@@ -128,5 +136,27 @@ namespace WaitYourTurn.Combat
             return true;
         }
         private static bool Finite(Vector3 v) => !float.IsNaN(v.sqrMagnitude) && !float.IsInfinity(v.sqrMagnitude);
+        public WeaponSnapshot Capture()
+        {
+            EnsureInitialized(); var data = new WeaponSnapshot { equipped = equipped, owned = (bool[])owned.Clone(),
+                ammo = new AmmoSnapshot[states.Length], triggerRemaining = Mathf.Max(0, nextTrigger - Time.time) };
+            for (int i = 0; i < states.Length; i++) data.ammo[i] = states[i].Capture(Time.time);
+            return data;
+        }
+        public bool CanRestore(WeaponSnapshot data)
+        {
+            EnsureInitialized();
+            if (data == null || data.owned == null || data.ammo == null || data.owned.Length != states.Length ||
+                data.ammo.Length != states.Length || data.equipped < 0 || data.equipped >= states.Length || !data.owned[0] ||
+                !data.owned[data.equipped] || !(data.triggerRemaining >= 0) || data.triggerRemaining > 60) return false;
+            for (int i = 0; i < states.Length; i++) if (!states[i].CanRestore(data.ammo[i])) return false;
+            return true;
+        }
+        public bool Restore(WeaponSnapshot data)
+        {
+            if (!CanRestore(data)) return false;
+            for (int i = 0; i < states.Length; i++) states[i].Restore(data.ammo[i], Time.time);
+            owned = (bool[])data.owned.Clone(); equipped = data.equipped; nextTrigger = Time.time + data.triggerRemaining; return true;
+        }
     }
 }

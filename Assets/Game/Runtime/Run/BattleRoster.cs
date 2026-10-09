@@ -19,6 +19,17 @@ namespace WaitYourTurn.Run
         }
         public bool IsAlive(int index) => alive[index];
         public int Place(int index) => places[index];
+        public int[] CapturePlaces() => (int[])places.Clone();
+        public void Restore(int[] ranks)
+        {
+            if (ranks == null || ranks.Length != Count || ranks[0] != 0) throw new ArgumentException("Invalid active battle ranks.");
+            int survivors = 0;
+            for (int i = 0; i < Count; i++) { if (ranks[i] < 0 || ranks[i] > Count) throw new ArgumentException("Invalid rank."); if (ranks[i] == 0) survivors++; }
+            if (survivors < 2) throw new ArgumentException("Finished battles cannot resume.");
+            foreach (int rank in ranks) if (rank > 0 && rank <= survivors) throw new ArgumentException("Rank conflicts with living participants.");
+            Living = survivors;
+            for (int i = 0; i < Count; i++) { places[i] = ranks[i]; alive[i] = ranks[i] == 0; }
+        }
         public void Eliminate(bool[] dead)
         {
             if (dead == null || dead.Length != Count) throw new ArgumentException("One flag per participant required.");

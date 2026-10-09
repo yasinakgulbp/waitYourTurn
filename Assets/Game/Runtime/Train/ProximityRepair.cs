@@ -39,6 +39,8 @@ namespace WaitYourTurn.Train
             doorLife = targetHealth != null ? targetHealth.LifeVersion : 0;
             actorLife = actor != null ? actor.LifeVersion : 0;
         }
+        public void RestoreProgress(DoorController target, float progress)
+        { SetDoor(target); Cancel(); if (InRange && door.NeedsRepair && actor.IsAlive) elapsed = Mathf.Clamp01(progress) * duration; }
         // Resolve after Update-based attacks; optional interruption takes priority over completion.
         private void LateUpdate() => Tick(Time.deltaTime);
         /// <summary>Uses scaled gameplay time. Also permits deterministic rule checks without waiting.</summary>

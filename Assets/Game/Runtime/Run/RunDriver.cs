@@ -34,7 +34,11 @@ namespace WaitYourTurn.Run
         [SerializeField, Min(0)] private float arrivalProtectionSeconds = 2;
         public float ArrivalProtectionSeconds => arrivalProtectionSeconds;
         public void ConfigureInitialWagon(int index) => initialWagonIndex = index;
-        private System.Random random;
+        private RunRandom random;
+        public uint RandomState => random.State;
+        public RunTimings Timings => timings;
+        public bool Loading { get; private set; }
+        public event Action Restarted;
         private bool gateClosed;
         private float previousTimeScale;
         private readonly List<(HealthComponent health, bool invulnerable)> protectedBodies = new List<(HealthComponent, bool)>(40);
@@ -61,7 +65,7 @@ namespace WaitYourTurn.Run
             SetGate(false);
             if (Flow != null) Flow.Changed -= OnPhase;
             ActualRunSeed = useFixedSeed ? seed : Guid.NewGuid().GetHashCode();
-            random = new System.Random(ActualRunSeed); Assignments = 0; Failure = null;
+            random = new RunRandom(ActualRunSeed); Assignments = 0; Failure = null;
             foreach (WagonRuntime wagon in wagons)
             {
                 wagon.SetDefender(null);
@@ -74,10 +78,20 @@ namespace WaitYourTurn.Run
             int first = randomInitialWagon ? random.Next(wagons.Length) : Mathf.Clamp(initialWagonIndex, 0, wagons.Length - 1);
             if (!Assign(wagons[first], false)) { Flow.Fail(); return; }
             OnPhase(RunPhase.Approach);
+            Restarted?.Invoke();
         }
+        public void RestoreFlow(int runSeed, uint rng, RunPhase phase, int station, float elapsed, int assignments)
+        {
+            SetGate(false); Flow.Changed -= OnPhase;
+            Flow = new RunFlow(timings); Flow.Restore(phase, station, elapsed); Flow.Changed += OnPhase;
+            ActualRunSeed = runSeed; random = new RunRandom(runSeed) { State = rng }; Assignments = assignments;
+            foreach (var wagon in wagons) wagon.SetStationAccess(phase == RunPhase.Defense || phase == RunPhase.DepartureWarning);
+        }
+        public void SetLoadingGate(bool closed)
+        { Loading = closed; if (!closed) SetGate(false); SetGate(closed || Flow.Paused); }
         private void Update()
         {
-            if (Flow == null) return;
+            if (Flow == null || Loading) return;
             Flow.Tick(Time.unscaledDeltaTime);
             bool open = !Flow.Paused && player.IsAlive;
             input.InputEnabled = open && ControlsAllowed;

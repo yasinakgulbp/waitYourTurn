@@ -83,3 +83,5 @@ Tek bağımsız mekanik kök: ölçek 1, +Z ileri, +Y yukarı; oyuncunun vagonda
 ## D33 — Bot karakter modeli
 
 Botlar insanla aynı mekanik ölçüye sahiptir: zemin kökü, ölçek 1, +Z yüz yönü; 1,7 m boy / 0,6 m çap kapsül görseli. Aynı CharacterController, hareket alanı, Y=0,9 m varsayılan namlu ve onarım mesafeleri kullanılır. `Replaceable actor visuals` altındaki model/siluet/renk değiştirilebilir; collider, CharacterController, Health, motor, aim, gun veya repair bu görsel altına taşınmaz. Animasyon root motion ile mekanik kökü sürmez. Bot profil rengi görsel yardımcıdır; beceri, hasar veya takım collider katmanından çıkarılmaz. Ad etiketi ayrı HUD sunumudur. Model tesliminde F7 bot ve F10 geometri/atış kabulü birlikte çalıştırılır; davranış ve profil ayarları BOTS.md.
+
+D34: insan/bot kök dönüşünü PlayerMotor yönetir; görünür hedefe, hedef yoksa gerçek hareket yönüne döner. Modelin ileri ekseni +Z kalır. Animator veya görsel script ikinci bir kök dönüşü yazmaz; görsel salınım/animasyon alt modelde tutulur.

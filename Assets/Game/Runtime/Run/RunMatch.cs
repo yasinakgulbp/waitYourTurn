@@ -14,7 +14,8 @@ namespace WaitYourTurn.Run
         [SerializeField] private RunEconomy economy;
         [SerializeField] private BotController[] bots;
         [SerializeField] private RunMode mode = RunMode.Battle;
-        private System.Random random;
+        private RunRandom random;
+        public uint RandomState => random.State;
         private bool[] living, dead;
         private Vector3[] points;
         private int[] assignment;
@@ -55,7 +56,7 @@ namespace WaitYourTurn.Run
             foreach (var bot in bots) if (bot.Profile == null || !bot.Profile.Valid || bot.Profile.preferredWeapon >= bot.Weapon.WeaponCount)
                 throw new System.InvalidOperationException("Invalid bot profile or weapon inventory.");
             Roster = new BattleRoster(bots.Length + 1); living = new bool[Roster.Count]; dead = new bool[Roster.Count]; points = new Vector3[Roster.Count];
-            random = new System.Random(seed ^ 0x4B07);
+            random = new RunRandom(seed ^ 0x4B07);
             foreach (var bot in bots) bot.Begin(run, economy.Catalog, economy.Defenses);
         }
         public bool TryAssign(int preferredHumanWagon, bool arrival)
@@ -85,12 +86,12 @@ namespace WaitYourTurn.Run
         private void Update()
         {
             if (!Active || Roster == null) return;
-            bool paused = !AiAllowed || run.Flow == null || run.Flow.Paused || !run.Player.IsAlive;
+            bool paused = !AiAllowed || run.Loading || run.Flow == null || run.Flow.Paused || !run.Player.IsAlive;
             foreach (var bot in bots) bot.SetPaused(paused || !bot.Health.IsAlive);
         }
         private void LateUpdate()
         {
-            if (!Active || Roster == null || Result != BattleResult.None) return;
+            if (!Active || run.Loading || Roster == null || Result != BattleResult.None) return;
             dead[0] = !run.Player.IsAlive;
             for (int i = 0; i < bots.Length; i++)
             {
@@ -106,5 +107,7 @@ namespace WaitYourTurn.Run
         }
         private void OnKilled(DeathNotice death, int reward)
         { if (Active) foreach (var bot in bots) if (bot.Health.IsAlive) bot.ObserveKill(death, reward); }
+        public void RestoreRoster(int[] ranks, uint rng)
+        { Roster.Restore(ranks); random.State = rng; }
     }
 }

@@ -124,5 +124,10 @@ namespace WaitYourTurn.Navigation
             Revision++;
             Changed?.Invoke();
         }
+        public void Restore(bool open, bool closing, bool access)
+        {
+            IsOpen = open; ClosePending = closing; stationAccess = access;
+            blocker.enabled = doorwayCut.enabled = !open; NotifyChanged();
+        }
     }
 }

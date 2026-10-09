@@ -22,6 +22,8 @@ namespace WaitYourTurn.Enemies
         public float Damage => damage;
         public float Interval => interval;
         public bool WindingUp => pending != null;
+        public float CooldownRemaining => Mathf.Max(0, nextAttackAt - Time.time);
+        public void RestoreCooldown(float remaining) { pending = null; nextAttackAt = Time.time + remaining; }
         public void Configure(HealthComponent health) => source = health;
         public void ApplyProfile(EnemyProfile profile)
         {

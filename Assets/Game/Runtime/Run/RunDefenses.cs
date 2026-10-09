@@ -28,7 +28,7 @@ namespace WaitYourTurn.Run
             }
             observedFlow = run.Flow; foreach (var rack in racks) rack.Clear();
         }
-        private void Update() => SetPaused(run.Flow == null || run.Flow.Paused || !run.Player.IsAlive);
+        private void Update() => SetPaused(run.Loading || run.Flow == null || run.Flow.Paused || !run.Player.IsAlive);
         private void SetPaused(bool paused) { if (racks != null) foreach (var rack in racks) rack.SetPaused(paused); }
         public TurretRack CurrentRack
         {
@@ -38,6 +38,11 @@ namespace WaitYourTurn.Run
         public bool CanBuy(int index) => isActiveAndEnabled && run.Flow != null && !run.Flow.Paused && run.Player.IsAlive &&
             index >= 0 && index < definitions.Length && CurrentRack != null && CurrentRack.CanDeploy(definitions[index], run.Player);
         public bool TryBuy(int index) => CanBuy(index) && CurrentRack.TryDeploy(definitions[index], run.Player, registry);
+        public bool RestoreTurret(int wagon, int slot, int type, Vector3 position, Quaternion rotation, HealthComponent owner, WeaponSnapshot ammo)
+        {
+            var mount = racks[wagon].Mounts[slot]; mount.transform.SetPositionAndRotation(position, rotation);
+            return mount.Actor.TryDeploy(definitions[type], owner, registry) && mount.Actor.Weapon.Restore(ammo);
+        }
         private TurretRack RackFor(WagonRuntime wagon)
         { for (int i = 0; i < run.Wagons.Length; i++) if (run.Wagons[i] == wagon) return racks[i]; return null; }
         public bool CanBuyFor(int index, HealthComponent owner, WagonRuntime wagon) =>

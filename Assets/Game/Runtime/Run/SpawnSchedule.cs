@@ -2,6 +2,14 @@ using System;
 
 namespace WaitYourTurn.Run
 {
+    [Serializable]
+    public sealed class ScheduleSnapshot
+    {
+        public int[] emitted, failures;
+        public float[] retryAt;
+        public SpawnRequest[] pending;
+        public int cursor, spawned, dropped, attempts, suppressed;
+    }
     public enum SpawnResult { Spawned, CapacityFull, InvalidPosition, Unoccupied }
     public readonly struct SpawnStream
     {
@@ -10,10 +18,11 @@ namespace WaitYourTurn.Run
         public SpawnStream(int wagon, int profile, int count, float start, float interval)
         { Wagon = wagon; Profile = profile; Count = count; Start = start; Interval = interval; }
     }
+    [Serializable]
     public struct SpawnRequest
     {
         public int Wagon, Profile, Ordinal, Failures;
-        internal int Stream;
+        public int Stream;
     }
 
     /// <summary>Bounded, fair scheduler. No Unity objects, frame allocations, catch-up burst or hidden spawning.</summary>
@@ -78,6 +87,35 @@ namespace WaitYourTurn.Run
             }
         }
         public void Clear() { head = count = 0; stopped = true; }
+        public ScheduleSnapshot Capture()
+        {
+            var data = new ScheduleSnapshot { emitted = (int[])emitted.Clone(), failures = (int[])failures.Clone(),
+                retryAt = (float[])retryAt.Clone(), pending = new SpawnRequest[count], cursor = cursor,
+                spawned = Spawned, dropped = Dropped, attempts = Attempts, suppressed = SuppressedStreams };
+            for (int i = 0; i < count; i++) data.pending[i] = pending[(head + i) % pending.Length]; return data;
+        }
+        public bool Restore(ScheduleSnapshot data)
+        {
+            if (data == null || data.emitted == null || data.failures == null || data.retryAt == null || data.pending == null ||
+                data.emitted.Length != streams.Length || data.failures.Length != streams.Length || data.retryAt.Length != streams.Length ||
+                data.pending.Length > pending.Length || data.cursor < 0 || data.cursor >= streams.Length ||
+                data.spawned < 0 || data.dropped < 0 || data.attempts < 0 || data.suppressed < 0 || data.suppressed > streams.Length) return false;
+            for (int i = 0; i < streams.Length; i++)
+                if (data.emitted[i] < 0 || data.emitted[i] > streams[i].Count || data.failures[i] < 0 || data.failures[i] >= maxFailures ||
+                    !(data.retryAt[i] >= 0) || float.IsInfinity(data.retryAt[i])) return false;
+            var seen = new bool[streams.Length];
+            foreach (var request in data.pending)
+            {
+                int s = request.Stream;
+                if (s < 0 || s >= streams.Length || seen[s] || request.Wagon != streams[s].Wagon || request.Profile != streams[s].Profile ||
+                    request.Ordinal != data.emitted[s] || request.Ordinal >= streams[s].Count || request.Failures != data.failures[s]) return false;
+                seen[s] = true;
+            }
+            Array.Copy(data.emitted, emitted, emitted.Length); Array.Copy(data.failures, failures, failures.Length);
+            Array.Copy(data.retryAt, retryAt, retryAt.Length); Array.Copy(seen, queued, seen.Length);
+            Array.Copy(data.pending, pending, data.pending.Length); head = 0; count = data.pending.Length; cursor = data.cursor;
+            Spawned = data.spawned; Dropped = data.dropped; Attempts = data.attempts; SuppressedStreams = data.suppressed; stopped = false; return true;
+        }
         private void Enqueue(SpawnRequest request) { pending[(head + count) % pending.Length] = request; count++; }
     }
 }

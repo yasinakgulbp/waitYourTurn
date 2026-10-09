@@ -84,5 +84,10 @@ namespace WaitYourTurn.Combat
             try { HealthChanged?.Invoke(Model.Snapshot); }
             finally { notifying = false; }
         }
+        public bool Restore(float current, float maximum, float protection = 0)
+        {
+            if (notifying || !Model.Restore(current, maximum, Team)) return false;
+            damageProtectedUntil = Time.time + Mathf.Max(0, protection); NotifyChanged(); return true;
+        }
     }
 }

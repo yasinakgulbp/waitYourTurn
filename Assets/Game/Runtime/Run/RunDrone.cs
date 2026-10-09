@@ -27,10 +27,15 @@ namespace WaitYourTurn.Run
         private void Update()
         {
             if (run.Player == null || !run.Player.IsAlive) { actor.Clear(); return; }
-            actor.SetPaused(run.Flow == null || run.Flow.Paused);
+            actor.SetPaused(run.Loading || run.Flow == null || run.Flow.Paused);
         }
         public bool CanBuy => isActiveAndEnabled && run.Flow != null && !run.Flow.Paused && run.Player.IsAlive &&
             run.CurrentWagon != null && definition != null && definition.Valid && !actor.Occupied;
         public bool TryBuy() => CanBuy && actor.TryDeploy(definition, run.Player, registry, run.CurrentWagon.transform, run.CurrentWagon.Geometry.Interior);
+        public bool Restore(WeaponSnapshot ammo, DroneState state, Vector3 position, Quaternion rotation, float remaining)
+        {
+            if (!actor.TryDeploy(definition, run.Player, registry, run.CurrentWagon.transform, run.CurrentWagon.Geometry.Interior) || !actor.Weapon.Restore(ammo)) return false;
+            actor.RestoreFlight(state, position, rotation, remaining); return true;
+        }
     }
 }

@@ -34,6 +34,10 @@ namespace WaitYourTurn.Enemies
         public bool Paused => paused;
         public string WagonId { get; private set; }
         public EnemyProfile Profile { get; private set; }
+        public DoorController Entry => door;
+        public void RestoreTravel(bool retained) { onBoard = retained; }
+        public float AttackRemaining => attack.CooldownRemaining;
+        public void RestoreAttack(float remaining) => attack.RestoreCooldown(remaining);
         public int SpawnStation { get; private set; }
         public HealthComponent Health => health;
         public int AgentTypeId => motor.Agent.agentTypeID;

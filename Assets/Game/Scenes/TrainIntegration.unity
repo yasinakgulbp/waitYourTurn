@@ -166881,6 +166881,87 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1740634455}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1743617300
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1743617304}
+  - component: {fileID: 1743617303}
+  - component: {fileID: 1743617302}
+  - component: {fileID: 1743617301}
+  m_Layer: 0
+  m_Name: Local run persistence - F5 save F6 load F4 acceptance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1743617301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743617300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9342c45a1e87b08438dfa680513e3462, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaitYourTurn.Sandbox::WaitYourTurn.Sandbox.PersistenceHud
+  save: {fileID: 1743617303}
+--- !u!114 &1743617302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743617300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a40ebc5258a02c14989ad3f1053cf295, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaitYourTurn.Sandbox::WaitYourTurn.Sandbox.PersistenceAcceptance
+  run: {fileID: 948233411}
+  economy: {fileID: 961070782}
+  spawner: {fileID: 2048927057}
+  save: {fileID: 1743617303}
+--- !u!114 &1743617303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743617300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e469098a16750749a6b819e22237e54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaitYourTurn.Run::WaitYourTurn.Run.RunPersistence
+  run: {fileID: 948233411}
+  economy: {fileID: 961070782}
+  spawner: {fileID: 2048927057}
+  resumeInEditor: 0
+  autosaveSeconds: 5
+  contentRevision: train-integration-1
+--- !u!4 &1743617304
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743617300}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1744437357
 GameObject:
   m_ObjectHideFlags: 0
@@ -202190,3 +202271,4 @@ SceneRoots:
   - {fileID: 104367666}
   - {fileID: 1474154106}
   - {fileID: 219308216}
+  - {fileID: 1743617304}

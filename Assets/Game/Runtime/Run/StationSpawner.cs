@@ -3,6 +3,13 @@ using UnityEngine;
 
 namespace WaitYourTurn.Run
 {
+    [Serializable]
+    public sealed class SpawnerSnapshot
+    {
+        public int station;
+        public int[] attempted;
+        public ScheduleSnapshot schedule;
+    }
     /// <summary>Run adapter for data-driven bounded spawning; old labs retain their original small schedule.</summary>
     public sealed class StationSpawner : MonoBehaviour
     {
@@ -29,6 +36,7 @@ namespace WaitYourTurn.Run
         public string Diagnostic { get; private set; }
         public StationDefinition Definition => definition;
         public StationDefinition[] Programs => programs;
+        public bool SpawningAllowed { get; set; } = true;
         public int TotalActive { get { int count = 0; foreach (var wagon in run.Wagons) count += wagon.Enemies.Active.Count; return count; } }
         public void Configure(RunDriver owner) => run = owner;
         public void ConfigurePrograms(StationDefinition[] values) => programs = values;
@@ -39,6 +47,8 @@ namespace WaitYourTurn.Run
         private void Update()
         {
             CreatedThisFrame = SpawnedThisFrame = 0;
+            if (run.Loading) return;
+            if (!SpawningAllowed) return;
             if (!ReferenceEquals(observedFlow, run.Flow)) { observedFlow = run.Flow; ResetSchedule(); }
             bool dataDriven = programs != null && programs.Length > 0;
             if (dataDriven) WarmPools(Mathf.Clamp(definition != null ? definition.warmupPerFrame : 4, 1, 32));
@@ -113,5 +123,15 @@ namespace WaitYourTurn.Run
         public void ResetSchedule()
         { station = 0; Attempts = 0; schedule = null; definition = null; Diagnostic = null; }
         private void OnDisable() => ResetSchedule();
+        public SpawnerSnapshot Capture() => new SpawnerSnapshot { station = station, attempted = (int[])attempted.Clone(),
+            schedule = run.Flow.Phase == RunPhase.Defense ? schedule?.Capture() : null };
+        public bool Restore(SpawnerSnapshot data)
+        {
+            observedFlow = run.Flow; ResetSchedule();
+            if (data == null || data.attempted == null || data.attempted.Length != attempted.Length) return false;
+            Array.Copy(data.attempted, attempted, attempted.Length); station = data.station;
+            if (run.Flow.Phase != RunPhase.Defense) return true;
+            return station == run.Flow.Station && BeginStation() && schedule.Restore(data.schedule);
+        }
     }
 }

@@ -33,6 +33,15 @@ namespace WaitYourTurn.Enemies
         public int AgentTypeId => template.AgentTypeId;
         public int AreaMask => template.AreaMask;
         public HealthComponent Defender => playerPresent ? player : null;
+        public int SpawnSequence { get => spawnSequence; set => spawnSequence = value; }
+        public EnemyBrain RestoreEnemy(Vector3 point, DoorController entry, EnemyProfile profile, int station, int slot)
+        {
+            if (available.Count == 0 && !WarmOne()) return null;
+            var enemy = available.Pop();
+            if (!enemy.Spawn(point, entry, player, slot, geometry, profile, station))
+            { enemy.Despawn(); enemy.gameObject.SetActive(false); available.Push(enemy); return null; }
+            enemy.SetScope(wagonId, playerPresent); active.Add(enemy); registry.Register(enemy.Health); return enemy;
+        }
         public void SetDefender(HealthComponent defender)
         {
             player = defender; playerPresent = defender != null;

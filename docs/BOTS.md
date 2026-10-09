@@ -52,4 +52,6 @@ F7 hedefleri: eşsiz beş katılımcı/üç profil; camdan gerçek öldürme ve 
 
 ## Açık işler
 
+2026-10-09 M8a: katılımcı yaşamı, sıra, vagon, cüzdan/mermi ve insan/bot atama RNG durumu yerel kayda eklendi. Elenmiş bot yüklemede geri doğmaz. D34 ile hedef yokken insan/bot hareket yönüne bakar. Güncel kayıt kabulü ve sınırlar [PERSISTENCE.md](PERSISTENCE.md); aşağıdaki M8 kayıt hedefi bu temel için artık uygulanmıştır.
+
 Beş vagonun bot/zombi mekanikleri şu anda gerçek ve tam simüle edilir; uzaktakiler için yaklaşık savaş hesabı veya sunum seyreltmesi uygulanmadı. Kullanıcının 10 vagonlu yarış için maliyet hedefi korunur. Sonraki optimizasyon, görünürlükten bağımsız durum sahipliği üzerinden ve ölçümle yapılmalıdır; görünmeyen botu kapatıp hayatta saymak veya zombi/can/ödülü sıfırlamak uygun değildir. Android ölçümü, uzun yarışta botların hayatta kalma dağılımı, ekonomi/onarım dengesi ve nihai mobil arayüz ayrıca açık. M8 kayıt; katılımcı yaşamları, eleme sıraları, atanmış vagonlar, cüzdanlar/mermiler ve RNG konumu birlikte kaydedilmelidir.

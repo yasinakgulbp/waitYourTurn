@@ -1,0 +1,43 @@
+M8a PC acceptance — 2026-10-09 Europe/Istanbul (raw timestamps UTC 2026-10-08)
+Unity 6000.6.4f1; TrainIntegration; Windows Editor; local JSON only.
+Logs/BattleAndRunTests.xml : 38 passed / 0 failed / 2026-10-08 21:02:42Z
+Logs/WeaponTests.xml : 25 passed / 0 failed / 2026-10-08 21:03:12Z
+Logs/HealthAndRepairTests.xml : 41 passed / 0 failed / 2026-10-08 21:12:30Z
+
+Logs/PersistenceAcceptance.txt
+2026-10-08T21:18:02.9866965Z
+PASS: Human walking faces 4 directions; visible target overrides movement. Real disk JSON: Battle participant HP/max/coins/guns/ammo/roster/RNG; door damage/repair progress, retained passenger, turret and drone, spawn progress restored; eliminated bot stays out; all 7 phases preserve assignment count; next draw continues; invalid ammo rejected before mutation; Solo and death tombstone passed. PC only; Android pause/kill and device IO pending.
+
+Logs/TrainIntegration-5.txt
+2026-10-08T21:14:07.2377254Z
+PASS: Door variants 6,5,5,4,4: repair/glass; every bilateral window passes all four guns, metal edges/panels block straight/oblique rays, movement/nav remain closed; bilateral door entry/thresholds and player boundary; responsive camera; 10 cycles visiting 5 wagons; HP/SMG/ammo/survivors/door damage preserved; full 60-enemy pool bound.
+
+Logs/EconomyAcceptance.txt
+2026-10-08T21:14:43.2881172Z
+PASS: Actual pistol kill + owned-defense credit; pooled life/replay/foreign-owner/cleanup; heal 10->40,50->80,80->100; full/unfunded/duplicate reject; current-wagon repair; weapon unlock/refill/cooldown; 10 assignments preserve currency/inventory/ammo; dark/death/old context reject; new run resets. PC only.
+
+Cross-Play manual acceptance: F5 saved run, stopped Play (domain teardown), restarted Play into a different wagon, F6 restored wagon-a / HP100 / Coins1000 / 6 doors / 1 enemy / same bot assignments. UI: Run resumed locally, defense ~52.4 sec remaining (saved elapsed 6.8137).
+Saved JSON metadata:
+{
+  "utc": "2026-10-08T21:18:24.0832243Z",
+  "runId": "261d2d95b1db4b0eb792a18f00c4e3d5",
+  "seed": -98640339,
+  "phase": 1,
+  "station": 1,
+  "elapsed": 6.8136982917785645,
+  "humanWagon": 0,
+  "coins": 1000,
+  "hp": 100.0,
+  "rng": 448181952,
+  "hasDrone": false,
+  "bytes": 7671
+}
+Found/fixed during cross-Play smoke: JsonUtility represents inline null drone as an empty object. Explicit hasDrone flag added; F4 now reads droneless Solo from disk too.
+Scene audit: 6564 old serialized blocks, 6569 new; 0 removed, only existing SceneRoots list updated. Existing geometry/NavMesh preserved.
+Limits: PC only. Android lifecycle/process kill/File.Replace and device IO pending; cloud, permanent result delivery, economy/balance/UX and distant simulation pending. No claim of deterministic combat replay.
+
+Logs/BotAcceptance.txt (after final fixture isolation change)
+2026-10-08T21:20:03.7269496Z
+PASS: 5 unique participants / 3 profiles; real glass kill credits bot only, metal blocks; zombie attacks assigned bot; actor damage preserves repair, door damage cancels; actual AI moves, repairs and purchases shared guns; death ranks/releases defender; no new empty-wagon spawn and survivors retained; 10 dark assignments preserve identity/ammo/money and never respawn eliminated; human win/loss, solo isolation and same-object restart passed. PC only; distant simulation, long-session balance and Android pending.
+Saved production runId and elapsed unchanged after F7: PASS.
+Final Play shutdown Console: 0 errors / 0 warnings (visible UI).

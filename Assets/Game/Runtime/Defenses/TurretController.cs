@@ -25,6 +25,7 @@ namespace WaitYourTurn.Defenses
         public TurretDefinition Definition { get; private set; }
         public HitscanWeapon Weapon => weapon;
         public HealthComponent Target => target;
+        public HealthComponent CreditedOwner => creditedOwner;
         public int ShotsFired { get; private set; }
         public int Exhaustions { get; private set; }
         public int BlastHits { get; private set; }

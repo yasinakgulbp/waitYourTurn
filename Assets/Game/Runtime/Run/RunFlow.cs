@@ -65,6 +65,14 @@ namespace WaitYourTurn.Run
             Set(next);
         }
         public void EndRun() => Set(RunPhase.GameOver);
+        public void Restore(RunPhase phase, int station, float elapsed)
+        {
+            if (phase < RunPhase.Approach || phase > RunPhase.FadeIn || station < 1 || station > 100000 ||
+                float.IsNaN(elapsed) || float.IsInfinity(elapsed) || elapsed < 0) throw new ArgumentException("Invalid saved run flow.");
+            Phase = phase; Station = station;
+            if (elapsed > Duration) throw new ArgumentException("Saved phase timer exceeds duration.");
+            Elapsed = elapsed;
+        }
         public void Fail() => Set(RunPhase.Faulted);
         private void Set(RunPhase phase) { if (Terminal) return; Phase = phase; Elapsed = 0; Changed?.Invoke(phase); }
     }

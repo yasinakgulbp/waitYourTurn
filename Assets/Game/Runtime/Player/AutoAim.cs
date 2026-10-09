@@ -17,6 +17,13 @@ namespace WaitYourTurn.Player
         { selectionInterval = Mathf.Max(.05f, interval); reactionDelay = Mathf.Max(0, delay); ClearTarget(); }
         public void Configure(TargetRegistry targets, HitscanWeapon gun) { registry = targets; pistol = gun; }
         public void ClearTarget() { target = null; nextSelection = 0; reactAt = 0; }
+        public bool TryFacing(out Vector3 direction)
+        {
+            direction = Vector3.zero;
+            if (!isActiveAndEnabled || pistol.Paused || target == null || !target.IsAlive ||
+                target.LifeVersion != targetLife || !pistol.HasSight(target)) return false;
+            direction = target.transform.position - transform.position; direction.y = 0; return true;
+        }
         private void Update()
         {
             if (Time.time >= nextSelection)
@@ -29,8 +36,6 @@ namespace WaitYourTurn.Player
             }
             if (target == null || !target.IsAlive || target.LifeVersion != targetLife || !pistol.HasSight(target)) return;
             Vector3 direction = target.transform.position + Vector3.up * 0.85f - pistol.Muzzle;
-            Vector3 facing = direction; facing.y = 0;
-            if (facing.sqrMagnitude > 0.001f) transform.rotation = Quaternion.LookRotation(facing);
             if (Time.time < reactAt) return;
             pistol.TryFire(direction);
         }

@@ -2,6 +2,12 @@ using System;
 
 namespace WaitYourTurn.Combat
 {
+    [Serializable]
+    public sealed class AmmoSnapshot
+    {
+        public int rounds, reserve;
+        public float shotRemaining, reloadRemaining;
+    }
     /// <summary>Immutable rules. Reserve excludes the loaded magazine; shared by any weapon owner.</summary>
     public readonly struct WeaponSpec
     {
@@ -62,5 +68,18 @@ namespace WaitYourTurn.Combat
             // Preserve nextShot: buying ammunition cannot bypass the weapon's fire interval.
             return true;
         }
+        public AmmoSnapshot Capture(float now) => new AmmoSnapshot { rounds = Rounds, reserve = Reserve,
+            shotRemaining = Math.Max(0, nextShot - now), reloadRemaining = Reloading ? Math.Max(0, reloadUntil - now) : -1 };
+        public bool CanRestore(AmmoSnapshot value) => value != null && value.rounds >= 0 && value.rounds <= Spec.MagazineSize &&
+            value.reserve >= 0 && value.reserve <= Spec.InitialReserve && Finite(value.shotRemaining) && value.shotRemaining >= 0 &&
+            value.shotRemaining <= Spec.Interval + .01f && Finite(value.reloadRemaining) && value.reloadRemaining >= -1 &&
+            value.reloadRemaining <= Spec.ReloadSeconds + .01f && (value.reloadRemaining < 0 || value.rounds == 0);
+        public bool Restore(AmmoSnapshot value, float now)
+        {
+            if (!CanRestore(value) || !Finite(now)) return false;
+            Rounds = value.rounds; Reserve = value.reserve; nextShot = now + value.shotRemaining;
+            reloadUntil = value.reloadRemaining < 0 ? -1 : now + value.reloadRemaining; return true;
+        }
+        private static bool Finite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
     }
 }
