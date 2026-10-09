@@ -1,12 +1,12 @@
 # Oyun tasarımı
 
-Durum: kullanıcının 2026-10-07 tarihinde anlattığı hedefler ve açıkça işaretlenen öneriler. Sayısal değerler ilk denge denemeleri içindir.
+Durum: 2026-10-09 güncel D37 mod/ilerleme hedefi. Sayısal değerler ilk denge denemeleri içindir. Yeni Solo/meta tasarımı henüz kodda uygulanmadı; ayrıntı [PROGRESSION_DESIGN.md](PROGRESSION_DESIGN.md).
 
 ## Oyun kimliği
 
 Otomasyonla istasyonlar arasında hareket eden bir trende zombi salgını sırasında hayatta kalma. Savunma, rastgele vagon ataması ve koşu içindeki ekipman gelişimi birleşir. İlk hedef mümkün olduğunca çok istasyondan sağ çıkmaktır. Geniş roguelike yetenek/ödül sistemi sonraki kapsamdır.
 
-Her vagon ayrı bir kimliğe, kapılara ve savunma kapasitesine sahiptir. Kapıların maksimum canı vagonun güvenliğini belirler. Şans, her yolculukta oyuncunun hangi vagona atanacağını belirler.
+Her vagon ayrı bir kimliğe, kapılara ve savunma kapasitesine sahiptir. Kapıların maksimum canı ve giriş sayısı vagonun güvenliğini etkiler. Battle'da şans, her yolculukta oyuncunun hangi vagona atanacağını belirler; Solo hedefinde oyuncu koşu parasıyla vagon açar ve fiziksel olarak ilerler.
 
 İlk prototip `Assets/Scenes/SampleScene 2.unity` yerleşim referansıdır: uzun dikdörtgen vagonlar, oyuncuyu izleyen kamera ve trenin iki yanından saldırılar. Güncel D23 görselleri fiziksel oranları ve 4–6 kapılı vagon hedefini belirler; ölçüler VISUAL_SCALE.md ve MODEL_CONTRACT.md içindedir. Kare/tek kapılı/tek taraflı test sahneleri bu hedefin yerine geçmez. 2026-10-08 karşılaştırması ve gerçek geometriye geçiş kabulü `VISION_AND_INTEGRATION.md` içinde kayıtlıdır.
 
@@ -16,7 +16,7 @@ Kararlaştırıldı: oynanış zemini sabit kalır, çevre/istasyonun görsel ha
 
 Ortak tren/kapı/zombi/silah/koşu temeli iki moda hizmet edecek. Kullanıcı ilk varsayılan hedef olarak **Battle** düşündüğünü belirtti: nickli botlar komşu vagonlarda oynar, oyuncu hayatta kalanlar arasında birinci olmaya çalışır. En az üç bot beceri profili (başlangıç/orta/iyi düzeyi) hedeflenir. “Trene bin” giriş sunumu, yükleme ve yarış atmosferi daha sonraki arayüz aşamasıdır. Bu yerel bot hedefi için gerçek multiplayer, matchmaking veya ağ sunucusu henüz talep edilmiş değildir.
 
-**Tek oyunculu ilerleme/hikâye:** rakip bot yoktur; rastgele vagon, kalıcı koşu ekipmanı ve daha ileri istasyonlara ulaşma odağı korunur. TrainIntegration artık Battle/Solo seçimi, dört bot ve üç beceri profili içerir; tamamlanmış hikâye sunumu değildir. Botlar ortak ateş/onarım/ekonomi çekirdeğini kullanır. D33: insan ölünce sırası gösterilip koşu biter; yalnız insan hayattaysa birincilikle biter; aynı karede elenenler aynı sırayı paylaşır. Yaşayan katılımcılar ayrı vagonlara atanır, elenen bot geri doğmaz. 5 vagon mevcut temel, 10 vagon olası genişlemedir. Ayrıntı [BOTS.md](BOTS.md).
+**Tek oyunculu ilerleme/hikâye — D37 güncel hedef:** rakip bot yok; en zayıf kuyruk vagonunda başla, koşu parasıyla sıradaki daha güçlü vagonu aç, açık vagonlar arasında fiziksel yürü. Yeni saldırılar oyuncunun bulunduğu vagona yönelir; içerideki zombiler korunur. Yeni vagon bir defalık yardım/ganimet sunabilir. Solo'da rastgele yolculuk ataması kaldırılacak; mevcut kod hâlâ eski Solo atamasını kullanır. Kalıcı silah açılışı ve sınırlı güç geliştirmeleri iki modda çalışacak; fiyat/üst sınır açık. TrainIntegration dört bot/üç profil ve ortak savaş temeli içerir; yeni Solo/hikâye tamamlanmış değildir. D33 Battle insan ölümü/son kazanan/aynı karede ortak sıra kuralı korunur. Beş vagon mevcut temel, on vagon olası genişlemedir. Ayrıntı [PROGRESSION_DESIGN.md](PROGRESSION_DESIGN.md), [BOTS.md](BOTS.md).
 
 ## İstasyon ve yolculuk döngüsü
 
@@ -28,7 +28,7 @@ Kararlaştırıldı: tren istasyonda süreye bağlı bekler; ilk savunma 60 sani
 | Savunma | Kararlaştırıldı: ilk istasyonda 60 saniye | Spawn programı işler; kapılara ve içeri giren zombilere karşı savaşılır. |
 | Kalkış uyarısı | Yaklaşık 3 saniye | Yeni üretim durur; oyuncuya kalkış bildirilir. |
 | Kalkış | Yaklaşık 3 saniyelik görünür hızlanma | İstasyon bağlantıları güvenle kesilir. |
-| Geçiş | Kararma; karanlıkta 10 saniyelik sayaç | Trenin sesi sürer; bir kez rastgele vagon ataması yapılır. |
+| Geçiş | Kararma; karanlıkta 10 saniyelik sayaç | Trenin sesi sürer; Battle'da bir kez rastgele atama. D37 Solo hedefinde mevcut konum/ilerleme korunacak; mevcut kod henüz ayrılmadı. |
 | Yeni yaklaşma | Görüntü açılır; yaklaşık 3 saniye sonra yavaşlama başlar | Sonraki istasyon hazır edilir; oyuncu hazırlık yapabilir. |
 | Yeni savunma | Tren tamamen durunca | Kurulum hazırsa yeni spawn programı başlar. |
 

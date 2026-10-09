@@ -1,5 +1,7 @@
 # Sıralı geliştirme planı
 
+**2026-10-09 D37 revizyonu:** M8b güncel A54 temeli → M8s iki-vagon Solo açma/geçiş/spawn/kayıt → M8e minimum kalıcı sonuç/harcama → M8c geri bildirim/UI/öğretici → M8d iki mod oyuncu denemesi. M9a tek-vagon sanat örneği, M8s geçit ölçüleri kabul edilince M8c ile paralel başlayabilir. Her fiziksel/kayıt değişimi ayrı küçük commit ve uygun Android kontrolüyle ilerler. Yeni mod/ekonomi [PROGRESSION_DESIGN.md](PROGRESSION_DESIGN.md); aşağıdaki tarihsel Solo rastgele atama/önceki meta açık notlarının yerine güncel D37 hedefi geçer. Bu tasarım henüz uygulanmadı. İlk yayın iki mod hedefi korunur.
+
 Güncel durum: 2026-10-09 — ortak savaş/kapı, beş vagonlu iki taraflı geometri, spawn, mağaza, turret, dron ve dört bot PC teknik kabulüne ulaştı. M8a yerel kayıt PC'de doğrulandı; D35 kalabalıkta oyuncu sınırı ve yumuşak dönüş düzeltmesi geçti. Güncel birleşik oyunun Android kaydı, dokunma hissi, uzun oturum ve görsel yükü henüz kabul edilmedi. Eski A54 navigasyon ölçümü bugünkü oyunun performans kanıtı değildir. Sıradaki M8b cihaz temeli; sonra hafif geri bildirim, iki modun oynanış değerlendirmesi, sanat örneği ve yayın yolu. Ayrıntılı güncel sıra ve karar kapıları [RELEASE_PLAN.md](RELEASE_PLAN.md) içindedir. Aşağıdaki tarihli laboratuvar kayıtları geçmiş kanıttır; güncel yapılacaklar listesi olarak okunmaz.
 
 ## Öncelik mantığı
@@ -25,7 +27,7 @@ Güncel durum: 2026-10-09 — ortak savaş/kapı, beş vagonlu iki taraflı geom
 | M6 | Veriyle yönetilen spawn, enemy çeşitleri ve kalabalık bütçesi | M6a kabulü | PC teknik kabulü: üç ortak profil, veri programı ve sınırlı director kuruldu; 26 kural/yolculuk testi, 30 istasyon/5 yolcu/60 sabit havuz ve eski birleşik kabul PASS. Android kalabalık profili henüz yapılmadı; SPAWNING.md |
 | M7 | Para, mağaza, turret ve dron | M2, M4–M6 | M7a/M7b/M7c PC teknik kabulü PASS; ECONOMY.md, DEFENSES.md, DRONE.md. Mod/Bot artık uygulandı; mobil ergonomi ve denge açık |
 | Mod/Bot | Battle için komşu vagon botları, en az 3 beceri profili ve eleme/sıralama; botsuz ilerleme modu politikası | M4b ortak döngü, M5/M6 savaş, M7 ekonomi | İlk PC kabulü PASS: 4 bot / 3 profil, ortak savaş/onarım/ekonomi, eşsiz atama, eleme/sıralama ve Solo; BOTS.md. Uzak simülasyon/Android/uzun denge açık; gerçek multiplayer yok |
-| M8 | Etap dengesi, kayıt ve koşu deneyimi | M4–M7 | M8a PC kayıt temeli PASS; M8b Android kayıt/kontrol/performans temeli → M8c hafif kamera/ses/geri bildirim + akış UI → M8d iki modda ilk oynanış değerlendirmesi. RELEASE_PLAN.md |
+| M8 | Etap dengesi, kayıt ve koşu deneyimi | M4–M7 | M8a PC kayıt temeli PASS; M8b Android → M8s Solo geçiş/açma → M8e minimum meta/sonuç → M8c hafif kamera/ses/UI → M8d iki mod oyuncu değerlendirmesi. RELEASE_PLAN.md, PROGRESSION_DESIGN.md |
 | M9 | Sanat, mobil kalite, gelir ve yayın doğrulaması | M8 değerlendirmesi | M9a tek vagon sanat örneği → M9b bütçeli içerik/denge → M9c gelir/ölçüm adaptörleri → M9d kapalı ve sınırlı yayın → M9e ölçümlü genel yayın. RELEASE_PLAN.md |
 
 Performans ölçümü M1'den itibaren başlar; M9'a ertelenmez. Pooling M3'te temel yaşam döngüsü, M6'da geniş spawn sistemi olarak gelişir. Aşağıdaki maddelerde geçen M4, M4a/M4b bütününü ifade eder.

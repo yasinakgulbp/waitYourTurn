@@ -1,5 +1,7 @@
 # Yerel koşu kaydı — M8a
 
+**D37 tasarım notu:** mevcut v1 bağlantı koridorunda Solo konumunu, açılmış vagonları, toplanan ganimetleri veya kalıcı satın almaları kaydetmez. M8s/M8e yeni şema ve açık uyum/revizyon kararı getirecek; bugünkü PC PASS yeni Solo/meta kabulü değildir. Kalıcı profil koşu kaydından ayrı tutulacak. [Tasarım](PROGRESSION_DESIGN.md).
+
 İlk kayıt hedefi aynı koşuya devam etmektir; tamamlanmış/ölünmüş Battle geri açılmaz. Google Play bulut, giriş, reklam ödülü ve IAP teslimi bu aşamada bağlanmaz. İlk cihaz kaydı sağlayıcısı `LocalRunStore`, sahne bağlayıcısı `RunPersistence`, veri sözleşmesi `RunSnapshot` v1 olur.
 
 ## Kullanım ve yaşam döngüsü

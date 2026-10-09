@@ -1,5 +1,7 @@
 # Gelir ve kalıcı ekonomi — araştırma / tasarım taslağı
 
+**2026-10-09 D37 güncellemesi:** Kullanıcı iki **toplam** para kaynağı istedi: koşuda harcanıp sıfırlanan para + sonuçtan sınırlı kazanılan ve IAP ile satılacak kalıcı para. Kalıcı silah açılışı ve sınırlı can/menzil/hız geliştirmeleri hedef; kullanıcı bunların Battle ve Solo'da çalışmasını seçti. Aşağıdaki önceki kozmetik ağırlıklı/premium isteğe bağlı öneri bu yeni hedefin yerine geçmez. Güncel tasarım/risk/sıra [PROGRESSION_DESIGN.md](PROGRESSION_DESIGN.md). M8e minimum meta/sonuç ekonomisini SDK'dan önce kanıtlayacak; paket/fiyat/limitler ve para adları açık. IAP veya kalıcı cüzdan henüz uygulanmadı. Unity Ads / Google Play ve D30 reklam hedefi korunur.
+
 2026-10-08. Kullanıcının fikirleri ve araştırmadan çıkarılan öneriler ayrı tutulur. Henüz reklam/IAP SDK'sı, kalıcı hesap cüzdanı, ürün veya sonuç ödülü uygulanmadı. M7a `Wallet` yalnız mevcut koşunun parasıdır; uygulama kapanınca kayıt M8 işidir.
 
 ## Kullanıcının hedeflediği akış
@@ -24,7 +26,7 @@ Kaynaklar 2026-10-08'de kontrol edildi. Bir ürünün kullanımda olması bizim 
 - [The Tower — 26 Ağustos 2026 v29 notları](https://techtreegames.zendesk.com/hc/en-us/articles/54972978743707-v29-Patch-Notes-2026-08-26): reklam gem ödülleri ve Disable Ads ile talep etme hâlâ kullanılıyor; günlük talep limiti de bulunuyor. Bu oyunun reklam kaldırma kapsamı bizim yalnız geçiş reklamını kaldırma fikrimizden farklı. Ürün açıklaması kapsamı açık söylemeli.
 - [Google / Refuel Games vaka çalışması](https://admob.google.com/home/resources/refuel-games-grows-ad-revenue-with-admob-rewarded-ads/): Rally Fury'de isteğe bağlı para/booster ödülleri, beta ve oyuncu geri bildirimiyle değerlendirildi; reklam gelirinde %17 artış raporlanıyor. Eski ve reklam sağlayıcısının yayımladığı tek oyun örneği; 2026 sektör ortalaması veya bizim gelir tahmini değildir.
 
-## Önerilen sade başlangıç — henüz seçilmiş tasarım değil
+## Önceki sade başlangıç önerisi — D37 ile güncel hedef değişti
 
 | Katman | Öneri | Kullanım |
 | --- | --- | --- |
@@ -49,7 +51,7 @@ Kaynaklar 2026-10-08'de kontrol edildi. Bir ürünün kullanımda olması bizim 
 
 ## Geliştirme sırası ve veri sözleşmesi
 
-M7b turret → M7c dron → Mod/Bot ve Battle elemesi → M8 koşu sonucu, meta harcamaları ve kayıt → M9 reklam/IAP adaptörleri. Gelir tasarımı M8 öncesi netleşir; servisi erken eklemek çekirdek kusurlarını çözmez.
+Güncel sıra: M8b Android temeli → M8s Solo geçiş/açma → M8e minimum sonuç/kalıcı harcama → geri bildirim/UI/iki mod oyuncu denemesi ve tek-vagon sanat örneği → M9 reklam/IAP adaptörleri. Ayrıntı RELEASE_PLAN.md. Gelir tasarımı servis entegrasyonundan önce yapılır; SDK çekirdek kusurlarını çözmez.
 
 `RunId`/sonuç kimliği, kesinleşmiş temel ödül, tek teslim/çarpan durumu; kalıcı cüzdan ve zorunlu reklam kaldırma hakkı kayıt şemasında ayrı tutulmalı. Koşu cüzdanı sonuç hesabına doğrudan dönüştürülmemeli: kazanılan ve harcanan para farklıdır. IAP işlemi ve reklam reward callback'i tekrar gelebilir; teslim aynı işlem için bir kez yapılmalı. SDK reklamı kapandı sinyali tek başına ödül kazanımı değildir. Uygulama kapanması/yeniden açılması ve satın alımları geri yükleme kendi aşamasında doğrulanır.
 

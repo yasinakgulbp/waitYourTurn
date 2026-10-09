@@ -1,5 +1,7 @@
 # Model üretimi ve oyuna bağlama sözleşmesi
 
+**D37 — 2026-10-09 yeni Solo hedefi:** vagonlar arası fiziksel geçiş gerekecek. Mevcut CSV/uç duvarlar bugünkü kapalı Battle geometrisidir; nihai Solo uç kapısı ve 1 m bağlantı boşluğundaki yürüme zemini ölçüsü henüz kabul edilmedi. 12 × 4,2 m dış vagon ve mevcut yan kapı/cam ölçüleri korunur. Uç portal, hareketli iç kapı ve sabit bağlantı parçası M8s iki-vagon denemesinde kesinleşip CSV'ye eklenmeden bütün vagonların uç meshlerini sonlandırmayın. Aynı sanat gövdesi Battle kapalı uç / Solo açılabilir geçiş çocuk parçalarını desteklemeli; iç geçit dış savunma kapısı sayılmaz. İlk tek-vagon sanat örneği bu küçük ölçü kabulünden sonra başlayabilir. [Güncel tasarım](PROGRESSION_DESIGN.md).
+
 2026-10-08 — D23 ölçüleri, D24 ateş edilebilir yan pencereler. Nihai sanat çalışmasına başlamadan modelci bu belgeyi, [görsel referansları](VISUAL_SCALE.md) ve sahneden üretilen [ölçü listesini](generated/train-model-dimensions.csv) birlikte kullanır. Yeni nesne/mekanik ölçüsü kararlaştırılırsa burada ve tanım varlığında güncellenir; sadece render modelini büyüterek fizik düzeltilmez.
 
 ## Birimler, pivot ve yönler

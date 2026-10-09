@@ -1,5 +1,7 @@
 # Mimari ve sistem sözleşmeleri
 
+**D37 güncel mod ayrımı:** Solo fiziksel vagon açma/geçiş ve iki modda kalıcı güç hedefi [PROGRESSION_DESIGN.md](PROGRESSION_DESIGN.md) içinde. Battle'ın rastgele atama/eleme politikası ile Solo'nun açılmış vagon/bağlantı/spawn bağlamı ayrılacak; ortak RunFlow ve savaş bileşenleri korunur. Mevcut RunDriver FadeIn ataması ve tek MovementArea sınırı yeni Solo için henüz ayrılmadı. Kalıcı profil, koşu cüzdanı, sonuç teslimi ve reklam/IAP adaptörü ayrı sorumluluklardır; yeni büyük framework veya SDK bu plan güncellemesinde kurulmadı.
+
 Bu belge hedef yapıyı tarif eder; adı geçen sistemlerin bir kısmı henüz uygulanmadı. Uygulanan navigation, ortak can/hasar, tek vagon ve iki vagonlu koşu bileşenlerinin gerçek doğrulama sınırları `NAVIGATION_LAB.md`, `COMBAT_LAB.md`, `GAMEPLAY_LAB.md` ve `RUN_LAB.md` içinde listelenir. Kesin tasarım kararları `DECISIONS.md` içinde, doğrulama işleri `ROADMAP.md` içindedir.
 
 D22 hedef denetimi: kare/tek kapılı laboratuvar ürün mimarisi kabul edilmez. Denetimde saptanan tek kapı bağı, portal yarı düzleminden üyelik ve sabit doğuş/güvenli noktalar M6a'da WagonGeometry ile iki tarafa/çok kapıya genellendi. D23 güncel ölçek/kamera referansıdır; D24 yan pencereden atışı ekler. Somut geçmiş `VISION_AND_INTEGRATION.md`, güncel geometri/model bağlama `VISUAL_SCALE.md` ve `MODEL_CONTRACT.md` içindedir. Döngü/hasar testlerinin geçmesi tek başına yeni geometri entegrasyonunun kanıtı sayılmaz.

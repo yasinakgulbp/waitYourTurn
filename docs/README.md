@@ -12,7 +12,9 @@ Amaç: mobil zombi savunma oyununu küçük, doğrulanmış adımlarla geliştir
 
 ## Okuma sırası
 
-**Güncel yayın yolu:** [RELEASE_PLAN.md](RELEASE_PLAN.md) — Battle ve Solo eşit önemde; önce A54 temeli, sonra hafif kamera/ses/akış, dış oynanış değerlendirmesi, tek vagon sanat örneği, bütçeli üretim, gelir ve sınırlı yayın. Teknik PASS eğlence/kâr kanıtı değildir. Ana planın eski durum başlığı güncellendi; tarihsel kayıtlar korunur.
+**D37 güncel mod/ekonomi vizyonu:** [PROGRESSION_DESIGN.md](PROGRESSION_DESIGN.md). Solo'da kuyruktan başlayıp vagon açma ve fiziksel geçiş; iki toplam para kaynağı, kalıcı silah açma ve iki modda sınırlı güç geliştirmeleri. Yeni hedef henüz uygulanmadı. Battle'ın mevcut rastgele ataması korunur; Solo eski davranışı M8s'de değiştirilecek. Modelleme için uç geçit ölçüsü önce kabul edilir.
+
+**Güncel yayın yolu:** [RELEASE_PLAN.md](RELEASE_PLAN.md) — Battle ve Solo eşit önemde; A54 temeli → Solo geçiş/açma → minimum meta/sonuç → hafif kamera/ses/UI → dış oynanış değerlendirmesi. Tek vagon sanat örneği Solo geçit ölçüsü kabulünden sonra başlayabilir; ardından bütçeli üretim, gelir ve sınırlı yayın. [Android hazırlığı ve test sınırları](ANDROID_PLAYTEST.md). Teknik PASS eğlence/kâr kanıtı değildir; tarihsel kayıtlar korunur.
 
 **Son kullanıcı düzeltmesi D35:** açık kapıda kalabalık baskısına karşı gerçek kapsül sınırı ve insan/bot için yumuşak yürüyüş dönüşü. Davranış, Inspector ayarı ve F3 yeniden üretim testi [PLAYER_MOVEMENT.md](PLAYER_MOVEMENT.md) içinde. M8b sıradaki aşama olarak kalır.
 

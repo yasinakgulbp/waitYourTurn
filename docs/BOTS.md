@@ -1,5 +1,7 @@
 # Battle botları ve mod sınırı
 
+**2026-10-09 D37 sunum hedefi:** kullanıcı doğal oyuncu nickleri, farklı boşta hareket/alışveriş/onarım kararları ve istasyon geçişinde eleme/kalan kişi bilgisini istedi. Mevcut Ray/Mira/Kaya/Nova ve davranışlar teknik başlangıçtır; yeni davranış/sunum henüz uygulanmadı. Yerel rakipleri gerçek online eşleşme olarak sunmama mühendislik önerisi PROGRESSION_DESIGN.md içindedir. Kalıcı güç geliştirmelerinin Battle'da da çalışması kullanıcı kararıdır; bot güç aralığı ile ustalık ayrılır, otomatik oyuncuya eşit gizli güçlendirme varsayılmaz. Uzak vagon simülasyonu cihaz ölçümüne göre sonraki optimizasyondur. Yeni Solo vagon geçişi Battle bot atamasını değiştirmez.
+
 2026-10-08 — Mod/Bot uygulaması. PC kabul sonucu aşağıdaki kanıt kaydında güncellenir; Android performansı ve uzun oturum dengesi bu aşamada ölçülmüş sayılmaz.
 
 ## Oyuncunun göreceği
