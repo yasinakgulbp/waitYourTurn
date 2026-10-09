@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58f554feda633f0439651908a4be72fd, type: 3}
   m_Name: SurvivalShop
   m_EditorClassIdentifier: WaitYourTurn.Run::WaitYourTurn.Run.ShopCatalog
-  startingCoins: 3000
+  startingCoins: 10000
   purchaseCooldown: 0.35
   items:
   - id: heal
@@ -38,7 +38,7 @@ MonoBehaviour:
     weaponIndex: 1
     turretIndex: -1
     reinforcementLevel: 0
-    requiresWeaponUnlock: 1
+    requiresWeaponUnlock: 0
   - id: rifle
     label: Rifle / refill
     price: 2500
@@ -46,7 +46,7 @@ MonoBehaviour:
     weaponIndex: 2
     turretIndex: -1
     reinforcementLevel: 0
-    requiresWeaponUnlock: 1
+    requiresWeaponUnlock: 0
   - id: shotgun
     label: Shotgun / refill
     price: 1000
@@ -54,7 +54,7 @@ MonoBehaviour:
     weaponIndex: 3
     turretIndex: -1
     reinforcementLevel: 0
-    requiresWeaponUnlock: 1
+    requiresWeaponUnlock: 0
   - id: turret-normal
     label: Normal turret
     price: 500

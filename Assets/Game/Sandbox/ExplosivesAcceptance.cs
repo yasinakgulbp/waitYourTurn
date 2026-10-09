@@ -30,13 +30,13 @@ namespace WaitYourTurn.Sandbox
             run.Restart(); spawner.ResetSchedule(); spawner.SpawningAllowed = false;
             run.AimAllowed = run.ControlsAllowed = false; run.Repair.enabled = false;
             yield return null;
-            if (!Require(economy.Wallet.Balance == 3000 && Price("heal") == 150 && Price("smg") == 300 && Price("rifle") == 2500 &&
+            if (!Require(economy.Wallet.Balance == economy.Catalog.startingCoins && Price("heal") == 150 && Price("smg") == 300 && Price("rifle") == 2500 &&
                 Price("shotgun") == 1000 && Price("turret-normal") == 500 && Price("turret-advanced") == 900 &&
-                Price("wood") == 600 && Price("launcher") == 6000 && run.Weapon.WeaponCount == 5, "Requested prices / starting 3000 / 5 weapons")) yield break;
+                Price("wood") == 600 && Price("launcher") == 6000 && run.Weapon.WeaponCount == 5, "Requested prices / catalog starting coins / 5 weapons")) yield break;
             var pool = run.Wagons[1].Enemies; while (pool.WarmOne()) { }
             Vector3 center = run.Wagons[1].transform.position;
             run.Player.GetComponent<PlayerMotor>().Place(center + Vector3.up * .05f);
-            economy.RestoreWallet(12000, 0); // Fixture-only; production restarts with exactly3000.
+            economy.RestoreWallet(12000, 0); // Fixture-only; production restarts with catalog starting coins.
             if (!Require(Buy("mine") == PurchaseResult.Success && economy.Mines.Actors.Count(m => m.Deployed) == 1, "Purchase small mine at feet")) yield break;
             var mine = economy.Mines.Actors.First(m => m.Deployed); mine.SetPaused(true); mine.Tick(1);
             if (!Require(mine.Deployed && run.Player.Current == run.Player.Maximum && mine.GetComponentsInChildren<Collider>().Length == 0,
@@ -73,9 +73,9 @@ namespace WaitYourTurn.Sandbox
             var corrupt = save.Capture(); corrupt.mines[0].slot = 99;
             if (!Require(!save.Validate(corrupt, out _), "Corrupt mine slot rejected")) yield break;
             run.Restart();
-            if (!Require(economy.Wallet.Balance == 3000 && !economy.Mines.Actors.Any(m => m.Occupied) && run.Weapon.Projectiles.ActiveCount == 0 &&
+            if (!Require(economy.Wallet.Balance == economy.Catalog.startingCoins && !economy.Mines.Actors.Any(m => m.Occupied) && run.Weapon.Projectiles.ActiveCount == 0 &&
                 !run.Weapon.IsOwned(4), "New run clears mines / projectiles / purchased launcher")) yield break;
-            Finish(true, "Requested prices and3000 testcoins; enemy-only single mine blast and killcredit; collider-free placement; finite launcher projectile+cluster damage; persisted live mine+projectile restore; corrupt slot rejection; new-run reset. Shared implementations, Survival composition only. PC.");
+            Finish(true, "Requested prices and catalog starting coins; enemy-only single mine blast and killcredit; collider-free placement; finite launcher projectile+cluster damage; persisted live mine+projectile restore; corrupt slot rejection; new-run reset. Shared implementations, Survival composition only. PC.");
         }
         private int Price(string id) => economy.Catalog.items.First(i => i.id == id).price;
         private PurchaseResult Buy(string id) => economy.Buy(Array.FindIndex(economy.Catalog.items, i => i.id == id), economy.Context, economy.NextRequest());

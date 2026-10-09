@@ -17,8 +17,10 @@ namespace WaitYourTurn.Editor
             if (survival)
             {
                 catalog = Object.Instantiate(EnsureCatalog());
-                catalog.startingCoins = 3000;
+                catalog.startingCoins = 10000;
                 foreach (var item in catalog.items)
+                {
+                    if (item.effect == ShopEffect.Weapon) item.requiresWeaponUnlock = false; // Temporary Survival equipment testing.
                     switch (item.id)
                     {
                         case "heal": item.price = 150; break;
@@ -28,6 +30,7 @@ namespace WaitYourTurn.Editor
                         case "turret-normal": item.price = 500; break;
                         case "turret-advanced": item.price = 900; break;
                     }
+                }
                 var products = new System.Collections.Generic.List<ShopItem>(catalog.items);
                 products.Add(new ShopItem { id = "wood", label = "Wood reinforcement", price = 600,
                     effect = ShopEffect.ReinforceDoors, reinforcementLevel = 1 });
