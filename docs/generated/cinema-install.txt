@@ -1,0 +1,5 @@
+2026-10-10T13:56:05.0847120Z
+Survival only. Removed 802 superseded disabled MeshRenderer/MeshFilter pairs, retained gameplay transforms/components.
+Single body per wagon; single mesh per gangway; independent functional doors/windows.
+Track-relative night gradient, directional studio light, contact edge shade. Quarter-resolution capped384px separable blur; protected train/near-enemy band.
+No depth prepass, realtime shadows, HDR, AO, extra camera or pipeline change. Camera follows after PlayerMotor with65ms time-based lag.

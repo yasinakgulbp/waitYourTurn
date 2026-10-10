@@ -1,5 +1,8 @@
 # Sıralı geliştirme planı
 
+**D52 devam noktası (2026-10-10):** Survival maket sineması kuruldu; karanlık çevre, sınırlı tilt-shift ve yumuşak kamera. Kilitli prefab Inspector PC testini yavaşlatıyordu; açılınca24AI ile5–6ms kısa Editor örneği. Kapı/cam/körük kabulü geçti. Kullanıcı görsel değerlendirmesi → ölçek sözleşmeli karakter/zombi maketleri → A54 kalabalık FPS/GPU/ısı kontrolü. Android/Battle tam kabulü bekler. [Ayarlar ve kanıt](MAQUETTE_CINEMA.md).
+
+
 **D51 güncel sanat yönü (2026-10-10):** Kullanıcının maket teması denemesi:
 beyaz mat karton, teknik çizim zemini, kâğıt ağaçlar ve bordo vurgular.
 Survival'ın mevcut ölçüleri/kapıları/geçitleri korunur. Görsel yön önce Unity

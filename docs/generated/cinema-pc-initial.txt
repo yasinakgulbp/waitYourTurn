@@ -1,0 +1,4 @@
+2026-10-10T13:50:18.2211735Z
+Editor PC sample; includes Editor overhead, not Android acceptance.
+Frames=1899; FPS=237,3; P50ms=4,07; P95ms=6,12; Maxms=24,24; MaxEnemies=2
+GCcounterValid=True; AverageFrameAllocKB=14,94; MainCounterValid=True; AverageMainMs=4,21

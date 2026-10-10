@@ -3,6 +3,7 @@ using UnityEngine;
 namespace WaitYourTurn.Run
 {
     /// <summary>Only visual roots/camera move. Gameplay surfaces and colliders stay fixed.</summary>
+    [DefaultExecutionOrder(1000)]
     public sealed class RunPresentation : MonoBehaviour
     {
         [SerializeField] private RunDriver run;
@@ -17,6 +18,9 @@ namespace WaitYourTurn.Run
         [SerializeField] private bool responsiveFraming;
         [SerializeField] private Bounds framingVolume = new Bounds(new Vector3(0, .3f, 0), new Vector3(16, 2.2f, 10));
         [SerializeField] private float playerFollowLimit = .65f;
+        [SerializeField, Range(0, .2f)] private float survivalCameraLag;
+        private bool followInitialized;
+        public void ConfigureCameraLag(float seconds) => survivalCameraLag = Mathf.Clamp(seconds, 0, .2f);
         public bool ResponsiveFraming => responsiveFraming;
         public Bounds FramingVolume => framingVolume;
         public void ConfigureFraming(Bounds volume) { responsiveFraming = true; framingVolume = volume; }
@@ -123,6 +127,11 @@ namespace WaitYourTurn.Run
             // Walking through a Solo connector must not jump a whole wagon at the midpoint.
             if (run.UsesSoloProgression && !run.UsesOpenTrainSurvival)
                 cameraPosition.x = Mathf.MoveTowards(view.transform.position.x, cameraPosition.x, 12 * Time.unscaledDeltaTime);
+            if (run.UsesOpenTrainSurvival && survivalCameraLag > 0 && followInitialized &&
+                (cameraPosition-view.transform.position).sqrMagnitude < 100)
+                cameraPosition = Vector3.Lerp(view.transform.position, cameraPosition,
+                    1-Mathf.Exp(-Time.unscaledDeltaTime/survivalCameraLag));
+            followInitialized = true;
             view.transform.SetPositionAndRotation(cameraPosition, cameraRotation);
         }
     }

@@ -185,7 +185,7 @@ namespace WaitYourTurn.Editor
             }
             mat.SetTexture("_Grain",AssetDatabase.LoadAssetAtPath<Texture2D>(grainPath));EditorUtility.SetDirty(mat);return mat;
         }
-        private static string GameplayKey(Scene scene)
+        internal static string GameplayKey(Scene scene)
         {
             var data=new StringBuilder();
             foreach(var root in scene.GetRootGameObjects())foreach(var t in root.GetComponentsInChildren<Transform>(true))

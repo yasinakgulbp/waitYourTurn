@@ -7,6 +7,7 @@ Shader "WaitYourTurn/MaquetteCard"
         _Grain ("Fine card grain", 2D) = "white" {}
         _VertexTint ("Use baked vertex tint", Float) = 1
         _Atmosphere ("Darken distant model board", Float) = 0
+        _Night ("Studio night treatment", Range(0,1)) = 0
     }
     SubShader
     {
@@ -22,8 +23,8 @@ Shader "WaitYourTurn/MaquetteCard"
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
             struct appdata { float4 vertex:POSITION; float3 normal:NORMAL; fixed4 color:COLOR; UNITY_VERTEX_INPUT_INSTANCE_ID };
-            struct v2f { float4 pos:SV_POSITION; half3 normal:TEXCOORD0; float2 grain:TEXCOORD1; fixed3 color:COLOR; half depth:TEXCOORD2; };
-            fixed4 _Color, _Ambient; sampler2D _Grain; half _VertexTint, _Atmosphere;
+            struct v2f { float4 pos:SV_POSITION; half3 normal:TEXCOORD0; float2 grain:TEXCOORD1; fixed3 color:COLOR; half depth:TEXCOORD2; float3 world:TEXCOORD3; };
+            fixed4 _Color, _Ambient; sampler2D _Grain; half _VertexTint, _Atmosphere, _Night;
             v2f vert(appdata v)
             {
                 UNITY_SETUP_INSTANCE_ID(v);
@@ -36,6 +37,7 @@ Shader "WaitYourTurn/MaquetteCard"
                 if(_VertexTint>.5)o.color=LinearToGammaSpace(v.color.rgb)*_Color.rgb;
                 #endif
                 o.depth=-UnityObjectToViewPos(v.vertex).z;
+                o.world=mul(unity_ObjectToWorld,v.vertex).xyz;
                 return o;
             }
             fixed4 frag(v2f i):SV_Target
@@ -47,8 +49,15 @@ Shader "WaitYourTurn/MaquetteCard"
                 fixed4 result=fixed4(i.color*(fill+_LightColor0.rgb*light)*fiber,1);
                 // A cheap board-only depth gradient, not screen-space blur.
                 // Train and actors retain full gameplay contrast.
-                half fade=saturate((i.depth-17)/9)*_Atmosphere;
+                // Track-relative distance, not a camera distance that misses the visible board.
+                // Both enemy approaches remain readable near the train.
+                half fade=lerp(saturate((i.depth-17)/9),smoothstep(2.8,6.8,abs(i.world.z)),_Night)*_Atmosphere;
                 result.rgb=lerp(result.rgb,fixed3(.018,.027,.041),fade);
+                half stage=1-.22*smoothstep(1.1,2.5,abs(i.world.z));
+                // Soft baked-style wall contact shade on the actual floor, no shadow map.
+                half deck=saturate((.08-i.world.y)*25)*saturate(n.y);
+                stage*=1-.23*deck*smoothstep(1.45,2.1,abs(i.world.z));
+                result.rgb*=lerp(1,stage,_Night*(1-_Atmosphere));
                 return result;
             }
             ENDCG

@@ -79,3 +79,5 @@ kanıtları üzerine yazılmadı. Play sonrasında Console hata/uyarı sayısı0
 en fazla4 canlı zombi; `maquette-pc-frame-sample.txt`. Editor ve mevcut
 PC pencere çözünürlüğünü içerir; kalabalık Android veya eşit koşullu önce/sonra
 performans karşılaştırması değildir. A54 FPS/ısınma/pil ölçümü bekliyor.
+
+D52 sinematik devamı ve güncel PC yük incelemesi: [MAQUETTE_CINEMA.md](MAQUETTE_CINEMA.md). D51'in postprocess yok kaydı ilk denemeyi anlatır; güncel Survival sınırlı tilt-shift kullanır.

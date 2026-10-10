@@ -1,0 +1,12 @@
+2026-10-10T13:56:04.5666103Z
+Player - stable gameplay root: enabled/active=5; totalRendererComponents=5; transforms=12
+Capsule enemy template - stable gameplay root: enabled/active=0; totalRendererComponents=3; transforms=5
+Track visuals - no physics: enabled/active=1; totalRendererComponents=83; transforms=85
+Station visuals - both platforms - no physics: enabled/active=2; totalRendererComponents=84; transforms=86
+Journey scenery - no physics: enabled/active=12; totalRendererComponents=168; transforms=170
+Train and station - fixed gameplay navigation: enabled/active=39; totalRendererComponents=529; transforms=903
+Reusable player drone - F8 acceptance: enabled/active=0; totalRendererComponents=11; transforms=15
+Incoming station - visual only: enabled/active=2; totalRendererComponents=84; transforms=86
+Reusable grenade delivery - capacity 16: enabled/active=0; totalRendererComponents=32; transforms=65
+Run mine pool - capacity 12: enabled/active=0; totalRendererComponents=36; transforms=73
+Train static visual roots are single mesh renderers; inactive pools and physics transforms do not each issue a draw.

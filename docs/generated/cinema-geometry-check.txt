@@ -1,0 +1,4 @@
+Compared HEAD 1754a0e against cinematic scene.
+Physics/Nav components unchanged=292.
+Transform changes=1 (directional light rotation only; camera clip/component is separate).
+Removed MeshRenderer=802, MeshFilter=802; no GameObject, Collider or Nav component removed.

@@ -1,0 +1,7 @@
+2026-10-10T13:58:59.9337392Z
+Editor movement stress, alternating same-run effect OFF/ON. Not Android acceptance.
+Spawned=24; GameView=1018x588; Quality=Ultra
+Effect=OFF; frames=186; meanMs=21.65; P95ms=29.84; maxMs=37.35; mainMs=21.64; gcKB=232.31; draws=0.0; drawCounterValid=True
+Effect=ON; frames=178; meanMs=22.52; P95ms=31.04; maxMs=43.86; mainMs=22.42; gcKB=239.45; draws=0.0; drawCounterValid=True
+Effect=OFF; frames=180; meanMs=22.23; P95ms=31.19; maxMs=42.61; mainMs=22.22; gcKB=236.71; draws=0.0; drawCounterValid=True
+Effect=ON; frames=222; meanMs=18.03; P95ms=29.35; maxMs=46.78; mainMs=18.02; gcKB=182.27; draws=0.0; drawCounterValid=True

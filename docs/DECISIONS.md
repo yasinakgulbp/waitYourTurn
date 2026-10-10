@@ -1,5 +1,10 @@
 # Karar kaydı
 
+## 2026-10-10 — D52: maket sineması ve PC kasması
+
+Kullanıcı minyatür/tilt-shift hissi, karanlık uzak çevre, mobil maliyet sınırı ve tren parça/titreşim incelemesi istedi. Survival'a sınırlı düşük çözünürlüklü blur, renk/vignette, analitik çevre karartma ve65ms kamera yumuşatma kuruldu. Gövdeler/körükler zaten birleşikti;802 eski kapalı görsel componenti fizik/nav korunarak silindi. PC kasması kilitli altı-prefab Inspector ile ilişkili bulundu; kilit açıldıktan sonra24AI yürüyüşte efekt açık ortalama5.31–6.07ms. Bu cihaz kabulü değildir.15kapı/15cam/iki geçiş kısa kabulü PASS. Battle sahnesi değiştirilmedi. Ayrıntı ve ölçüm sınırları [MAQUETTE_CINEMA.md](MAQUETTE_CINEMA.md); sonraki iş kullanıcı görünüm değerlendirmesi ve maket karakter/zombi giydirme, ardından A54 kalabalık kontrolü.
+
+
 ## 2026-10-10 — D51: mimari maket sanat denemesi
 
 Kullanıcı D50'nin dokusuz treninden devam ederek beyaz kaliteli maket kartonu,
