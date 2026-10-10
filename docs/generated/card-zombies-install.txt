@@ -1,0 +1,9 @@
+2026-10-10T17:13:49.5831135Z
+PASS: original card zombie meshes; 15 bones and one material/SkinnedMeshRenderer per actor.
+Normal: 1536 triangles; visual scale 1
+Fast: 1536 triangles; visual scale 0,84
+Tough: 1680 triangles; visual scale 1,13
+Boss: 1768 triangles; visual scale 1,45
+Survival template installed; Normal/Intro, Fast and Tough retain existing profiles. Boss art prepared only.
+All existing collider/agent/obstacle state and transforms unchanged. No root motion, extra lights, textures or Animator.
+Blur .55 -> .70 with same capped buffers/passes. Player turn .20s walking / .14s aiming, capped720deg/s; combat aim unchanged.

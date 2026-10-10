@@ -7,12 +7,13 @@ namespace WaitYourTurn.Run
     public sealed class MaquetteCinema : MonoBehaviour
     {
         [SerializeField] private Shader filmShader;
-        [SerializeField, Range(0, 1)] private float blurAmount = .55f;
+        [SerializeField, Range(0, 1)] private float blurAmount = .70f;
         [SerializeField, Range(0, .5f)] private float vignette = .22f;
         [SerializeField] private bool useBlur = true;
         private Material material;
         private Camera view;
         public bool UseBlur { get => useBlur; set => useBlur = value; }
+        public float BlurAmount { get => blurAmount; set => blurAmount = Mathf.Clamp01(value); }
         public void Configure(Shader shader) { filmShader = shader; }
         private void OnEnable() { view = GetComponent<Camera>(); }
         private void OnDisable()

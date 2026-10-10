@@ -1,0 +1,1 @@
+PASS: 292 existing collider/agent/obstacle blocks and all existing local transform poses unchanged versus d2ab4c4. Battle scene unchanged.

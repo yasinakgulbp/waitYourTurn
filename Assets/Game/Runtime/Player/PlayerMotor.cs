@@ -11,6 +11,9 @@ namespace WaitYourTurn.Player
         [SerializeField] private Camera view;
         [SerializeField, Min(0.1f)] private float speed = 3.5f;
         [SerializeField, Min(1f)] private float walkingTurnSpeed = 720f;
+        [SerializeField, Min(.02f)] private float walkingTurnEase = .20f;
+        [SerializeField, Min(.02f)] private float aimingTurnEase = .14f;
+        private float turnVelocity;
         [SerializeField] private MovementArea movementArea;
         private CharacterController body;
         private float vertical;
@@ -50,14 +53,17 @@ namespace WaitYourTurn.Player
         {
             // Final pose also stays valid after other actors move, before presentation/save capture.
             ConstrainActualPosition();
-            if (!health.IsAlive || Time.deltaTime <= 0) return;
+            if (!health.IsAlive || Time.deltaTime <= 0) { turnVelocity = 0; return; }
             Vector3 facing = walkingDirection;
             bool aiming = false;
             if (aim != null && aim.TryFacing(out Vector3 targetDirection))
             { facing = targetDirection; aiming = true; }
-            if (facing.sqrMagnitude <= .000001f) return;
-            Quaternion rotation = Quaternion.LookRotation(facing);
-            transform.rotation = aiming ? rotation : Quaternion.RotateTowards(transform.rotation, rotation, walkingTurnSpeed * Time.deltaTime);
+            if (facing.sqrMagnitude <= .000001f) { turnVelocity = 0; return; }
+            // Presentation turns smoothly; AutoAim still fires at its actual visible target.
+            float yaw = Mathf.Atan2(facing.x, facing.z) * Mathf.Rad2Deg;
+            float eased = Mathf.SmoothDampAngle(transform.eulerAngles.y, yaw, ref turnVelocity,
+                aiming ? aimingTurnEase : walkingTurnEase, walkingTurnSpeed, Time.deltaTime);
+            transform.rotation = Quaternion.Euler(0, eased, 0);
         }
         private float WorldRadius
         {
@@ -94,6 +100,7 @@ namespace WaitYourTurn.Player
             vertical = 0f;
             LastMoveDirection = Vector3.zero;
             walkingDirection = Vector3.zero;
+            turnVelocity = 0;
             body.enabled = true;
         }
     }

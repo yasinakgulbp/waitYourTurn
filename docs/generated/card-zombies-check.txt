@@ -1,0 +1,7 @@
+2026-10-10T17:12:23.3519265Z
+Editor-only acceptance; not Android acceptance.
+PASS: gradual first-frame turn and convergence; blur .70.
+PASS: 24 mixed-profile actors, one renderer/15 bones, real movement-driven poses and nav-root agreement.
+Frames=610; meanMs=6.56; P95ms=9.02; view=1060x576; quality=Ultra
+PASS: real four-enemy intro wave blocks departure while any attacker is outside; boarded enemies retained, zero exterior actors at departure.
+PASS: pooled new life restores basic mesh/scale and clears old animation. Normal save isolated.

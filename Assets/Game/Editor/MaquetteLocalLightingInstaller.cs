@@ -146,6 +146,8 @@ namespace WaitYourTurn.Editor
                 save.UseTestStore(Path.Combine(Application.persistentDataPath,"acceptance-only","local-lighting.json"));
                 run.Restart();spawn.SpawningAllowed=false;run.Player.Invulnerable=true;run.AimAllowed=false;
                 yield return new WaitForSeconds(1);
+                // Stress actors belong at a stopped station, never on scrolling approach scenery.
+                run.Flow.Tick(run.Flow.Remaining + .01f);
                 foreach(var wagon in run.Wagons)while(wagon.Enemies.WarmOne()){}
                 var profile=spawn.Programs[0].bands[0].profile;int spawned=0;
                 foreach(var wagon in run.Wagons)for(int i=0;i<8;i++)
