@@ -1,0 +1,5 @@
+2026-10-10T13:16:22.7255818Z
+PASS: Survival-only maquette. All collider/agent/obstacle state and transforms unchanged; same NavMesh asset/hash.
+Train opaque triangles 26850. One directional light without realtime shadows; no postprocess or extra camera.
+Combined, bounded 20m card scenery; existing RunPresentation owns station/track/scenery motion. Only 64px grain map; no reference imagery copied.
+Battle unchanged. User visual and Android acceptance pending.

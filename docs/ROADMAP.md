@@ -1,5 +1,12 @@
 # Sıralı geliştirme planı
 
+**D51 güncel sanat yönü (2026-10-10):** Kullanıcının maket teması denemesi:
+beyaz mat karton, teknik çizim zemini, kâğıt ağaçlar ve bordo vurgular.
+Survival'ın mevcut ölçüleri/kapıları/geçitleri korunur. Görsel yön önce Unity
+kamerasında ve kısa mevcut mekanik kontrolünde değerlendirilir; kullanıcı
+kalite değerlendirmesi ve A54 FPS/ısınma kontrolü ayrı kalır. Battle teması
+henüz değişmez. Ayrıntı [MAQUETTE_ART.md](MAQUETTE_ART.md).
+
 **D50 güncel tercih (2026-10-10):** Kullanıcı önceki tren modelini yüzey dokusuz kullanmak istedi; D48 meshleri düz malzemelerle korunur. Yeni doku fikri beklenir; D49 lookdev çalışma olarak saklanır, oyuna kurulmaz. Önceki malzeme denemesine kullanıcı onayı var sayılmaz. Ayrıntı [TRAIN_ART.md](TRAIN_ART.md).
 
 **D49 güncel sanat işi (2026-10-10):** Kullanıcı D48 görünümünü reddetti. Önce özgün Blender malzeme/ışık denemesi; native node, gerçek model renderi ve renk örnekleri `ArtSource/SurvivalTrain/LookDev` içinde. Unity sahnesine bu çalışmada kurulum yoktur. Görsel yön değerlendirmesinden sonra kompakt bake ve tek-vagon Unity eşleştirmesi yapılır; bütün treni tekrar körlemesine giydirme yapılmaz. İç dekor şu an ayrı görsel öneridir. A54 sanat yükü ölçümü bekler; Blender renderi mobil kabul değildir. Ayrıntı [TRAIN_ART.md](TRAIN_ART.md).

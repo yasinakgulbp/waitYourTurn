@@ -1,5 +1,18 @@
 # Karar kaydı
 
+## 2026-10-10 — D51: mimari maket sanat denemesi
+
+Kullanıcı D50'nin dokusuz treninden devam ederek beyaz kaliteli maket kartonu,
+grafit raylar, özgün teknik zemin çizimleri, kesilmiş kâğıt ağaçlar ve ölçülü
+bordo vurgular istedi. Yeni referanslar yalnız sanat dili; tren şekli/ölçüleri,
+kapı yerleri ve mekanikler değişmez. Mevcut Survival gövdesinin görünümü,
+sahneye özel prop malzemeleri ve mevcut hareket otoritesinin görsel çevresi
+uyarlanır. Battle sahnesi ayrı kalır. Tek hafif shader + offline köşe AO;
+realtime gölge/probe/DOF/SSAO eklenmez. Önce Unity kamerasında görsel deneme,
+kısa mevcut mekanik kontrolü ve kullanıcı değerlendirmesi; A54 sanat testi
+ayrı kabul kapısıdır. Reklam CTR/gelir veya FPS artışı kabul edilmiş sayılmaz.
+Kaynak/ölçü/yeniden kurulum ve kanıtlar [MAQUETTE_ART.md](MAQUETTE_ART.md).
+
 ## 2026-10-10 — D50: önceki tren, yüzey dokusuz
 
 Kullanıcı yeni doku fikrini daha sonra iletmek üzere **önceki tren modelini oyunda dokusuz kullanmayı** istedi. D49 look-development yönü kabul edilmiş değildir; çalışma kaynak olarak saklanır, sahneye kurulmaz. Survival'daki mevcut D48 geometri/kapı/cam/körük modeli korunur. Gövde düz gri, yapraklar düz kırmızı, körük koyu düz Standard materyal kullanır; yeni opak materyallerin bütün yüzey texture slotları boştur. Cam ve mevcut portal görsel bağları kalır. Collider/nav/meshler ve Battle sahnesi değişmez; yeni fikir gelene kadar yüzey dokusu geliştirme durur. Editor komutu `Use Previous Train Without Textures` yeniden uygulanabilir. Mevcut textured kurulum komutu eski atlası tekrar bağlar; kullanıcı yeni fikrini vermeden onu kullanmayın.

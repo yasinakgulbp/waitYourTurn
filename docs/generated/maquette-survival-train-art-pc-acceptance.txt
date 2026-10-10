@@ -1,0 +1,3 @@
+2026-10-10T13:18:15.4732249Z
+PASS: 15 doors glass/metal rays, break/hide/repair/restore; 15 side windows and upper/lower/post metal rays; complete nav and physical walking through both gangways.
+Isolated test save; normal save unchanged. Device FPS/thermal check pending.

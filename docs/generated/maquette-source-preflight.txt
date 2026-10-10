@@ -1,0 +1,2 @@
+PASS: all 10 train-part bounds unchanged, valid indices/UInt16/color arrays, original input hash unchanged, Battle scene untouched.
+Wagon6,Wagon6Glass,Wagon5,Wagon5Glass,Wagon4,Wagon4Glass,DoorLower,DoorGlass,Connector,Locomotive

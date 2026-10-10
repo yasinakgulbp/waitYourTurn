@@ -1,5 +1,14 @@
 # Survival tren sanatı — D47, 2026-10-09
 
+## D51 güncel maket denemesi — 2026-10-10
+
+Kullanıcı yeni doku fikrini **mimari maket** olarak belirledi. D50 önceki
+modelin geçici dokusuz hâlidir; güncel deneme aynı oyun ölçülerini beyaz
+karton, grafit detay ve bordo aksanla giydirir. Teknik zemin/kâğıt ağaç ve
+istasyon çevresi mevcut hareket köklerini izler. Yeni shader/ölçüler/kaynaklar
+ve mobil yük sınırları [MAQUETTE_ART.md](MAQUETTE_ART.md). Kullanıcı görsel
+kalite ve Android kabulü tamamlanmış sayılmaz.
+
 ## D50 geçerli oyun görünümü — 2026-10-10
 
 Kullanıcının yeni isteği: **önceki tren modeli, yüzey dokusuz**. Mevcut D48 meshleri ve çalışan kapı/cam/körükler korunur; opak rendererlar düz gri/kırmızı/koyu Standard malzeme kullanır. Yeni materyallerin bütün yüzey haritaları boştur. D49 görünüm çalışması oyuna kurulmamıştır ve yeni doku fikri beklenir. Tekrar uygulama: `Wait Your Turn → Survival → Use Previous Train Without Textures` (Ctrl+Shift+Alt+U), Play durmuşken. `Install Textured Train Art` komutu eski atlası tekrar bağlar; dokusuz görünüm için onu çalıştırmayın. Uygulama kaydı `docs/generated/survival-train-plain-install.txt`.
