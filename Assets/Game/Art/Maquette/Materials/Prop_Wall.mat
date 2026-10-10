@@ -33,7 +33,7 @@ Material:
     - _Night: 0
     - _VertexTint: 0
     m_Colors:
-    - _Ambient: {r: 0.13, g: 0.16, b: 0.2, a: 1}
+    - _Ambient: {r: 0.28, g: 0.32, b: 0.39, a: 1}
     - _Color: {r: 0.72, g: 0.75, b: 0.77, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

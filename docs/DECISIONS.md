@@ -1,5 +1,9 @@
 # Karar kaydı
 
+## 2026-10-10 — D53: güneşsiz fener denemesi ve kontrollü asset incelemesi
+
+Kullanıcı güneşi kapatıp önce yerel ışıkları denemeyi, assetleri sonra kontrollü değerlendirmeyi istedi. Yakın düşmanlar fener dışında da seçilir. Survival'da yön ışığı ve yapay world-Z karartma bandı kapatıldı; düşük soğuk fill, aktör okunurluğu, tek oyuncu feneri (128px cookie/512px hard shadow) ve altı küçük gölgesiz vertex vurgu ışığı eklendi. Mat karton shader Unity spot/cookie/attenuation/gölge desteği alır. Oynanış kökleri ve NavMesh korunur; pipeline/paket/kamera eklenmez. [Ayarlar, kanıt ve asset kararları](LOCAL_LIGHTING.md). Grid Master/Miniature Camera resmi tablolarda URP-only; güncel TopDown Engine Built-in destekler, kullanıcının eski kopyası ayrıca incelenir. İlk ikisini doğrudan mevcut Built-in'e ekleme kararı verilmedi. Grid içerik/dokuları ayrı ortamda incelenebilir. Kamera impulse ve maket aktörler görünüm değerlendirmesi sonrasında; Android GPU/ısı/pil kabulü açık.
+
 ## 2026-10-10 — D52: maket sineması ve PC kasması
 
 Kullanıcı minyatür/tilt-shift hissi, karanlık uzak çevre, mobil maliyet sınırı ve tren parça/titreşim incelemesi istedi. Survival'a sınırlı düşük çözünürlüklü blur, renk/vignette, analitik çevre karartma ve65ms kamera yumuşatma kuruldu. Gövdeler/körükler zaten birleşikti;802 eski kapalı görsel componenti fizik/nav korunarak silindi. PC kasması kilitli altı-prefab Inspector ile ilişkili bulundu; kilit açıldıktan sonra24AI yürüyüşte efekt açık ortalama5.31–6.07ms. Bu cihaz kabulü değildir.15kapı/15cam/iki geçiş kısa kabulü PASS. Battle sahnesi değiştirilmedi. Ayrıntı ve ölçüm sınırları [MAQUETTE_CINEMA.md](MAQUETTE_CINEMA.md); sonraki iş kullanıcı görünüm değerlendirmesi ve maket karakter/zombi giydirme, ardından A54 kalabalık kontrolü.

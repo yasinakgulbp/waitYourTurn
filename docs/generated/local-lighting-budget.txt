@@ -1,0 +1,5 @@
+2026-10-10T16:05:29.9254772Z
+Editor-only moving24-enemy flashlight shadow OFF/ON; not Android acceptance.
+Spawned=24; GameView=1018x588; Quality=Ultra
+Shadows=OFF; frames=525; meanMs=7.62; P95ms=10.46; mainMs=7.61; gcKB=16.00; draws=0.0; drawCounterValid=True
+Shadows=ON; frames=640; meanMs=6.25; P95ms=8.36; mainMs=6.25; gcKB=16.00; draws=0.0; drawCounterValid=True

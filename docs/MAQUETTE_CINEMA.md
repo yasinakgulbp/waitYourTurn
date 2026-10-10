@@ -74,6 +74,10 @@ ve telefon çözünürlüklerinde titreşimin bittiği iddia edilmiyor.
 
 ## Yeniden kullanım ve sonraki kapı
 
+D53 güncel ışık denemesi güneşi ve bu sayfadaki world-Z koyu bandı kapatır.
+Tek gerçek oyuncu feneri ve gölgesi eklenmiştir; bu sayfanın önceki "gölgesiz"
+tanımı D52'nin tarihsel durumudur. Güncel ayarlar/kanıt LOCAL_LIGHTING.md'de.
+
 Wait Your Turn → Survival → Install Maquette Cinema (Play durmuş olmalı).
 D51 kurulumunu tekrar yapmak ışık/malzemeleri sıfırlayabilir; ardından bu
 kurulumu yeniden uygulayın. Gameplay fingerprint uyuşmazsa sahne kaydedilmez.

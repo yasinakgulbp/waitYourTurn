@@ -1,0 +1,4 @@
+2026-10-10T16:02:48.0145999Z
+PASS: Survival geometry fingerprint unchanged. Sun disabled; no world-Z darkness band.
+One 128px cookie spotlight attached to actor facing; one512px hard shadow. Six bounded vertex point lights.
+No new camera, package, colliders, NavMesh bake, HDR, volumetric fog or pipeline migration. Android acceptance pending.

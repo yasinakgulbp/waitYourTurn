@@ -29,11 +29,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Atmosphere: 1
-    - _Night: 1
+    - _Atmosphere: 0
+    - _Night: 0
     - _VertexTint: 1
     m_Colors:
-    - _Ambient: {r: 0.13, g: 0.16, b: 0.2, a: 1}
+    - _Ambient: {r: 0.12, g: 0.15, b: 0.2, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

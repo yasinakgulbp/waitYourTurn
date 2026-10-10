@@ -30,10 +30,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _Atmosphere: 0
-    - _Night: 1
+    - _Night: 0
     - _VertexTint: 0
     m_Colors:
-    - _Ambient: {r: 0.13, g: 0.16, b: 0.2, a: 1}
+    - _Ambient: {r: 0.48, g: 0.53, b: 0.58, a: 1}
     - _Color: {r: 0.36, g: 0.63, b: 0.53, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

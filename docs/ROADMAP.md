@@ -1,6 +1,6 @@
 # Sıralı geliştirme planı
 
-**D52 devam noktası (2026-10-10):** Survival maket sineması kuruldu; karanlık çevre, sınırlı tilt-shift ve yumuşak kamera. Kilitli prefab Inspector PC testini yavaşlatıyordu; açılınca24AI ile5–6ms kısa Editor örneği. Kapı/cam/körük kabulü geçti. Kullanıcı görsel değerlendirmesi → ölçek sözleşmeli karakter/zombi maketleri → A54 kalabalık FPS/GPU/ısı kontrolü. Android/Battle tam kabulü bekler. [Ayarlar ve kanıt](MAQUETTE_CINEMA.md).
+**D53 devam noktası (2026-10-10):** Kullanıcının güneşsiz ışık denemesi Survival'a kuruldu: düşük ortam fill, tek oyuncu feneri, küçük sıcak vertex vurgular; önceki yapay koyu bant kapalı. Mevcut sınırlı tilt-shift/takip korunur. [Ayarlar, kısa PC kanıtı ve asset uyumluluğu](LOCAL_LIGHTING.md). Önce kullanıcı görünüm denemesi; gerekirse Grid Master dokularını ayrı ortamda inceleme. Grid Master ve önerilen Miniature Camera shader'ları URP ister; mevcut Built-in'e doğrudan paket/pipeline eklenmedi. Ardından küçük olay bazlı kamera hissi ve ölçü sözleşmeli maket aktörler; A54 GPU/FPS/ısı kabulü bekler. D52 Editor kasmasının kilitli Inspector tanısı [önceki kayıtta](MAQUETTE_CINEMA.md) korunur.
 
 
 **D51 güncel sanat yönü (2026-10-10):** Kullanıcının maket teması denemesi:

@@ -1,0 +1,2 @@
+Compared preceding c0ff5bc Survival scene.
+PASS: 292 collider/agent/obstacle components identical; no new physics components. All original transform positions/rotations/scales/parents preserved. New light children only. No original component removed.
