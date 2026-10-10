@@ -1,0 +1,22 @@
+{
+  "purpose": "Isolated reference material / lighting trial, NOT runtime integration",
+  "source": "Original ImageGen surface atlas + editable metric Blender procedural floor/roughness/bump nodes; no downloaded third-party textures",
+  "units": "meters; unchanged 12 x 4.2m game-sized carriage",
+  "floor": "3.7cm diagonal knurl; 1.2 x 1.4m shader panel divisions",
+  "interior_props": "Bench/partition visual proposal only; no gameplay colliders",
+  "lighting": "Offline Cycles soft shadows and warm/cool area lights; must bake/approximate and verify in Unity before shipping",
+  "mobile_status": "Not tested; shader nodes and preview lights are not mobile runtime assets",
+  "materials": [
+    "LD / warm lamp lens",
+    "LD / dark track bed",
+    "LD / brushed silver edge",
+    "LD / warm aged interior steel",
+    "LD / smoky glazing",
+    "LD / fine diamond anti-slip floor",
+    "LD / rubber and bellows",
+    "LD / charcoal exterior enamel",
+    "LD / dark upholstered bench",
+    "LD / oxblood red satin doors",
+    "LD / vent grille"
+  ]
+}

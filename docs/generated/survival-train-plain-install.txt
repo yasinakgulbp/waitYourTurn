@@ -1,0 +1,4 @@
+2026-10-10T12:35:25.9455720Z
+PASS: previous train meshes retained; 21 opaque renderers use plain materials without any surface maps.
+Gray body, red door leaves, dark gangways, existing clear glazing. Movement/shot colliders, NavMesh and portal bindings unchanged.
+LookDev not installed; Battle scene untouched. User's new texture idea pending.

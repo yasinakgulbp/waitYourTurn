@@ -1,5 +1,15 @@
 # Survival tren sanatı — D47, 2026-10-09
 
+## D50 geçerli oyun görünümü — 2026-10-10
+
+Kullanıcının yeni isteği: **önceki tren modeli, yüzey dokusuz**. Mevcut D48 meshleri ve çalışan kapı/cam/körükler korunur; opak rendererlar düz gri/kırmızı/koyu Standard malzeme kullanır. Yeni materyallerin bütün yüzey haritaları boştur. D49 görünüm çalışması oyuna kurulmamıştır ve yeni doku fikri beklenir. Tekrar uygulama: `Wait Your Turn → Survival → Use Previous Train Without Textures` (Ctrl+Shift+Alt+U), Play durmuşken. `Install Textured Train Art` komutu eski atlası tekrar bağlar; dokusuz görünüm için onu çalıştırmayın. Uygulama kaydı `docs/generated/survival-train-plain-install.txt`.
+
+## D49 güncel görünüm çalışması — 2026-10-10
+
+**D48 görünümü kullanıcı tarafından reddedildi.** Aşağıdaki D48 kayıtları teknik geçmiştir; nihai sanat yönü veya görsel kabul değildir. Sıra: özgün malzeme + ışığı önce model üzerinde dene → görüntüyü değerlendir → kompakt haritalara bake et → tek vagonu Unity'de aynı kamerada doğrula → üç vagona uygula → Android yükünü ölç.
+
+Yeni çalışma [LookDev/README](../ArtSource/SurvivalTrain/LookDev/README.md) içinde. Gerçek Blender renderi `material-lighting-preview.png`, yakın kamera `material-detail.png`, düzenlenebilir kaynak `SurvivalTrain-LookDev.blend`; özgün ImageGen yüzey atlası ve native zemin/roughness/kabartma node'ları üçüncü taraf doku gerektirmez. Kaynak atlas ve tam üretim promptu aynı klasörde tutulur. Önceki fotoğraf benzeri atlasın her küçük parçaya esneyen UV yerleşimi bu denemede kullanılmaz; desenler metre ölçeğindedir. Eşzamanlı oyun giydirme yapılmaz. Bench/bölme görselleri ayrı bir öneridir; Unity/NavMesh/collider kabulüne eklenmiş sayılmaz. Offline ışıklandırma mobil runtime maliyeti olarak sunulmaz.
+
 ## D48 görünüm ve titreme düzeltmesi — 2026-10-10
 
 Kullanıcı oyun içi görünümü yeterli bulmadı; Blender önizlemesi nihai görünüm kabulü değildir. Körükteki titreme fizik hareketinden değil, vagon/körük zeminlerinin ve uç dikme/yan yüzeylerinin aynı düzlemde örtüşmesinden kaynaklanabilecek somut bir geometri hatası içeriyordu. Görsel körük artık yalnız 1 m boşluğu doldurur; 1,4 m fizik/nav zemini güvenli bindirmesiyle korunur. Dört birleşimin dışa bakan eksen hizalı yüzeyleri için pozitif coplanar örtüşme kontrolü mesh önkontrolüne eklendi. Ana gövde zaten tek mesh; ayrı kalan parçalar cam, portal durumunu izleyen kapı yaprakları ve iki körüktür.

@@ -18,6 +18,67 @@ namespace WaitYourTurn.Editor
     public static class SurvivalTrainArtInstaller
     {
         private const string Folder = "Assets/Game/Art/SurvivalTrain";
+        public static void UsePreviousTrainWithoutTexturesBatch()
+        {
+            EditorSceneManager.OpenScene(TrainIntegrationBuilder.SurvivalScenePath);
+            UsePreviousTrainWithoutTextures();
+        }
+        [MenuItem("Wait Your Turn/Survival/Use Previous Train Without Textures %#&u")]
+        public static void UsePreviousTrainWithoutTextures()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Stop Play before changing train materials.");
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (scene.path != TrainIntegrationBuilder.SurvivalScenePath) throw new InvalidOperationException("Open SurvivalIntegration; Battle is not the material target.");
+            var run = UnityEngine.Object.FindAnyObjectByType<RunDriver>();
+            if (run == null || run.Wagons.Length != 3 || !run.UsesOpenTrainSurvival) throw new InvalidOperationException("Expected three open Survival wagons.");
+            var root = run.Wagons[0].transform.parent;
+            string before = GeometryKey(root);
+            var body = Plain("PlainTrainBody", new Color(.36f,.39f,.42f));
+            var doors = Plain("PlainTrainDoors", new Color(.5f,.03f,.035f));
+            var gangway = Plain("PlainTrainGangway", new Color(.09f,.10f,.11f));
+            int changed = 0;
+            void Assign(Transform model, Material mat)
+            {
+                if (model == null || !model.TryGetComponent<MeshRenderer>(out var r)) throw new InvalidOperationException("Expected the previous installed train art.");
+                Undo.RecordObject(r,"Use train without surface textures");r.sharedMaterial=mat;changed++;
+            }
+            // Existing meshes and working portal bindings stay installed. Do not
+            // replace them with the isolated look-development benches or materials.
+            foreach (var wagon in run.Wagons)
+            {
+                var art= wagon.transform.Find("Textured train art - visuals only");
+                if (art == null) throw new InvalidOperationException("Previous train art is not installed.");
+                Assign(art.Find("Body"),body);
+                foreach(var door in wagon.Doors)
+                {
+                    var leaves=door.transform.Find("Textured door art - same portal");
+                    Assign(leaves != null ? leaves.Find("Red leaves") : null, doors);
+                }
+            }
+            foreach(var connection in run.Solo.Connections)
+            {
+                var art=connection.transform.Find("Textured gangway - permanently open");
+                Assign(art != null ? art.Find("Bellows and floor") : null, gangway);
+            }
+            var cab=root.Cast<Transform>().Single(t=>t.name.StartsWith("Locomotive -"));
+            var cabArt=cab.Find("Textured control room - visual only");
+            Assign(cabArt != null ? cabArt.Find("Closed locomotive") : null,body);
+            if(GeometryKey(root)!=before)throw new InvalidOperationException("Material change altered gameplay geometry; do not save.");
+            EditorSceneManager.MarkSceneDirty(scene);AssetDatabase.SaveAssets();EditorSceneManager.SaveScene(scene);
+            var report=DateTime.UtcNow.ToString("O")+$"\nPASS: previous train meshes retained; {changed} opaque renderers use plain materials without any surface maps.\n"+
+                "Gray body, red door leaves, dark gangways, existing clear glazing. Movement/shot colliders, NavMesh and portal bindings unchanged.\n"+
+                "LookDev not installed; Battle scene untouched. User's new texture idea pending.\n";
+            File.WriteAllText("docs/generated/survival-train-plain-install.txt",report);Debug.Log("[TrainArt] "+report);
+        }
+
+        private static Material Plain(string name, Color color)
+        {
+            var mat=Mat(name,"Standard");
+            foreach(var property in mat.GetTexturePropertyNames())mat.SetTexture(property,null);
+            mat.shaderKeywords=Array.Empty<string>();mat.color=color;mat.SetFloat("_Metallic",.15f);mat.SetFloat("_Glossiness",.15f);
+            mat.enableInstancing=true;EditorUtility.SetDirty(mat);return mat;
+        }
+
         [Serializable] private sealed class Payload { public Part[] parts = Array.Empty<Part>(); }
         [Serializable] private sealed class Part
         { public string name = string.Empty; public float[] vertices = Array.Empty<float>(), normals = Array.Empty<float>(), uv = Array.Empty<float>(); public int[] triangles = Array.Empty<int>(); }

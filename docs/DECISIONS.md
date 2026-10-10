@@ -1,5 +1,15 @@
 # Karar kaydı
 
+## 2026-10-10 — D50: önceki tren, yüzey dokusuz
+
+Kullanıcı yeni doku fikrini daha sonra iletmek üzere **önceki tren modelini oyunda dokusuz kullanmayı** istedi. D49 look-development yönü kabul edilmiş değildir; çalışma kaynak olarak saklanır, sahneye kurulmaz. Survival'daki mevcut D48 geometri/kapı/cam/körük modeli korunur. Gövde düz gri, yapraklar düz kırmızı, körük koyu düz Standard materyal kullanır; yeni opak materyallerin bütün yüzey texture slotları boştur. Cam ve mevcut portal görsel bağları kalır. Collider/nav/meshler ve Battle sahnesi değişmez; yeni fikir gelene kadar yüzey dokusu geliştirme durur. Editor komutu `Use Previous Train Without Textures` yeniden uygulanabilir. Mevcut textured kurulum komutu eski atlası tekrar bağlar; kullanıcı yeni fikrini vermeden onu kullanmayın.
+
+## 2026-10-10 — D49: önce malzeme ve ışık denemesi
+
+Kullanıcı D48 görünümünü önceki tasarımdan da kötü buldu; nötr çelik / desensiz zemin yönü reddedildi. Hedef hâlâ 09.44.05 referansındaki sıcak eskitilmiş iç metal, koyu ince desenli güverte, kırmızı kapılar, soğuk gümüş çerçeve ve sıcak ışık vurgularıdır. Kullanıcı dokuları kendimiz üretip model üzerinde bitirmeden denememizi istedi. Önceki atlaslar da dışarıdan indirilmiş değildi; üretildi, fakat oyundaki sonuç yeterli değildi.
+
+`ArtSource/SurvivalTrain/LookDev` Assets dışında ayrı bir Blender malzeme/ışık çalışmasıdır. Mevcut metre ölçülü gövde üzerinde fiziksel ölçekte özgün zemin deseni, küçük aşınmalar ve render ışığı değerlendirilir. İlk iki native node denemesinden sonra doğal metal aşınması için built-in ImageGen ile özgün dört hücreli yüzey atlası üretildi; kaynak ve tam prompt aynı klasörde korunur. Atlas metre bazında yüzeye oturur; zemin/kabartma/roughness node ile üretilir. Gerçek 3D render, dört ham renk örneği ve düzenlenebilir .blend teslim edilir; oyun sahnesi/atlas/kurucu bu adımda değiştirilmez. Koltuk/bölme siluetleri yalnız görsel öneridir, oyun colliderı değildir. Cycles shader/ışıkları mobil runtime'a doğrudan taşınmayacak; yön kabul edilince kompakt atlas/bake ve önce tek-vagon Unity görünüm kontrolü yapılacaktır. Blender görüntüsü Unity veya Android kalite/performance kabulü değildir. Kullanıcı görünüm değerlendirmesi açık; D48 teknik mekanik kayıtları sanat kabulü sayılmaz.
+
 ## 2026-10-10 — D48: oyun içi tren görünümü ve yüzey kararlılığı
 
 Kullanıcı D47'nin oyun içi dokusunu/zeminini ve kamera hareketinde özellikle körükte görünen titremeyi kabul etmedi. Görünüm için sarımsı iç panel yerine nötr çelik, sakin koyu güverte ve daha okunur metal ışığı hedeflenir. Ana gövde zaten tek mesh; körük-vagon arasında aynı düzlemde örtüşen görsel yüzeyler kaldırılır. Fizik/nav güvenli bindirmesi korunur. Mevcut tek gölgesiz yönlü ışık ayarlanır, ek ışık/gölge/DOF yoktur. Kaynak .blend/atlas ve yeniden kurulum kodu birlikte güncellenir. Dört birleşimde coplanar art örtüşme kontrolü mesh preflight'e eklendi. Yeni tren24.660 üçgen;39 renderer. Kullanıcı görünüm kabulü ve Android ölçümü ayrıca gereklidir; referans atmosferi tamamlanmış sayılmaz.
