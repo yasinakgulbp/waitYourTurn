@@ -208,7 +208,7 @@ namespace WaitYourTurn.Enemies
             if (attack.CanReach(player))
             { motor.Stop(); attackTarget = player; State = EnemyState.AttackingPlayer; return; }
             // Nearby attack range, rather than an exact occupied grid point, completes pursuit.
-            Vector3 offset = new Vector3(Mathf.Sin(targetAngle), 0, Mathf.Cos(targetAngle)) * 0.8f;
+            Vector3 offset = new Vector3(Mathf.Sin(targetAngle), 0, Mathf.Cos(targetAngle)) * Mathf.Min(.72f, attack.ActorReach - .12f);
             Vector3 goal = player.transform.position + offset;
             if (onBoard && interiorPursuit != null) goal = interiorPursuit.Constrain(goal, motor.Agent.radius + .1f);
             else if (geometry != null) goal = geometry.Constrain(goal, motor.Agent.radius + .1f);

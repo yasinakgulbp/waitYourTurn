@@ -1,0 +1,8 @@
+2026-10-10T17:58:46.1792971Z
+Short PC contact/death acceptance; not Android.
+Normal: PASS far target rejected; one impact after windup; closest claw gap=0,062m.
+PASS moving-target cancellation, recoil, immediate pool/reward return and collider-free death skin.
+Fast: PASS far target rejected; one impact after windup; closest claw gap=0,042m.
+PASS moving-target cancellation, recoil, immediate pool/reward return and collider-free death skin.
+Tough: PASS far target rejected; one impact after windup; closest claw gap=0,088m.
+PASS moving-target cancellation, recoil, immediate pool/reward return and collider-free death skin.

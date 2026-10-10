@@ -1,5 +1,11 @@
 # Karar kaydı
 
+## 2026-10-10 — D55: referans canavarlar, yakın temas ve ölüm görselleri
+
+Kullanıcı dört karton canavar referansı verdi; kutu/Lego görünümü yerine faceted beden, türlere özgü saldırı, hasar ve ölüm hareketi istedi. Fast/Normal/Tough sürekli iki ağırlıklı eklem yüzeyleriyle yeniden modellendi; üç başlı dikenli Boss kaynağı hazırlandı ve tren yüksekliğine göre küçültüldü. Boss dalgası/savaş profili henüz tanımlanmadığından mevcut dalgalara eklenmedi. Tek mesh/malzeme/15 kemik, 800–1194 üçgen; yeni atlas/ışık/ragdoll yok.
+
+Oyuncuya 1,6m uzaktan darbe kaldırıldı: Fast .82m, Normal .92m, Tough 1.02m merkez sınırı ve collider yüzeyine kol pozu. Yaklaşma halkası küçültüldü; kapı menzili/rezervasyonu korunur. MeleeAttack saati hazırlık/temas/geri dönüşü yönetir; hayat/menzil/metal darbe anında yeniden kontrol edilir. Üç slot/vagon ölüm görseli savaş havuzundan ayrıdır: ödül/canlı kota hemen sonuçlanır, collider-free beden düşer. Ayrıntı ve PC kabulü CARD_ZOMBIES.md; Android ve Boss savaş dengesi açık. Okunamayan mesh tamponunun yeniden ithali GUID korunarak düzeltildi.
+
 ## 2026-10-10 — D54: yumuşak dönüş ve animasyonlu karton zombiler
 
 Kullanıcı bulanıklığı biraz artırmayı, karakter/fener dönüşünü ivmeli yapmayı, dış zombi kaymasını incelemeyi ve karton low-poly düşmanlara geçmeyi istedi. Blur0,70, ortak PlayerMotor yürüyüş/aim easing0,20/0,14s; isabet hesabı korunur. Survival template tek skinned mesh/15 kemikle Intro/Normal, Fast ve Tough modellerini taşır. Boss sadece tasarım/rig olarak hazırdır. Hareket animasyonu gerçek kök yer değiştirmesinden, saldırı mevcut wind-up'tan türetilir; root motion yok. Önceki yoğunluk fixture'ı yaklaşma sırasında dış düşman ürettiği için kayan dekorla yanlış görüntü veriyordu; fixture durmuş istasyona taşındı. Gerçek4-zombi dalgasında dış düşman bitmeden kalkış olmadığı ve binenlerin korunduğu PASS.24AI kısa Editor kontrolü ortalama6,56ms/P959,02ms; telefon kabulü bekler. [Model sözleşmesi ve kanıt](CARD_ZOMBIES.md). Built-in Unity6.6'da deprecated; ağırlıklı URP assetler nedeniyle ayrı branch üzerinde kontrollü URP geçiş denemesi önerilir, bu aşamada uygulanmadı.

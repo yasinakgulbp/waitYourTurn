@@ -22,6 +22,8 @@ namespace WaitYourTurn.Enemies
         private readonly List<EnemyBrain> active = new List<EnemyBrain>(12);
         private readonly Stack<EnemyBrain> available = new Stack<EnemyBrain>(12);
         private int spawnSequence;
+        private CardCorpsePool corpses;
+        public CardCorpsePool Corpses => corpses;
         private bool playerPresent = true;
         private string wagonId = "lab-wagon";
         public IReadOnlyList<EnemyBrain> Active => active;
@@ -73,6 +75,13 @@ namespace WaitYourTurn.Enemies
             enemy.name = "Pooled Zombie " + (all.Count + 1);
             enemy.gameObject.SetActive(false);
             enemy.PrepareWarmup();
+            if (corpses == null && enemy.GetComponentInChildren<CardZombieVisual>(true) is CardZombieVisual art)
+            {
+                var visuals = new GameObject("Bounded card deaths - no gameplay");
+                visuals.transform.SetParent(transform, false);
+                corpses = visuals.AddComponent<CardCorpsePool>();
+                corpses.Warm(art);
+            }
             enemy.Health.Died += OnEnemyDeath;
             all.Add(enemy); available.Push(enemy); return true;
         }
@@ -115,7 +124,10 @@ namespace WaitYourTurn.Enemies
             // The health notification still owns this life; profile/credit are captured before pool return.
             foreach (var enemy in active)
                 if (enemy.Health.Identity.RuntimeId == death.Target.RuntimeId)
-                { Killed?.Invoke(death, enemy.Profile != null ? enemy.Profile.reward : 0); return; }
+                {
+                    if (corpses != null) corpses.Show(enemy.GetComponentInChildren<CardZombieVisual>(), enemy.Profile != null ? enemy.Profile.id : "normal");
+                    Killed?.Invoke(death, enemy.Profile != null ? enemy.Profile.reward : 0); return;
+                }
         }
         private void ReturnAt(int index)
         {
@@ -131,6 +143,7 @@ namespace WaitYourTurn.Enemies
             for (int i = active.Count - 1; i >= 0; i--) ReturnAt(i);
             DeathCount = 0;
             spawnSequence = 0;
+            if (corpses != null) corpses.Clear();
         }
         public void RemoveStationOutsiders()
         {

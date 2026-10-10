@@ -63,6 +63,7 @@ namespace WaitYourTurn.Editor
                     {
                         var art = enemy.GetComponentInChildren<CardZombieVisual>();
                         Require(art != null && art.Skin.bones.Length == 15 && art.Skin.sharedMaterials.Length == 1, "Single material skeletal art");
+                        Require(art.Skin.sharedMesh.vertexCount < 4000 && art.Skin.quality == SkinQuality.Bone2, "Updated native mesh buffers and blended joints");
                         Require(enemy.GetComponentsInChildren<MeshRenderer>().All(r => !r.enabled), "Legacy capsule/stripe hidden");
                         Require((enemy.transform.position - enemy.GetComponent<NavMeshAgent>().nextPosition).sqrMagnitude < .01f, "Visual animation must not drift root from navigation");
                         animated |= art.WalkingBlend > .5f && Quaternion.Angle(art.Skin.bones[9].localRotation, Quaternion.identity) > 3;

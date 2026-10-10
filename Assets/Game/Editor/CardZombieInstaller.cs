@@ -18,7 +18,7 @@ namespace WaitYourTurn.Editor
         [Serializable] private sealed class Payload { public Bone[] bones; public Part[] parts; }
         [Serializable] private sealed class Bone { public string name; public int parent; public float[] position; }
         [Serializable] private sealed class Part
-        { public string name; public float scale; public float[] vertices, normals, colors; public int[] weights, triangles; }
+        { public string name; public float scale; public float[] vertices, normals, colors, blends; public int[] weights, secondWeights, triangles; }
         [InitializeOnLoadMethod] private static void Listen()
         { EditorApplication.update -= Consume; EditorApplication.update += Consume; }
         private static void Consume()
@@ -31,6 +31,7 @@ namespace WaitYourTurn.Editor
             {
                 if (command == "install") Install();
                 else if (command == "check") CardZombieChecks.Start();
+                else if (command == "combatcheck") CardContactChecks.Start();
                 else throw new InvalidOperationException("Unknown card zombie request");
             }
             catch (Exception e) { File.WriteAllText("docs/generated/card-zombies-error.txt", e.ToString()); Debug.LogException(e); }
@@ -46,6 +47,7 @@ namespace WaitYourTurn.Editor
             if (data.bones.Length != 15 || data.parts.Length != 4) throw new InvalidOperationException("Invalid card rig");
             Directory.CreateDirectory(Folder + "/Meshes"); AssetDatabase.Refresh();
             var meshes = data.parts.ToDictionary(p => p.name, p => MeshAsset(p, data.bones));
+            if (AssetDatabase.IsValidFolder(Folder + "/__MeshRebuild")) AssetDatabase.DeleteAsset(Folder + "/__MeshRebuild");
             var template = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<EnemyBrain>(true)).Single();
             foreach (var r in template.GetComponentsInChildren<MeshRenderer>(true)) r.enabled = false;
             var root = template.transform.Find("Animated card body - visual only");
@@ -57,12 +59,13 @@ namespace WaitYourTurn.Editor
             if (MaquetteArtInstaller.GameplayKey(scene) != physics) throw new InvalidOperationException("Physics changed; do not save");
             AssetDatabase.SaveAssets(); EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
             File.WriteAllText("docs/generated/card-zombies-install.txt", DateTime.UtcNow.ToString("O") +
-                "\nPASS: original card zombie meshes; 15 bones and one material/SkinnedMeshRenderer per actor.\n" +
+                "\nPASS: continuous faceted card monsters; 15 bones, two-weight joints and one material/SkinnedMeshRenderer per actor.\n" +
                 string.Join("\n", data.parts.Select(p => p.name + ": " + p.triangles.Length / 3 + " triangles; visual scale " + p.scale)) +
                 "\nSurvival template installed; Normal/Intro, Fast and Tough retain existing profiles. Boss art prepared only.\n" +
                 "All existing collider/agent/obstacle state and transforms unchanged. No root motion, extra lights, textures or Animator.\n" +
-                "Blur .55 -> .70 with same capped buffers/passes. Player turn .20s walking / .14s aiming, capped720deg/s; combat aim unchanged.\n");
-            Debug.Log("[CardZombie] Installed card models and in-place paper hinge animation.");
+                "Type-specific gait/anticipation/contact/recovery/hit; three bounded collider-free death skins per wagon.\n" +
+                "Player-contact reach: Fast .82m, Normal .92m, Tough 1.02m; door reservation range retained.\n");
+            Debug.Log("[CardZombie] Installed faceted monsters and contact-driven animation.");
         }
         private static Vector3 V(float[] a, int i = 0) => new Vector3(a[i], a[i + 1], a[i + 2]);
         private static Mesh MeshAsset(Part part, Bone[] bones)
@@ -78,16 +81,30 @@ namespace WaitYourTurn.Editor
                 c[i] = new Color(part.colors[i * 4], part.colors[i * 4 + 1], part.colors[i * 4 + 2], 1);
                 if (part.weights[i] < 0 || part.weights[i] >= bones.Length) throw new InvalidOperationException("Invalid hinge weight");
                 w[i] = new BoneWeight { boneIndex0 = part.weights[i], weight0 = 1 };
+                if (part.secondWeights != null && part.secondWeights.Length == count && part.blends != null && part.blends.Length == count)
+                    w[i] = new BoneWeight { boneIndex0 = part.weights[i], weight0 = part.blends[i], boneIndex1 = part.secondWeights[i], weight1 = 1 - part.blends[i] };
             }
             mesh.vertices = v; mesh.normals = n; mesh.colors32 = c; mesh.triangles = part.triangles;
             mesh.boneWeights = w; mesh.bindposes = bones.Select(b => Matrix4x4.Translate(V(b.position)).inverse).ToArray();
             mesh.RecalculateBounds();
             string path = Folder + "/Meshes/" + part.name + ".asset";
-            var old = AssetDatabase.LoadAssetAtPath<Mesh>(path);
-            if (old == null) AssetDatabase.CreateAsset(mesh, path);
-            else { EditorUtility.CopySerialized(mesh, old); UnityEngine.Object.DestroyImmediate(mesh); mesh = old; }
-            // Bound animation has no CPU mesh mutation after import.
-            mesh.UploadMeshData(true); EditorUtility.SetDirty(mesh); return mesh;
+            if (!File.Exists(path))
+            {
+                AssetDatabase.CreateAsset(mesh, path);
+                mesh.UploadMeshData(true); EditorUtility.SetDirty(mesh); return mesh;
+            }
+            // CopySerialized cannot replace native buffers of an already uploaded unreadable mesh.
+            // Serialize a fresh mesh and replace only the asset data; its .meta/GUID stays intact.
+            if (!AssetDatabase.IsValidFolder(Folder + "/__MeshRebuild")) AssetDatabase.CreateFolder(Folder, "__MeshRebuild");
+            string staging = Folder + "/__MeshRebuild/" + part.name + ".asset";
+            AssetDatabase.CreateAsset(mesh, staging);
+            mesh.UploadMeshData(true); EditorUtility.SetDirty(mesh); AssetDatabase.SaveAssets();
+            File.Copy(staging, path, true);
+            AssetDatabase.DeleteAsset(staging);
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (mesh.vertexCount != count) throw new InvalidOperationException("Native mesh buffer mismatch: " + part.name);
+            return mesh;
         }
         private static Transform CreateArt(Transform parent, Mesh mesh, Bone[] bones, out SkinnedMeshRenderer skin, out Transform[] skeleton)
         {
@@ -101,7 +118,7 @@ namespace WaitYourTurn.Editor
                 skeleton[i] = b;
             }
             skin = root.gameObject.AddComponent<SkinnedMeshRenderer>(); skin.sharedMesh = mesh;
-            skin.bones = skeleton; skin.rootBone = skeleton[0]; skin.quality = SkinQuality.Bone1;
+            skin.bones = skeleton; skin.rootBone = skeleton[0]; skin.quality = SkinQuality.Bone2;
             const string materialPath = Folder + "/ZombieCard.mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
             if (material == null)
